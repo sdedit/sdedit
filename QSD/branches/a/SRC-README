@@ -1,0 +1,10 @@
+QUICK SEQUENCE DIAGRAM EDITOR - SOURCE DISTRIBUTION
+===================================================
+
+You need Java, version 5 or higher, to run this tool. You can get Java
+here: http://java.sun.com/javase/downloads
+
+Compile the application with "ant compile" and run it with "ant run". "ant 
+start" will do both.  
+
+You can get ant here: http://ant.apache.org

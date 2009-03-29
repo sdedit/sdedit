@@ -1,0 +1,21 @@
+::GlobalConfiguration.tooltipDismissDelay
+The time (in seconds) before a <b>tooltip</b> disappears,
+when no other action is taken.
+
+::GlobalConfiguration.autodrawLatency
+The time (one unit stands for 20 ms) that must pass between
+a keystroke and the redrawal of a diagram.
+
+::GlobalConfiguration.autoScroll
+If checked, you will see the arrow representing the message
+that you are currently typing.
+
+::GlobalConfiguration.autostartServer
+If checked, on startup the server that accepts connections
+for transmitting diagram texts will be started automatically.
+
+::GlobalConfiguration.autoUpdate
+If checked, the diagram will be updated when no key has been
+typed for a certain (typically small) amount of time.
+
+
