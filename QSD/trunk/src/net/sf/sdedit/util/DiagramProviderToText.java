@@ -61,7 +61,11 @@ public class DiagramProviderToText implements DiagramDataProvider {
 	}
 
 	public String getText() {
-		return stringWriter.toString();
+		String text = stringWriter.toString();
+		if (!System.getProperty("line.separator").equals("\n")) {
+			text = text.replaceAll(System.getProperty("line.separator"), "\n");
+		}
+		return text;
 	}
 
 	public static String getText(DiagramDataProvider provider) {
@@ -169,7 +173,7 @@ public class DiagramProviderToText implements DiagramDataProvider {
 			printWriter.println();
 		}
 		return flag;
-			
+
 	}
 
 	public boolean closeFragment() {
@@ -181,9 +185,9 @@ public class DiagramProviderToText implements DiagramDataProvider {
 	}
 
 	public String[] getDescription() {
-		String [] desc = provider.getDescription();
+		String[] desc = provider.getDescription();
 		if (desc != null) {
-			printWriter.println ("#!>>");
+			printWriter.println("#!>>");
 			for (String string : desc) {
 				printWriter.println("#!" + string);
 			}
@@ -200,7 +204,7 @@ public class DiagramProviderToText implements DiagramDataProvider {
 	public String getFragmentSeparator() {
 		String sep = provider.getFragmentSeparator();
 		if (sep != null) {
-			printWriter.println ("--" + sep);
+			printWriter.println("--" + sep);
 		}
 		return sep;
 	}
@@ -221,12 +225,12 @@ public class DiagramProviderToText implements DiagramDataProvider {
 		}
 		return title;
 	}
-	
-	private static String escape (String msg) {
+
+	private static String escape(String msg) {
 		msg = msg.replaceAll("\\.", "\\\\.");
 		msg = msg.replaceAll(":", "\\\\:");
 		return msg;
-		
+
 	}
 
 	public MessageData nextMessage() throws SyntaxError {
