@@ -479,6 +479,21 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 	public T getFirst() {
 		return (T) first.content;
 	}
+	
+	protected Entry insertAfter (Entry _where, T what) {
+		Entry newEntry = new Entry(what);
+		newEntry.next = _where.next;
+		if (_where.next != null) {
+			_where.next.previous = newEntry;
+		}
+		_where.next = newEntry;
+		newEntry.previous = _where;
+		entryMap.put(what, newEntry);
+		if (last == _where) {
+			last = newEntry;
+		}
+		return newEntry;
+	}
 
 	public void addFirst(T first) {
 		Entry entry = new Entry(first);
@@ -498,7 +513,7 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 		_remove(last);
 		return (T) last.content;
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public T getLast() {
 		return (T) last.content;
@@ -506,6 +521,15 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 
 	public void addLast(T last) {
 		add(last);
+	}
+	
+	public void replace(T whom, Collection<T> by) {
+		Entry _whom = entryMap.get(whom);
+		Entry entry = _whom;
+		for (T t : by) {
+			entry = insertAfter(entry, t);
+		}
+		remove(whom);
 	}
 
 	public int indexOf(T elem) {

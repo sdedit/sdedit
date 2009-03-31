@@ -27,8 +27,6 @@ package net.sf.sdedit.util.collection;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class OntoMap<P, I> implements Serializable {
@@ -53,6 +51,14 @@ public class OntoMap<P, I> implements Serializable {
 
 	public Collection<P> getPreImages() {
 		return map.keySet();
+	}
+	
+	public Collection<I> getImages () {
+		return reverse.keySet();
+	}
+	
+	public boolean containsImage (I image) {
+		return reverse.containsKey(image);
 	}
 
 	private Collection<?> newCollection() {
@@ -104,5 +110,4 @@ public class OntoMap<P, I> implements Serializable {
 		}
 		return (Collection<P>) preImages;
 	}
-
 }
