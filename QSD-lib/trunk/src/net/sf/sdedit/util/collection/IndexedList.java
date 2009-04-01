@@ -158,10 +158,13 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 		}
 
 		public void remove(int num) {
+			// the entry most recently returned by next()
 			Entry current = previous;
 			for (int i = 0; i < num; i++) {
+				// leaves current unchanged
 				IndexedList.this.remove(current.content);
 				if (direction) {
+					// move current
 					current = current.previous;
 				} else {
 					current = current.next;
