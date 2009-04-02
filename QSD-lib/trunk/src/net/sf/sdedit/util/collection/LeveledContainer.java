@@ -103,11 +103,4 @@ public class LeveledContainer<T> implements Iterable<T> {
 		return new LCIterator();
 	}
 
-	public static void main(String[] argv) {
-		LeveledContainer<Integer> lc = new LeveledContainer<Integer>();
-		for (int i : lc) {
-			System.out.println(i); // 3,4,1,4
-		}
-	}
-
 }
