@@ -138,7 +138,18 @@ public class Utilities {
 		}
 		return -1;
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T [] reverse(T[] array) {
+		Class<?> elemClass = array.getClass().getComponentType();
+		int l = array.length;
+		T [] reverse = (T []) Array.newInstance(elemClass, l);
+		for (int i = 0; i < array.length; i++) {
+			reverse[l-i-1] = array[i];			
+		}
+		return reverse;
+	}
+	
 	public static File toFile(URL url) {
 		File file;
 		try {
@@ -237,6 +248,22 @@ public class Utilities {
 		} finally {
 			os.close();
 		}
+	}
+	
+	public static String classesString (Object [] objects, boolean simple) {
+		String [] strings = new String [objects.length];
+		for (int i = 0; i < objects.length; i++) {
+			if (simple) {
+				strings [i] = objects[i].getClass().getSimpleName();
+			} else {
+				strings [i] = objects[i].getClass().getName();
+			}
+		}
+		return "[" + join(",", strings) + "]";
+	}
+	
+	public static String classesString (Collection<?> objects, boolean simple) {
+		return classesString(objects.toArray(), simple);
 	}
 
 	@SuppressWarnings("unchecked")

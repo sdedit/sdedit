@@ -69,6 +69,10 @@ public class Traversal<T> {
 		list.add(root);
 		traverse(tree, list, Integer.MAX_VALUE);
 	}
+	
+	public void traverse(Tree<T> tree, Collection<T> roots) {
+		traverse(tree, roots, Integer.MAX_VALUE);
+	}
 
 	/**
 	 * Traverses the given tree, starting at the nodes as specified by the

@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 
 import net.sf.sdedit.ui.components.Stainable;
+import net.sf.sdedit.util.Utilities;
 import net.sf.sdedit.util.collection.IndexedList;
 import net.sf.sdedit.util.tree.BreadthFirstSearch;
 
@@ -155,36 +156,36 @@ public class TreeNavigatorPane extends JPanel {
 		setSelectedComponent(child);
 	}
 
-	protected TreeNavigatorNode findSelectionAfterRemoval(
-			TreeNavigatorNode removedNode) {
-		int row = navigationTree.getRowForPath(removedNode.getTreePath());
-		int step = chooseNextOnRemove ? 1 : -1;
-		boolean wrapped = false;
-		int n = navigationTree.getRowCount();
-		while (true) {
-			row += step;
-			if (row == -1) {
-				row = n - 1;
-				wrapped = true;
-			} else if (row == n) {
-				row = 0;
-				wrapped = true;
-			}
-			TreePath nextPath = navigationTree.getPathForRow(row);
-			if (nextPath == null) {
-				return null;
-			}
-			TreeNavigatorNode nextNode = (TreeNavigatorNode) nextPath
-					.getLastPathComponent();
-			if (nextNode == removedNode && wrapped) {
-				return null;
-			} else {
-				if (nextNode.getComponent() != null) {
-					return nextNode;
-				}
-			}
-		}
-	}
+//	protected TreeNavigatorNode findSelectionAfterRemoval(
+//			TreeNavigatorNode removedNode) {
+//		int row = navigationTree.getRowForPath(removedNode.getTreePath());
+//		int step = chooseNextOnRemove ? 1 : -1;
+//		boolean wrapped = false;
+//		int n = navigationTree.getRowCount();
+//		while (true) {
+//			row += step;
+//			if (row == -1) {
+//				row = n - 1;
+//				wrapped = true;
+//			} else if (row == n) {
+//				row = 0;
+//				wrapped = true;
+//			}
+//			TreePath nextPath = navigationTree.getPathForRow(row);
+//			if (nextPath == null) {
+//				return null;
+//			}
+//			TreeNavigatorNode nextNode = (TreeNavigatorNode) nextPath
+//					.getLastPathComponent();
+//			if (nextNode == removedNode && wrapped) {
+//				return null;
+//			} else {
+//				if (nextNode.getComponent() != null) {
+//					return nextNode;
+//				}
+//			}
+//		}
+//	}
 
 	public JComponent[] removeComponent(JComponent comp,
 			boolean removeDescendants) {
@@ -215,22 +216,14 @@ public class TreeNavigatorPane extends JPanel {
 		for (JComponent cmp : list) {
 			componentHistory.remove(cmp);
 		}
+		if (!componentHistory.isEmpty()) {
+			setSelectedComponent(componentHistory.getLast());
+		}
 		return list.toArray(new JComponent[list.size()]);
 	}
 
-	public void selectNextComponent(JComponent comp) {
-		TreeNavigatorNode node = treeModel.find(comp);
-		if (node != null) {
-			final TreeNavigatorNode next = findSelectionAfterRemoval(node);
-			if (next != null) {
-				setSelectedComponent(next.getComponent());
-			}
-		}
-
-	}
 
 	private void removeNode(TreeNavigatorNode node) {
-		final TreeNavigatorNode next = findSelectionAfterRemoval(node);
 		if (node.getChildCount() > 0) {
 			TreeNavigatorNode parent = node.getParent();
 			for (TreeNavigatorNode child : node.getChildren()) {
@@ -239,23 +232,6 @@ public class TreeNavigatorPane extends JPanel {
 			}
 		}
 		treeModel.removeChild(node.getParent(), node);
-		if (next == null) {
-			selected = null;
-		} else {
-			selected = next.getComponent();
-		}
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				if (next == null) {
-					contentPanel.removeAll();
-					contentPanel.revalidate();
-					navigationTree.revalidate();
-					repaint();
-				} else {
-					setSelectedComponent(next.getComponent());
-				}
-			}
-		});
 	}
 
 	public boolean existsCategory(String category) {

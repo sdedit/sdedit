@@ -68,7 +68,7 @@ public class LeveledContainer<T> implements Iterable<T> {
 
 	public LeveledContainer() {
 		this(false);
-		levels = new TreeMap<Integer, List<T>>();
+
 	}
 
 	protected List<T> list(int level) {
@@ -78,6 +78,15 @@ public class LeveledContainer<T> implements Iterable<T> {
 			levels.put(level, l);
 		}
 		return l;
+	}
+
+	/**
+	 * Determines the order of elements returned by {@linkplain #iterator()}.
+	 * 
+	 * @param reverse
+	 */
+	public void setReverse(boolean reverse) {
+		this.reverse = reverse;
 	}
 
 	public void add(int level, T t) {
@@ -96,6 +105,7 @@ public class LeveledContainer<T> implements Iterable<T> {
 
 	public LeveledContainer(boolean reverse) {
 		this.reverse = reverse;
+		levels = new TreeMap<Integer, List<T>>();
 	}
 
 	@Override

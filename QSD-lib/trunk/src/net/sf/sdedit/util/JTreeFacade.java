@@ -35,7 +35,6 @@ import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.util.PopupActions.ContextHandler;
 import net.sf.sdedit.util.collection.DistinctObjectsMap;
 import net.sf.sdedit.util.collection.DistinctObjectsSet;
@@ -101,7 +100,6 @@ PopupActions.ContextHandler, TreeCellRenderer {
 	}
 
 	public List<String> getSelections(PathIdenter identer) {
-
 		List<String> identList = new LinkedList<String>();
 		if (tree.getSelectionPaths() != null) {
 			for (TreePath treePath : tree.getSelectionPaths()) {
@@ -109,6 +107,14 @@ PopupActions.ContextHandler, TreeCellRenderer {
 			}
 		}
 		return identList;
+	}
+	
+	public void expandSelectedPaths () {
+		if (tree.getSelectionPaths() != null) {
+			for (TreePath path : tree.getSelectionPaths()) {
+				tree.expandPath(path);
+			}
+		}
 	}
 
 	public void restoreSelections(PathIdenter identer, List<String> selections) {
@@ -236,5 +242,4 @@ PopupActions.ContextHandler, TreeCellRenderer {
 		}
 		return label;
 	}
-
 }
