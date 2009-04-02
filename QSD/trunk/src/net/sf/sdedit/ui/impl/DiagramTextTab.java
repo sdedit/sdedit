@@ -561,7 +561,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 
 	public void setConfiguration(Bean<Configuration> configuration) {
 		super.setConfiguration(configuration);
-		oldConfiguration = configuration;
+		oldConfiguration = configuration.copy();
 		layout(configuration.getDataObject().isVerticallySplit() ? 1 : 0);
 
 	}

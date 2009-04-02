@@ -102,8 +102,6 @@ public class TabNavigatorContainer implements TabContainer,
 			for (Tab closedTab : Utilities.castArray(closed, Tab.class)) {
 				listeners.remove(closedTab);
 			}
-		} else {
-			navigator.selectNextComponent(tab);
 		}
 	}
 
