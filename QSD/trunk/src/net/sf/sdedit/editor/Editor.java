@@ -229,6 +229,15 @@ public final class Editor implements Constants, UserInterfaceListener
 			ui.help(title, file.replaceAll(".html", ""));
 		}
 	}
+	
+	public <T extends Plugin> T getPlugin (Class<T> pluginClass) {
+		for (Plugin plugin : plugins) {
+			if (pluginClass.isInstance(plugin)) {
+				pluginClass.cast(plugin);
+			}
+		}
+		return null;
+	}
 
 	private void readRecentFiles() {
 		String sep = System.getProperty("path.separator");
