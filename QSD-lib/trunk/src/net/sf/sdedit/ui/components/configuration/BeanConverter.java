@@ -90,15 +90,14 @@ public class BeanConverter {
 			for (File file : (File[]) value) {
 				strings.add(file.getAbsolutePath());
 			}
-			CDATASection cdata = document.createCDATASection(Utilities.join(";;", strings
-					.toArray(new String[strings.size()])));
+			CDATASection cdata = document.createCDATASection(Utilities.join(
+					";;", strings.toArray(new String[strings.size()])));
 			elem.appendChild(cdata);
 		} else if (value instanceof KeyStroke) {
 			elem.setAttribute("value", value.toString());
 		} else if (value instanceof Color) {
 			elem.setAttribute("value", "" + ((Color) value).getRGB());
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("unknown property type: "
 					+ value.getClass().getName());
 		}
@@ -131,12 +130,17 @@ public class BeanConverter {
 				String fileName = element.getAttribute("value");
 				value = new File(fileName);
 			} else if (type.equals(File[].class)) {
-				String[] strings = element.getTextContent().split(";;");
-				File [] files = new File[strings.length];
-				for (int i = 0; i < strings.length; i++) {
-					files [i] = new File(strings[i]);
+				String text = element.getTextContent().trim();
+				if (text.length() == 0) {
+					value = new File[0];
+				} else {
+					String[] strings = element.getTextContent().split(";;");
+					File[] files = new File[strings.length];
+					for (int i = 0; i < strings.length; i++) {
+						files[i] = new File(strings[i]);
+					}
+					value = files;
 				}
-				value = files;
 			} else if (type.equals(KeyStroke.class)) {
 				String keyStrokeDescription = element.getAttribute("value");
 				value = KeyStroke.getKeyStroke(keyStrokeDescription);
