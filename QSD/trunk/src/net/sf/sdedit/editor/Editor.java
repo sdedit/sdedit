@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
-import javax.swing.JFrame;
 
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
