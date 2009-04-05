@@ -37,11 +37,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
+import javax.swing.JFrame;
 
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.GlobalConfiguration;
+import net.sf.sdedit.eclipse.Eclipse;
 import net.sf.sdedit.editor.apple.AppInstaller;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.editor.plugin.FileHandler;
@@ -229,11 +231,11 @@ public final class Editor implements Constants, UserInterfaceListener
 			ui.help(title, file.replaceAll(".html", ""));
 		}
 	}
-	
-	public <T extends Plugin> T getPlugin (Class<T> pluginClass) {
+
+	public <T extends Plugin> T getPlugin(Class<T> pluginClass) {
 		for (Plugin plugin : plugins) {
 			if (pluginClass.isInstance(plugin)) {
-				pluginClass.cast(plugin);
+				return pluginClass.cast(plugin);
 			}
 		}
 		return null;
@@ -571,7 +573,6 @@ public final class Editor implements Constants, UserInterfaceListener
 
 	public void quit() {
 		if (closeAll()) {
-			ui.exit();
 			writeRecentFiles();
 			try {
 				ConfigurationManager.storeConfigurations();
@@ -583,7 +584,10 @@ public final class Editor implements Constants, UserInterfaceListener
 			if (server != null) {
 				server.shutDown();
 			}
-			System.exit(0);
+			ui.exit();
+			if (Eclipse.getEclipse() == null) {
+				System.exit(0);
+			}
 		}
 	}
 

@@ -1,5 +1,6 @@
 package net.sf.sdedit.eclipse;
 
+import java.io.File;
 import java.lang.reflect.Method;
 
 public abstract class Eclipse {
@@ -17,9 +18,8 @@ public abstract class Eclipse {
 		return eclipse;
 	}
 	
-	public abstract boolean goToSource (String className, String methodName,
-			String methodDesc);
+	public abstract boolean goToSource (String className, int lineNumber);
 	
+	public abstract File [] getPluginClasspath ();
 	
-
 }

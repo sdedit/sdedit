@@ -579,7 +579,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	}
 
 	public void exit() {
-		// printDialog.saveProfiles();
+		setVisible(false);
 	}
 
 	public ScalePanel getScalePanel() {
@@ -633,12 +633,13 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		String _caption = caption == null ? "Error" : caption;
 		String message = header == null ? "" : header;
 		if (throwable != null) {
+			throwable.printStackTrace();
 			if (message.length() > 0) {
 				message += "\n\n";
 			}
 			message += "An exception of type "
 					+ throwable.getClass().getSimpleName() + "\n";
-			message += "has occured with the message:\n";
+			message += "has occurred with the message:\n";
 			message += throwable.getMessage();
 			if (throwable.getCause() != null) {
 				message += "\n\nThe exception was caused by a "
