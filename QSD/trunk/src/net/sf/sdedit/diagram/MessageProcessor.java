@@ -208,14 +208,14 @@ final class MessageProcessor {
 			throw new SemanticError(
 					provider,
 					"There are no automatic answers to messages that reach actors."
-							+ " This should be done by means of an explicit message!");
+							+ "<br>This should be done by means of an explicit message!");
 		}
 		if (diagram.isThreaded() && data.isSpawnMessage()
 				&& data.getAnswer().length() > 0) {
 			throw new SemanticError(
 					provider,
 					"There are no automatic answers to messages that spawn threads."
-							+ " This should be done by means of an explicit message!");
+							+ "<br>This should be done by means of an explicit message!");
 		}
 		if (rootCallee != null) {
 			if (!rootCallee.isAlive() && !data.isNewMessage()) {
