@@ -156,6 +156,14 @@ public class TabNavigatorContainer implements TabContainer,
 	public Tab [] getSelectedTabs() {
 		return Utilities.castArray(navigator.getSelectedComponents(), Tab.class);
 	}
+	
+	public List<Tab> getSuccessors(Tab tab) {
+		List<Tab> successors = new LinkedList<Tab>();
+		for (JComponent comp : navigator.getSuccessors(tab)) {
+			successors.add((Tab) comp);
+		}
+		return successors;
+	}
 
 	public List<Tab> getDescendants(Tab root) {
 		List<Tab> descendants = new LinkedList<Tab>();

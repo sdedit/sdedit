@@ -140,6 +140,14 @@ public abstract class Tab extends JPanel implements Stainable,
 		this.id = id;
 	}
 	
+	public List<Tab> getChildren () {
+		return ui.getTabContainer().getSuccessors(this);
+	}
+	
+	public Tab getParentTab() {
+		return ui.getTabContainer().getParentTab(this);
+	}
+	
 	public int getId () {
 		return id;
 	}

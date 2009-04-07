@@ -546,5 +546,10 @@ public class TextHandler implements DiagramDataProvider {
 	public boolean pass() {
 		return false;
 	}
+
+	@Override
+	public Diagram getDiagram() {
+		return diagram;
+	}
 }
 // {{core}}

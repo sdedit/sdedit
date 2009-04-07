@@ -164,6 +164,8 @@ public interface DiagramDataProvider {
      *            the diagram that uses this DiagramDataProvider
      */
     public void setDiagram(Diagram diagram);
+    
+    public Diagram getDiagram();
 
     /**
      * Returns a pair consisting of a lifeline and the number of a description
@@ -184,6 +186,7 @@ public interface DiagramDataProvider {
      * @return the title of a fragment section or <tt>null</tt>
      */
     public String getFragmentSeparator();
+    
     
 }
 //{{core}}

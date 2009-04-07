@@ -254,6 +254,10 @@ public class DiagramProviderToText implements DiagramDataProvider {
 		}
 		return of;
 	}
+	
+	public Diagram getDiagram () {
+		return provider.getDiagram();
+	}
 
 	public void setDiagram(Diagram diagram) {
 		provider.setDiagram(diagram);

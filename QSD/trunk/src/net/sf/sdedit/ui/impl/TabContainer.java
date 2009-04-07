@@ -39,9 +39,13 @@ public interface TabContainer {
 	
 	public void removeListener (TabContainerListener listener);
 	
+	public List<Tab> getSuccessors(Tab tab);
+	
 	public List<Tab> getDescendants(Tab root);
 	
 	public Tab getParentTab (Tab tab);
+	
+	
 	
 	public void goToNextTab ();
 	

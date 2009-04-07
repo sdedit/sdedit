@@ -90,7 +90,7 @@ public class Note extends SequenceElement
      */
     private URI link;
     
-    private int targetId;
+    private long targetId;
     
     private int subId;
 
@@ -118,14 +118,13 @@ public class Note extends SequenceElement
         targets = new LinkedList<Point>();
         targetId = 0;
         subId = -1;
-        
     }
     
-    public void setTargetId (int id) {
+    public void setTargetId (long id) {
     	this.targetId = id;
     }
     
-    public int getTargetId () {
+    public long getTargetId () {
     	return targetId;
     }
     
@@ -155,6 +154,10 @@ public class Note extends SequenceElement
      */
     public int getNumber() {
         return number;
+    }
+    
+    public void setNumber (int number) {
+    	this.number = number;
     }
 
     /**
