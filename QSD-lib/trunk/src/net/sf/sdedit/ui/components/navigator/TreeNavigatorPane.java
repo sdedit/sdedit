@@ -1,6 +1,7 @@
 package net.sf.sdedit.ui.components.navigator;
 
 import java.awt.BorderLayout;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -324,6 +325,16 @@ public class TreeNavigatorPane extends JPanel {
 
 	public List<JComponent> getAllComponents() {
 		return treeModel.getComponents();
+	}
+	
+	public List<JComponent> getSuccessors(JComponent comp) {
+		TreeNavigatorNode node = treeModel.find(comp);
+		TreeNavigatorNode[] children = node.getChildren();
+		List<JComponent> succs = new LinkedList<JComponent>();
+		for (TreeNavigatorNode child : children) {
+			succs.add(child.getComponent());
+		}
+		return succs;
 	}
 
 	public List<JComponent> getDescendants(JComponent root) {

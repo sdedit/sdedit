@@ -151,6 +151,10 @@ public class JTreeSearcher implements ActionListener {
 		return next;
 	}
 	
+	public void remove (JTree tree) {
+		// TODO
+	}
+	
 	public JTree [] getTrees () {
 		return tree;
 	}
