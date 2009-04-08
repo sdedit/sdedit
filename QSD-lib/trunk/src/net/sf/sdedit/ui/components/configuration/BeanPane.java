@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 
 import net.sf.sdedit.util.DocUtil.XMLException;
 
+@SuppressWarnings("serial")
 public class BeanPane extends JPanel implements ConfigurationUIListener {
 
 	private LinkedList<ConfigurationUIListener> listeners;
@@ -65,7 +66,7 @@ public class BeanPane extends JPanel implements ConfigurationUIListener {
 	public void addTab (Component tab, String title) {
 		additionalTabs.put(title, tab);
 	}
-
+	
 	public void addListener(ConfigurationUIListener listener) {
 		listeners.add(listener);
 	}

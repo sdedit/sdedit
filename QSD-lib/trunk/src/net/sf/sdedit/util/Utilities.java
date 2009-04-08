@@ -60,7 +60,15 @@ public class Utilities {
 		T first = iterator.next();
 		iterator.remove();
 		return first;
-
+	}
+	
+	public static <T> T peek(Collection<T> set) {
+		Iterator<T> iterator = set.iterator();
+		if (!iterator.hasNext()) {
+			throw new IllegalStateException("The set is empty");
+		}
+		T first = iterator.next();
+		return first;
 	}
 	
 	public static String substring (String string, int pos, int length) {
