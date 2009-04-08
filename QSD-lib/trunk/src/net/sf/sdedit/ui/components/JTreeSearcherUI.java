@@ -9,25 +9,18 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 
-import net.sf.sdedit.util.Utilities;
-
 public class JTreeSearcherUI extends JPanel implements ActionListener {
 
 	private JTreeSearcher searcher;
 
-	private int treeNumber;
-
 	private JButton button;
+	
+	private JTree tree;
 
 	private JTextField textField;
 
 	public JTreeSearcherUI(JTreeSearcher searcher, JTree tree) {
 		this.searcher = searcher;
-		if (tree != null) {
-			treeNumber = Utilities.indexOf(searcher.getTrees(), tree);
-		} else {
-			treeNumber = -1;
-		}
 		button = new JButton("Search");
 		textField = new JTextField();
 		setLayout(new BorderLayout());
@@ -35,15 +28,17 @@ public class JTreeSearcherUI extends JPanel implements ActionListener {
 		add(button, BorderLayout.WEST);
 		textField.addActionListener(this);
 		button.addActionListener(this);
+		this.tree = tree;
 	}
 
 	public JTreeSearcherUI(JTreeSearcher searcher) {
 		this(searcher, null);
 	}
-
-	public int getTreeNumber() {
-		return treeNumber;
+	
+	public JTree getTree () {
+		return tree;
 	}
+
 
 	public void actionPerformed(ActionEvent e) {
 		e.setSource(this);

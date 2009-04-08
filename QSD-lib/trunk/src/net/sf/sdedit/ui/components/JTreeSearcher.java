@@ -26,6 +26,8 @@ package net.sf.sdedit.ui.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,29 +52,29 @@ import net.sf.sdedit.util.tree.BreadthFirstSearch;
 
 public class JTreeSearcher implements ActionListener {
 
-	private JTree [] tree;
+	private ArrayList<JTree> tree;
 
-	private BreadthFirstSearch [] bfs;
+	private ArrayList<BreadthFirstSearch> bfs;
 
 	private boolean isCaseSensitive;
-	
-	private JTreeFacade [] facade;
-	
+
+	private ArrayList<JTreeFacade> facade;
+
 	private String text;
-	
+
 	private int currentTree;
-	
+
 	private List<ActionListener> actionListeners;
-	
+
 	private int eventId;
 
 	public JTreeSearcher(JTree... tree) {
-		this.tree = tree;
-		facade = new JTreeFacade[tree.length];
-		bfs = new BreadthFirstSearch[tree.length];
+		this.tree = new ArrayList<JTree>(Arrays.asList(tree));
+		facade = new ArrayList<JTreeFacade>();
+		bfs = new ArrayList<BreadthFirstSearch>();
 		for (int i = 0; i < tree.length; i++) {
-			facade[i] = new JTreeFacade(tree[i]);
-			bfs[i] = new BreadthFirstSearch(tree[i].getModel());
+			facade.add(new JTreeFacade(tree[i]));
+			bfs.add(new BreadthFirstSearch(tree[i].getModel()));
 		}
 
 		isCaseSensitive = false;
@@ -80,37 +82,45 @@ public class JTreeSearcher implements ActionListener {
 		actionListeners = new LinkedList<ActionListener>();
 		eventId = 0;
 	}
-	
-	public void addActionListener (ActionListener listener) {
+
+	public void addActionListener(ActionListener listener) {
 		actionListeners.add(listener);
 	}
-	
-	public void removeActionListener (ActionListener listener) {
+
+	public void removeActionListener(ActionListener listener) {
 		actionListeners.remove(listener);
 	}
-	
-	protected void fireGoToTree () {
-		ActionEvent actionEvent = new ActionEvent(tree[currentTree], eventId, text);
+
+	protected void fireGoToTree() {
+		ActionEvent actionEvent = new ActionEvent(currTree(), eventId, text);
 		for (ActionListener listener : actionListeners) {
 			listener.actionPerformed(actionEvent);
 		}
 	}
-	
+
+	private JTree currTree() {
+		return tree.get(currentTree);
+	}
+
+	private JTreeFacade currFacade() {
+		return facade.get(currentTree);
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		JTreeSearcherUI ui = (JTreeSearcherUI) e.getSource();
-		if (ui.getTreeNumber() >= 0) {
-			currentTree = ui.getTreeNumber();
+		if (ui.getTree() != null) {
+			currentTree = tree.indexOf(ui.getTree());
 		}
 		text = ui.getSearchText();
 		TreePath next = findNext();
 		if (next != null) {
-			facade[currentTree].deselectAll();
+			currFacade().deselectAll();
 			TreePath path = next.getParentPath();
 			if (path != null) {
-				tree[currentTree].expandPath(path);
+				currTree().expandPath(path);
 			}
-			tree[currentTree].setSelectionPath(next);
-			tree[currentTree].scrollPathToVisible(next);
+			currTree().setSelectionPath(next);
+			currTree().scrollPathToVisible(next);
 			fireGoToTree();
 		}
 	}
@@ -139,33 +149,41 @@ public class JTreeSearcher implements ActionListener {
 		}
 		return null;
 	}
-	
-	private TreePath next () {
+
+	private TreePath next() {
 		TreePath next;
 		do {
-			next = bfs [currentTree].next();
+			next = bfs.get(currentTree).next();
 			if (next == null) {
 				currentTree++;
 			}
-		} while (next == null && currentTree < tree.length);
+		} while (next == null && currentTree < tree.size());
 		return next;
 	}
-	
-	public void remove (JTree tree) {
-		// TODO
+
+	public void remove(JTree tree) {
+		int i = this.tree.indexOf(tree);
+		this.tree.remove(i);
+		bfs.remove(i);
+		this.facade.remove(i);
+		if (i >= 0 && i < this.tree.size()) {
+			currentTree = i;
+		} else {
+			restart();
+		}
 	}
-	
-	public JTree [] getTrees () {
-		return tree;
+
+	public JTree[] getTrees() {
+		return tree.toArray(new JTree[tree.size()]);
 	}
-	
-	private void restart () {
+
+	private void restart() {
 		for (BreadthFirstSearch b : bfs) {
 			b.restart();
 		}
 		currentTree = 0;
 	}
-	
+
 	private boolean matches(String string) {
 		int i;
 		if (isCaseSensitive) {
@@ -173,6 +191,6 @@ public class JTreeSearcher implements ActionListener {
 		} else {
 			i = string.toUpperCase().indexOf(text.toUpperCase());
 		}
-		return i>=0;
+		return i >= 0;
 	}
 }
