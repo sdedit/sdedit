@@ -156,7 +156,11 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 
 	private boolean changed;
 
-	private Timer timer;
+	private Timer changeTimer;
+
+	private boolean mustScroll;
+
+	private Timer scrollTimer;
 
 	public DiagramTextTab(UserInterfaceImpl ui, Font codeFont,
 			Bean<Configuration> configuration
@@ -211,11 +215,8 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 
 			public void caretUpdate(CaretEvent e) {
 				if (globalConf.isAutoScroll()) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run () {
-							scrollToCurrentDrawable();
-						}
-					});
+					mustScroll = true;
+					scrollTimer.restart();
 				}
 			}
 		});
@@ -282,10 +283,15 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 			}
 		});
 
-		timer = new Timer(20 * ConfigurationManager.getGlobalConfiguration()
-				.getAutodrawLatency(), this);
-		timer.start();
+		changeTimer = new Timer(20 * ConfigurationManager
+				.getGlobalConfiguration().getAutodrawLatency(), this);
+		changeTimer.start();
 		changed = false;
+
+		scrollTimer = new Timer(20 * ConfigurationManager
+				.getGlobalConfiguration().getAutodrawLatency(), this);
+		scrollTimer.start();
+		mustScroll = false;
 
 		statusPanel = getStatusPanel();
 		statusPanel.setLayout(new BorderLayout());
@@ -320,7 +326,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 
 	private void somethingChanged() {
 		changed = true;
-		timer.restart();
+		changeTimer.restart();
 		timeOfLastKeyChange = currentTimeMillis();
 		invokeLater(new Runnable() {
 			public void run() {
@@ -373,7 +379,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 		if (close) {
 			ConfigurationManager.getGlobalConfigurationBean()
 					.removePropertyChangeListener(this);
-			timer.stop();
+			changeTimer.stop();
 		}
 		return close;
 	}
@@ -417,8 +423,8 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 			}
 		});
 	}
-	
-	public void goHome () {
+
+	public void goHome() {
 		super.goHome();
 		textArea.setCaretPosition(0);
 		textArea.requestFocusInWindow();
@@ -481,12 +487,17 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 	}
 
 	protected void scrollToCurrentDrawable() {
+		scrollToCurrentDrawable(true);
+	}
+
+	protected void scrollToCurrentDrawable(boolean highlight) {
 		int begin = textArea.getCurrentLineBegin();
 		Diagram diagram = getDiagram();
 		if (diagram != null) {
 			Drawable drawable = diagram.getDrawableForState(begin);
 			if (drawable != null) {
-				scrollToDrawable(drawable, globalConf.isHighlightCurrent());
+				scrollToDrawable(drawable, highlight
+						&& globalConf.isHighlightCurrent());
 			} else {
 				int caret = textArea.getCaretPosition();
 				if (textArea.getText().substring(caret).trim().length() == 0) {
@@ -576,9 +587,9 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 			setLineWrap(wrap);
 		} else if (evt.getPropertyName().toLowerCase()
 				.equals("autodrawlatency")) {
-			timer.stop();
-			timer.setDelay((Integer) evt.getNewValue());
-			timer.start();
+			changeTimer.stop();
+			changeTimer.setDelay((Integer) evt.getNewValue());
+			changeTimer.start();
 		}
 		somethingChanged();
 	}
@@ -624,7 +635,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 			FileActionProvider faProvider) {
 		super.activate(actionManager, faProvider);
 		changed = false;
-		timer.restart();
+		changeTimer.restart();
 		leaveFilterMode();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -637,7 +648,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 	public void deactivate(ActionManager actionManager,
 			FileActionProvider faProvider) {
 		super.deactivate(actionManager, faProvider);
-		timer.stop();
+		changeTimer.stop();
 	}
 
 	@Override
@@ -697,10 +708,17 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if (changed) {
-			refresh(false);
+		if (e.getSource() == changeTimer) {
+			if (changed) {
+				refresh(false);
+			}
+			changed = false;
+		} else if (e.getSource() == scrollTimer) {
+			if (mustScroll) {
+				scrollToCurrentDrawable(true);
+			}
+			mustScroll = false;
 		}
-		changed = false;
 	}
 
 	@Override
@@ -756,7 +774,5 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 		}
 
 	};
-	
-	
 
 }
