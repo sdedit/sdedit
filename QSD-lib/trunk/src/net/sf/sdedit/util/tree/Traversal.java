@@ -59,6 +59,11 @@ public class Traversal<T> {
 		lastChildren = new DistinctObjectsMap<T, T>();
 	}
 	
+	public void DESTROY () {
+		stack.clear();
+		lastChildren.clear();
+	}
+	
 	public void traverse(Tree<T> tree) {
 		List<T> roots = Arrays.asList(tree.getChildren(null));
 		traverse(tree, roots, Integer.MAX_VALUE);

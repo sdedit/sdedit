@@ -110,6 +110,14 @@ public class TreeAdapter<T> implements TreeModel {
 		children = new WeakHashMap<Node, T[]>();
 	}
 	
+	public void DESTROY () {
+		nodes.clear();
+		root = null;
+		tree = null;
+		listeners.clear();
+		children.clear();
+	}
+	
 	public void invalidateAll () {
 		children.clear();
 	}

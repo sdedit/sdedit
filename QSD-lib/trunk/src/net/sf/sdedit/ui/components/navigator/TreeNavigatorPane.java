@@ -1,7 +1,6 @@
 package net.sf.sdedit.ui.components.navigator;
 
 import java.awt.BorderLayout;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +17,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 
 import net.sf.sdedit.ui.components.Stainable;
-import net.sf.sdedit.util.Utilities;
 import net.sf.sdedit.util.collection.IndexedList;
 import net.sf.sdedit.util.tree.BreadthFirstSearch;
 
@@ -59,6 +57,8 @@ public class TreeNavigatorPane extends JPanel {
 	private boolean chooseNextOnRemove;
 
 	private final Set<String> categories;
+	
+	private boolean historyEnabled;
 
 	public TreeNavigatorPane() {
 		setLayout(new BorderLayout());
@@ -82,6 +82,7 @@ public class TreeNavigatorPane extends JPanel {
 		chooseNextOnRemove = false;
 		categories = new HashSet<String>();
 		componentHistory = new IndexedList<JComponent>();
+		historyEnabled = true;
 	}
 
 	/**
@@ -254,7 +255,7 @@ public class TreeNavigatorPane extends JPanel {
 		if (setSelectedComponentEntered) {
 			return true;
 		}
-		if (updateHistory) {
+		if (historyEnabled && updateHistory) {
 			componentHistory.remove(comp);
 			componentHistory.add(comp);
 		}
@@ -377,6 +378,14 @@ public class TreeNavigatorPane extends JPanel {
 
 	public boolean previousComponentExists() {
 		return componentHistory.previous(selected) != null;
+	}
+	
+	public void enableHistory () {
+		historyEnabled = true;
+	}
+	
+	public void disableHistory () {
+		historyEnabled = false;		
 	}
 
 }
