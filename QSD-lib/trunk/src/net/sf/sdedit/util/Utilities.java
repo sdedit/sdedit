@@ -291,26 +291,23 @@ public class Utilities {
 		}
 	}
 
-	public static Iterable<String> readLines(String command,
-			Ref<InputStream> stream) throws IOException {
-		System.out.println(command);
+	public static Iterable<String> readLines(String command) throws IOException {
 		Process proc = Runtime.getRuntime().exec(command);
-		stream.t = proc.getInputStream();
+		InputStream stream = proc.getInputStream();
 		return readLines(stream);
 	}
 
-	public static Iterable<String> readLines(File file, Ref<InputStream> stream)
+	public static Iterable<String> readLines(File file)
 			throws IOException {
-		stream.t = new FileInputStream(file);
+		InputStream stream = new FileInputStream(file);
 		return readLines(stream);
 	}
 
-	public static Iterable<String> readLines(Ref<InputStream> stream)
+	public static Iterable<String> readLines(final InputStream stream)
 			throws IOException {
 
-		try {
 			final BufferedReader reader = new BufferedReader(
-					new InputStreamReader(stream.t));
+					new InputStreamReader(stream));
 			return new Iterable<String>() {
 
 				public Iterator<String> iterator() {
@@ -321,7 +318,15 @@ public class Utilities {
 						public boolean hasNext() {
 							try {
 								currentLine = reader.readLine();
+								if (currentLine == null) {
+									stream.close();
+								}
 							} catch (IOException e) {
+								try {
+									stream.close();
+								} catch (IOException ignored) {
+									/* empty */
+								}
 								throw new IllegalStateException(
 										"Cannot read file", e);
 							}
@@ -338,14 +343,14 @@ public class Utilities {
 					};
 				}
 			};
-		} finally {
-			stream.t.close();
-		}
 	}
 	
 	public static void main (String [] args) throws Throwable {
-		Ref<InputStream> stream = new Ref<InputStream>();
-		for (String line : Utilities.readLines("REG QUERY HKLM\\Software", stream)) {
+//		Ref<InputStream> stream = new Ref<InputStream>();
+//		for (String line : Utilities.readLines("REG QUERY HKLM\\Software", stream)) {
+//			System.out.println(line);
+//		}
+		for (String line : readLines("cat /tmp/xyz")) {
 			System.out.println(line);
 		}
 	}
