@@ -171,6 +171,7 @@ public class Main implements Constants {
 				options);
 	}
 
+	@SuppressWarnings("static-access")
 	private static Options createBasicOptions() {
 
 		Options options = new Options();
@@ -199,6 +200,7 @@ public class Main implements Constants {
 		return options;
 	}
 
+	@SuppressWarnings("static-access")
 	private static void addPropertyOptions(Options options,
 			Bean<Configuration> conf) {
 		for (PropertyDescriptor property : conf.getProperties()) {

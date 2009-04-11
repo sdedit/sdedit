@@ -45,7 +45,9 @@ public interface TabContainer {
 	
 	public Tab getParentTab (Tab tab);
 	
+	public void disableTabHistory ();
 	
+	public void enableTabHistory ();
 	
 	public void goToNextTab ();
 	

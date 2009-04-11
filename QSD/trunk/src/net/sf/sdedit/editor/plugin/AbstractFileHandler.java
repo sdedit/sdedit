@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import net.sf.sdedit.editor.Editor;
@@ -33,9 +34,9 @@ public abstract class AbstractFileHandler implements FileHandler {
 	protected AbstractFileHandler() {
 
 	}
-	
+
 	// TODO
-	protected UserInterfaceImpl getUI () {
+	protected UserInterfaceImpl getUI() {
 		return (UserInterfaceImpl) Editor.getEditor().getUI();
 	}
 
@@ -83,8 +84,10 @@ public abstract class AbstractFileHandler implements FileHandler {
 	/**
 	 * @see net.sf.sdedit.editor.plugin.FileHandler#loadFile(java.net.URL)
 	 */
-	public void loadFile(URL url, UserInterface ui) throws IOException {
-		Tab tab = _loadFile(url);
+	public final void loadFile(URL url, final UserInterface ui)
+			throws IOException {
+		ui.getTabContainer().disableTabHistory();
+		final Tab tab = _loadFile(url);
 		if (tab == null) {
 			return;
 		}
@@ -98,7 +101,14 @@ public abstract class AbstractFileHandler implements FileHandler {
 		if (file != null && file.exists()) {
 			Editor.getEditor().addToRecentFiles(file.getAbsolutePath());
 		}
-		addTabToUI (file, tab, ui);
+		addTabToUI(file, tab, ui);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				ui.getTabContainer().enableTabHistory();
+				ui.selectTab(tab);
+			}
+		});
+
 	}
 
 	protected void addTabToUI(File file, Tab tab, UserInterface ui) {

@@ -197,4 +197,16 @@ public class TabNavigatorContainer implements TabContainer,
 		return navigator.previousComponentExists();
 	}
 
+	@Override
+	public void disableTabHistory() {
+		navigator.disableHistory();
+		
+	}
+
+	@Override
+	public void enableTabHistory() {
+		navigator.enableHistory();
+		
+	}
+
 }
