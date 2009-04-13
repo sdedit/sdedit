@@ -339,6 +339,8 @@ public abstract class Tab extends JPanel implements Stainable,
 			for (TabListener listener : listeners) {
 				listener.tabIsClosed(this);
 			}
+			listeners.clear();
+			stainedListeners.clear();
 			return true;
 		}
 		return false;

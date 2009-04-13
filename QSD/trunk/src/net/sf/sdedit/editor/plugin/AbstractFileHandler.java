@@ -133,8 +133,8 @@ public abstract class AbstractFileHandler implements FileHandler {
 				confirmation = tab
 						.get_UI()
 						.confirmOrCancel(
-								file.getName()
-										+ " already exists.\nDo you want to overwrite it?");
+								"<html>" + file.getName()
+										+ " already exists.<br>Do you want to overwrite it?");
 			}
 			if (confirmation == 1) {
 				updateFileChooserDirectory(file);
