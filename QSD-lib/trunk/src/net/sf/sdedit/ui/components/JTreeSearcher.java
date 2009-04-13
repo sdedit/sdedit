@@ -28,8 +28,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
@@ -68,6 +70,8 @@ public class JTreeSearcher implements ActionListener {
 
 	private int eventId;
 
+	private Map<JTree, JTreeSearcherUI> uis;
+
 	public JTreeSearcher(JTree... tree) {
 		this.tree = new ArrayList<JTree>(Arrays.asList(tree));
 		facade = new ArrayList<JTreeFacade>();
@@ -81,6 +85,7 @@ public class JTreeSearcher implements ActionListener {
 		currentTree = 0;
 		actionListeners = new LinkedList<ActionListener>();
 		eventId = 0;
+		uis = new HashMap<JTree, JTreeSearcherUI>();
 	}
 
 	public void addActionListener(ActionListener listener) {
@@ -106,6 +111,20 @@ public class JTreeSearcher implements ActionListener {
 		return facade.get(currentTree);
 	}
 
+	public void register(JTreeSearcherUI ui) {
+		if (ui.getTree() != null) {
+			uis.put(ui.getTree(), ui);
+		}
+
+	}
+
+	public void deregister(JTreeSearcherUI ui) {
+		if (ui.getTree() != null) {
+			uis.remove(ui.getTree());
+		}
+
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		JTreeSearcherUI ui = (JTreeSearcherUI) e.getSource();
 		if (ui.getTree() != null) {
@@ -122,6 +141,8 @@ public class JTreeSearcher implements ActionListener {
 			currTree().setSelectionPath(next);
 			currTree().scrollPathToVisible(next);
 			fireGoToTree();
+			JTreeSearcherUI sui = uis.get(currTree());
+			sui.getTextField().requestFocusInWindow();
 		}
 	}
 

@@ -24,10 +24,12 @@
 
 package net.sf.sdedit.util.tree;
 
+import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.WeakHashMap;
 
+import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -35,6 +37,14 @@ import javax.swing.tree.TreePath;
 import net.sf.sdedit.util.collection.DistinctObjectsMap;
 
 public class TreeAdapter<T> implements TreeModel {
+	
+	public static enum DisplayMode {
+		
+		ALL_NODES,
+		
+		NO_LEAVES
+		
+	}
 
 	private Tree<T> tree;
 
@@ -44,8 +54,10 @@ public class TreeAdapter<T> implements TreeModel {
 
 	private List<TreeModelListener> listeners;
 	
-	private WeakHashMap<Node, T[]> children; 
-
+	private WeakHashMap<Node, T[]> children;
+	
+	private DisplayMode displayMode;
+	
 	public class Node {
 
 		T t;
@@ -108,6 +120,19 @@ public class TreeAdapter<T> implements TreeModel {
 		root = new Node(null);
 		listeners = new LinkedList<TreeModelListener>();
 		children = new WeakHashMap<Node, T[]>();
+		displayMode = DisplayMode.ALL_NODES;
+	}
+	
+	public void setDisplayMode (DisplayMode newMode) {
+		if (!newMode.equals(displayMode)) {
+			this.displayMode = newMode;
+			invalidateAll();
+	        TreeModelEvent tme = new TreeModelEvent(this,
+	                new Object[] { getRoot() });
+	        for (TreeModelListener tml : getTreeModelListeners()) {
+	            tml.treeStructureChanged(tme);
+	        }
+		}
 	}
 	
 	public void DESTROY () {
@@ -126,13 +151,36 @@ public class TreeAdapter<T> implements TreeModel {
 		children.remove(nodes.get(t));
 	}
 	
-	private T [] children(Node node) {
+	private T [] _children(Node node) {
 		T [] result = children.get(node);
 		if (result == null) {
 			result = tree.getChildren(node.t);
 			children.put(node, result);
 		}
 		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private T [] children(Node node, boolean ignoreDisplayMode) {
+		if (ignoreDisplayMode || displayMode == DisplayMode.ALL_NODES) {
+			return _children(node);
+		} else {
+			List<T> cl = new LinkedList<T>();
+			T [] children = _children(node);
+			for (T child : children) {
+				Node c = getNode(child);
+				if (_children(c).length > 0) {
+					cl.add(child);
+				}
+			}
+			children = (T[]) Array.newInstance(children.getClass().getComponentType(), cl.size());
+			return cl.toArray(children);
+			
+		}
+	}
+	
+	public T [] children(Node node) {
+		return children(node, false);
 	}
 
 	public void addTreeModelListener(TreeModelListener arg0) {
@@ -185,7 +233,7 @@ public class TreeAdapter<T> implements TreeModel {
 	}
 
 	public boolean isLeaf(Object arg0) {
-		return getChildCount(arg0) == 0;
+		return children((Node) arg0, true).length == 0;
 	}
 
 	public void removeTreeModelListener(TreeModelListener arg0) {

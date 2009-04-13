@@ -29,10 +29,26 @@ public class JTreeSearcherUI extends JPanel implements ActionListener {
 		textField.addActionListener(this);
 		button.addActionListener(this);
 		this.tree = tree;
+		searcher.register(this);
+	}
+	
+	public void DESTROY () {
+		searcher.deregister(this);
+		tree = null;
+		searcher = null;
+		textField.removeActionListener(this);
+		button.removeActionListener(this);
+		textField = null;
+		button = null;
+		
 	}
 
 	public JTreeSearcherUI(JTreeSearcher searcher) {
 		this(searcher, null);
+	}
+	
+	public JTextField getTextField () {
+		return textField;
 	}
 	
 	public JTree getTree () {

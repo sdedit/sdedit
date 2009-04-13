@@ -24,7 +24,6 @@
 
 package net.sf.sdedit.util;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
