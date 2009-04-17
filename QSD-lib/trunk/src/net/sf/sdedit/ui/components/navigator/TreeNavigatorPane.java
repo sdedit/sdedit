@@ -54,8 +54,6 @@ public class TreeNavigatorPane extends JPanel {
 
 	private final IndexedList<JComponent> componentHistory;
 
-	private boolean chooseNextOnRemove;
-
 	private final Set<String> categories;
 	
 	private boolean historyEnabled;
@@ -79,37 +77,9 @@ public class TreeNavigatorPane extends JPanel {
 		add(splitPane, BorderLayout.CENTER);
 		splitPane.setLeftComponent(navigationScrollPane);
 		splitPane.setRightComponent(contentPanel);
-		chooseNextOnRemove = false;
 		categories = new HashSet<String>();
 		componentHistory = new IndexedList<JComponent>();
 		historyEnabled = true;
-	}
-
-	/**
-	 * Sets a flag denoting if the next node (one under the removed node) is to
-	 * be selected after a removal (if there exists such node) or the former one
-	 * is to be selected.
-	 * 
-	 * @param chooseNextOnRemove
-	 *            a flag denoting if the next node (one under the removed node)
-	 *            is to be selected after a removal (if there exists such node)
-	 *            or the former one is to be selected.
-	 */
-	public void setChooseNextOnRemove(boolean chooseNextOnRemove) {
-		this.chooseNextOnRemove = chooseNextOnRemove;
-	}
-
-	/**
-	 * Returns a flag denoting if the next node (one under the removed node) is
-	 * to be selected after a removal (if there exists such node) or the former
-	 * one is to be selected.
-	 * 
-	 * @return a flag denoting if the next node (one under the removed node) is
-	 *         to be selected after a removal (if there exists such node) or the
-	 *         former one is to be selected.
-	 */
-	public boolean isChooseNextOnRemove() {
-		return chooseNextOnRemove;
 	}
 
 	protected JTree getTree() {
@@ -157,37 +127,6 @@ public class TreeNavigatorPane extends JPanel {
 		}
 		setSelectedComponent(child);
 	}
-
-//	protected TreeNavigatorNode findSelectionAfterRemoval(
-//			TreeNavigatorNode removedNode) {
-//		int row = navigationTree.getRowForPath(removedNode.getTreePath());
-//		int step = chooseNextOnRemove ? 1 : -1;
-//		boolean wrapped = false;
-//		int n = navigationTree.getRowCount();
-//		while (true) {
-//			row += step;
-//			if (row == -1) {
-//				row = n - 1;
-//				wrapped = true;
-//			} else if (row == n) {
-//				row = 0;
-//				wrapped = true;
-//			}
-//			TreePath nextPath = navigationTree.getPathForRow(row);
-//			if (nextPath == null) {
-//				return null;
-//			}
-//			TreeNavigatorNode nextNode = (TreeNavigatorNode) nextPath
-//					.getLastPathComponent();
-//			if (nextNode == removedNode && wrapped) {
-//				return null;
-//			} else {
-//				if (nextNode.getComponent() != null) {
-//					return nextNode;
-//				}
-//			}
-//		}
-//	}
 
 	public JComponent[] removeComponent(JComponent comp,
 			boolean removeDescendants) {
@@ -314,6 +253,7 @@ public class TreeNavigatorPane extends JPanel {
 		if (node != null) {
 			treeModel.setTitle(node, title);
 		}
+		navigationTree.repaint();
 	}
 
 	public List<String> getAllTitles() {

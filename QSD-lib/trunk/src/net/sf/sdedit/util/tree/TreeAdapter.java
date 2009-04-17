@@ -127,12 +127,23 @@ public class TreeAdapter<T> implements TreeModel {
 		if (!newMode.equals(displayMode)) {
 			this.displayMode = newMode;
 			invalidateAll();
-	        TreeModelEvent tme = new TreeModelEvent(this,
-	                new Object[] { getRoot() });
-	        for (TreeModelListener tml : getTreeModelListeners()) {
-	            tml.treeStructureChanged(tme);
-	        }
+			fireTreeStructureChanged();
+
 		}
+	}
+	
+	public void fireTreeNodesRemoved (TreeModelEvent tme) {
+		for (TreeModelListener tml : listeners) {
+			tml.treeNodesRemoved(tme);
+		}
+	}
+	
+	public void fireTreeStructureChanged () {
+        TreeModelEvent tme = new TreeModelEvent(this,
+                new Object[] { getRoot() });
+        for (TreeModelListener tml : listeners) {
+            tml.treeStructureChanged(tme);
+        }
 	}
 	
 	public void DESTROY () {
@@ -238,10 +249,6 @@ public class TreeAdapter<T> implements TreeModel {
 
 	public void removeTreeModelListener(TreeModelListener arg0) {
 		listeners.remove(arg0);
-	}
-
-	public TreeModelListener[] getTreeModelListeners() {
-		return listeners.toArray(new TreeModelListener[listeners.size()]);
 	}
 
 	public void valueForPathChanged(TreePath arg0, Object arg1) {
