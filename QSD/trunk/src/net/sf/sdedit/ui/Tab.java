@@ -101,7 +101,7 @@ public abstract class Tab extends JPanel implements Stainable,
 	private JPanel bottom;
 
 	private String title;
-	
+
 	private int id;
 
 	static {
@@ -135,20 +135,20 @@ public abstract class Tab extends JPanel implements Stainable,
 		stainedListeners = new LinkedList<StainedListener>();
 		clean = true;
 	}
-	
-	public void setId (int id) {
+
+	public void setId(int id) {
 		this.id = id;
 	}
-	
-	public List<Tab> getChildren () {
+
+	public List<Tab> getChildren() {
 		return ui.getTabContainer().getSuccessors(this);
 	}
-	
+
 	public Tab getParentTab() {
 		return ui.getTabContainer().getParentTab(this);
 	}
-	
-	public int getId () {
+
+	public int getId() {
 		return id;
 	}
 
@@ -161,7 +161,12 @@ public abstract class Tab extends JPanel implements Stainable,
 	}
 
 	public void setTitle(String title) {
-		boolean changed = this.title != title;
+		boolean changed;
+		if (title != null) {
+			changed = !title.equals(this.title);
+		} else {
+			changed = this.title != null;
+		}
 		this.title = title;
 		if (changed) {
 			for (TabListener listener : listeners) {
@@ -280,7 +285,9 @@ public abstract class Tab extends JPanel implements Stainable,
 
 	public void setFile(File file) {
 		this.file = file;
-		setTitle(file.getName());
+		if (file != null) {
+			setTitle(file.getName());
+		}
 	}
 
 	public boolean isReadyToBeClosed(Ref<Boolean> noToAll) {
@@ -345,7 +352,7 @@ public abstract class Tab extends JPanel implements Stainable,
 		}
 		return false;
 	}
-	
+
 	public void addTabListener(TabListener listener) {
 		listeners.add(listener);
 	}
@@ -372,21 +379,21 @@ public abstract class Tab extends JPanel implements Stainable,
 			Tab.this.close(true);
 		}
 	};
-	
+
 	public ZoomPane getZoomPane() {
 		return null;
 	}
-	
-	public boolean canZoom () {
+
+	public boolean canZoom() {
 		return getZoomPane() != null;
 	}
-	
+
 	public abstract boolean canGoHome();
-	
-	public void goHome () {
-		
+
+	public void goHome() {
+
 	}
-	
+
 	protected abstract void _getContextActions(List<Action> actionList);
 
 	protected abstract List<Pair<Action, Activator>> getOverloadedActions();
