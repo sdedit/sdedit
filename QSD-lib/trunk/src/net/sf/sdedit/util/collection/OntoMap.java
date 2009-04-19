@@ -57,6 +57,11 @@ public class OntoMap<P, I> implements Serializable {
 		return reverse.keySet();
 	}
 	
+	public void clear () {
+		map.clear();
+		reverse.clear();
+	}
+	
 	public boolean containsImage (I image) {
 		return reverse.containsKey(image);
 	}
