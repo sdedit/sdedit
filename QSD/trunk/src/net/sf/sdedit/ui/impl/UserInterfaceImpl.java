@@ -34,6 +34,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,6 +60,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import net.iharder.dnd.FileDrop;
+import net.iharder.dnd.FileDrop.Listener;
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
@@ -93,7 +96,7 @@ import net.sf.sdedit.util.UIUtilities;
 @SuppressWarnings("serial")
 public final class UserInterfaceImpl extends JFrame implements Constants,
 		UserInterface, TabContainerListener, HyperlinkListener,
-		ConfigurationUIListener, TabListener {
+		ConfigurationUIListener, TabListener, Listener {
 
 	private JFileChooser fileChooser;
 
@@ -205,6 +208,8 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		toolbar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		toolbar.setFloatable(false);
 
+		new FileDrop(this, this);
+
 	}
 
 	public void addListener(UserInterfaceListener listener) {
@@ -281,7 +286,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 			return !tab.isEmpty();
 		}
 	};
-	
+
 	private final TabActivator<Tab> zoomActivator = new TabActivator<Tab>(
 			Tab.class, this) {
 		@Override
@@ -289,8 +294,6 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 			return tab.canZoom();
 		}
 	};
-	
-	
 
 	public void showUI() {
 		setIconImage(Icons.getIcon("icon").getImage());
@@ -694,5 +697,17 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	public void titleChanged(Tab tab) {
 		setTitle(tab.getTitle() + " - Quick Sequence Diagram Editor");
 	}
-
+	
+	/**
+	 * @see net.iharder.dnd.FileDrop.Listener#filesDropped(java.io.File[])
+	 */
+	public void filesDropped(File[] files) {
+		for (File file : files) {
+			try {
+				Editor.getEditor().load(file.toURI().toURL());
+			} catch (IOException e) {
+				errorMessage(e, null, null);
+			}
+		}
+	}
 }
