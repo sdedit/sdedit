@@ -56,6 +56,10 @@ public class Bijection<P,I> {
 	 * @param image the image
 	 */
 	public void add (P preImage, I image) {
+		I img = map.get(preImage);
+		if (img != null) {
+			inverse.remove(img);
+		}
 		map.put(preImage, image);
 		inverse.put(image, preImage);
 	}
@@ -78,6 +82,10 @@ public class Bijection<P,I> {
 	 */
 	public P getPreImage (I image) {
 		return inverse.get(image);
+	}
+	
+	public String toString () {
+		return map.toString() + " || " + inverse.toString();
 	}
 
 }
