@@ -36,7 +36,6 @@ public class LeveledContainer<T> implements Iterable<T> {
 			return iterator;
 		}
 
-		@Override
 		public boolean hasNext() {
 			Iterator<T> iterator = iterator();
 			if (iterator == null) {
@@ -45,7 +44,6 @@ public class LeveledContainer<T> implements Iterable<T> {
 			return iterator.hasNext();
 		}
 
-		@Override
 		public T next() {
 			T next = iterator().next();
 			if (!iterator().hasNext()) {
@@ -54,7 +52,6 @@ public class LeveledContainer<T> implements Iterable<T> {
 			return next;
 		}
 
-		@Override
 		public void remove() {
 			iterator().remove();
 
@@ -108,7 +105,6 @@ public class LeveledContainer<T> implements Iterable<T> {
 		levels = new TreeMap<Integer, List<T>>();
 	}
 
-	@Override
 	public Iterator<T> iterator() {
 		return new LCIterator();
 	}
