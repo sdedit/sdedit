@@ -177,33 +177,27 @@ public class TabNavigatorContainer implements TabContainer,
 		return (Tab) navigator.getParentComponent(tab);
 	}
 
-	@Override
 	public void goToNextTab() {
 		navigator.goToNextComponent();
 	}
 
-	@Override
 	public void goToPreviousTab() {
 		navigator.goToPreviousComponent();
 	}
 
-	@Override
 	public boolean nextTabExists() {
 		return navigator.nextComponentExists();
 	}
 
-	@Override
 	public boolean previousTabExists() {
 		return navigator.previousComponentExists();
 	}
 
-	@Override
 	public void disableTabHistory() {
 		navigator.disableHistory();
 		
 	}
 
-	@Override
 	public void enableTabHistory() {
 		navigator.enableHistory();
 		

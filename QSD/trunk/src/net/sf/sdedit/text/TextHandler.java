@@ -547,7 +547,7 @@ public class TextHandler implements DiagramDataProvider {
 		return false;
 	}
 
-	@Override
+
 	public Diagram getDiagram() {
 		return diagram;
 	}
