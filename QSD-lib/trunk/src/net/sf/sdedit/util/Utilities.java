@@ -61,6 +61,12 @@ public class Utilities {
 		return first;
 	}
 	
+	public static <T> LinkedList<T> singletonList (T element) {
+		LinkedList<T> list = new LinkedList<T>();
+		list.add(element);
+		return list;
+	}
+	
 	public static <T> T peek(Collection<T> set) {
 		Iterator<T> iterator = set.iterator();
 		if (!iterator.hasNext()) {
