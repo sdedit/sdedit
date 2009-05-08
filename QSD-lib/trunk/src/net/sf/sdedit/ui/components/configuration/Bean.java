@@ -116,8 +116,8 @@ public class Bean<T extends DataObject> implements Serializable,
 		methodToPropertyNameMap = new HashMap<String, String>();
 		alwaysNotifyListeners = false;
 	}
-	
-	public Class<T> getDataClass () {
+
+	public Class<T> getDataClass() {
 		return dataClass;
 	}
 
@@ -125,8 +125,8 @@ public class Bean<T extends DataObject> implements Serializable,
 		return Character.toUpperCase(property.charAt(0))
 				+ property.substring(1);
 	}
-	
-	public Set<PropertyChangeListener> getPropertyChangeListeners () {
+
+	public Set<PropertyChangeListener> getPropertyChangeListeners() {
 		return listeners;
 	}
 
@@ -135,30 +135,38 @@ public class Bean<T extends DataObject> implements Serializable,
 		order = new TreeMap<String, String>();
 		listeners = new LinkedHashSet<PropertyChangeListener>();
 		pattern = Pattern.compile("get|set|is");
-		try {
-			BeanInfo beanInfo = Introspector.getBeanInfo(dataClass);
-			PropertyDescriptor[] propertyDescriptors = beanInfo
-					.getPropertyDescriptors();
-			for (int i = 0; i < propertyDescriptors.length; i++) {
-				PropertyDescriptor property = propertyDescriptors[i];
-				if (property.getWriteMethod() != null
-						&& property.getWriteMethod().isAnnotationPresent(
-								Adjustable.class)) {
-					String key = property.getWriteMethod().getAnnotation(
-							Adjustable.class).key();
-					if (key.equals("")) {
-						key = norm(property.getName());
+		Class<?> cls = dataClass;
+		while (cls != null) {
+			try {
+				BeanInfo beanInfo = Introspector.getBeanInfo(cls);
+				PropertyDescriptor[] propertyDescriptors = beanInfo
+						.getPropertyDescriptors();
+				for (int i = 0; i < propertyDescriptors.length; i++) {
+					PropertyDescriptor property = propertyDescriptors[i];
+					if (property.getWriteMethod() != null
+							&& property.getWriteMethod().isAnnotationPresent(
+									Adjustable.class)) {
+						String key = property.getWriteMethod().getAnnotation(
+								Adjustable.class).key();
+						if (key.equals("")) {
+							key = norm(property.getName());
+						}
+						order.put(key, norm(property.getName()));
+						properties.put(norm(property.getName()), property);
 					}
-					order.put(key, norm(property.getName()));
-					properties.put(norm(property.getName()), property);
 				}
+			} catch (RuntimeException e) {
+				throw e;
+			} catch (Throwable t) {
+				t.printStackTrace();
+				throw new IllegalStateException(
+						"FATAL: data class introspection was not successful");
 			}
-		} catch (RuntimeException e) {
-			throw e;
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw new IllegalStateException(
-					"FATAL: data class introspection was not successful");
+			if (cls.getInterfaces() != null && cls.getInterfaces().length > 0) {
+				cls = cls.getInterfaces()[0];
+			} else {
+				cls = null;
+			}
 		}
 	}
 
@@ -497,8 +505,8 @@ public class Bean<T extends DataObject> implements Serializable,
 		}
 		return strings;
 	}
-	
-	public void setStringSelectionProvider (StringSelectionProvider ssp) {
+
+	public void setStringSelectionProvider(StringSelectionProvider ssp) {
 		this.ssp = ssp;
 	}
 
