@@ -47,6 +47,7 @@ import java.util.List;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -731,7 +732,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 		return true;
 	}
 
-	public Object getObjectForCurrentContext() {
+	public Object getObjectForCurrentContext(JComponent comp) {
 		int begin = textArea.getCurrentLineBegin();
 		Diagram diagram = getDiagram();
 		if (diagram != null) {

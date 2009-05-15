@@ -502,20 +502,10 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	public void addPredicateAction(String category, String name,
 			String description, String tooltip, Icon icon,
 			final Predicate predicate, boolean initialValue) {
+		
+		menuBar.addToggleAction(category, name, description, tooltip, icon, predicate, initialValue);
 
-		final JCheckBoxMenuItem checkBox = MenuBar.makeMenuItem(name,
-				JCheckBoxMenuItem.class);
-		checkBox.setIcon(icon);
-		checkBox.setText(description);
-		checkBox.setToolTipText(tooltip);
-		checkBox.setSelected(initialValue);
-		checkBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				predicate.set(checkBox.isSelected());
-			}
-
-		});
-		menuBar.addItem(category, checkBox);
+		
 	}
 
 	/**
