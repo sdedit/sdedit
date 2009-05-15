@@ -24,16 +24,22 @@
 
 package net.sf.sdedit.ui.components;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+
+import net.sf.sdedit.util.Predicate;
 
 /**
  * This is a slightly advanced <tt>JMenuBar</tt> subclass that allows to
@@ -317,6 +323,25 @@ public class MenuBar extends JMenuBar {
 		// TODO insert category menu if needed
 		JMenu categoryMenu = categories.get(getCaption(category));
 		categoryMenu.add(item);
+	}
+	
+	public void addToggleAction(String category, String name,
+			String description, String tooltip, Icon icon,
+			final Predicate predicate, boolean initialValue) {
+
+		final JCheckBoxMenuItem checkBox = MenuBar.makeMenuItem(name,
+				JCheckBoxMenuItem.class);
+		checkBox.setIcon(icon);
+		checkBox.setText(description);
+		checkBox.setToolTipText(tooltip);
+		checkBox.setSelected(initialValue);
+		checkBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				predicate.set(checkBox.isSelected());
+			}
+
+		});
+		addItem(category, checkBox);
 	}
 
 	/**

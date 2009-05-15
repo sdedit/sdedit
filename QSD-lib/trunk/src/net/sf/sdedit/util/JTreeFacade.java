@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
@@ -82,7 +83,12 @@ PopupActions.ContextHandler, TreeCellRenderer {
 	
 	public PopupActions getPopupActions (ContextHandler ch) {
 		if (popupActions == null) {
-			popupActions = new PopupActions(tree, ch);
+			if (ch == null) {
+				popupActions = new PopupActions(tree, this);
+			} else {
+				popupActions = new PopupActions(tree, ch);
+			}
+			
 		}
 		return popupActions;
 	}
@@ -201,7 +207,7 @@ PopupActions.ContextHandler, TreeCellRenderer {
 	/**
 	 * @see net.sf.sdedit.util.PopupActions.ContextHandler#getObjectForCurrentContext()
 	 */
-	public Object getObjectForCurrentContext() {
+	public Object getObjectForCurrentContext(JComponent comp) {
 		TreePath [] paths = tree.getSelectionPaths();
 		if (paths == null) {
 			paths = new TreePath[0];

@@ -33,10 +33,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -47,8 +50,23 @@ import java.util.jar.Manifest;
 
 public class Utilities {
 
+	private static HashMap<PrintWriter, StringWriter> writerMap = new HashMap<PrintWriter, StringWriter>();
+
 	private Utilities() {
 
+	}
+
+	public static PrintWriter createPrintWriter() {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		writerMap.put(pw, sw);
+		return pw;
+	}
+
+	public static String toString(PrintWriter pw) {
+		pw.flush();
+		StringWriter sw = writerMap.remove(pw);
+		return sw.toString();
 	}
 
 	public static <T> T pollFirst(Collection<T> set) {
@@ -60,13 +78,22 @@ public class Utilities {
 		iterator.remove();
 		return first;
 	}
-	
-	public static <T> LinkedList<T> singletonList (T element) {
+
+	public static <T> LinkedList<T> singletonList(T element) {
 		LinkedList<T> list = new LinkedList<T>();
 		list.add(element);
 		return list;
 	}
 	
+	public static String getSimpleName (File file) {
+		String name = file.getName();
+		int i = name.lastIndexOf('.');
+		if (i > 0) {
+			name = name.substring(0,i);
+		}
+		return name;
+	}
+
 	public static <T> T peek(Collection<T> set) {
 		Iterator<T> iterator = set.iterator();
 		if (!iterator.hasNext()) {
@@ -75,12 +102,12 @@ public class Utilities {
 		T first = iterator.next();
 		return first;
 	}
-	
-	public static String substring (String string, int pos, int length) {
+
+	public static String substring(String string, int pos, int length) {
 		if (string.length() - pos <= length) {
 			return string.substring(pos);
 		}
-		return string.substring(pos, pos+length);
+		return string.substring(pos, pos + length);
 	}
 
 	public static String join(String token, Collection<String> strings) {
@@ -151,18 +178,18 @@ public class Utilities {
 		}
 		return -1;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static <T> T [] reverse(T[] array) {
+	public static <T> T[] reverse(T[] array) {
 		Class<?> elemClass = array.getClass().getComponentType();
 		int l = array.length;
-		T [] reverse = (T []) Array.newInstance(elemClass, l);
+		T[] reverse = (T[]) Array.newInstance(elemClass, l);
 		for (int i = 0; i < array.length; i++) {
-			reverse[l-i-1] = array[i];			
+			reverse[l - i - 1] = array[i];
 		}
 		return reverse;
 	}
-	
+
 	public static File toFile(URL url) {
 		File file;
 		try {
@@ -262,20 +289,20 @@ public class Utilities {
 			os.close();
 		}
 	}
-	
-	public static String classesString (Object [] objects, boolean simple) {
-		String [] strings = new String [objects.length];
+
+	public static String classesString(Object[] objects, boolean simple) {
+		String[] strings = new String[objects.length];
 		for (int i = 0; i < objects.length; i++) {
 			if (simple) {
-				strings [i] = objects[i].getClass().getSimpleName();
+				strings[i] = objects[i].getClass().getSimpleName();
 			} else {
-				strings [i] = objects[i].getClass().getName();
+				strings[i] = objects[i].getClass().getName();
 			}
 		}
 		return "[" + join(",", strings) + "]";
 	}
-	
-	public static String classesString (Collection<?> objects, boolean simple) {
+
+	public static String classesString(Collection<?> objects, boolean simple) {
 		return classesString(objects.toArray(), simple);
 	}
 
@@ -302,8 +329,7 @@ public class Utilities {
 		return readLines(stream);
 	}
 
-	public static Iterable<String> readLines(File file)
-			throws IOException {
+	public static Iterable<String> readLines(File file) throws IOException {
 		InputStream stream = new FileInputStream(file);
 		return readLines(stream);
 	}
@@ -311,50 +337,51 @@ public class Utilities {
 	public static Iterable<String> readLines(final InputStream stream)
 			throws IOException {
 
-			final BufferedReader reader = new BufferedReader(
-					new InputStreamReader(stream));
-			return new Iterable<String>() {
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(
+				stream));
+		return new Iterable<String>() {
 
-				public Iterator<String> iterator() {
-					return new Iterator<String>() {
+			public Iterator<String> iterator() {
+				return new Iterator<String>() {
 
-						private String currentLine;
+					private String currentLine;
 
-						public boolean hasNext() {
-							try {
-								currentLine = reader.readLine();
-								if (currentLine == null) {
-									stream.close();
-								}
-							} catch (IOException e) {
-								try {
-									stream.close();
-								} catch (IOException ignored) {
-									/* empty */
-								}
-								throw new IllegalStateException(
-										"Cannot read file", e);
+					public boolean hasNext() {
+						try {
+							currentLine = reader.readLine();
+							if (currentLine == null) {
+								stream.close();
 							}
-							return currentLine != null;
+						} catch (IOException e) {
+							try {
+								stream.close();
+							} catch (IOException ignored) {
+								/* empty */
+							}
+							throw new IllegalStateException("Cannot read file",
+									e);
 						}
+						return currentLine != null;
+					}
 
-						public String next() {
-							return currentLine;
-						}
+					public String next() {
+						return currentLine;
+					}
 
-						public void remove() {
-							throw new UnsupportedOperationException();
-						}
-					};
-				}
-			};
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+				};
+			}
+		};
 	}
-	
-	public static void main (String [] args) throws Throwable {
-//		Ref<InputStream> stream = new Ref<InputStream>();
-//		for (String line : Utilities.readLines("REG QUERY HKLM\\Software", stream)) {
-//			System.out.println(line);
-//		}
+
+	public static void main(String[] args) throws Throwable {
+		// Ref<InputStream> stream = new Ref<InputStream>();
+		// for (String line : Utilities.readLines("REG QUERY HKLM\\Software",
+		// stream)) {
+		// System.out.println(line);
+		// }
 		for (String line : readLines("cat /tmp/xyz")) {
 			System.out.println(line);
 		}

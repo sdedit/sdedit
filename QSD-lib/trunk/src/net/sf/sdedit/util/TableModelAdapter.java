@@ -36,14 +36,29 @@ public class TableModelAdapter implements TableModel,
 	private CollectionState collectionState;
 	
 	private RowExpansion rowExpansion;
-
-	public TableModelAdapter(String[] columns, Class<?>[] classes, RowExpansion rowExpansion) {
+	
+	private RowEditor rowEditor;
+	
+	private Object master;
+	
+	public TableModelAdapter(String[] columns, Class<?>[] classes, RowExpansion rowExpansion,
+			RowEditor rowEditor) {
 		this.columns = columns;
 		this.classes = classes;
 		listeners = new LinkedList<TableModelListener>();
 		collectionState = new CollectionState();
 		collectionState.addListener(this);
 		this.rowExpansion = rowExpansion;
+		this.rowEditor = rowEditor;
+		
+	}
+	
+	public void setMaster (Object master) {
+		this.master = master;
+	}
+	
+	public Object getMaster () {
+		return master;
 	}
 	
 	public Object getRawDataAt (int i) {
@@ -54,7 +69,7 @@ public class TableModelAdapter implements TableModel,
 		this.rawData = data.toArray();
 		this.data = new Object[data.size()][columns.length];
 		int i = 0;
-		for (Object row : data) {
+		for (Object row : rawData) {
 			Object [] expanded = rowExpansion.expand(row);
 			for (int j = 0; j < expanded.length; j++) {
 				this.data[i][j] = expanded[j];
@@ -89,7 +104,9 @@ public class TableModelAdapter implements TableModel,
 	}
 
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return false;
+		return rowEditor != null &&
+		rowEditor.isEditable(data[rowIndex], columnIndex);
+
 	}
 
 	public void removeTableModelListener(TableModelListener l) {
@@ -97,7 +114,10 @@ public class TableModelAdapter implements TableModel,
 	}
 
 	public void setValueAt(Object value, int rowIndex, int columnIndex) {
-		/* empty */
+		rowEditor.setValue(rawData[rowIndex], columnIndex, value);
+		data [rowIndex] = rowExpansion.expand(rawData[rowIndex]);
+		
+
 	}
 
 	/**
@@ -153,6 +173,14 @@ public class TableModelAdapter implements TableModel,
 
 		public Object[] expand(Object row);
 
+	}
+	
+	public static interface RowEditor {
+		
+		public boolean isEditable (Object row, int index);
+		
+		public void setValue (Object row, int index, Object value);
+		
 	}
 
 }

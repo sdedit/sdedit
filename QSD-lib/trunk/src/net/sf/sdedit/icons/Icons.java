@@ -29,49 +29,100 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 
-public final class Icons
-{
-	private static Map<String,ImageIcon> cache
-	= new HashMap<String,ImageIcon>();
-	
-    private Icons() {
-        /* empty */ 
-    }
+import net.sf.sdedit.util.UIUtilities;
 
-    public final static ImageIcon getIcon(String name) {
-        ImageIcon icon = cache.get(name);
-        if (icon != null) {
-        	return icon;
-        }
-        try {
-        	URL res = Icons.class.getResource(name + ".png");
-        	if (res == null) {
-        		throw new IllegalArgumentException("icon not found: " + name + ".png");
-        	}
-            icon = new ImageIcon(res);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        cache.put(name, icon);
-        return icon;
-    }
-    
-    public final static ImageIcon getEmptyIcon(int width, int height) {
-    	String code = "EMPTY_" + width + "x" + height;
-    	ImageIcon icon = cache.get(code);
-    	if (icon != null) {
-    		return icon;
-    	}
-    	Image img = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-    	img.getGraphics().setColor(Color.WHITE);
-    	img.getGraphics().fillRect(0,0,width,height);
-    	icon = new ImageIcon(img);
-    	cache.put(code, icon);
-    	return icon;
-    }
+public final class Icons {
+
+	private static Map<String, ImageIcon> cache = new HashMap<String, ImageIcon>();
+
+	private static List<String> bases = new LinkedList<String>();
+
+	private static Set<String> notFound = new HashSet<String>();
+
+	private Icons() {
+		/* empty */
+	}
+
+	public final static ImageIcon getIcon(String name) {
+		ImageIcon icon = cache.get(name);
+		if (icon != null) {
+			return icon;
+		}
+		if (notFound.contains(name)) {
+			return null;
+		}
+		try {
+			if (name.indexOf('\\') > 0) {
+				for (String subName : name.split("\\\\")) {
+					ImageIcon subIcon = getIcon(subName);
+					System.out.println("subName=" + subName);
+					if (subIcon == null) {
+						icon = null;
+						break;
+					}
+					if (icon == null) {
+						icon = subIcon;
+					} else {
+						Image join = UIUtilities.joinImages(icon.getImage(),
+								subIcon.getImage(), 2, BufferedImage.TYPE_INT_ARGB);
+						icon = new ImageIcon(join);
+					}
+				}
+			} else {
+
+				URL res = findRes(name);
+				if (res == null) {
+					notFound.add(name);
+					return null;
+				}
+				icon = new ImageIcon(res);
+			}
+		} catch (RuntimeException e) {
+			throw e;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		cache.put(name, icon);
+		return icon;
+	}
+
+	public static void addBase(String base) {
+		bases.add(base);
+	}
+
+	private static URL findRes(String name) {
+		URL res = Icons.class.getResource(name + ".png");
+		if (res == null) {
+			for (String base : bases) {
+				res = Icons.class.getResource(base + "/" + name + ".png");
+				if (res != null) {
+					return res;
+				}
+			}
+		}
+		return res;
+	}
+
+	public final static ImageIcon getEmptyIcon(int width, int height) {
+		String code = "EMPTY_" + width + "x" + height;
+		ImageIcon icon = cache.get(code);
+		if (icon != null) {
+			return icon;
+		}
+		Image img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		img.getGraphics().setColor(Color.WHITE);
+		img.getGraphics().fillRect(0, 0, width, height);
+		icon = new ImageIcon(img);
+		cache.put(code, icon);
+		return icon;
+	}
 
 }

@@ -14,7 +14,7 @@ public class PopupActions implements MouseListener {
 
 	public static interface ContextHandler {
 
-		public Object getObjectForCurrentContext();
+		public Object getObjectForCurrentContext(JComponent comp);
 
 	}
 
@@ -71,7 +71,7 @@ public class PopupActions implements MouseListener {
 
 	public void mouseClicked(MouseEvent e) {
 		if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
-			Object context = contextHandler.getObjectForCurrentContext();
+			Object context = contextHandler.getObjectForCurrentContext(component);
 			boolean show = false;
 			JPopupMenu menu = new JPopupMenu();
 			for (Action action : actions) {

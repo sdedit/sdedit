@@ -24,19 +24,26 @@
 
 package net.sf.sdedit.util;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 public class UIUtilities {
@@ -63,6 +70,22 @@ public class UIUtilities {
 				+ parent.getSize().height / 2 - height / 2);
 		top = Math.min(top, screen.height - height);
 		window.setLocation(left, top);
+	}
+
+	public static void showText(JFrame parent, String caption, String text) {
+		JDialog textDialog = new JDialog(parent);
+		textDialog.setTitle(caption);
+		textDialog.setModal(true);
+		textDialog.getContentPane().setLayout(new BorderLayout());
+		JTextArea textArea = new JTextArea();
+		textArea.setText(text);
+		textArea.setFont(Font.decode("Monospace"));
+		textDialog.getContentPane().add(new JScrollPane(textArea),
+				BorderLayout.CENTER);
+		textDialog.setSize(640, 480);
+		centerWindow(textDialog, parent);
+		textDialog.setVisible(true);
+		textDialog.dispose();
 	}
 
 	public static void changeIconButton(JButton button) {
@@ -120,6 +143,16 @@ public class UIUtilities {
 				collectDescendants((Container) comp, descs);
 			}
 		}
+	}
+
+	public static Image joinImages(Image img1, Image img2, int gap, int imageType) {
+		int width = img1.getWidth(null) + img2.getWidth(null) + gap;
+		int height = Math.max(img1.getHeight(null) , img2.getHeight(null));
+		Image join = new BufferedImage(width, height, imageType);
+		join.getGraphics().drawImage(img1, 0, 0, null);
+		join.getGraphics().drawImage(img2, img1.getWidth(null) + gap, 0, null);
+		return join;
+		
 	}
 
 	public static File affixType(File file, String type) {

@@ -64,6 +64,11 @@ public class Bijection<P,I> {
 		inverse.put(image, preImage);
 	}
 	
+	public void removeByPreImage (P preImage) {
+		I img = map.remove(preImage);
+		inverse.remove(img);
+	}
+	
 	/**
 	 * Returns the image of the given pre-image
 	 * 
