@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
@@ -62,11 +63,40 @@ public class Utilities {
 		writerMap.put(pw, sw);
 		return pw;
 	}
+	
+	public static PrintWriter createPrintWriter(File file, String encoding)
+	throws IOException {
+		OutputStream outputStream = new FileOutputStream(file);
+		try {
+			OutputStreamWriter osw = new OutputStreamWriter(outputStream, encoding);
+			PrintWriter pw = new PrintWriter(osw);
+			return pw;
+		} catch (IOException e) {
+			outputStream.close();
+			throw e;
+		}
+	}
 
 	public static String toString(PrintWriter pw) {
 		pw.flush();
 		StringWriter sw = writerMap.remove(pw);
 		return sw.toString();
+	}
+	
+	public static void erase (File directory, boolean recursive) {
+		File [] files = directory.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				if (!file.isDirectory()) {
+					file.delete();
+				} else {
+					if (recursive) {
+						erase(file, true);
+						file.delete();
+					}
+				}
+			}
+		}
 	}
 
 	public static <T> T pollFirst(Collection<T> set) {
@@ -108,6 +138,17 @@ public class Utilities {
 			return string.substring(pos);
 		}
 		return string.substring(pos, pos + length);
+	}
+	
+	public static String join(String token, Object[] objects) {
+		if (objects != null) {
+			String [] strings = new String[objects.length];
+			for (int i = 0; i < objects.length; i++) {
+				strings [i] = objects [i].toString();
+			}
+			return join(token, strings);
+		}
+		return "";
 	}
 
 	public static String join(String token, Collection<String> strings) {
@@ -208,6 +249,21 @@ public class Utilities {
 				collection.add(t);
 			}
 			return collection;
+		} catch (RuntimeException re) {
+			throw re;
+		} catch (Throwable t) {
+			throw new IllegalArgumentException(t);
+		}
+	}
+	
+	public static<T, C extends Collection<T>> Collection<T> flatten(
+			Class<C> cls, Collection<? extends Collection<T>> collections) {
+		try {
+			Collection<T> flatCollection = cls.newInstance();
+			for (Collection<T> collection : collections) {
+				flatCollection.addAll(collection);
+			}
+			return flatCollection;
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Throwable t) {
