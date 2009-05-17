@@ -256,6 +256,16 @@ public class Utilities {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static <T> T [] joinArrays (Object array0, Object array1, Class<T> elementClass) {
+		int l0 = Array.getLength(array0);
+		int l1 = Array.getLength(array1);
+		T [] array = (T[]) Array.newInstance(elementClass, l0 + l1);
+		System.arraycopy(array0, 0, array, 0, l0);
+		System.arraycopy(array1, 0, array, l0, l1);
+		return array;
+	}
+	
 	public static<T, C extends Collection<T>> Collection<T> flatten(
 			Class<C> cls, Collection<? extends Collection<T>> collections) {
 		try {

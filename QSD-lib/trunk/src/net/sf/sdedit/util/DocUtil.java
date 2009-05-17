@@ -169,6 +169,7 @@ public class DocUtil {
 		} catch (TransformerException e) {
 			throw new XMLException("writeDocument failed", e);
 		}
+		writer.flush();
 	}
 
 	/**
