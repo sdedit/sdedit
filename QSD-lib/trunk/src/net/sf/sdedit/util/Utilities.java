@@ -63,12 +63,13 @@ public class Utilities {
 		writerMap.put(pw, sw);
 		return pw;
 	}
-	
+
 	public static PrintWriter createPrintWriter(File file, String encoding)
-	throws IOException {
+			throws IOException {
 		OutputStream outputStream = new FileOutputStream(file);
 		try {
-			OutputStreamWriter osw = new OutputStreamWriter(outputStream, encoding);
+			OutputStreamWriter osw = new OutputStreamWriter(outputStream,
+					encoding);
 			PrintWriter pw = new PrintWriter(osw);
 			return pw;
 		} catch (IOException e) {
@@ -79,12 +80,12 @@ public class Utilities {
 
 	public static String toString(PrintWriter pw) {
 		pw.flush();
-		StringWriter sw = writerMap.remove(pw);
+		StringWriter sw = writerMap.get(pw);
 		return sw.toString();
 	}
-	
-	public static void erase (File directory, boolean recursive) {
-		File [] files = directory.listFiles();
+
+	public static void erase(File directory, boolean recursive) {
+		File[] files = directory.listFiles();
 		if (files != null) {
 			for (File file : files) {
 				if (!file.isDirectory()) {
@@ -108,18 +109,29 @@ public class Utilities {
 		iterator.remove();
 		return first;
 	}
+	
+	public static Object nvl(Object obj, Object nullObject) {
+		if (obj != null) {
+			return obj;
+		}
+		return nullObject;
+	}
+	
+	public static Object nvl2(Object obj, Object obj1, Object obj2) {
+		return obj == null ? obj2 : obj1;
+	}
 
 	public static <T> LinkedList<T> singletonList(T element) {
 		LinkedList<T> list = new LinkedList<T>();
 		list.add(element);
 		return list;
 	}
-	
-	public static String getSimpleName (File file) {
+
+	public static String getSimpleName(File file) {
 		String name = file.getName();
 		int i = name.lastIndexOf('.');
 		if (i > 0) {
-			name = name.substring(0,i);
+			name = name.substring(0, i);
 		}
 		return name;
 	}
@@ -139,12 +151,12 @@ public class Utilities {
 		}
 		return string.substring(pos, pos + length);
 	}
-	
+
 	public static String join(String token, Object[] objects) {
 		if (objects != null) {
-			String [] strings = new String[objects.length];
+			String[] strings = new String[objects.length];
 			for (int i = 0; i < objects.length; i++) {
-				strings [i] = objects [i].toString();
+				strings[i] = objects[i].toString();
 			}
 			return join(token, strings);
 		}
@@ -255,18 +267,19 @@ public class Utilities {
 			throw new IllegalArgumentException(t);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static <T> T [] joinArrays (Object array0, Object array1, Class<T> elementClass) {
+	public static <T> T[] joinArrays(Object array0, Object array1,
+			Class<T> elementClass) {
 		int l0 = Array.getLength(array0);
 		int l1 = Array.getLength(array1);
-		T [] array = (T[]) Array.newInstance(elementClass, l0 + l1);
+		T[] array = (T[]) Array.newInstance(elementClass, l0 + l1);
 		System.arraycopy(array0, 0, array, 0, l0);
 		System.arraycopy(array1, 0, array, l0, l1);
 		return array;
 	}
-	
-	public static<T, C extends Collection<T>> Collection<T> flatten(
+
+	public static <T, C extends Collection<T>> Collection<T> flatten(
 			Class<C> cls, Collection<? extends Collection<T>> collections) {
 		try {
 			Collection<T> flatCollection = cls.newInstance();
@@ -442,14 +455,4 @@ public class Utilities {
 		};
 	}
 
-	public static void main(String[] args) throws Throwable {
-		// Ref<InputStream> stream = new Ref<InputStream>();
-		// for (String line : Utilities.readLines("REG QUERY HKLM\\Software",
-		// stream)) {
-		// System.out.println(line);
-		// }
-		for (String line : readLines("cat /tmp/xyz")) {
-			System.out.println(line);
-		}
-	}
 }

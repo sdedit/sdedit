@@ -25,6 +25,7 @@
 package net.sf.sdedit.util;
 
 import java.awt.Component;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import net.sf.sdedit.util.collection.DistinctObjectsSet;
 import net.sf.sdedit.util.tree.BreadthFirstSearch;
 
 public class JTreeFacade implements PopupActions.Provider,
-PopupActions.ContextHandler, TreeCellRenderer {
+		PopupActions.ContextHandler, TreeCellRenderer {
 
 	public interface NodeConversion<T> {
 
@@ -68,32 +69,30 @@ PopupActions.ContextHandler, TreeCellRenderer {
 	private JTree tree;
 
 	private PopupActions popupActions;
-	
-	private TreeCellRenderer existingRenderer;
-	
 
+	private TreeCellRenderer existingRenderer;
 
 	private Icon nodeIcon;
-	
+
 	private Icon leafIcon;
 
 	public JTreeFacade(JTree tree) {
 		this.tree = tree;
 	}
-	
-	public PopupActions getPopupActions (ContextHandler ch) {
+
+	public PopupActions getPopupActions(ContextHandler ch) {
 		if (popupActions == null) {
 			if (ch == null) {
 				popupActions = new PopupActions(tree, this);
 			} else {
 				popupActions = new PopupActions(tree, ch);
 			}
-			
+
 		}
 		return popupActions;
 	}
-	
-	public PopupActions getPopupActions () {
+
+	public PopupActions getPopupActions() {
 		return getPopupActions(this);
 	}
 
@@ -114,8 +113,8 @@ PopupActions.ContextHandler, TreeCellRenderer {
 		}
 		return identList;
 	}
-	
-	public void expandSelectedPaths () {
+
+	public void expandSelectedPaths() {
 		if (tree.getSelectionPaths() != null) {
 			for (TreePath path : tree.getSelectionPaths()) {
 				tree.expandPath(path);
@@ -146,6 +145,19 @@ PopupActions.ContextHandler, TreeCellRenderer {
 		return map;
 
 	}
+
+	public List<TreePath> getVisibleNodes() {
+		List<TreePath> result = new LinkedList<TreePath>();
+		Enumeration<TreePath> paths = tree.getExpandedDescendants(new TreePath(tree.getModel().getRoot()));
+		if (paths != null) {
+			while (paths.hasMoreElements()) {
+				result.add(paths.nextElement());
+			}
+		}
+		return result;
+	}
+	
+
 
 	public int deselectAncestors(TreePath selectedNode) {
 		DistinctObjectsSet<Object> ancestors = new DistinctObjectsSet<Object>();
@@ -198,8 +210,8 @@ PopupActions.ContextHandler, TreeCellRenderer {
 		}
 		return list;
 	}
-	
-	public void selectAndGoToRoot () {
+
+	public void selectAndGoToRoot() {
 		TreePath path = new TreePath(tree.getModel().getRoot());
 		tree.scrollPathToVisible(path);
 	}
@@ -208,13 +220,13 @@ PopupActions.ContextHandler, TreeCellRenderer {
 	 * @see net.sf.sdedit.util.PopupActions.ContextHandler#getObjectForCurrentContext()
 	 */
 	public Object getObjectForCurrentContext(JComponent comp) {
-		TreePath [] paths = tree.getSelectionPaths();
+		TreePath[] paths = tree.getSelectionPaths();
 		if (paths == null) {
 			paths = new TreePath[0];
 		}
 		return paths;
 	}
-	
+
 	public Icon getNodeIcon() {
 		return nodeIcon;
 	}
@@ -230,8 +242,8 @@ PopupActions.ContextHandler, TreeCellRenderer {
 	public void setLeafIcon(Icon leafIcon) {
 		this.leafIcon = leafIcon;
 	}
-	
-	public void useAsRenderer () {
+
+	public void useAsRenderer() {
 		existingRenderer = tree.getCellRenderer();
 		tree.setCellRenderer(this);
 	}
@@ -239,7 +251,8 @@ PopupActions.ContextHandler, TreeCellRenderer {
 	public Component getTreeCellRendererComponent(JTree tree, Object value,
 			boolean selected, boolean expanded, boolean leaf, int row,
 			boolean hasFocus) {
-		JLabel label = (JLabel) existingRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+		JLabel label = (JLabel) existingRenderer.getTreeCellRendererComponent(
+				tree, value, selected, expanded, leaf, row, hasFocus);
 		if (leaf) {
 			label.setIcon(leafIcon);
 		} else {
