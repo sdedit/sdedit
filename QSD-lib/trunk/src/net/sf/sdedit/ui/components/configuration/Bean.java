@@ -426,7 +426,9 @@ public class Bean<T extends DataObject> implements Serializable,
 		if (notify) {
 			PropertyChangeEvent event = new PropertyChangeEvent(this, property
 					.getName(), oldValue, newValue);
-			for (PropertyChangeListener listener : listeners) {
+			List<PropertyChangeListener> _listeners = new LinkedList<PropertyChangeListener>(
+					listeners);
+			for (PropertyChangeListener listener : _listeners) {
 				listener.propertyChange(event);
 			}
 		}
