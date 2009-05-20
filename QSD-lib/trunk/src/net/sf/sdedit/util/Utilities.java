@@ -126,6 +126,14 @@ public class Utilities {
 		list.add(element);
 		return list;
 	}
+	
+	public static String pad (char c, int length) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < length; i++) {
+			buffer.append(c);
+		}
+		return buffer.toString();
+	}
 
 	public static String getSimpleName(File file) {
 		String name = file.getName();
