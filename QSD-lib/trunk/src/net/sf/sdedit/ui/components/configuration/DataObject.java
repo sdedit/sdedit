@@ -49,6 +49,12 @@ public interface DataObject {
 	 *         implementations of this interface
 	 */
 	public <T extends DataObject> Bean<T> getBean(Class<T> cls);
+	
+	public boolean isA (Class<?> cls);
+	
+	public <T extends DataObject> T cast (Class<T> cls);
+	
+	public <T extends DataObject> T copy (Class<T> cls);
 
 }
 // {{core}}

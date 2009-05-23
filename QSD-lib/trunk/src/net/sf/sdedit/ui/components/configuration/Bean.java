@@ -190,11 +190,22 @@ public class Bean<T extends DataObject> implements Serializable,
 	 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
 	 *      java.lang.reflect.Method, java.lang.Object[])
 	 */
+	@SuppressWarnings("unchecked")
 	public final Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		String name = method.getName();
 		if (name.equals("getBean")) {
 			return this;
+		}
+		if (name.equals("isA")) {
+		    return ((Class) args[0]).isAssignableFrom(dataClass);
+		}
+		if (name.equals("cast")) {
+			return proxy;
+		}
+		if (name.equals("copy")) {
+			Bean<T> copy = copy();
+			return copy.getDataObject();
 		}
 		String property = methodToPropertyNameMap.get(name);
 
@@ -222,6 +233,17 @@ public class Bean<T extends DataObject> implements Serializable,
 		List<PropertyDescriptor> list = new LinkedList<PropertyDescriptor>();
 		for (String property : order.values()) {
 			list.add(properties.get(property));
+		}
+		return list;
+	}
+	
+	public Collection<PropertyDescriptor> getPrimaryProperties () {
+		List<PropertyDescriptor> list = new LinkedList<PropertyDescriptor>();
+		Collection<PropertyDescriptor> properties = getProperties();
+		for (PropertyDescriptor prop : properties) {
+			if (prop.getWriteMethod().getAnnotation(Adjustable.class).primary()) {
+				list.add(prop);
+			}
 		}
 		return list;
 	}

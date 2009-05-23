@@ -149,6 +149,10 @@ public @interface Adjustable {
 	String tooltip() default "";
 
 	int gap() default 1;
+	
+	boolean primary() default false;
+	
+	String datePattern() default "";
 
 }
 //{{core}}

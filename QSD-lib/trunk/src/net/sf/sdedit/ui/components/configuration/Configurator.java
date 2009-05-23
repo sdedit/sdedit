@@ -303,7 +303,13 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 			comp.setEnabled(enabled);
 		}
 	}
-
+	
+	public void setEditable(boolean editable) {
+		for (Component comp : UIUtilities.getDescendants(this)) {
+			UIUtilities.setEditable(comp, editable);
+		}
+	}
+	
 	@Override
 	public void setToolTipText(String tooltip) {
 		super.setToolTipText(tooltip);

@@ -28,11 +28,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.beans.PropertyDescriptor;
 import java.io.File;
+import java.util.Date;
 
 import javax.swing.KeyStroke;
 
 import net.sf.sdedit.ui.components.configuration.configurators.BooleanConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.ColorConfigurator;
+import net.sf.sdedit.ui.components.configuration.configurators.DateConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.FileConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.FileSetConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.FontConfigurator;
@@ -68,7 +70,7 @@ public class ConfiguratorFactory<C extends DataObject> {
 	 * @return a specialized configurator for the property
 	 */
 	public Configurator<?, C> createConfigurator(Bean<C> bean,
-			PropertyDescriptor property, Bean<C> defaultConfiguration) {
+			PropertyDescriptor property) {
 		if (property.getPropertyType().equals(String.class)) {
 			Adjustable adj = property.getWriteMethod().getAnnotation(Adjustable.class);
 			String[] choices = adj.choices();
@@ -105,6 +107,9 @@ public class ConfiguratorFactory<C extends DataObject> {
 		}
 		if (property.getPropertyType().equals(Color.class)) {
 			return new ColorConfigurator<C>(bean,property);
+		}
+		if (property.getPropertyType().equals(Date.class)) {
+			return new DateConfigurator<C>(bean,property);
 		}
 		
 		throw new IllegalArgumentException("cannot create configurator for "

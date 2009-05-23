@@ -38,6 +38,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ToolTipManager;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
+import net.sf.sdedit.ui.components.AutoCompletionComboboxEditor;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.components.configuration.DataObject;
 
@@ -71,7 +72,11 @@ public class StringSelectionConfigurator<C extends DataObject> extends
 	private void initialize() {
 		comboBox = new JComboBox();
 		
-		comboBox.setEditable(false);
+		comboBox.setEditable(true);
+		AutoCompletionComboboxEditor editor = new AutoCompletionComboboxEditor(comboBox);
+		
+		
+		comboBox.setEditor(editor);
 		comboBox.setRenderer(this);
 
 		ToolTipManager.sharedInstance().registerComponent(comboBox);

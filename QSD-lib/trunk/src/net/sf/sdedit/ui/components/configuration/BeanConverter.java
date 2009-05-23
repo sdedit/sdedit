@@ -29,6 +29,7 @@ import java.awt.Font;
 import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.KeyStroke;
 
@@ -97,7 +98,10 @@ public class BeanConverter {
 			elem.setAttribute("value", value.toString());
 		} else if (value instanceof Color) {
 			elem.setAttribute("value", "" + ((Color) value).getRGB());
-		} else {
+		} else if (value instanceof Date) {
+			elem.setAttribute("value", "" + ((Date) value).getTime());
+		}
+		else {
 			throw new IllegalArgumentException("unknown property type: "
 					+ value.getClass().getName());
 		}
@@ -147,6 +151,9 @@ public class BeanConverter {
 			} else if (type.equals(Color.class)) {
 				String rgb = element.getAttribute("value");
 				value = new Color(Integer.parseInt(rgb));
+			} else if (type.equals(Date.class)) {
+				String time = element.getAttribute("value");
+				value = new Date(Long.parseLong(time));
 			}
 			if (value == null) {
 				System.err.println("Warning: a value for property " + name

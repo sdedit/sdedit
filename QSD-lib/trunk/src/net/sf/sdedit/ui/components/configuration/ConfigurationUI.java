@@ -320,7 +320,7 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 					labelWidth = labelWidths.get(category);
 				}
 				Configurator<?, C> configurator = configuratorFactory
-						.createConfigurator(bean, property, defaultObject);
+						.createConfigurator(bean, property);
 				String tooltipKey = bean.getDataClass().getSimpleName() + 
 					"." + property.getName();
 				String tooltipText = Tooltips.getTooltip(tooltipKey);

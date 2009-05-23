@@ -35,8 +35,11 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -47,6 +50,40 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 public class UIUtilities {
+	
+	private static WeakHashMap<String,Ref<Method>> editableMethods =
+		new WeakHashMap<String,Ref<Method>>();
+	
+	private static Method getEditableMethod (Object object) {
+		Ref<Method> ref = editableMethods.get(object.getClass().getName());
+		if (ref == null) {
+			ref = new Ref<Method>();
+			for (Method method : object.getClass().getMethods()) {
+				if (method.getName().equals("setEditable") &&
+						method.getParameterTypes().length == 1 &&
+						method.getParameterTypes()[0].equals(Boolean.TYPE)) {
+					ref.t = method;
+					break;
+				}
+			}
+			editableMethods.put(object.getClass().getName(), ref);
+		}
+		return ref.t;
+	}
+	
+	public static void setEditable (Component comp, boolean editable) {
+		Method method = getEditableMethod(comp);
+		if (method != null) {
+			try {
+				method.invoke(comp, editable);
+			} catch (RuntimeException re) {
+				throw re;
+			} catch (Exception e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+				
+	}
 
 	public static void centerWindow(Window window) {
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();

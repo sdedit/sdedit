@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 
 /**
  * An <tt>AutoCompletion</tt> object can be added to a <tt>JTextPane</tt> as
@@ -54,7 +55,7 @@ public class AutoCompletion extends KeyAdapter {
 
 	private int counter;
 
-	private JTextPane textArea;
+	private JTextComponent textArea;
 
 	private SuggestionProvider provider;
 
@@ -98,7 +99,7 @@ public class AutoCompletion extends KeyAdapter {
 	 *            characters that are to be interpreted as the left limit (not
 	 *            inclusive) of a prefix that might be substituted
 	 */
-	public AutoCompletion(JTextPane textPane, SuggestionProvider provider,
+	public AutoCompletion(JTextComponent textPane, SuggestionProvider provider,
 			char... delimiters) {
 		this.textArea = textPane;
 		textPane.addKeyListener(this);
