@@ -43,6 +43,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -558,12 +559,15 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 	 * @see net.sf.sdedit.ui.components.AutoCompletion.SuggestionProvider#getSuggestions(java.lang.String)
 	 */
 	public List<String> getSuggestions(String prefix) {
+		String regexp = "^" + prefix.replaceAll("\\*", ".*") + ".*$";
+		Pattern pattern = Pattern.compile(regexp);
 		List<String> suggestions = new LinkedList<String>();
 		Diagram diag = getDiagram();
 		if (diag != null) {
 			for (Lifeline lifeline : diag.getAllLifelines()) {
 				String name = lifeline.getName();
-				if (name.startsWith(prefix)) {
+				if (pattern.matcher(name).matches()) {
+				//if (name.startsWith(prefix)) {
 					suggestions.add(name);
 				}
 			}
