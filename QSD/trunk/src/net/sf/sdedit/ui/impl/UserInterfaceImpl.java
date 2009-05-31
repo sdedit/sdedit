@@ -580,12 +580,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	}
 
 	public String getOption(String text, String... options) {
-		OptionDialog optionDialog = new OptionDialog(this,
-				"Please choose an option", Icons.getIcon("question"), text);
-		for (String option : options) {
-			optionDialog.addOption(option);
-		}
-		return optionDialog.getOption();
+		return UIUtilities.getOption(this, text, options);
 	}
 
 	public String getOptionWithDecision(String text, int decisionKey,
