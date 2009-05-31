@@ -207,6 +207,14 @@ public class Bean<T extends DataObject> implements Serializable,
 			Bean<T> copy = copy();
 			return copy.getDataObject();
 		}
+		if (name.equals("hashCode") && method.getParameterTypes().length == 1) {
+			return hashCode();
+		}
+		if (name.equals("equals") && method.getParameterTypes().length == 1 &&
+				method.getParameterTypes()[0] == Object.class) {
+			DataObject other = (DataObject) args [0];
+			return this.equals(other.getBean(DataObject.class));
+		}
 		String property = methodToPropertyNameMap.get(name);
 
 		if (property == null) {
@@ -468,6 +476,9 @@ public class Bean<T extends DataObject> implements Serializable,
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
 		Bean<? extends DataObject> bean = (Bean<? extends DataObject>) o;
+		if (dataClass != bean.getDataClass()) {
+			return false;
+		}
 		for (PropertyDescriptor property : getProperties()) {
 			Object myVal = getValue(property.getName());
 			Object yourVal = bean.getValue(property.getName());

@@ -120,4 +120,10 @@ public class KeyStrokeConfigurator<C extends DataObject> extends
 		textField.setBackground(bg);
 	}
 
+	@Override
+	public void focus() {
+		textField.requestFocusInWindow();
+		
+	}
+
 }

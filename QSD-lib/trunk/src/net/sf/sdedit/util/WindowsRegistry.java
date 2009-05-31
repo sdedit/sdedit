@@ -89,21 +89,14 @@ public final class WindowsRegistry extends Thread {
     throws IOException
     {
     	category = category.replace('/', '\\');
-    	Process proc = Runtime.getRuntime().exec(
-    			"reg QUERY \"" + category + "\""); 
-    	InputStream stream = new BufferedInputStream(proc.getInputStream());
-    	try {
-    		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-    		String line = reader.readLine();
-    		while (line != null) {
-    			String [] parts = line.split("\t");
-    			if (parts.length == 3 && parts [0].trim().equals(key)) {
-    				return parts[2].trim();
-    			}
-    			line = reader.readLine();
-    		}
-    	} finally {
-    		stream.close();
+    	String command = "reg QUERY \"" + category + "\"";
+    	Ref<InputStream> streamRef = new Ref<InputStream>();
+    	for (String line : Utilities.readLines(command, streamRef)) {
+			String [] parts = line.split("\t");
+			if (parts.length == 3 && parts [0].trim().equals(key)) {
+				streamRef.t.close();
+				return parts[2].trim();
+			}
     	}
     	return null;
     }

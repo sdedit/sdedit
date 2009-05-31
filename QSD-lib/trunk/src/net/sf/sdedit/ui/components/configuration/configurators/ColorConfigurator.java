@@ -99,4 +99,10 @@ public class ColorConfigurator<C extends DataObject> extends
 		label.setBackground(value);
 	}
 
+	@Override
+	public void focus() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

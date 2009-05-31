@@ -28,6 +28,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.beans.PropertyDescriptor;
 
 import javax.swing.JTextField;
@@ -36,12 +38,13 @@ import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.components.configuration.DataObject;
 
 public class FreeStringConfigurator<C extends DataObject> extends StringConfigurator<C> implements
-		FocusListener {
+		FocusListener, KeyListener {
 	
 	private JTextField textField;
 
 	public FreeStringConfigurator(Bean<C> bean, PropertyDescriptor property) {
 		super(bean, property);
+		
 		initialize();
 	}
 
@@ -49,7 +52,8 @@ public class FreeStringConfigurator<C extends DataObject> extends StringConfigur
 		getBottomPanel().setLayout(new BorderLayout());
 		textField = new JTextField(getValue());
 		getBottomPanel().add(textField, BorderLayout.CENTER);
-		textField.addFocusListener(this);
+		//textField.addFocusListener(this);
+		textField.addKeyListener(this);
 	}
 
 	@Override
@@ -69,6 +73,28 @@ public class FreeStringConfigurator<C extends DataObject> extends StringConfigur
 
 	public void focusLost(FocusEvent arg0) {
 		actionPerformed(null);
+	}
+
+	@Override
+	public void focus() {
+		textField.selectAll();
+		textField.requestFocusInWindow();
+		
+	}
+
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keyTyped(KeyEvent e) {
+		actionPerformed(null);
+		
 	}
 
 }

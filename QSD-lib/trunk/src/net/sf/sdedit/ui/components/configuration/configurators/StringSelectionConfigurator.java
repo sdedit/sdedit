@@ -127,4 +127,10 @@ public class StringSelectionConfigurator<C extends DataObject> extends
 	protected void _setEnabled(boolean enabled) {
 		comboBox.setEnabled(enabled);
 	}
+
+	@Override
+	public void focus() {
+		comboBox.requestFocus();
+		
+	}
 }

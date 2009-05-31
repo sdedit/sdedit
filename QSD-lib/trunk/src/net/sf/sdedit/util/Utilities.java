@@ -37,21 +37,48 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class Utilities {
 
 	private static HashMap<PrintWriter, StringWriter> writerMap = new HashMap<PrintWriter, StringWriter>();
+	
+    /* 
+     * Maps the Class representations of the primitive classes onto their
+     * wrapper classes.
+     */
+    static private Map<Class<?>, Class<?>> primitiveClasses;
+
+    static
+    {
+        primitiveClasses = new HashMap<Class<?>, Class<?>> ();
+        primitiveClasses.put (Integer.TYPE, Integer.class);
+        primitiveClasses.put (Boolean.TYPE, Boolean.class);
+        primitiveClasses.put (Character.TYPE, Character.class);
+        primitiveClasses.put (Byte.TYPE, Byte.class);
+        primitiveClasses.put (Short.TYPE, Short.class);
+        primitiveClasses.put (Integer.TYPE, Integer.class);
+        primitiveClasses.put (Long.TYPE, Long.class);
+        primitiveClasses.put (Float.TYPE, Float.class);
+        primitiveClasses.put (Double.TYPE, Double.class);
+    }
 
 	private Utilities() {
 
@@ -84,20 +111,16 @@ public class Utilities {
 		return sw.toString();
 	}
 
-	public static void erase(File directory, boolean recursive) {
-		File[] files = directory.listFiles();
-		if (files != null) {
-			for (File file : files) {
-				if (!file.isDirectory()) {
-					file.delete();
-				} else {
-					if (recursive) {
-						erase(file, true);
-						file.delete();
-					}
+	public static void erase(File file, boolean recursive) {
+		if (recursive) {
+			File[] files = file.listFiles();
+			if (files != null) {
+				for (File _file : files) {
+					erase(_file, true);
 				}
 			}
 		}
+		file.delete();
 	}
 
 	public static <T> T pollFirst(Collection<T> set) {
@@ -109,14 +132,49 @@ public class Utilities {
 		iterator.remove();
 		return first;
 	}
-	
+
 	public static Object nvl(Object obj, Object nullObject) {
 		if (obj != null) {
 			return obj;
 		}
 		return nullObject;
 	}
-	
+
+	public static String lpad(String str, char pad, int len) {
+		while (str.length() < len) {
+			str = pad + "" + str;
+		}
+		return str;
+	}
+
+	public static String hourDiff(Date firstDate, Date lastDate) {
+		Calendar cal1 = new GregorianCalendar(TimeZone.getDefault());
+		Calendar cal2 = new GregorianCalendar(TimeZone.getDefault());
+		cal1.setTime(firstDate);
+		cal2.setTime(lastDate);
+		int d1 = cal1.get(Calendar.DAY_OF_YEAR);
+		int d2 = cal2.get(Calendar.DAY_OF_YEAR);
+		int h1 = cal1.get(Calendar.HOUR_OF_DAY);
+		int h2 = cal2.get(Calendar.HOUR_OF_DAY);
+		int m1 = cal1.get(Calendar.MINUTE);
+		int m2 = cal2.get(Calendar.MINUTE);
+		int diff = d2 * 24 * 60 + h2 * 60 + m2 - d1 * 24 * 60 - h1 * 60 - m1;
+		String min = String.valueOf(diff % 60);
+		return (diff / 60) + ":" + lpad(min, '0', 2);
+
+	}
+
+	public static int[] makeInts(int from, int to) {
+		if (to < from) {
+			throw new IllegalArgumentException("from=" + from + ", to=" + to);
+		}
+		int[] ints = new int[to - from + 1];
+		for (int i = from; i <= to; i++) {
+			ints[i] = from + i;
+		}
+		return ints;
+	}
+
 	public static Object nvl2(Object obj, Object obj1, Object obj2) {
 		return obj == null ? obj2 : obj1;
 	}
@@ -126,8 +184,8 @@ public class Utilities {
 		list.add(element);
 		return list;
 	}
-	
-	public static String pad (char c, int length) {
+
+	public static String pad(char c, int length) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < length; i++) {
 			buffer.append(c);
@@ -221,12 +279,7 @@ public class Utilities {
 	}
 
 	public static <T> boolean contains(T[] array, T elem) {
-		for (T t : array) {
-			if (t.equals(elem)) {
-				return true;
-			}
-		}
-		return false;
+		return indexOf(array, elem) >= 0;
 	}
 
 	public static <T> int indexOf(T[] array, T elem) {
@@ -410,15 +463,31 @@ public class Utilities {
 		}
 	}
 
-	public static Iterable<String> readLines(String command) throws IOException {
+	public static Iterable<String> readLines(String command, Ref<InputStream> streamRef) throws IOException {
 		Process proc = Runtime.getRuntime().exec(command);
 		InputStream stream = proc.getInputStream();
+		if (streamRef != null) {
+			streamRef.t = stream;
+		}
 		return readLines(stream);
 	}
+	
+	public static Iterable<String> readLines(String command) throws IOException {
+		return readLines(command, null);
+	}
+	
+	
 
-	public static Iterable<String> readLines(File file) throws IOException {
+	public static Iterable<String> readLines(File file, Ref<InputStream> streamRef) throws IOException {
 		InputStream stream = new FileInputStream(file);
+		if (streamRef != null) {
+			streamRef.t = stream;
+		}
 		return readLines(stream);
+	}
+	
+	public static Iterable<String> readLines(File file) throws IOException {
+		return readLines(file,null);
 	}
 
 	public static Iterable<String> readLines(final InputStream stream)
@@ -462,5 +531,78 @@ public class Utilities {
 			}
 		};
 	}
+	
+//    /**
+//     * Calls a method that fits the given parameters inside a new thread
+//     * 
+//     * @param object
+//     *            the object on which the method is called
+//     * @param methodName
+//     *            name of the method
+//     * @param args
+//     *            array of parameter Objects
+//     * @param listener
+//     *            listener object that is notified when the method returns
+//     * @param lock
+//     *            lock to avoid a call while another one has not finished
+//     * @throws IllegalArgumentException
+//     *             if no fitting method is found
+//     */
+//    public static void invoke (Object object, String methodName,
+//            Object [] args, MethodReturnedListener listener, Object lock)
+//    {
+//        Method m = resolveMethod (object.getClass (), methodName, args);
+//        if (m == null)
+//        {
+//            throw new IllegalArgumentException ("there is no method"
+//                    + " named " + methodName + " taking arguments "
+//                    + Arrays.asList (args) + " declared in "
+//                    + object.getClass ());
+//        }
+//        MethodInvoker invoker = new MethodInvoker (object, m, args, listener,
+//                lock);
+//        Thread thread = new Thread (invoker);
+//        threadSet.add (thread);
+//        thread.start ();
+//    }
+
+    /**
+     * Convenience method for finding a method that fits a name and the types of
+     * the objects inside the parameter array.
+     * 
+     * @param clazz
+     *            a class that declares the method that is looked for
+     * @param name
+     *            the name of the method
+     * @param args
+     *            array of arguments with which the method should be called
+     * @return a method that has the given names and can be called using the
+     *         arguments given, <code>null</code> if no such method exists
+     */
+    public static Method resolveMethod (Class<?> clazz, String name, Object [] args)
+    {
+        Method [] methods = clazz.getMethods ();
+        int i;
+        for (i = 0; i < methods.length; i++)
+        {
+            Method m = methods [i];
+            Class<?> [] classes = m.getParameterTypes ();
+            boolean match = m.getName ().equals (name)
+                    && classes.length == args.length;
+            for (int j = 0; match && j < classes.length; j++)
+            {
+                match = classes [j].isAssignableFrom (args [j].getClass ())
+                        || primitiveClasses.get (classes [j]) == args [j]
+                                .getClass ();
+            }
+            if (match)
+            {
+                return m;
+            }
+        }
+        return null;
+    }
+
+
 
 }

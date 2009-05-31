@@ -70,4 +70,10 @@ implements ActionListener {
 	protected void _setEnabled(boolean enabled) {
 		checkBox.setEnabled(enabled);
 	}
+
+	@Override
+	public void focus() {
+		checkBox.requestFocusInWindow();
+		
+	}
 }

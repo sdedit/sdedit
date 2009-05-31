@@ -179,4 +179,9 @@ public class FontConfigurator<C extends DataObject> extends Configurator<Font, C
 	public void setLabelWidth(int width) {
 		label.setPreferredSize (new Dimension(width, label.getPreferredSize().height));
 	}
+
+	@Override
+	public void focus() {
+		nameComboBox.requestFocusInWindow();
+	}
 }

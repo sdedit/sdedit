@@ -102,4 +102,10 @@ implements ChangeListener
 	protected void _setEnabled(boolean enabled) {
 		spinner.setEnabled(enabled);
 	}
+
+	@Override
+	public void focus() {
+		spinner.requestFocusInWindow();
+		
+	}
 }

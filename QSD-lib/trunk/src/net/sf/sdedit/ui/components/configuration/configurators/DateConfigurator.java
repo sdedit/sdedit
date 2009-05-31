@@ -25,7 +25,7 @@ import net.sf.sdedit.ui.components.configuration.Configurator;
 import net.sf.sdedit.ui.components.configuration.DataObject;
 
 public class DateConfigurator<C extends DataObject> extends
-		Configurator<Date, C> implements FocusListener, KeyListener{
+		Configurator<Date, C> implements FocusListener, KeyListener {
 
 	/*
 	 * public class DateParser { public static void main( String args[] ) {
@@ -39,21 +39,20 @@ public class DateConfigurator<C extends DataObject> extends
 	 * 
 	 * } catch ( ParseException e ) { System.err.println( e ); } } }
 	 */
-	//private static DateFormat dateFormat = DateFormat.getInstance();
-	
-
+	// private static DateFormat dateFormat = DateFormat.getInstance();
 	private DateFormat dateFormat;
 
 	private GregorianCalendar calendar;
 
 	private JTextField textField;
-	
+
 	private int stepMinutes;
 
 	public DateConfigurator(Bean<C> bean, PropertyDescriptor property) {
 		super(bean, property);
 		setLayout(new BorderLayout());
-		String datePattern = property.getWriteMethod().getAnnotation(Adjustable.class).datePattern();
+		String datePattern = property.getWriteMethod().getAnnotation(
+				Adjustable.class).datePattern();
 		if (datePattern != null && datePattern.length() > 0) {
 			dateFormat = new SimpleDateFormat();
 			((SimpleDateFormat) dateFormat).applyPattern(datePattern);
@@ -61,30 +60,36 @@ public class DateConfigurator<C extends DataObject> extends
 			dateFormat = DateFormat.getInstance();
 		}
 		dateFormat.setLenient(true);
-		JLabel label = new JLabel(getProperty().getWriteMethod().getAnnotation(Adjustable.class).info() + ":"); 
-	    label.setHorizontalAlignment(SwingConstants.RIGHT);
+		JLabel label = new JLabel(getProperty().getWriteMethod().getAnnotation(
+				Adjustable.class).info()
+				+ ":");
+		label.setHorizontalAlignment(SwingConstants.RIGHT);
 		add(label, BorderLayout.WEST);
 
 		calendar = new GregorianCalendar(TimeZone.getDefault());
 		textField = new JTextField();
 		textField.addFocusListener(this);
-	    add(textField, BorderLayout.CENTER);
-	    stepMinutes = property.getWriteMethod().getAnnotation(Adjustable.class).step();
-	    textField.addKeyListener(this);
+		add(textField, BorderLayout.CENTER);
+		stepMinutes = property.getWriteMethod().getAnnotation(Adjustable.class)
+				.step();
+		textField.addKeyListener(this);
 
 	}
 
 	@Override
 	protected void _actionPerformed(ActionEvent evt) {
 		Date date;
-		try {
-			date = dateFormat.parse(textField.getText().trim());
-		} catch (ParseException e) {
-			refresh();
-			return;
+		if ("".equals(textField.getText().trim())) {
+			date = getNullValue();
+		} else {
+			try {
+				date = dateFormat.parse(textField.getText().trim());
+			} catch (ParseException e) {
+				refresh();
+				return;
+			}
 		}
 		getBean().setValue(getProperty(), date);
-		
 
 	}
 
@@ -93,17 +98,24 @@ public class DateConfigurator<C extends DataObject> extends
 		textField.setEnabled(enabled);
 
 	}
-	
-	public void changeHour (int diff) {
+
+	public void changeHour(int diff) {
 		calendar.setTime(getValue());
 		calendar.add(Calendar.HOUR_OF_DAY, diff);
 		refresh(calendar.getTime());
 		actionPerformed(null);
 	}
-	
-	public void changeMinutes (int diff) {
+
+	public void changeMinutes(int diff) {
 		calendar.setTime(getValue());
 		calendar.add(Calendar.MINUTE, diff);
+		refresh(calendar.getTime());
+		actionPerformed(null);
+	}
+
+	protected void setToCurrentTime() {
+		calendar.setTime(new Date());
+		calendar.set(Calendar.SECOND, 0);
 		refresh(calendar.getTime());
 		actionPerformed(null);
 	}
@@ -115,28 +127,33 @@ public class DateConfigurator<C extends DataObject> extends
 
 	@Override
 	protected void refresh(Date value) {
-		calendar.setTime(value);
-		int minutes = calendar.get(Calendar.MINUTE);
-		int mod = minutes % stepMinutes;
-		if (mod > 0) {
-			minutes -= mod;
-			calendar.set(Calendar.MINUTE, minutes);
-			
+		if (value.equals(getNullValue())) {
+			textField.setText("");
+		} else {
+			calendar.setTime(value);
+			int minutes = calendar.get(Calendar.MINUTE);
+			int mod = minutes % stepMinutes;
+			if (mod > 0) {
+				minutes -= mod;
+				calendar.set(Calendar.MINUTE, minutes);
+				getBean().setValue(getProperty(), calendar.getTime());
+
+			}
+
+			textField.setText(dateFormat.format(calendar.getTime()));
 		}
-		textField.setText(dateFormat.format(calendar.getTime()));
 	}
 
-	public void focusGained(FocusEvent e) {}
+	public void focusGained(FocusEvent e) {
+	}
 
 	public void focusLost(FocusEvent e) {
 		actionPerformed(null);
-	
-		
+
 	}
 
 	public void keyPressed(KeyEvent e) {
 
-		
 	}
 
 	public void keyReleased(KeyEvent e) {
@@ -150,13 +167,25 @@ public class DateConfigurator<C extends DataObject> extends
 			} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 				changeHour(-1);
 			}
+		} else if (e.isControlDown() && e.isShiftDown()) {
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+				setToCurrentTime();
+			}
+		} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			refresh();
 		}
-		
+
 	}
 
 	public void keyTyped(KeyEvent e) {
 
-		
+	}
+
+	@Override
+	public void focus() {
+		textField.selectAll();
+		textField.requestFocusInWindow();
+
 	}
 
 }

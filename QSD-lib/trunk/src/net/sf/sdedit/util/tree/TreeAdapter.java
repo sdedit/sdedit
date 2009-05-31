@@ -132,11 +132,45 @@ public class TreeAdapter<T> implements TreeModel {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	private TreeModelEvent translate (TreeModelEvent tme) {
+		Object [] children = tme.getChildren();
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				children [i] = getNode((T) children[i]);
+			}
+		}
+		return new TreeModelEvent(tme.getSource(),tme.getTreePath(),tme.getChildIndices(),children);
+	}
+	
 	public void fireTreeNodesRemoved (TreeModelEvent tme) {
+		
 		for (TreeModelListener tml : listeners) {
-			tml.treeNodesRemoved(tme);
+			tml.treeNodesRemoved(translate(tme));
 		}
 	}
+	
+	public void fireTreeNodesInserted (TreeModelEvent tme) {
+		for (TreeModelListener tml : listeners) {
+			tml.treeNodesInserted(translate(tme));
+		}
+	}
+	public void fireTreeNodesChanged (TreeModelEvent tme) {
+		for (TreeModelListener tml : listeners) {
+			tml.treeNodesChanged(translate(tme));
+		}
+	}
+	
+	public void fireTreeStructureChanged (TreeModelEvent tme) {
+		for (TreeModelListener tml : listeners) {
+			tml.treeStructureChanged(tme);
+		}
+	}
+	
+	
+	
+	
+	
 	
 	public void fireTreeStructureChanged () {
         TreeModelEvent tme = new TreeModelEvent(this,

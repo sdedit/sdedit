@@ -211,6 +211,8 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 		}
 		return true;
 	}
+	
+	public abstract void focus ();
 
 	public void setBean(Bean<C> bean) {
 		this.bean = bean;
@@ -326,7 +328,7 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 		// invoke this later to assert that all component models are in
 		// the appropriate state (reflecting the action) - we then apply the
 		// value to the underlying bean
-		SwingUtilities.invokeLater(new Runnable() {
+		 SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				_actionPerformed(e);
 			}

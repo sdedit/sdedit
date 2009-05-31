@@ -215,7 +215,7 @@ public class JTreeFacade implements PopupActions.Provider,
 		TreePath path = new TreePath(tree.getModel().getRoot());
 		tree.scrollPathToVisible(path);
 	}
-
+	
 	/**
 	 * @see net.sf.sdedit.util.PopupActions.ContextHandler#getObjectForCurrentContext()
 	 */

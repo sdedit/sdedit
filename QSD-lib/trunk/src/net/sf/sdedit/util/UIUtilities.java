@@ -49,6 +49,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
+import net.sf.sdedit.icons.Icons;
+import net.sf.sdedit.ui.components.OptionDialog;
+
 public class UIUtilities {
 	
 	private static WeakHashMap<String,Ref<Method>> editableMethods =
@@ -69,6 +72,15 @@ public class UIUtilities {
 			editableMethods.put(object.getClass().getName(), ref);
 		}
 		return ref.t;
+	}
+	
+	public static String getOption(JFrame appFrame, String text, String... options) {
+		OptionDialog optionDialog = new OptionDialog(appFrame,
+				"Please choose an option", Icons.getIcon("question"), text);
+		for (String option : options) {
+			optionDialog.addOption(option);
+		}
+		return optionDialog.getOption();
 	}
 	
 	public static void setEditable (Component comp, boolean editable) {

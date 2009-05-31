@@ -93,6 +93,8 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 	private JPanel categoryListPanel;
 
 	private ATabbedPane tabbedPane;
+	
+	private boolean editable;
 
 	/**
 	 * Constructor.
@@ -121,6 +123,7 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 			Bean<C> defaultBean, String saveAsDefault, String loadDefault,
 			String description, boolean tabbed) {
 		super();
+		editable = true;
 		this.bean = bean;
 		formerState = bean.copy();
 		this.defaultBean = defaultBean;
@@ -207,6 +210,14 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 		init(bean, defaultBean);
 		refreshAll();
 	}
+	
+	public ButtonPanel getButtonPanel () {
+		return buttonPanel;
+	}
+	
+	public void focusFirst () {
+		getConfigurators().get(0).focus();
+	}
 
 	public void hideCategoryList() {
 		remove(categoryListPanel);
@@ -239,6 +250,17 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 			configurator.setEnabled(enabled
 					&& configurator.isDependencySatisfied());
 		}
+	}
+	
+	public void setEditable (boolean editable) {
+		this.editable = editable;
+		for (Configurator<?, C> configurator : getConfigurators()) {
+			configurator.setEditable(editable);
+		}
+	}
+	
+	public boolean isEditable () {
+		return editable;
 	}
 
 	private List<Configurator<?, C>> getConfigurators() {

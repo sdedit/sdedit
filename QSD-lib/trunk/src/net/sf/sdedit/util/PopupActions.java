@@ -70,7 +70,7 @@ public class PopupActions implements MouseListener {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
+		if (component.isEnabled() && SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
 			Object context = contextHandler.getObjectForCurrentContext(component);
 			boolean show = false;
 			JPopupMenu menu = new JPopupMenu();

@@ -180,6 +180,12 @@ public class ButtonPanel extends JPanel {
 		}
 	}
 	
+	public void setAllEnabled (boolean enabled) {
+		for (AbstractButton button : buttonMap.values()) {
+			button.setEnabled(enabled);
+		}
+	}
+	
 	@SuppressWarnings("serial")
 	private Action makeSelectAction (final Action select, final Action deselect) {
 		

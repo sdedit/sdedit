@@ -169,4 +169,10 @@ FocusListener {
 
 	@Override
 	protected void _setEnabled(boolean enabled) {/* empty */}
+
+	@Override
+	public void focus() {
+		fileTextField.requestFocusInWindow();
+		
+	}
 }

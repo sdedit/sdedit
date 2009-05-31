@@ -99,4 +99,10 @@ public class SmallStringSelectionConfigurator<C extends DataObject> extends
 			button.setEnabled(enabled);
 		}
 	}
+
+	@Override
+	public void focus() {
+		
+		
+	}
 }
