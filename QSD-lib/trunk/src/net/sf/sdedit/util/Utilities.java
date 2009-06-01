@@ -539,6 +539,17 @@ public class Utilities {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static <T> Iterable<T> wrap (final Iterator iterator, Class<T> elemClass) {
+		return new Iterable<T> () {
+
+			public Iterator<T> iterator() {
+				return iterator;
+			}
+			
+		};
+	}
+	
 	
 
 	/**
