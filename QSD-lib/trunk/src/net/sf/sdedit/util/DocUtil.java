@@ -88,7 +88,7 @@ public class DocUtil {
 			throws XMLException {
 		XPath xpath = xPathFactory.newXPath();
 		try {
-			return xpath.evaluate("/extension/description", document);
+			return xpath.evaluate(expression, document);
 		} catch (XPathExpressionException xee) {
 			throw new XMLException("Could not evaluate XPath: " + expression,
 					xee);
@@ -194,6 +194,8 @@ public class DocUtil {
 		}
 		return document;
 	}
+	
+	
 
 
 
