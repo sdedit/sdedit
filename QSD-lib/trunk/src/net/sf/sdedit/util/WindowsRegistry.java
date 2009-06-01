@@ -92,7 +92,8 @@ public final class WindowsRegistry extends Thread {
     	String command = "reg QUERY \"" + category + "\"";
     	Ref<InputStream> streamRef = new Ref<InputStream>();
     	for (String line : Utilities.readLines(command, streamRef)) {
-			String [] parts = line.split("\t");
+    	    line = line.replaceAll("\\s+", " ").trim();
+			String [] parts = line.split(" ");
 			if (parts.length == 3 && parts [0].trim().equals(key)) {
 				streamRef.t.close();
 				return parts[2].trim();
