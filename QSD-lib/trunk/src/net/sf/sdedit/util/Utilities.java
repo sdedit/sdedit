@@ -24,6 +24,7 @@
 
 package net.sf.sdedit.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,7 +41,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -59,26 +59,25 @@ import java.util.jar.Manifest;
 public class Utilities {
 
 	private static HashMap<PrintWriter, StringWriter> writerMap = new HashMap<PrintWriter, StringWriter>();
-	
-    /* 
-     * Maps the Class representations of the primitive classes onto their
-     * wrapper classes.
-     */
-    static private Map<Class<?>, Class<?>> primitiveClasses;
 
-    static
-    {
-        primitiveClasses = new HashMap<Class<?>, Class<?>> ();
-        primitiveClasses.put (Integer.TYPE, Integer.class);
-        primitiveClasses.put (Boolean.TYPE, Boolean.class);
-        primitiveClasses.put (Character.TYPE, Character.class);
-        primitiveClasses.put (Byte.TYPE, Byte.class);
-        primitiveClasses.put (Short.TYPE, Short.class);
-        primitiveClasses.put (Integer.TYPE, Integer.class);
-        primitiveClasses.put (Long.TYPE, Long.class);
-        primitiveClasses.put (Float.TYPE, Float.class);
-        primitiveClasses.put (Double.TYPE, Double.class);
-    }
+	/*
+	 * Maps the Class representations of the primitive classes onto their
+	 * wrapper classes.
+	 */
+	static private Map<Class<?>, Class<?>> primitiveClasses;
+
+	static {
+		primitiveClasses = new HashMap<Class<?>, Class<?>>();
+		primitiveClasses.put(Integer.TYPE, Integer.class);
+		primitiveClasses.put(Boolean.TYPE, Boolean.class);
+		primitiveClasses.put(Character.TYPE, Character.class);
+		primitiveClasses.put(Byte.TYPE, Byte.class);
+		primitiveClasses.put(Short.TYPE, Short.class);
+		primitiveClasses.put(Integer.TYPE, Integer.class);
+		primitiveClasses.put(Long.TYPE, Long.class);
+		primitiveClasses.put(Float.TYPE, Float.class);
+		primitiveClasses.put(Double.TYPE, Double.class);
+	}
 
 	private Utilities() {
 
@@ -133,7 +132,7 @@ public class Utilities {
 		return first;
 	}
 
-	public static Object nvl(Object obj, Object nullObject) {
+	public static <T,S extends T, U extends T> T nvl(S obj, U nullObject) {
 		if (obj != null) {
 			return obj;
 		}
@@ -330,7 +329,7 @@ public class Utilities {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T[] joinArrays(Object array0, Object array1,
+	public static <T, S extends T, U extends T> T[] joinArrays(S[] array0, U[] array1,
 			Class<T> elementClass) {
 		int l0 = Array.getLength(array0);
 		int l1 = Array.getLength(array1);
@@ -417,6 +416,15 @@ public class Utilities {
 		return result;
 	}
 
+	/**
+	 * Saves a byte array to a file.
+	 * 
+	 * @param file
+	 *            the file
+	 * @param bytes
+	 *            the byte array
+	 * @throws IOException
+	 */
 	public static void save(File file, byte[] bytes) throws IOException {
 		OutputStream os = new FileOutputStream(file);
 		try {
@@ -430,10 +438,20 @@ public class Utilities {
 		}
 	}
 
+	/**
+	 * Returns a string containing the (simple) names of the objects in the
+	 * array, separated by ';', enclosed by square brackets.
+	 * 
+	 * @param objects the object array
+	 * @param simple flag denoting if simple class names should be used
+	 * @return a string containing the names of the objects' classes
+	 */
 	public static String classesString(Object[] objects, boolean simple) {
 		String[] strings = new String[objects.length];
 		for (int i = 0; i < objects.length; i++) {
-			if (simple) {
+			if (objects[i] == null) {
+				strings[i] = "null";
+			} else if (simple) {
 				strings[i] = objects[i].getClass().getSimpleName();
 			} else {
 				strings[i] = objects[i].getClass().getName();
@@ -442,6 +460,13 @@ public class Utilities {
 		return "[" + join(",", strings) + "]";
 	}
 
+	/**
+	 * The same as {@linkplain #classesString(Object[], boolean)} for collections.
+	 * 
+	 * @param objects
+	 * @param simple
+	 * @return
+	 */
 	public static String classesString(Collection<?> objects, boolean simple) {
 		return classesString(objects.toArray(), simple);
 	}
@@ -454,16 +479,96 @@ public class Utilities {
 		}
 		return result;
 	}
+	
+	public <T> Iterable<T> castIterable (final Object iterable, final Class<T> itemClass) {
+		if (iterable == null) {
+			return null;
+		}
+		if (iterable.getClass().isArray()) {
+			return new Iterable<T> () {
+				
+				public Iterator<T> iterator() {
+					return new Iterator<T> () {
 
+						int i = 0;
+						
+						public boolean hasNext() {
+							return i < Array.getLength(iterable);
+						}
+
+						public T next() {
+							return itemClass.cast(Array.get(iterable, i++));
+						}
+
+						public void remove() {
+							throw new UnsupportedOperationException();
+							
+			
+						}
+						
+					};
+				}
+				
+			};
+		} else if (Iterable.class.isAssignableFrom(iterable.getClass())) {
+			return new Iterable<T> () {
+
+				public Iterator<T> iterator() {
+					return new Iterator<T> () {
+						
+						Iterator<?> iter = ((Iterable<?>) iterable).iterator();
+
+						public boolean hasNext() {
+							return iter.hasNext();
+						}
+
+						public T next() {
+							return itemClass.cast(iter.next());
+						}
+
+						public void remove() {
+							iter.remove();
+						}
+						
+					};
+				}
+				
+			};
+		}
+		throw new IllegalArgumentException (iterable.getClass().getName() + " is not iterable");
+		
+	}
+	
+	
+
+	/**
+	 * Reads bytes from the <tt>from</tt> input stream and writes them to the
+	 * <tt>to</tt> output stream.
+	 * 
+	 * @param from
+	 * @param to
+	 * @throws IOException
+	 */
 	public static void pipe(InputStream from, OutputStream to)
 			throws IOException {
-		while (from.available() > 0) {
-			byte b = (byte) from.read();
-			to.write(b);
+		byte [] buffer = new byte [1024];
+		BufferedInputStream bis = new BufferedInputStream(from);
+		BufferedOutputStream bos = new BufferedOutputStream(to);
+		int avail;
+		while ((avail = from.available()) > 0) {
+			for (int off = 0; off < avail; off += 1024) {
+				int length = Math.min(avail-off, 1024);
+				bis.read(buffer, 0, length);
+				bos.write(buffer, 0, length);
+				
+			}
+
 		}
+		bos.flush();
 	}
 
-	public static Iterable<String> readLines(String command, Ref<InputStream> streamRef) throws IOException {
+	public static Iterable<String> readLines(String command,
+			Ref<InputStream> streamRef) throws IOException {
 		Process proc = Runtime.getRuntime().exec(command);
 		InputStream stream = proc.getInputStream();
 		if (streamRef != null) {
@@ -471,23 +576,22 @@ public class Utilities {
 		}
 		return readLines(stream);
 	}
-	
+
 	public static Iterable<String> readLines(String command) throws IOException {
 		return readLines(command, null);
 	}
-	
-	
 
-	public static Iterable<String> readLines(File file, Ref<InputStream> streamRef) throws IOException {
+	public static Iterable<String> readLines(File file,
+			Ref<InputStream> streamRef) throws IOException {
 		InputStream stream = new FileInputStream(file);
 		if (streamRef != null) {
 			streamRef.t = stream;
 		}
 		return readLines(stream);
 	}
-	
+
 	public static Iterable<String> readLines(File file) throws IOException {
-		return readLines(file,null);
+		return readLines(file, null);
 	}
 
 	public static Iterable<String> readLines(final InputStream stream)
@@ -531,78 +635,81 @@ public class Utilities {
 			}
 		};
 	}
-	
-//    /**
-//     * Calls a method that fits the given parameters inside a new thread
-//     * 
-//     * @param object
-//     *            the object on which the method is called
-//     * @param methodName
-//     *            name of the method
-//     * @param args
-//     *            array of parameter Objects
-//     * @param listener
-//     *            listener object that is notified when the method returns
-//     * @param lock
-//     *            lock to avoid a call while another one has not finished
-//     * @throws IllegalArgumentException
-//     *             if no fitting method is found
-//     */
-//    public static void invoke (Object object, String methodName,
-//            Object [] args, MethodReturnedListener listener, Object lock)
-//    {
-//        Method m = resolveMethod (object.getClass (), methodName, args);
-//        if (m == null)
-//        {
-//            throw new IllegalArgumentException ("there is no method"
-//                    + " named " + methodName + " taking arguments "
-//                    + Arrays.asList (args) + " declared in "
-//                    + object.getClass ());
-//        }
-//        MethodInvoker invoker = new MethodInvoker (object, m, args, listener,
-//                lock);
-//        Thread thread = new Thread (invoker);
-//        threadSet.add (thread);
-//        thread.start ();
-//    }
 
-    /**
-     * Convenience method for finding a method that fits a name and the types of
-     * the objects inside the parameter array.
-     * 
-     * @param clazz
-     *            a class that declares the method that is looked for
-     * @param name
-     *            the name of the method
-     * @param args
-     *            array of arguments with which the method should be called
-     * @return a method that has the given names and can be called using the
-     *         arguments given, <code>null</code> if no such method exists
-     */
-    public static Method resolveMethod (Class<?> clazz, String name, Object [] args)
-    {
-        Method [] methods = clazz.getMethods ();
-        int i;
-        for (i = 0; i < methods.length; i++)
-        {
-            Method m = methods [i];
-            Class<?> [] classes = m.getParameterTypes ();
-            boolean match = m.getName ().equals (name)
-                    && classes.length == args.length;
-            for (int j = 0; match && j < classes.length; j++)
-            {
-                match = classes [j].isAssignableFrom (args [j].getClass ())
-                        || primitiveClasses.get (classes [j]) == args [j]
-                                .getClass ();
-            }
-            if (match)
-            {
-                return m;
-            }
-        }
-        return null;
-    }
+	// /**
+	// * Calls a method that fits the given parameters inside a new thread
+	// *
+	// * @param object
+	// * the object on which the method is called
+	// * @param methodName
+	// * name of the method
+	// * @param args
+	// * array of parameter Objects
+	// * @param listener
+	// * listener object that is notified when the method returns
+	// * @param lock
+	// * lock to avoid a call while another one has not finished
+	// * @throws IllegalArgumentException
+	// * if no fitting method is found
+	// */
+	// public static void invoke (Object object, String methodName,
+	// Object [] args, MethodReturnedListener listener, Object lock)
+	// {
+	// Method m = resolveMethod (object.getClass (), methodName, args);
+	// if (m == null)
+	// {
+	// throw new IllegalArgumentException ("there is no method"
+	// + " named " + methodName + " taking arguments "
+	// + Arrays.asList (args) + " declared in "
+	// + object.getClass ());
+	// }
+	// MethodInvoker invoker = new MethodInvoker (object, m, args, listener,
+	// lock);
+	// Thread thread = new Thread (invoker);
+	// threadSet.add (thread);
+	// thread.start ();
+	// }
 
+	public static Class<?> getWrapperClass(Class<?> primitiveClass) {
+		return primitiveClasses.get(primitiveClass);
+	}
 
+	public static boolean isPrimitiveClass(Class<?> cls) {
+		return getWrapperClass(cls) != null;
+	}
+
+	/**
+	 * Convenience method for finding a method that fits a name and the types of
+	 * the objects inside the parameter array.
+	 * 
+	 * @param clazz
+	 *            a class that declares the method that is looked for
+	 * @param name
+	 *            the name of the method
+	 * @param args
+	 *            array of arguments with which the method should be called
+	 * @return a method that has the given names and can be called using the
+	 *         arguments given, <code>null</code> if no such method exists
+	 */
+	public static Method resolveMethod(Class<?> clazz, String name,
+			Object[] args) {
+		Method[] methods = clazz.getMethods();
+		int i;
+		for (i = 0; i < methods.length; i++) {
+			Method m = methods[i];
+			Class<?>[] classes = m.getParameterTypes();
+			boolean match = m.getName().equals(name)
+					&& classes.length == args.length;
+			for (int j = 0; match && j < classes.length; j++) {
+				match = classes[j].isAssignableFrom(args[j].getClass())
+						|| primitiveClasses.get(classes[j]) == args[j]
+								.getClass();
+			}
+			if (match) {
+				return m;
+			}
+		}
+		return null;
+	}
 
 }

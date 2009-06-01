@@ -36,18 +36,10 @@ import java.util.Map;
  * 
  */
 public final class ObjectFactory {
+	
     private static final Map<Class<?>, Constructor<?>> stringConstructorMap;
 
-    private static final Map<Class<?>, Class<?>> primitives;
-
     static {
-        primitives = new HashMap<Class<?>, Class<?>>();
-        primitives.put(Integer.TYPE, Integer.class);
-        primitives.put(Float.TYPE, Float.class);
-        primitives.put(Double.TYPE, Double.class);
-        primitives.put(Character.TYPE, Character.class);
-        primitives.put(Long.TYPE, Long.class);
-        primitives.put(Boolean.TYPE, Boolean.class);
         stringConstructorMap = new HashMap<Class<?>, Constructor<?>>();
     }
 
@@ -79,7 +71,7 @@ public final class ObjectFactory {
         if (cls == Font.class) {
         	return Font.decode(string);
         }
-        final Class<?> nonPrimitive = primitives.get(cls);
+        final Class<?> nonPrimitive = Utilities.getWrapperClass(cls);
         if (nonPrimitive != null) {
             cls = nonPrimitive;
         }
