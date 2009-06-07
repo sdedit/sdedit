@@ -35,7 +35,6 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,8 +45,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
+import javax.swing.table.TableColumn;
 
 import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.ui.components.OptionDialog;
@@ -72,6 +73,15 @@ public class UIUtilities {
 			editableMethods.put(object.getClass().getName(), ref);
 		}
 		return ref.t;
+	}
+	
+	public static void setColumnWidths (JTable table, int... widths) {
+	    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+	    for (int i = 0; i < widths.length; i++) {
+	        TableColumn col = table.getColumnModel().getColumn(i);
+	        col.setPreferredWidth(widths[i]);
+	    }
+
 	}
 	
 	public static String getOption(JFrame appFrame, String text, String... options) {
