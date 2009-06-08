@@ -36,6 +36,7 @@ import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -48,6 +49,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import net.sf.sdedit.icons.Icons;
@@ -82,6 +84,13 @@ public class UIUtilities {
 	        col.setPreferredWidth(widths[i]);
 	    }
 
+	}
+	
+	public static void setTableCellRenderer(JTable table, TableCellRenderer renderer) {
+	    Enumeration<TableColumn> enumeration = table.getColumnModel().getColumns();
+	    while (enumeration.hasMoreElements()) {
+	        enumeration.nextElement().setCellRenderer(renderer);
+	    }
 	}
 	
 	public static String getOption(JFrame appFrame, String text, String... options) {

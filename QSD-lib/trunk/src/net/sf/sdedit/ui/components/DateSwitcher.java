@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -22,10 +21,24 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import net.sf.sdedit.icons.Icons;
+import net.sf.sdedit.util.Bijection;
 import net.sf.sdedit.util.UIUtilities;
 
 @SuppressWarnings("serial")
 public class DateSwitcher extends JPanel implements ActionListener {
+    
+    private static Bijection<Integer,Integer> dateComponents;
+    
+    static {
+        dateComponents = new Bijection<Integer,Integer>();
+        dateComponents.add(0, Calendar.YEAR);
+        dateComponents.add(1, Calendar.MONTH);
+        dateComponents.add(2, Calendar.DAY_OF_MONTH);
+        dateComponents.add(3, Calendar.HOUR_OF_DAY);
+        dateComponents.add(4, Calendar.MINUTE);
+        dateComponents.add(5, Calendar.SECOND);
+        dateComponents.add(6, Calendar.MILLISECOND);
+    }
 
     public static interface DateSwitcherListener {
 
@@ -44,9 +57,11 @@ public class DateSwitcher extends JPanel implements ActionListener {
     private final DateFormat dateFormat;
 
     private GregorianCalendar calendar;
+    
+    private int granularity;
 
-    public DateSwitcher(String dateFormat) {
-        this(new SimpleDateFormat(dateFormat));
+    public DateSwitcher(String dateFormat, int granularity) {
+        this(new SimpleDateFormat(dateFormat), granularity);
     }
 
     private void init() {
@@ -67,14 +82,14 @@ public class DateSwitcher extends JPanel implements ActionListener {
 
     }
 
-    public DateSwitcher(DateFormat dateFormat) {
+    public DateSwitcher(DateFormat dateFormat, int granularity) {
         this.dateFormat = dateFormat;
+        this.granularity = dateComponents.getPreImage(granularity);
         init();
     }
 
     public DateSwitcher() {
-        this.dateFormat = DateFormat.getDateInstance();
-        init();
+        this(DateFormat.getDateInstance(), Calendar.DAY_OF_MONTH);
     }
 
     public void addDateSwitcherListener(DateSwitcherListener listener) {
@@ -87,10 +102,13 @@ public class DateSwitcher extends JPanel implements ActionListener {
 
     public void setDate(Date date) {
         calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+        for (int i = granularity+1; i <= 6; i++) {
+            int r = 0;
+            if (i == 1 || i == 2) {
+                r = 1;
+            }
+            calendar.set(dateComponents.getImage(i), r);
+        }
         update();
     }
 
@@ -106,21 +124,21 @@ public class DateSwitcher extends JPanel implements ActionListener {
         return calendar.getTime();
     }
 
-    private void nextDay() {
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
+    private void nextDate() {
+        calendar.add(dateComponents.getImage(granularity), 1);
         update();
     }
 
-    private void previousDay() {
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
+    private void previousDate() {
+        calendar.add(dateComponents.getImage(granularity), -1);
         update();
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == previousButton) {
-            previousDay();
+            previousDate();
         } else {
-            nextDay();
+            nextDate();
         }
 
     }

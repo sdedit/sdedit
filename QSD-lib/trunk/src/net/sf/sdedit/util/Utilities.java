@@ -713,6 +713,10 @@ public class Utilities {
         return toString(new Date(ms), format);
     }
     
+    public  static <S,T> Pair<S,T> pair (S arg1, T arg2) {
+        return new Pair<S,T> (arg1, arg2);
+    }
+    
     public static Object invoke (String methodName, Object object, Object [] args) {
         Method method;
         if (object instanceof Class) {

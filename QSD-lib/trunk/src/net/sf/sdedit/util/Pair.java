@@ -31,7 +31,7 @@ package net.sf.sdedit.util;
  * @param <S> the type of the second entry of the pair
  * 
  */
-public class Pair<F,S>
+public class Pair<F,S> implements Comparable<Pair<F,S>>
 {
     private F first;
     
@@ -124,6 +124,27 @@ public class Pair<F,S>
     public String toString ()
     {
         return "<" + getFirst() + "," + getSecond() + ">";
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public int compareTo(Pair<F, S> arg0) {
+        F f = arg0.first;
+        S s = arg0.second;
+        int comp_f;
+        int comp_s;
+        if (Comparable.class.isInstance(first) && 
+                Comparable.class.isInstance(second) && Comparable.class.isInstance(f) && Comparable.class.isInstance(s)) {
+            comp_f = Comparable.class.cast(first).compareTo(Comparable.class.cast(f));
+            comp_s = Comparable.class.cast(second).compareTo(Comparable.class.cast(s));
+        } else {
+            comp_f = String.valueOf(first).compareTo(String.valueOf(f));
+            comp_s = String.valueOf(second).compareTo(String.valueOf(s));
+        }
+        if (comp_f != 0) {
+            return comp_f;
+        }
+        return comp_s;
     }
 
 }
