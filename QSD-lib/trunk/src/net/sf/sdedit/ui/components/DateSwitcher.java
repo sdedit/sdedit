@@ -15,14 +15,11 @@ import java.util.TimeZone;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.util.Bijection;
-import net.sf.sdedit.util.UIUtilities;
 
 @SuppressWarnings("serial")
 public class DateSwitcher extends JPanel implements ActionListener {
@@ -113,11 +110,15 @@ public class DateSwitcher extends JPanel implements ActionListener {
     }
 
     private void update() {
-        dateLabel.setText(dateFormat.format(calendar.getTime()));
+        dateLabel.setText(formatDate());
         for (DateSwitcherListener listener : Collections.checkedCollection(
                 listeners, DateSwitcherListener.class)) {
             listener.dateSwitched(this, calendar.getTime());
         }
+    }
+    
+    public String formatDate () {
+        return dateFormat.format(calendar.getTime());
     }
 
     public Date getDate() {
@@ -141,28 +142,6 @@ public class DateSwitcher extends JPanel implements ActionListener {
             nextDate();
         }
 
-    }
-
-    public static void main(String[] argv) {
-        final JFrame frame = new JFrame();
-        DateSwitcher dateSwitcher = new DateSwitcher();
-        dateSwitcher.setDate(new Date());
-        dateSwitcher.addDateSwitcherListener(new DateSwitcherListener() {
-
-            public void dateSwitched(DateSwitcher source, Date newDate) {
-                System.out.println(newDate);
-
-            }
-
-        });
-        frame.getContentPane().add(dateSwitcher);
-        frame.setVisible(true);
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                frame.pack();
-                UIUtilities.centerWindow(frame);
-            }
-        });
     }
 
 }

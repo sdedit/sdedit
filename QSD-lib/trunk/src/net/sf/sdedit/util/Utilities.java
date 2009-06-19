@@ -27,12 +27,16 @@ package net.sf.sdedit.util;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -42,7 +46,9 @@ import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -123,9 +129,21 @@ public class Utilities {
         }
         file.delete();
     }
-    
+
     public static String toString(Date date) {
         return toString(date, null);
+    }
+
+    public static Date toDate(String string, String format) {
+        DateFormat dateFormat = new SimpleDateFormat(format);
+        dateFormat.setLenient(true);
+        Date d;
+        try {
+            d = dateFormat.parse(string);
+        } catch (ParseException pe) {
+            throw new IllegalArgumentException(pe);
+        }
+        return d;
     }
 
     public static String toString(Date date, String format) {
@@ -201,11 +219,9 @@ public class Utilities {
     }
 
     public static String pad(char c, int length) {
-        StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < length; i++) {
-            buffer.append(c);
-        }
-        return buffer.toString();
+        char [] characters = new char [length];
+        Arrays.fill(characters,c);
+        return new String(characters);
     }
 
     public static String getSimpleName(File file) {
@@ -499,7 +515,7 @@ public class Utilities {
         return result;
     }
 
-    public <T> Iterable<T> castIterable(final Object iterable,
+    public static <T> Iterable<T> castIterable(final Object iterable,
             final Class<T> itemClass) {
         if (iterable == null) {
             return null;
@@ -707,17 +723,17 @@ public class Utilities {
     public static boolean isPrimitiveClass(Class<?> cls) {
         return getWrapperClass(cls) != null;
     }
-    
-    public static String getDuration (long milliseconds, String format) {
+
+    public static String getDuration(long milliseconds, String format) {
         long ms = milliseconds - 3600000;
         return toString(new Date(ms), format);
     }
-    
-    public  static <S,T> Pair<S,T> pair (S arg1, T arg2) {
-        return new Pair<S,T> (arg1, arg2);
+
+    public static <S, T> Pair<S, T> pair(S arg1, T arg2) {
+        return new Pair<S, T>(arg1, arg2);
     }
-    
-    public static Object invoke (String methodName, Object object, Object [] args) {
+
+    public static Object invoke(String methodName, Object object, Object[] args) {
         Method method;
         if (object instanceof Class) {
             method = resolveMethod((Class<?>) object, methodName, args);
@@ -731,7 +747,30 @@ public class Utilities {
         } catch (RuntimeException re) {
             throw re;
         } catch (Throwable t) {
-            throw new IllegalArgumentException ("cannot invoke method " + methodName);
+            throw new IllegalArgumentException("cannot invoke method "
+                    + methodName);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T clone(T t) {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(out);
+            oos.writeObject(t);
+            out.flush();
+
+            ByteArrayInputStream in = new ByteArrayInputStream(out
+                    .toByteArray());
+            ObjectInputStream ois = new ObjectInputStream(in);
+            T copy = (T) ois.readObject();
+            in.close();
+            out.close();
+            return copy;
+        } catch (RuntimeException re) {
+            throw re;
+        } catch (Throwable th) {
+            throw new IllegalStateException(th);
         }
     }
 
@@ -767,6 +806,202 @@ public class Utilities {
             }
         }
         return null;
+    }
+
+    public static class Record6<T1, T2, T3, T4, T5, T6> {
+
+        public T1 getField1() {
+            return field1;
+        }
+
+        public void setField1(T1 field1) {
+            this.field1 = field1;
+        }
+
+        public T2 getField2() {
+            return field2;
+        }
+
+        public void setField2(T2 field2) {
+            this.field2 = field2;
+        }
+
+        public T3 getField3() {
+            return field3;
+        }
+
+        public void setField3(T3 field3) {
+            this.field3 = field3;
+        }
+
+        public T4 getField4() {
+            return field4;
+        }
+
+        public void setField4(T4 field4) {
+            this.field4 = field4;
+        }
+
+        public T5 getField5() {
+            return field5;
+        }
+
+        public void setField5(T5 field5) {
+            this.field5 = field5;
+        }
+
+        public T6 getField6() {
+            return field6;
+        }
+
+        public void setField6(T6 field6) {
+            this.field6 = field6;
+        }
+
+        private T1 field1;
+
+        private T2 field2;
+
+        private T3 field3;
+
+        private T4 field4;
+
+        private T5 field5;
+
+        private T6 field6;
+
+    }
+
+    public static class Record5<T1, T2, T3, T4, T5> {
+
+        public T1 getField1() {
+            return field1;
+        }
+
+        public void setField1(T1 field1) {
+            this.field1 = field1;
+        }
+
+        public T2 getField2() {
+            return field2;
+        }
+
+        public void setField2(T2 field2) {
+            this.field2 = field2;
+        }
+
+        public T3 getField3() {
+            return field3;
+        }
+
+        public void setField3(T3 field3) {
+            this.field3 = field3;
+        }
+
+        public T4 getField4() {
+            return field4;
+        }
+
+        public void setField4(T4 field4) {
+            this.field4 = field4;
+        }
+
+        public T5 getField5() {
+            return field5;
+        }
+
+        public void setField5(T5 field5) {
+            this.field5 = field5;
+        }
+
+        private T1 field1;
+
+        private T2 field2;
+
+        private T3 field3;
+
+        private T4 field4;
+
+        private T5 field5;
+
+    }
+
+    public static class Record4<T1, T2, T3, T4> {
+
+        private T1 field1;
+
+        private T2 field2;
+
+        private T3 field3;
+
+        private T4 field4;
+
+        public T1 getField1() {
+            return field1;
+        }
+
+        public void setField1(T1 field1) {
+            this.field1 = field1;
+        }
+
+        public T2 getField2() {
+            return field2;
+        }
+
+        public void setField2(T2 field2) {
+            this.field2 = field2;
+        }
+
+        public T3 getField3() {
+            return field3;
+        }
+
+        public void setField3(T3 field3) {
+            this.field3 = field3;
+        }
+
+        public T4 getField4() {
+            return field4;
+        }
+
+        public void setField4(T4 field4) {
+            this.field4 = field4;
+        }
+
+    }
+
+    public static class Record3<T1, T2, T3> {
+
+        public T1 getField1() {
+            return field1;
+        }
+
+        public void setField1(T1 field1) {
+            this.field1 = field1;
+        }
+
+        public T2 getField2() {
+            return field2;
+        }
+
+        public void setField2(T2 field2) {
+            this.field2 = field2;
+        }
+
+        public T3 getField3() {
+            return field3;
+        }
+
+        public void setField3(T3 field3) {
+            this.field3 = field3;
+        }
+
+        private T1 field1;
+
+        private T2 field2;
+
+        private T3 field3;
+
     }
 
 }

@@ -44,11 +44,13 @@ import java.util.WeakHashMap;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -56,180 +58,248 @@ import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.ui.components.OptionDialog;
 
 public class UIUtilities {
-	
-	private static WeakHashMap<String,Ref<Method>> editableMethods =
-		new WeakHashMap<String,Ref<Method>>();
-	
-	private static Method getEditableMethod (Object object) {
-		Ref<Method> ref = editableMethods.get(object.getClass().getName());
-		if (ref == null) {
-			ref = new Ref<Method>();
-			for (Method method : object.getClass().getMethods()) {
-				if (method.getName().equals("setEditable") &&
-						method.getParameterTypes().length == 1 &&
-						method.getParameterTypes()[0].equals(Boolean.TYPE)) {
-					ref.t = method;
-					break;
-				}
-			}
-			editableMethods.put(object.getClass().getName(), ref);
-		}
-		return ref.t;
-	}
-	
-	public static void setColumnWidths (JTable table, int... widths) {
-	    table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-	    for (int i = 0; i < widths.length; i++) {
-	        TableColumn col = table.getColumnModel().getColumn(i);
-	        col.setPreferredWidth(widths[i]);
-	    }
 
-	}
-	
-	public static void setTableCellRenderer(JTable table, TableCellRenderer renderer) {
-	    Enumeration<TableColumn> enumeration = table.getColumnModel().getColumns();
-	    while (enumeration.hasMoreElements()) {
-	        enumeration.nextElement().setCellRenderer(renderer);
-	    }
-	}
-	
-	public static String getOption(JFrame appFrame, String text, String... options) {
-		OptionDialog optionDialog = new OptionDialog(appFrame,
-				"Please choose an option", Icons.getIcon("question"), text);
-		for (String option : options) {
-			optionDialog.addOption(option);
-		}
-		return optionDialog.getOption();
-	}
-	
-	public static void setEditable (Component comp, boolean editable) {
-		Method method = getEditableMethod(comp);
-		if (method != null) {
-			try {
-				method.invoke(comp, editable);
-			} catch (RuntimeException re) {
-				throw re;
-			} catch (Exception e) {
-				throw new IllegalArgumentException(e);
-			}
-		}
-				
-	}
+    private static WeakHashMap<String, Ref<Method>> editableMethods = new WeakHashMap<String, Ref<Method>>();
 
-	public static void centerWindow(Window window) {
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		int width = window.getWidth();
-		int height = window.getHeight();
-		int left = Math.max(0, screen.width / 2 - width / 2);
-		left = Math.min(left, screen.width - width);
-		int top = Math.max(0, screen.height / 2 - height / 2);
-		top = Math.min(top, screen.height - height);
-		window.setLocation(left, top);
-	}
+    private static Method getEditableMethod(Object object) {
+        Ref<Method> ref = editableMethods.get(object.getClass().getName());
+        if (ref == null) {
+            ref = new Ref<Method>();
+            for (Method method : object.getClass().getMethods()) {
+                if (method.getName().equals("setEditable")
+                        && method.getParameterTypes().length == 1
+                        && method.getParameterTypes()[0].equals(Boolean.TYPE)) {
+                    ref.t = method;
+                    break;
+                }
+            }
+            editableMethods.put(object.getClass().getName(), ref);
+        }
+        return ref.t;
+    }
 
-	public static void centerWindow(Window window, Window parent) {
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		int width = window.getWidth();
-		int height = window.getHeight();
-		int left = Math.max(0, parent.getLocationOnScreen().x
-				+ parent.getSize().width / 2 - width / 2);
-		left = Math.min(left, screen.width - width);
-		int top = Math.max(0, parent.getLocationOnScreen().y
-				+ parent.getSize().height / 2 - height / 2);
-		top = Math.min(top, screen.height - height);
-		window.setLocation(left, top);
-	}
+    public static void setColumnWidths(JTable table, int... widths) {
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        for (int i = 0; i < widths.length; i++) {
+            TableColumn col = table.getColumnModel().getColumn(i);
+            col.setPreferredWidth(widths[i]);
+        }
 
-	public static void showText(JFrame parent, String caption, String text) {
-		JDialog textDialog = new JDialog(parent);
-		textDialog.setTitle(caption);
-		textDialog.setModal(true);
-		textDialog.getContentPane().setLayout(new BorderLayout());
-		JTextArea textArea = new JTextArea();
-		textArea.setText(text);
-		textArea.setFont(Font.decode("Monospace"));
-		textDialog.getContentPane().add(new JScrollPane(textArea),
-				BorderLayout.CENTER);
-		textDialog.setSize(640, 480);
-		centerWindow(textDialog, parent);
-		textDialog.setVisible(true);
-		textDialog.dispose();
-	}
+    }
 
-	public static void changeIconButton(JButton button) {
-		button.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		button.setOpaque(false);
-		button.setMargin(new Insets(1, 1, 1, 1));
-	}
+    public static void setTableCellRenderer(JTable table,
+            TableCellRenderer renderer) {
+        Enumeration<TableColumn> enumeration = table.getColumnModel()
+                .getColumns();
+        while (enumeration.hasMoreElements()) {
+            enumeration.nextElement().setCellRenderer(renderer);
+        }
+    }
 
-	public static void setGlobalFont(Font font) {
+    public static String getOption(JFrame appFrame, String text,
+            String... options) {
+        OptionDialog optionDialog = new OptionDialog(appFrame,
+                "Please choose an option", Icons.getIcon("question"), text);
+        for (String option : options) {
+            optionDialog.addOption(option);
+        }
+        return optionDialog.getOption();
+    }
 
-		UIManager.put("Button.font", font);
-		UIManager.put("ToggleButton.font", font);
-		UIManager.put("RadioButton.font", font);
-		UIManager.put("CheckBox.font", font);
-		UIManager.put("ColorChooser.font", font);
-		UIManager.put("ComboBox.font", font);
-		UIManager.put("Label.font", font);
-		UIManager.put("List.font", font);
-		UIManager.put("MenuBar.font", font);
-		UIManager.put("MenuItem.font", font);
-		UIManager.put("RadioButtonMenuItem.font", font);
-		UIManager.put("CheckBoxMenuItem.font", font);
-		UIManager.put("Menu.font", font);
-		UIManager.put("PopupMenu.font", font);
-		UIManager.put("OptionPane.font", font);
-		UIManager.put("Panel.font", font);
-		UIManager.put("ProgressBar.font", font);
-		UIManager.put("ScrollPane.font", font);
-		UIManager.put("Viewport.font", font);
-		UIManager.put("TabbedPane.font", font);
-		UIManager.put("Table.font", font);
-		UIManager.put("TableHeader.font", font);
-		UIManager.put("TextField.font", font);
-		UIManager.put("PasswordField.font", font);
-		UIManager.put("TextArea.font", font);
-		UIManager.put("TextPane.font", font);
-		UIManager.put("EditorPane.font", font);
-		UIManager.put("TitledBorder.font", font);
-		UIManager.put("ToolBar.font", font);
-		UIManager.put("ToolTip.font", font);
-		UIManager.put("Tree.font", font);
+    public static void setEditable(Component comp, boolean editable) {
+        Method method = getEditableMethod(comp);
+        if (method != null) {
+            try {
+                method.invoke(comp, editable);
+            } catch (RuntimeException re) {
+                throw re;
+            } catch (Exception e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
 
-	}
+    }
 
-	public static List<Component> getDescendants(Container container) {
-		List<Component> descs = new LinkedList<Component>();
-		collectDescendants(container, descs);
-		return descs;
-	}
+    public static void centerWindow(Window window) {
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = window.getWidth();
+        int height = window.getHeight();
+        int left = Math.max(0, screen.width / 2 - width / 2);
+        left = Math.min(left, screen.width - width);
+        int top = Math.max(0, screen.height / 2 - height / 2);
+        top = Math.min(top, screen.height - height);
+        window.setLocation(left, top);
+    }
 
-	private static void collectDescendants(Container cont, List<Component> descs) {
-		for (Component comp : cont.getComponents()) {
-			descs.add(comp);
-			if (comp instanceof Container) {
-				collectDescendants((Container) comp, descs);
-			}
-		}
-	}
+    public static void centerWindow(Window window, Window parent) {
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = window.getWidth();
+        int height = window.getHeight();
+        int left = Math.max(0, parent.getLocationOnScreen().x
+                + parent.getSize().width / 2 - width / 2);
+        left = Math.min(left, screen.width - width);
+        int top = Math.max(0, parent.getLocationOnScreen().y
+                + parent.getSize().height / 2 - height / 2);
+        top = Math.min(top, screen.height - height);
+        window.setLocation(left, top);
+    }
 
-	public static Image joinImages(Image img1, Image img2, int gap, int imageType) {
-		int width = img1.getWidth(null) + img2.getWidth(null) + gap;
-		int height = Math.max(img1.getHeight(null) , img2.getHeight(null));
-		Image join = new BufferedImage(width, height, imageType);
-		join.getGraphics().drawImage(img1, 0, 0, null);
-		join.getGraphics().drawImage(img2, img1.getWidth(null) + gap, 0, null);
-		return join;
-		
-	}
+    public static void showText(JFrame parent, String caption, String text) {
+        JDialog textDialog = new JDialog(parent);
+        textDialog.setTitle(caption);
+        textDialog.setModal(true);
+        textDialog.getContentPane().setLayout(new BorderLayout());
+        JTextArea textArea = new JTextArea();
+        textArea.setText(text);
+        textArea.setFont(Font.decode("Monospace"));
+        textDialog.getContentPane().add(new JScrollPane(textArea),
+                BorderLayout.CENTER);
+        textDialog.setSize(640, 480);
+        centerWindow(textDialog, parent);
+        textDialog.setVisible(true);
+        textDialog.dispose();
+    }
 
-	public static File affixType(File file, String type) {
-		String fileName = file.getAbsolutePath();
-		int dot = fileName.lastIndexOf('.');
-		if (dot == -1) {
-			return new File(fileName + "." + type);
-		}
-		String baseName = fileName.substring(0, dot);
-		return new File(baseName + "." + type);
-	}
+    public static void changeIconButton(JButton button) {
+        button.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        button.setOpaque(false);
+        button.setMargin(new Insets(1, 1, 1, 1));
+    }
+
+    public static void setGlobalFont(Font font) {
+
+        UIManager.put("Button.font", font);
+        UIManager.put("ToggleButton.font", font);
+        UIManager.put("RadioButton.font", font);
+        UIManager.put("CheckBox.font", font);
+        UIManager.put("ColorChooser.font", font);
+        UIManager.put("ComboBox.font", font);
+        UIManager.put("Label.font", font);
+        UIManager.put("List.font", font);
+        UIManager.put("MenuBar.font", font);
+        UIManager.put("MenuItem.font", font);
+        UIManager.put("RadioButtonMenuItem.font", font);
+        UIManager.put("CheckBoxMenuItem.font", font);
+        UIManager.put("Menu.font", font);
+        UIManager.put("PopupMenu.font", font);
+        UIManager.put("OptionPane.font", font);
+        UIManager.put("Panel.font", font);
+        UIManager.put("ProgressBar.font", font);
+        UIManager.put("ScrollPane.font", font);
+        UIManager.put("Viewport.font", font);
+        UIManager.put("TabbedPane.font", font);
+        UIManager.put("Table.font", font);
+        UIManager.put("TableHeader.font", font);
+        UIManager.put("TextField.font", font);
+        UIManager.put("PasswordField.font", font);
+        UIManager.put("TextArea.font", font);
+        UIManager.put("TextPane.font", font);
+        UIManager.put("EditorPane.font", font);
+        UIManager.put("TitledBorder.font", font);
+        UIManager.put("ToolBar.font", font);
+        UIManager.put("ToolTip.font", font);
+        UIManager.put("Tree.font", font);
+
+    }
+
+    public static List<Component> getDescendants(Container container) {
+        List<Component> descs = new LinkedList<Component>();
+        collectDescendants(container, descs);
+        return descs;
+    }
+
+    private static void collectDescendants(Container cont, List<Component> descs) {
+        for (Component comp : cont.getComponents()) {
+            descs.add(comp);
+            if (comp instanceof Container) {
+                collectDescendants((Container) comp, descs);
+            }
+        }
+    }
+
+    public static Image joinImages(Image img1, Image img2, int gap,
+            int imageType) {
+        int width = img1.getWidth(null) + img2.getWidth(null) + gap;
+        int height = Math.max(img1.getHeight(null), img2.getHeight(null));
+        Image join = new BufferedImage(width, height, imageType);
+        join.getGraphics().drawImage(img1, 0, 0, null);
+        join.getGraphics().drawImage(img2, img1.getWidth(null) + gap, 0, null);
+        return join;
+
+    }
+
+    public static File affixType(File file, String type) {
+        String fileName = file.getAbsolutePath();
+        int dot = fileName.lastIndexOf('.');
+        if (dot == -1) {
+            return new File(fileName + "." + type);
+        }
+        String baseName = fileName.substring(0, dot);
+        return new File(baseName + "." + type);
+    }
+
+    public static void addExtension(JFileChooser fileChooser, String extension,
+            String description) {
+        FileFilter existing = null;
+        for (FileFilter ff : fileChooser.getChoosableFileFilters()) {
+            if (ff instanceof FF) {
+                if (((FF) ff).getExtension().equals(extension.toUpperCase())) {
+                    existing = ff;
+                    break;
+                }
+            }
+        }
+        if (existing != null) {
+            fileChooser.removeChoosableFileFilter(existing);
+        }
+        fileChooser.addChoosableFileFilter(new FF(extension, description));
+    }
+
+    public static void setExtension(JFileChooser fileChooser, String extension) {
+        for (FileFilter ff : fileChooser.getChoosableFileFilters()) {
+            if (ff instanceof FF) {
+                if (((FF) ff).getExtension().equals(extension.toUpperCase())) {
+                    fileChooser.setFileFilter(ff);
+                    return;
+                }
+            }
+        }
+    }
+    
+    public static void suggestName (JFileChooser fileChooser, String basename) {
+        String name = basename;
+        FileFilter ff = fileChooser.getFileFilter();
+        if (ff instanceof FF) {
+            name = name + "." + ((FF) ff).getExtension().toLowerCase();
+        }
+        File file = new File(fileChooser.getCurrentDirectory(), name);
+        fileChooser.setSelectedFile(file);
+    }
+
+    protected static class FF extends FileFilter {
+
+        private String ext;
+
+        private String description;
+
+        protected FF(String ext, String description) {
+            this.ext = ext.toUpperCase();
+            this.description = description;
+        }
+
+        protected String getExtension() {
+            return ext;
+        }
+
+        @Override
+        public boolean accept(File pathname) {
+            return pathname.isDirectory() || pathname.getAbsolutePath().toUpperCase().endsWith(ext);
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
+        }
+
+    }
 }
