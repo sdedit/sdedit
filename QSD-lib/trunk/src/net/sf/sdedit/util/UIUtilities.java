@@ -33,6 +33,8 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -43,18 +45,21 @@ import java.util.WeakHashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import net.sf.sdedit.icons.Icons;
+import net.sf.sdedit.ui.components.JTreeSearcher;
 import net.sf.sdedit.ui.components.OptionDialog;
 
 public class UIUtilities {
@@ -274,6 +279,32 @@ public class UIUtilities {
         }
         File file = new File(fileChooser.getCurrentDirectory(), name);
         fileChooser.setSelectedFile(file);
+    }
+    
+    public static JFrame show (JComponent comp) {
+        final JFrame frame = new JFrame();
+        frame.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+            
+        });
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setSize(800,600);
+        frame.setName(comp.getName());
+        frame.getContentPane().add(new JScrollPane(comp));
+        frame.setVisible(true);
+        
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run () {
+                UIUtilities.centerWindow(frame);
+            }
+        });
+        
+        return frame;
     }
 
     protected static class FF extends FileFilter {

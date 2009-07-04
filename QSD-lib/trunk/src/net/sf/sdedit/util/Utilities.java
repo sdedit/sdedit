@@ -115,7 +115,7 @@ public class Utilities {
     public static String toString(PrintWriter pw) {
         pw.flush();
         StringWriter sw = writerMap.get(pw);
-        return sw.toString();
+        return String.valueOf(sw);
     }
 
     public static void erase(File file, boolean recursive) {
@@ -219,8 +219,8 @@ public class Utilities {
     }
 
     public static String pad(char c, int length) {
-        char [] characters = new char [length];
-        Arrays.fill(characters,c);
+        char[] characters = new char[length];
+        Arrays.fill(characters, c);
         return new String(characters);
     }
 
@@ -587,6 +587,21 @@ public class Utilities {
         };
     }
 
+    public static String toString(URL url) throws IOException {
+        InputStream stream = url.openStream();
+        try {
+            PrintWriter pw = createPrintWriter();
+            for (String line : readLines(stream)) {
+                pw.println(line);
+            }
+            String str = toString(pw);
+            writerMap.remove(writerMap.get(pw));
+            return str;
+        } finally {
+            stream.close();
+        }
+    }
+
     /**
      * Reads bytes from the <tt>from</tt> input stream and writes them to the
      * <tt>to</tt> output stream.
@@ -733,23 +748,15 @@ public class Utilities {
         return new Pair<S, T>(arg1, arg2);
     }
 
-    public static Object invoke(String methodName, Object object, Object[] args) {
+    public static Object invoke(String methodName, Object object, Object[] args)
+            throws Throwable {
         Method method;
         if (object instanceof Class) {
             method = resolveMethod((Class<?>) object, methodName, args);
         } else {
             method = resolveMethod(object.getClass(), methodName, args);
         }
-        Object value;
-        try {
-            value = method.invoke(object, args);
-            return value;
-        } catch (RuntimeException re) {
-            throw re;
-        } catch (Throwable t) {
-            throw new IllegalArgumentException("cannot invoke method "
-                    + methodName);
-        }
+        return method.invoke(object, args);
     }
 
     @SuppressWarnings("unchecked")

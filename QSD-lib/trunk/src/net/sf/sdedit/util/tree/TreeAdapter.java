@@ -25,6 +25,8 @@
 package net.sf.sdedit.util.tree;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -58,6 +60,8 @@ public class TreeAdapter<T> implements TreeModel {
 	
 	private DisplayMode displayMode;
 	
+	private Comparator<T> nodeComparator;
+	
 	public class Node {
 
 		T t;
@@ -79,6 +83,10 @@ public class TreeAdapter<T> implements TreeModel {
 
 	public Tree<T> getTree() {
 		return tree;
+	}
+	
+	public void setNodeComparator(Comparator<T> comparator) {
+	    this.nodeComparator = comparator;
 	}
 
 	private Node getNode(T t) {
@@ -200,6 +208,9 @@ public class TreeAdapter<T> implements TreeModel {
 		T [] result = children.get(node);
 		if (result == null) {
 			result = tree.getChildren(node.t);
+			if (nodeComparator != null) {
+			    Arrays.sort(result, nodeComparator);
+			}
 			children.put(node, result);
 		}
 		return result;

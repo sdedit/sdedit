@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -49,8 +50,10 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -143,6 +146,89 @@ public class DocUtil {
 	 */
 	public static Document newDocument() {
 		return documentBuilder.newDocument();
+	}
+	
+	public static Node getChild (Node parent, String name) {
+	    NodeList list = parent.getChildNodes();
+	    for (int i = 0; i < list.getLength(); i++) {
+	        if (name.equals(list.item(i).getNodeName())) {
+	            return list.item(i);
+	        }
+	    }
+	    return null;
+	}
+	
+	public static String getAttribute (Element element, String name) {
+	    NamedNodeMap nnm = element.getAttributes();
+	    for (int i = 0; i < nnm.getLength(); i++) {
+	        if (name.equals(nnm.item(i).getNodeName())) {
+	            return nnm.item(i).getNodeValue();
+	        }
+	    }
+	    return null;
+	}
+	
+	public static Iterable<Node> iterate (final NodeList nodeList) {
+	    final Iterator<Node> iter = new Iterator<Node>() {
+	        
+	        private int i = 0;
+
+            @Override
+            public boolean hasNext() {
+                return i < nodeList.getLength();
+            }
+
+            @Override
+            public Node next() {
+                return nodeList.item(i++);
+            }
+
+            @Override
+            public void remove() {
+                                
+            }
+	        
+	        
+	    };
+	    
+	    return new Iterable<Node> () {
+
+            @Override
+            public Iterator<Node> iterator() {
+                return iter;
+            }
+	        
+	    };
+	}
+	
+	public static String toString (Node node) {
+	    if (node == null) {
+	        return "";
+	    }
+	    StringBuffer sb = new StringBuffer();
+	    if (node instanceof Element) {
+	        
+	        Element element = (Element) node;
+	        sb.append(element.getNodeName());
+	        NamedNodeMap nnm = element.getAttributes();
+	        boolean first = true;
+	        for (int i = 0; i < nnm.getLength(); i++) {
+	            Node attr = nnm.item(i);
+	            if (!first) {
+	                sb.append(", ");
+	            } else {
+	                sb.append(" ");
+	                first = false;
+	            }
+	            sb.append(attr.getNodeName() + "=\"" + attr.getNodeValue() + "\"");
+	        }
+	        return sb.toString();
+	    }
+	    if (node instanceof Text) {
+	        Text text = (Text) node;
+	        return '"' + text.getWholeText() + '"';
+	    }
+	    return node.toString();
 	}
 
 	/**
