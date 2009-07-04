@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -161,7 +162,7 @@ public class DocUtil {
 	public static String getAttribute (Element element, String name) {
 	    NamedNodeMap nnm = element.getAttributes();
 	    for (int i = 0; i < nnm.getLength(); i++) {
-	        if (name.equals(nnm.item(i).getNodeName())) {
+	        if (name.equalsIgnoreCase(nnm.item(i).getNodeName())) {
 	            return nnm.item(i).getNodeValue();
 	        }
 	    }
@@ -207,6 +208,8 @@ public class DocUtil {
 	    }
 	    StringBuffer sb = new StringBuffer();
 	    if (node instanceof Element) {
+	    	
+	    	
 	        
 	        Element element = (Element) node;
 	        sb.append(element.getNodeName());
@@ -222,7 +225,7 @@ public class DocUtil {
 	            }
 	            sb.append(attr.getNodeName() + "=\"" + attr.getNodeValue() + "\"");
 	        }
-	        return sb.toString();
+	        return "<" + sb.toString() + ">";
 	    }
 	    if (node instanceof Text) {
 	        Text text = (Text) node;
@@ -279,6 +282,21 @@ public class DocUtil {
 			throw new XMLException("readDocument failed", e);
 		}
 		return document;
+	}
+	
+	public static DOMNode toDOMNode (Document document) {
+		return new DOMNodeAdapter(document.getDocumentElement());
+	}
+	
+	public static DOMNode getDocumentFromURL (URL url, String encoding) {
+		try {
+			Document doc = readDocument(url.openStream(), "UTF-8");
+			return toDOMNode(doc);
+		} catch (RuntimeException re) {
+			throw re;
+		} catch (Throwable t) {
+			throw new IllegalArgumentException(t);
+		}
 	}
 	
 	

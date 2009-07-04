@@ -61,12 +61,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.WeakHashMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class Utilities {
 
-    private static HashMap<PrintWriter, StringWriter> writerMap = new HashMap<PrintWriter, StringWriter>();
+    private static WeakHashMap<PrintWriter, StringWriter> writerMap = new WeakHashMap<PrintWriter, StringWriter>();
 
     /*
      * Maps the Class representations of the primitive classes onto their
