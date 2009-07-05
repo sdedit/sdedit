@@ -815,6 +815,15 @@ public class Utilities {
         }
         return null;
     }
+    
+    public static Method findMethod (Class<?> clazz, String name, boolean declared) {
+    	for (Method method : declared ? clazz.getDeclaredMethods() : clazz.getMethods()) {
+    		if (method.getName().equals(name)) {
+    			return method;
+    		}
+    	}
+    	return null;
+    }
 
     public static class Record6<T1, T2, T3, T4, T5, T6> {
 
