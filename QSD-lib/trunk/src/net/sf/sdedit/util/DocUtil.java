@@ -174,17 +174,14 @@ public class DocUtil {
 	        
 	        private int i = 0;
 
-            @Override
             public boolean hasNext() {
                 return i < nodeList.getLength();
             }
 
-            @Override
             public Node next() {
                 return nodeList.item(i++);
             }
 
-            @Override
             public void remove() {
                                 
             }
@@ -194,7 +191,6 @@ public class DocUtil {
 	    
 	    return new Iterable<Node> () {
 
-            @Override
             public Iterator<Node> iterator() {
                 return iter;
             }

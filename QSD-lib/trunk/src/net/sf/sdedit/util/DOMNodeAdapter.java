@@ -33,7 +33,6 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
 		descendants = new LinkedList<Pair<Integer,Node>>();
 	}
 
-	@Override
 	public String getAttribute(String name) {
 		if (!(node instanceof Element)) {
 			return null;
@@ -123,7 +122,7 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
 		return Utilities.toString(pw);
 	}
 
-	@Override
+	
 	public List<DOMNode> getChildren() {
 		List<DOMNode> list = new LinkedList<DOMNode>();
 		for (Node n : DocUtil.iterate(node.getChildNodes())) {
@@ -143,7 +142,7 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
 		return list;
 	}
 
-	@Override
+	
 	public DOMNode getParent() {
 		return new DOMNodeAdapter(node.getParentNode());
 	}
@@ -152,7 +151,6 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
 		return node.getTextContent();
 	}
 
-	@Override
 	public DOMNode getChild(String name) {
 		List<DOMNode> children = getChildren(name);
 		if (children.size() == 0) {
@@ -161,32 +159,27 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
 		return children.get(0);
 	}
 
-	@Override
 	public String getName() {
 		return node.getNodeName();
 	}
 
-	@Override
 	public void beginTraversal(Node t, int level) {
 		descendants.add(new Pair<Integer,Node> (level, t));				
 	}
 
-	@Override
-	public boolean doTraverse(Node t, int level) {
+		public boolean doTraverse(Node t, int level) {
 		return true;
 	}
 
-	@Override
+	
 	public void endTraversal(Node t, boolean leaf) {
 				
 	}
 
-	@Override
 	public boolean isLeaf() {
 		return node.getChildNodes().getLength() == 0;
 	}
 
-	@Override
 	public Object getUserObject(String name) {
 		if (userObjects == null) {
 			return null;
@@ -194,7 +187,6 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
 		return userObjects.get(name);
 	}
 
-	@Override
 	public void setUserObject(String name, Object object) {
 		if (userObjects == null) {
 			userObjects = new HashMap<String,Object>();
@@ -203,7 +195,7 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
 		
 	}
 
-	@Override
+	
 	public <T extends Node> List<DOMNode> getChildren(Class<T> nodeClass) {
 		List<DOMNode> result = new LinkedList<DOMNode>();
 		for (DOMNodeAdapter child : Utilities.castIterable(getChildren(),DOMNodeAdapter.class)) {

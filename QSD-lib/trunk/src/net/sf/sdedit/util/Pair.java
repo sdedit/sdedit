@@ -127,7 +127,6 @@ public class Pair<F,S> implements Comparable<Pair<F,S>>
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public int compareTo(Pair<F, S> arg0) {
         F f = arg0.first;
         S s = arg0.second;
