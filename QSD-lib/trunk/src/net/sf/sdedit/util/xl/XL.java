@@ -1,90 +1,97 @@
 package net.sf.sdedit.util.xl;
 
-
-
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.sdedit.util.DOMNode;
+import net.sf.sdedit.util.Utilities;
 
 import org.w3c.dom.Element;
 
 public class XL {
-	
-	private String unitPackage;
-	
+
+	private String[] packageNames;
+
 	private DOMNode program;
-	
-	private Map<String,Object> globalObjects;
-	
+
+	private Map<String, Object> globalObjects;
+
+	private Map<String, XLType> typeMap;
+
 	private boolean exitOnException;
-	
-	public String getUnitPackage() {
-		return unitPackage;
+
+	public String[] getPackageNames() {
+		return packageNames;
 	}
 
-	public void setUnitPackage(String unitPackage) {
-		this.unitPackage = unitPackage;
-	}
-
-	public XL (DOMNode program) {
+	public XL(DOMNode program) {
 		this.program = program;
-		globalObjects = new HashMap<String,Object>();
+		packageNames = program.getAttribute("packages").split(";");
+		globalObjects = new HashMap<String, Object>();
+		typeMap = new HashMap<String, XLType>();
 		exitOnException = true;
+		readTypes(program);
 
 	}
-	
-	protected void setGlobalObject (String name, Object object) {
+
+	private void readTypes(DOMNode program) {
+		for (DOMNode typeNode : program.getChild("META").getChildren(Element.class)) {
+			XLType type = new XLType(typeNode, this);
+			if (typeMap.put(type.getName(), type) != null) {
+				throw new XLException("duplicate type: " + type.getName(), null);
+			}
+		}
+	}
+
+	public void setGlobalObject(String name, Object object) {
 		globalObjects.put(name, object);
 	}
-	
-	protected Object getGlobalObject (String name) {
+
+	public Object getGlobalObject(String name) {
 		return globalObjects.get(name);
 	}
-	
-	private XLUnit getUnit (DOMNode node) {
+
+	private XLUnit getUnit(DOMNode node) {
 		XLUnit unit = (XLUnit) node.getUserObject("XLUnit");
 		if (unit != null) {
 			return unit;
 		}
-		String qName = unitPackage + "." + node.getName();
-		try {
-			unit = XLUnit.class.cast(Class.forName(qName).newInstance());
-			unit.setNode(node);
-			unit.setXL(this);
-			for (String name : node.getAttributeNames()) {
-				unit.setAttribute(name, node.getAttribute(name));
-			}
-			node.setUserObject("XLUnit", unit);
-			unit.initialize();
-			return unit;
-
-			
-		} catch (RuntimeException re) {
-			throw re;
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw new IllegalArgumentException("cannot create unit " + node.getName());
+		XLType type = typeMap.get(node.getName());
+		if (type == null) {
+			throw new XLException(
+					"XLType " + node.getName() + " not declared.", null);
 		}
+		unit = type.newInstance();
+		unit.setNode(node);
+		unit.setXL(this);
+		for (String name : node.getAttributeNames()) {
+			unit.setAttribute(name, node.getAttribute(name));
+		}
+		node.setUserObject("XLUnit", unit);
+		unit.initialize();
+		return unit;
 	}
-	
-	public void execute (Object... arguments) throws Exception {
+
+	public void execute(Object... arguments) throws Exception {
 		executeChildren(null, arguments);
 	}
-	
-	protected void executeChildren (XLUnit unit, Object... arguments) throws Exception {
+
+	protected void executeChildren(XLUnit unit, Object... arguments)
+			throws Exception {
 		XLUnit pred = null;
-		DOMNode parent = unit == null ? program : unit.getNode();
+		DOMNode parent = unit == null ? program.getChild("SCRIPT") : unit.getNode();
 		for (DOMNode node : parent.getChildren(Element.class)) {
 			execute(node, pred, unit, arguments);
 			pred = (XLUnit) node.getUserObject("XLUnit");
 		}
 	}
-	
-	private void execute (DOMNode node, XLUnit predecessor, XLUnit parent, Object... arguments) 
-	throws Exception {
+
+	private void execute(DOMNode node, XLUnit predecessor, XLUnit parent,
+			Object... arguments) throws Exception {
 		XLUnit unit = getUnit(node);
-		System.out.println("executing " + unit.getClass().getSimpleName());
+		System.out.println(Utilities.toString(new Date(),"dd.MM.yyyy kk:mm:ss") + " executing " + unit.getClass().getSimpleName());
+		unit.getType().checkArguments(arguments);
 		Object result;
 		try {
 			result = unit.execute(predecessor, parent, arguments);
@@ -109,5 +116,5 @@ public class XL {
 	public boolean isExitOnException() {
 		return exitOnException;
 	}
-	
+
 }
