@@ -115,24 +115,20 @@ public class XL {
 		return exitOnException;
 	}
 
-    protected Object input(XLUnit unit, int index) {
+    protected <T> T input(XLUnit unit, Class<T> cls, int index) {
         if (unit.getPredecessor() != null) {
-            System.out.println(unit.getClass().getSimpleName() + " receives from predecessor " + unit.getPredecessor().getClass().getSimpleName());
-            return unit.getPredecessor().xlGetOutputArgument(index);
+            return unit.getPredecessor().xlGetOutputArgument(cls, index);
         }
         if (unit.getParent() != null) {
-            System.out.println(unit.getClass().getSimpleName() + " receives from parent " + unit.getParent().getClass().getSimpleName());
-            
-            return unit.getParent().xlGetPassedArgument(index);
+            return unit.getParent().xlGetPassedArgument(cls, index);
         }
-        System.out.println(unit.getClass().getSimpleName() + " receives program argument");
-        return arguments [index];
+        return cls.cast(arguments [index]);
         
         
     }
 
-    protected Object receive(XLUnit unit, int index) {
-        return unit.getLastChild().xlGetOutputArgument(index);        
+    protected <T> T receive(XLUnit unit, Class<T> cls, int index) {
+        return unit.getLastChild().xlGetOutputArgument(cls, index);        
     }
 
 }

@@ -28,34 +28,34 @@ public abstract class XLUnit {
         outputArguments = new LinkedList<Object>();
     }
 
-    protected void xlPass(int index, Object argument) {
+    protected <T> void xlPass(Class<T> cls, int index, T argument) {
         if (index > passedArguments.size() - 1) {
             passedArguments.add(null);
         }
         passedArguments.set(index, argument);
     }
 
-    protected void xlOutput(int index, Object argument) {
+    protected <T> void xlOutput(Class<T> cls, int index, T argument) {
         if (index > outputArguments.size() - 1) {
             outputArguments.add(null);
         }
         outputArguments.set(index, argument);
     }
     
-    protected Object xlReceive(int index) {
-        return xl.receive(this, index);
+    protected <T> T xlReceive(Class<T> cls, int index) {
+        return xl.receive(this, cls, index);
     }
     
-    protected Object xlInput(int index) {
-        return xl.input(this, index);
+    protected <T> T xlInput(Class<T> cls, int index) {
+        return xl.input(this, cls, index);
     }
     
-    protected Object xlGetOutputArgument(int index) {
-        return outputArguments.get(index);
+    protected <T> T xlGetOutputArgument(Class<T> cls, int index) {
+        return cls.cast(outputArguments.get(index));
     }
     
-    protected Object xlGetPassedArgument(int index) {
-        return passedArguments.get(index);
+    protected <T> T xlGetPassedArgument(Class<T> cls, int index) {
+        return cls.cast(passedArguments.get(index));
     }
     
     protected void setXL(XL xl) {
