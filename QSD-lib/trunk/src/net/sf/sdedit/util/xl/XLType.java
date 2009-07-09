@@ -1,11 +1,9 @@
 package net.sf.sdedit.util.xl;
 
-import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
 import net.sf.sdedit.util.DOMNode;
-import net.sf.sdedit.util.Utilities;
 
 public class XLType {
 
@@ -50,15 +48,17 @@ public class XLType {
 			}
 			if (typeNode.getAttribute("return") != null) {
 				returnType = Class.forName(typeNode.getAttribute("return").trim());
-				Method executeMethod = Utilities.findMethod(javaClass,
-						"execute", true);
-				if (executeMethod.getReturnType() != returnType) {
-					throw new XLException("return type "
-							+ executeMethod.getReturnType().getName() + " of "
-							+ className + " is not as declared: "
-							+ returnType.getName(), null);
-				}
 			}
+			// no type-checking now
+//				Method executeMethod = Utilities.findMethod(javaClass,
+//						"execute", true);
+//				if (executeMethod.getReturnType() != returnType) {
+//					throw new XLException("return type "
+//							+ executeMethod.getReturnType().getName() + " of "
+//							+ className + " is not as declared: "
+//							+ returnType.getName(), null);
+//				}
+//			}
 			if (!"ignore".equals(typeNode.getAttribute("args"))) {
 				if (typeNode.getAttribute("args") != null) {
 					argumentTypes = new LinkedList<Class<?>>();

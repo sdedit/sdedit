@@ -18,6 +18,8 @@ public class XL {
 	private Map<String, Object> globalObjects;
 
 	private Map<String, XLType> typeMap;
+	
+	private Object [] arguments;
 
 	private boolean exitOnException;
 
@@ -74,39 +76,35 @@ public class XL {
 	}
 
 	public void execute(Object... arguments) throws Exception {
-		executeChildren(null, arguments);
+	    this.arguments = arguments;
+		executeChildren(null);
 	}
-
-	protected void executeChildren(XLUnit unit, Object... arguments)
+	
+	protected void executeChildren(XLUnit unit)
 			throws Exception {
-		XLUnit pred = null;
 		DOMNode parent = unit == null ? program.getChild("SCRIPT") : unit.getNode();
 		for (DOMNode node : parent.getChildren(Element.class)) {
-			execute(node, pred, unit, arguments);
-			pred = (XLUnit) node.getUserObject("XLUnit");
+			execute(node);
 		}
 	}
 
-	private void execute(DOMNode node, XLUnit predecessor, XLUnit parent,
-			Object... arguments) throws Exception {
+	private void execute(DOMNode node) throws Exception {
 		XLUnit unit = getUnit(node);
 		System.out.println(Utilities.toString(new Date(),"dd.MM.yyyy kk:mm:ss") + " executing " + unit.getClass().getSimpleName());
-		unit.getType().checkArguments(arguments);
-		Object result;
+		//unit.getType().checkArguments(arguments);
 		try {
-			result = unit.execute(predecessor, parent, arguments);
+			unit.execute();
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception ex) {
 			if (exitOnException) {
 				throw ex;
 			}
-			result = ex;
 		}
-		unit.setResult(result);
-		if (parent != null) {
-			parent.processResultFromChild(unit, result);
-		}
+//		unit.setResult(result);
+//		if (parent != null) {
+//			parent.processResultFromChild(unit, result);
+//		}
 	}
 
 	public void setExitOnException(boolean exitOnException) {
@@ -116,5 +114,25 @@ public class XL {
 	public boolean isExitOnException() {
 		return exitOnException;
 	}
+
+    protected Object receive(XLUnit unit, int index) {
+        if (unit.getPredecessor() != null) {
+            System.out.println(unit.getClass().getSimpleName() + " receives from predecessor " + unit.getPredecessor().getClass().getSimpleName());
+            return unit.getPredecessor().xlGetReturnedArgument(index);
+        }
+        if (unit.getParent() != null) {
+            System.out.println(unit.getClass().getSimpleName() + " receives from parent " + unit.getParent().getClass().getSimpleName());
+            
+            return unit.getParent().xlGetPassedArgument(index);
+        }
+        System.out.println(unit.getClass().getSimpleName() + " receives program argument");
+        return arguments [index];
+        
+        
+    }
+
+    protected Object read(XLUnit unit, int index) {
+        return unit.getLastChild().xlGetReturnedArgument(index);        
+    }
 
 }

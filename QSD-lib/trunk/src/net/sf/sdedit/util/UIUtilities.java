@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
@@ -49,6 +50,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -59,7 +61,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import net.sf.sdedit.icons.Icons;
-import net.sf.sdedit.ui.components.JTreeSearcher;
 import net.sf.sdedit.ui.components.OptionDialog;
 
 public class UIUtilities {
@@ -333,4 +334,42 @@ public class UIUtilities {
         }
 
     }
+    
+    public static class Bordered extends JPanel  {
+        
+        private static final long serialVersionUID = -6567329111561123261L;
+
+        public Bordered (Component center, Component north, Component east, Component south, Component west) {
+            setLayout(new BorderLayout());
+            if (center != null) {
+                add(center, BorderLayout.CENTER);
+            }
+            if (north != null) {
+                add(north, BorderLayout.NORTH);
+            }
+            if (east != null) {
+                add(east, BorderLayout.EAST);
+            }
+            if (south != null) {
+                add(south, BorderLayout.SOUTH);
+            }
+            if (west != null) {
+                add(west, BorderLayout.WEST);
+            }
+        }
+    }
+    
+    public static class Grid extends JPanel {
+        
+        private static final long serialVersionUID = 1301195180733352164L;
+
+        public Grid (int rows, int columns, Component... components) {
+            setLayout(new GridLayout(rows, columns));
+            for (int i = 0; i < components.length; i++) {
+                add(components[i]);
+            }
+        }
+        
+    }
+    
 }

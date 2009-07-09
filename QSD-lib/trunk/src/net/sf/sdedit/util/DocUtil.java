@@ -78,7 +78,16 @@ public class DocUtil {
 		DocumentBuilderFactory factory = null;
 		try {
 			factory = DocumentBuilderFactory.newInstance();
+			System.out.println(factory.getClass().getName());
+			
+			factory.setValidating(false);
+			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+			
+			
 			documentBuilder = factory.newDocumentBuilder();
+			documentBuilder.setEntityResolver(null);
 			transformer = TransformerFactory.newInstance().newTransformer();
 			factory.setIgnoringElementContentWhitespace(true);
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -200,14 +209,12 @@ public class DocUtil {
 	
 	public static String toString (Node node) {
 	    if (node == null) {
-	        return "";
+	        return "NULL";
 	    }
 	    StringBuffer sb = new StringBuffer();
 	    if (node instanceof Element) {
 	    	
-	    	
-	        
-	        Element element = (Element) node;
+	    	Element element = (Element) node;
 	        sb.append(element.getNodeName());
 	        NamedNodeMap nnm = element.getAttributes();
 	        boolean first = true;
@@ -281,7 +288,8 @@ public class DocUtil {
 	}
 	
 	public static DOMNode toDOMNode (Document document) {
-		return new DOMNodeAdapter(document.getDocumentElement());
+	    Element elem = document.getDocumentElement();
+		return DOMNodeAdapter.makeNode(elem);
 	}
 	
 	public static DOMNode getDocumentFromURL (URL url, String encoding) {

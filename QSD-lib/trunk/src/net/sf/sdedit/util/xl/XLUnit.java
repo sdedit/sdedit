@@ -1,79 +1,126 @@
 package net.sf.sdedit.util.xl;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 
 import net.sf.sdedit.util.DOMNode;
 
+import org.w3c.dom.Element;
+
 public abstract class XLUnit {
 
-	private Properties attributes;
+    private Properties attributes;
 
-	private DOMNode node;
+    private DOMNode node;
 
-	private XL xl;
+    private XL xl;
 
-	private Object result;
+    private XLType type;
 
-	private XLType type;
+    private List<Object> passedArguments;
 
-	protected XLUnit() {
-		attributes = new Properties();
-	}
+    private List<Object> returnedArguments;
 
-	protected void setXL(XL xl) {
-		this.xl = xl;
-	}
+    protected XLUnit() {
+        attributes = new Properties();
+        passedArguments = new LinkedList<Object>();
+        returnedArguments = new LinkedList<Object>();
+    }
 
-	public XLType getType() {
-		return type;
-	}
+    protected void xlPass(int index, Object argument) {
+        if (index > passedArguments.size() - 1) {
+            passedArguments.add(null);
+        }
+        passedArguments.set(index, argument);
+    }
 
-	protected void setType(XLType type) {
-		this.type = type;
-	}
+    protected void xlReturn(int index, Object argument) {
+        if (index > returnedArguments.size() - 1) {
+            returnedArguments.add(null);
+        }
+        returnedArguments.set(index, argument);
+    }
+    
+    protected Object xlRead(int index) {
+        return xl.read(this, index);
+    }
+    
+    protected Object xlReceive(int index) {
+        return xl.receive(this, index);
+    }
+    
+    protected Object xlGetReturnedArgument(int index) {
+        return returnedArguments.get(index);
+    }
+    
+    protected Object xlGetPassedArgument(int index) {
+        return passedArguments.get(index);
+    }
+    
+    protected void setXL(XL xl) {
+        this.xl = xl;
+    }
 
-	protected void executeChildren(Object... arguments) throws Exception {
-		xl.executeChildren(this, arguments);
-	}
+    public XLType getType() {
+        return type;
+    }
 
-	protected void setGlobalObject(String name, Object object) {
-		xl.setGlobalObject(name, object);
-	}
+    protected void setType(XLType type) {
+        this.type = type;
+    }
 
-	protected Object getGlobalObject(String name) {
-		return xl.getGlobalObject(name);
-	}
+    protected void executeChildren() throws Exception {
+        xl.executeChildren(this);
+    }
 
-	public void setAttribute(String name, String value) {
-		attributes.setProperty(name, value);
-	}
+    protected void setGlobalObject(String name, Object object) {
+        xl.setGlobalObject(name, object);
+    }
 
-	public String getAttribute(String name) {
-		return attributes.getProperty(name);
-	}
+    protected Object getGlobalObject(String name) {
+        return xl.getGlobalObject(name);
+    }
 
-	protected void setResult(Object result) {
-		this.result = result;
-	}
+    public void setAttribute(String name, String value) {
+        attributes.setProperty(name, value);
+    }
 
-	protected abstract void initialize();
+    public String getAttribute(String name) {
+        return attributes.getProperty(name);
+    }
 
-	public Object getResult() {
-		return result;
-	}
+    public XLUnit getPredecessor () {
+        DOMNode pred = getNode().getPreviousSibling(Element.class);
+        if (pred == null) {
+            return null;
+        }
+        return (XLUnit) pred.getUserObject("XLUnit");
+    }
+    
+    public XLUnit getParent () {
+        return (XLUnit) getNode().getParent().getUserObject("XLUnit");
+    }
+    
+    public XLUnit getLastChild () {
+        List<DOMNode> nodes = getNode().getChildren(Element.class);
+        DOMNode last = nodes.get(nodes.size()-1);
+        return (XLUnit) last.getUserObject("XLUnit");
+    }
 
-	public abstract Object execute(XLUnit predecessor, XLUnit parent,
-			Object... arguments) throws Exception;
+    protected abstract void initialize();
 
-	public abstract void processResultFromChild(XLUnit child, Object result)
-			throws Exception;
+    public abstract void execute() throws Exception;
 
-	public void setNode(DOMNode node) {
-		this.node = node;
-	}
+    // public abstract void processResultFromChild(XLUnit child, Object result)
+    // throws Exception;
 
-	public DOMNode getNode() {
-		return node;
-	}
+    public void setNode(DOMNode node) {
+        this.node = node;
+    }
+
+    public DOMNode getNode() {
+        return node;
+    }
 
 }

@@ -40,4 +40,10 @@ public interface DOMNode {
     
     public <T extends Node> List<DOMNode> getChildren (Class<T> nodeClass);
     
+    public <T extends Node> DOMNode getPreviousSibling(Class<T> nodeClass);
+    
+
+    public <T extends Node> DOMNode getNextSibling(Class<T> nodeClass);
+    
+    
 }
