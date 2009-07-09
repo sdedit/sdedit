@@ -20,12 +20,12 @@ public abstract class XLUnit {
 
     private List<Object> passedArguments;
 
-    private List<Object> returnedArguments;
+    private List<Object> outputArguments;
 
     protected XLUnit() {
         attributes = new Properties();
         passedArguments = new LinkedList<Object>();
-        returnedArguments = new LinkedList<Object>();
+        outputArguments = new LinkedList<Object>();
     }
 
     protected void xlPass(int index, Object argument) {
@@ -35,23 +35,23 @@ public abstract class XLUnit {
         passedArguments.set(index, argument);
     }
 
-    protected void xlReturn(int index, Object argument) {
-        if (index > returnedArguments.size() - 1) {
-            returnedArguments.add(null);
+    protected void xlOutput(int index, Object argument) {
+        if (index > outputArguments.size() - 1) {
+            outputArguments.add(null);
         }
-        returnedArguments.set(index, argument);
-    }
-    
-    protected Object xlRead(int index) {
-        return xl.read(this, index);
+        outputArguments.set(index, argument);
     }
     
     protected Object xlReceive(int index) {
         return xl.receive(this, index);
     }
     
-    protected Object xlGetReturnedArgument(int index) {
-        return returnedArguments.get(index);
+    protected Object xlInput(int index) {
+        return xl.input(this, index);
+    }
+    
+    protected Object xlGetOutputArgument(int index) {
+        return outputArguments.get(index);
     }
     
     protected Object xlGetPassedArgument(int index) {

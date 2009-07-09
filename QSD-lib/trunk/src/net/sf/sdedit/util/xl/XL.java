@@ -115,10 +115,10 @@ public class XL {
 		return exitOnException;
 	}
 
-    protected Object receive(XLUnit unit, int index) {
+    protected Object input(XLUnit unit, int index) {
         if (unit.getPredecessor() != null) {
             System.out.println(unit.getClass().getSimpleName() + " receives from predecessor " + unit.getPredecessor().getClass().getSimpleName());
-            return unit.getPredecessor().xlGetReturnedArgument(index);
+            return unit.getPredecessor().xlGetOutputArgument(index);
         }
         if (unit.getParent() != null) {
             System.out.println(unit.getClass().getSimpleName() + " receives from parent " + unit.getParent().getClass().getSimpleName());
@@ -131,8 +131,8 @@ public class XL {
         
     }
 
-    protected Object read(XLUnit unit, int index) {
-        return unit.getLastChild().xlGetReturnedArgument(index);        
+    protected Object receive(XLUnit unit, int index) {
+        return unit.getLastChild().xlGetOutputArgument(index);        
     }
 
 }
