@@ -9,20 +9,39 @@ public class XLType {
 
 	private Class<?> javaClass;
 
-	private Class<?> returnType;
+	private List<Class<?>> outputTypes;
+	
+	private List<Class<?>> inputTypes;
+	
+	private List<Class<?>> passedTypes;
+	
+	private List<Class<?>> receivedTypes;
 
-	private List<Class<?>> argumentTypes;
 
 	private DOMNode typeNode;
 
 	public XLType(DOMNode typeNode, XL xl) {
 		this.typeNode = typeNode;
+		outputTypes = new LinkedList<Class<?>>();
+		inputTypes = new LinkedList<Class<?>>();
+		passedTypes = new LinkedList<Class<?>>();
+		receivedTypes = new LinkedList<Class<?>>();
 
 		initialize(xl);
 	}
 
 	public String getName() {
 		return typeNode.getAttribute("name");
+	}
+	
+	private void fillTypeList(List<Class<?>> typeList, String typeString) {
+		for (String type : typeString.split(";")) {
+			try {
+				typeList.add(Class.forName(type));
+			} catch (ClassNotFoundException e) {
+				throw new XLException("XLType " + type + " not found.", e);
+			}
+		}
 	}
 
 	private void initialize(XL xl) {
@@ -32,9 +51,24 @@ public class XLType {
 					"a type node has been defined without a name", null);
 		}
 		try {
+
+
+			if (typeNode.getAttribute("input") != null) {
+				fillTypeList(inputTypes, typeNode.getAttribute("input"));
+			}
+			if (typeNode.getAttribute("output") != null) {
+				fillTypeList(outputTypes, typeNode.getAttribute("output"));
+			}
+			if (typeNode.getAttribute("pass") != null) {
+				fillTypeList(passedTypes, typeNode.getAttribute("pass"));
+			}
+			if (typeNode.getAttribute("receive") != null) {
+				fillTypeList(receivedTypes, typeNode.getAttribute("receive"));
+			}
 			for (String pkg : xl.getPackageNames()) {
 				try {
 					javaClass = Class.forName(pkg + "." + className);
+					xl.check(javaClass, this);
 					break;
 				} catch (RuntimeException re) {
 					throw re;
@@ -46,29 +80,7 @@ public class XLType {
 				throw new XLException("no java class found for type "
 						+ className, null);
 			}
-			if (typeNode.getAttribute("return") != null) {
-				returnType = Class.forName(typeNode.getAttribute("return").trim());
-			}
-			// no type-checking now
-//				Method executeMethod = Utilities.findMethod(javaClass,
-//						"execute", true);
-//				if (executeMethod.getReturnType() != returnType) {
-//					throw new XLException("return type "
-//							+ executeMethod.getReturnType().getName() + " of "
-//							+ className + " is not as declared: "
-//							+ returnType.getName(), null);
-//				}
-//			}
-			if (!"ignore".equals(typeNode.getAttribute("args"))) {
-				if (typeNode.getAttribute("args") != null) {
-					argumentTypes = new LinkedList<Class<?>>();
-					for (String argType : typeNode.getAttribute("args").split(
-							";")) {
-						argumentTypes.add(Class.forName(argType.trim()));
-					}
-				}
-
-			}
+			
 
 		} catch (RuntimeException re) {
 			throw re;
@@ -78,23 +90,25 @@ public class XLType {
 		}
 	}
 
-	public void checkArguments(Object[] arguments) {
-		if (argumentTypes != null) {
-			if (arguments.length != argumentTypes.size()) {
-				throw new XLException("incorrect number of arguments for type "
-						+ getName(), null);
-			}
-			int i = 0;
-			for (Class<?> clazz : argumentTypes) {
-				if (!clazz.isInstance(arguments[i])) {
-					throw new XLException("Incorrect argument type at index "
-							+ i + " for type " + getName() + ". Expected: "
-							+ clazz.getName() + ", got: "
-							+ arguments[i].getClass().getName(), null);
-				}
-				i++;
-			}
-		}
+
+	public List<Class<?>> getInputTypes() {
+		return inputTypes;
+	}
+
+	public List<Class<?>> getOutputTypes() {
+		return outputTypes;
+	}
+
+	public List<Class<?>> getPassedTypes() {
+		return passedTypes;
+	}
+
+	public List<Class<?>> getReceivedTypes() {
+		return receivedTypes;
+	}
+
+	public DOMNode getTypeNode() {
+		return typeNode;
 	}
 
 	public XLUnit newInstance() {

@@ -816,6 +816,15 @@ public class Utilities {
         return null;
     }
     
+    public static <T> boolean in (T element, T... set) {
+    	for (T s : set) {
+    		if (element.equals(s)) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
     public static Method findMethod (Class<?> clazz, String name, boolean declared) {
     	for (Method method : declared ? clazz.getDeclaredMethods() : clazz.getMethods()) {
     		if (method.getName().equals(name)) {

@@ -28,14 +28,14 @@ public abstract class XLUnit {
         outputArguments = new LinkedList<Object>();
     }
 
-    protected <T> void xlPass(Class<T> cls, int index, T argument) {
+    protected <T> void xlPass(T argument, Class<T> cls, int index) {
         if (index > passedArguments.size() - 1) {
             passedArguments.add(null);
         }
         passedArguments.set(index, argument);
     }
 
-    protected <T> void xlOutput(Class<T> cls, int index, T argument) {
+    protected <T> void xlOutput(T argument, Class<T> cls, int index) {
         if (index > outputArguments.size() - 1) {
             outputArguments.add(null);
         }

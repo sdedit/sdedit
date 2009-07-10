@@ -17,7 +17,6 @@ public class DOMNodeTree implements Tree<DOMNode> {
         this.nodeClass = nodeClass;
     }
 
-    @Override
     public DOMNode[] getChildren(DOMNode node) {
         if (node == null) {
             return new DOMNode [] {root};
@@ -25,7 +24,6 @@ public class DOMNodeTree implements Tree<DOMNode> {
         return node.getChildren(nodeClass).toArray(new DOMNode[0]);
     }
 
-    @Override
     public DOMNode getParent(DOMNode node) {
         return node.getParent();
     }

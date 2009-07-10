@@ -22,19 +22,29 @@ public class XL {
 	private Object [] arguments;
 
 	private boolean exitOnException;
+	
+	private XLTypeChecker typeChecker;
 
 	public String[] getPackageNames() {
 		return packageNames;
 	}
 
-	public XL(DOMNode program) {
+	public XL(DOMNode program, XLTypeChecker typeChecker) {
 		this.program = program;
 		packageNames = program.getAttribute("packages").split(";");
 		globalObjects = new HashMap<String, Object>();
 		typeMap = new HashMap<String, XLType>();
 		exitOnException = true;
+		this.typeChecker = typeChecker;
 		readTypes(program);
-
+	}
+	
+	public XL(DOMNode program) {
+		this(program, null);
+	}
+	
+	public void setTypeChecker (XLTypeChecker typeChecker) {
+		this.typeChecker = typeChecker;
 	}
 
 	private void readTypes(DOMNode program) {
@@ -130,5 +140,12 @@ public class XL {
     protected <T> T receive(XLUnit unit, Class<T> cls, int index) {
         return unit.getLastChild().xlGetOutputArgument(cls, index);        
     }
+
+	public void check(Class<?> unitClass,XLType type) {
+		if (typeChecker != null) {
+			typeChecker.check(unitClass, type);
+		}
+		
+	}
 
 }
