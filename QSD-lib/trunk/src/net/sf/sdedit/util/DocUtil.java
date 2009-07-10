@@ -78,14 +78,11 @@ public class DocUtil {
 		DocumentBuilderFactory factory = null;
 		try {
 			factory = DocumentBuilderFactory.newInstance();
-			System.out.println(factory.getClass().getName());
 			
 			factory.setValidating(false);
 			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
 			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
-			
-			
 			documentBuilder = factory.newDocumentBuilder();
 			documentBuilder.setEntityResolver(null);
 			transformer = TransformerFactory.newInstance().newTransformer();
