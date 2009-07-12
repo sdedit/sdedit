@@ -25,11 +25,13 @@
 package net.sf.sdedit.util;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -58,7 +60,7 @@ public class JTreeFacade implements PopupActions.Provider,
 		public TreePath getPath(String ident);
 
 	}
-
+	
 	@SuppressWarnings("serial")
 	public static abstract class JTreeAction extends AbstractAction {
 
@@ -75,9 +77,10 @@ public class JTreeFacade implements PopupActions.Provider,
 	private Icon nodeIcon;
 
 	private Icon leafIcon;
-
+	
 	public JTreeFacade(JTree tree) {
 		this.tree = tree;
+		
 	}
 
 	public PopupActions getPopupActions(ContextHandler ch) {
@@ -95,7 +98,7 @@ public class JTreeFacade implements PopupActions.Provider,
 	public PopupActions getPopupActions() {
 		return getPopupActions(this);
 	}
-
+	
 	public void deselectAll() {
 		if (tree.getSelectionPaths() != null) {
 			for (TreePath path : tree.getSelectionPaths()) {
@@ -121,7 +124,17 @@ public class JTreeFacade implements PopupActions.Provider,
 			}
 		}
 	}
-
+	
+	public void expandAll (TreePath path) {
+		BreadthFirstSearch bfs = new BreadthFirstSearch(tree.getModel(),
+				path.getLastPathComponent());
+		
+		while ((path = bfs.next()) != null
+				 ) {
+			tree.expandPath(path);			
+		}
+	}
+	
 	public void restoreSelections(PathIdenter identer, List<String> selections) {
 		tree.removeSelectionPaths(tree.getSelectionPaths());
 		for (String selection : selections) {
@@ -265,4 +278,29 @@ public class JTreeFacade implements PopupActions.Provider,
 		}
 		return label;
 	}
+	
+	@SuppressWarnings("serial")
+	public PopupActions.Action getExpandAllAction () {
+		return new PopupActions.Action() {
+	
+
+		{
+			putValue(Action.NAME, "Expand all");
+		}
+
+		private TreePath treePath;
+
+		@Override
+		protected boolean beforePopup(Object context) {
+			treePath = (TreePath) context;
+
+			return true;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			expandAll(treePath);
+		}
+
+	};}
 }
