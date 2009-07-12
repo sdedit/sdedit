@@ -833,6 +833,45 @@ public class Utilities {
     	}
     	return null;
     }
+    
+    /**
+     * 
+     * @param <T>
+     * @param set0
+     * @param set1
+     * @param set0Only
+     * @param set1Only
+     * @return true iff both sets are equal
+     */
+    @SuppressWarnings("unchecked")
+	public static <T> boolean computeDifference (Set<T> set0, Set<T> set1, Ref<Set<T>> set0Only, Ref<Set<T>> set1Only) {
+    	try {
+			set0Only.t = (Set<T>) set0.getClass().newInstance();
+		} catch (RuntimeException re) {
+			throw re;
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Cannot instantiate another " + set0.getClass().getName(), e);
+		
+		}
+    	try {
+			set1Only.t = (Set<T>) set1.getClass().newInstance();
+		} catch (RuntimeException re) {
+			throw re;
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Cannot instantiate another " + set1.getClass().getName(), e);
+		
+		}
+		
+		set0Only.t.addAll(set0);
+		set1Only.t.addAll(set1);
+		
+		set0Only.t.removeAll(set1);
+		set1Only.t.removeAll(set0);
+		
+		return set0Only.t.isEmpty() && set1Only.t.isEmpty();
+		
+		
+    }
 
     public static class Record6<T1, T2, T3, T4, T5, T6> {
 
