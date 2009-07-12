@@ -53,6 +53,10 @@ public class TableModelAdapter implements TableModel,
 		
 	}
 	
+	public TableModelAdapter(String [] columns, Class<?>[] classes) {
+		this(columns, classes, null, null);
+	}
+	
 	public void setMaster (Object master) {
 		this.master = master;
 	}
@@ -63,6 +67,14 @@ public class TableModelAdapter implements TableModel,
 	
 	public Object getRawDataAt (int i) {
 		return rawData [i];
+	}
+	
+	public void setRowExpansion (RowExpansion rowExpansion) {
+		this.rowExpansion = rowExpansion;
+	}
+	
+	public void setRowEditor(RowEditor rowEditor) {
+		this.rowEditor = rowEditor;
 	}
 	
 	public void setData(Collection<?> data) {
