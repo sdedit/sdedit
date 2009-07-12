@@ -36,6 +36,7 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -124,6 +125,21 @@ public class UIUtilities {
             }
         }
 
+    }
+    
+    public static JFrame createExitingJFrame () {
+    	WindowListener wl = new WindowAdapter () {
+
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				System.exit(0);
+			}
+    		
+    	};
+    	JFrame frame = new JFrame ();
+    	frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    	frame.addWindowListener(wl);
+    	return frame;
     }
 
     public static void centerWindow(Window window) {
