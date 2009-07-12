@@ -25,6 +25,9 @@ public class DOMNodeTree implements Tree<DOMNode> {
     }
 
     public DOMNode getParent(DOMNode node) {
+    	if (node == root) {
+    		return null;
+    	}
         return node.getParent();
     }
 
