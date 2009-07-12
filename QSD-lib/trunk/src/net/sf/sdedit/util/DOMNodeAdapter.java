@@ -47,7 +47,7 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
             throw new NullPointerException();
         }
         this.node = node;
-        descendants = new LinkedList<Pair<Integer, Node>>();
+        
     }
 
     public String getAttribute(String name) {
@@ -117,7 +117,7 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
     private void computeDescendants() {
         DocumentTree<Node> tree = new DocumentTree<Node>(node, Node.class);
         Traversal<Node> traversal = new Traversal<Node>(this);
-        descendants.clear();
+        descendants = new LinkedList<Pair<Integer, Node>>();
         traversal.traverse(tree);
     }
 
