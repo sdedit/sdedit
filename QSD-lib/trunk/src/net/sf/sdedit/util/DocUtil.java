@@ -64,6 +64,7 @@ import org.xml.sax.SAXException;
  */
 
 public class DocUtil {
+	
 	private static DocumentBuilder documentBuilder;
 
 	private static Transformer transformer;
@@ -229,7 +230,7 @@ public class DocUtil {
 	    }
 	    if (node instanceof Text) {
 	        Text text = (Text) node;
-	        return '"' + text.getWholeText() + '"';
+	        return text.getWholeText();
 	    }
 	    return node.toString();
 	}
@@ -309,6 +310,8 @@ public class DocUtil {
 	 * well-formed or not valid.
 	 */
 	public static class XMLException extends Exception {
+
+		private static final long serialVersionUID = -6835267522941428813L;
 
 		/**
 		 * Constructor.
