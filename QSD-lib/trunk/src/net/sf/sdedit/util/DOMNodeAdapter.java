@@ -56,6 +56,17 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
         }
         return DocUtil.getAttribute((Element) node, name);
     }
+    
+    public void setAttribute(String name, String value) {
+    	NamedNodeMap nnm = node.getAttributes();
+    	for (int i = 0; i < nnm.getLength(); i++) {
+    		if (nnm.item(i).getNodeName().equalsIgnoreCase(name)) {
+    			nnm.item(i).setNodeValue(value);
+    			return;
+    		}
+    	}
+    	throw new IllegalArgumentException ("attribute does not exist: " + name);
+    }
 
     public List<String> getAttributeNames() {
         List<String> result = new LinkedList<String>();

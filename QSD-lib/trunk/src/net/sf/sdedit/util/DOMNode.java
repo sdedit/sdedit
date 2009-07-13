@@ -12,6 +12,8 @@ public interface DOMNode {
     
     public DOMNode getParent ();
     
+    public void setAttribute(String name, String value);
+    
     public String getAttribute (String name);
     
     public List<DOMNode> getChildren (String name);

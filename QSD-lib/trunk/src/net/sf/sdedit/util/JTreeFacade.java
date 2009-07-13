@@ -290,14 +290,14 @@ public class JTreeFacade implements PopupActions.Provider,
 
 		private TreePath treePath;
 
-		@Override
+		
 		protected boolean beforePopup(Object context) {
 			treePath = (TreePath) context;
 
 			return true;
 		}
 
-		@Override
+		
 		public void actionPerformed(ActionEvent e) {
 			expandAll(treePath);
 		}
