@@ -65,7 +65,11 @@ class DOMNodeAdapter implements DOMNode, TraversalControl<Node> {
     			return;
     		}
     	}
-    	throw new IllegalArgumentException ("attribute does not exist: " + name);
+    	addAttribute(name, value);
+    }
+    
+    private void addAttribute (String name, String value) {
+        ((Element) node).setAttribute(name, value);
     }
 
     public List<String> getAttributeNames() {

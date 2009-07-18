@@ -122,5 +122,9 @@ public abstract class XLUnit {
     public DOMNode getNode() {
         return node;
     }
+    
+    public void stop () {
+        /* empty, may be overwritten by subclasses */
+    }
 
 }
