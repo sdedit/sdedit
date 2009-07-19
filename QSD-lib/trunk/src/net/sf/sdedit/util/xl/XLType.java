@@ -10,13 +10,12 @@ public class XLType {
 	private Class<?> javaClass;
 
 	private List<Class<?>> outputTypes;
-	
-	private List<Class<?>> inputTypes;
-	
-	private List<Class<?>> passedTypes;
-	
-	private List<Class<?>> receivedTypes;
 
+	private List<Class<?>> inputTypes;
+
+	private List<Class<?>> passedTypes;
+
+	private List<Class<?>> receivedTypes;
 
 	private DOMNode typeNode;
 
@@ -33,7 +32,7 @@ public class XLType {
 	public String getName() {
 		return typeNode.getAttribute("name");
 	}
-	
+
 	private void fillTypeList(List<Class<?>> typeList, String typeString) {
 		for (String type : typeString.split(";")) {
 			try {
@@ -43,6 +42,20 @@ public class XLType {
 			}
 		}
 	}
+	
+	private Class<?> getJavaClass (XL xl, String name) {
+		try {
+			javaClass = Class.forName(name);
+			xl.check(javaClass, this);
+			return javaClass;
+	
+		} catch (RuntimeException re) {
+			throw re;
+		} catch (Exception ignored) {
+			/* empty */
+		}
+		return null;
+	}
 
 	private void initialize(XL xl) {
 		String className = typeNode.getAttribute("name");
@@ -51,7 +64,6 @@ public class XLType {
 					"a type node has been defined without a name", null);
 		}
 		try {
-
 
 			if (typeNode.getAttribute("input") != null) {
 				fillTypeList(inputTypes, typeNode.getAttribute("input"));
@@ -65,22 +77,20 @@ public class XLType {
 			if (typeNode.getAttribute("receive") != null) {
 				fillTypeList(receivedTypes, typeNode.getAttribute("receive"));
 			}
-			for (String pkg : xl.getPackageNames()) {
-				try {
-					javaClass = Class.forName(pkg + "." + className);
-					xl.check(javaClass, this);
-					break;
-				} catch (RuntimeException re) {
-					throw re;
-				} catch (Exception ignored) {
-					/* empty */
+			if (typeNode.getAttribute("class") != null) {
+				javaClass = getJavaClass(xl, typeNode.getAttribute("class"));				
+			} else {
+				for (String pkg : xl.getPackageNames()) {
+					javaClass = getJavaClass(xl, pkg + "." + className);
+					if (javaClass != null) {
+						break;
+					}
 				}
 			}
 			if (javaClass == null) {
 				throw new XLException("no java class found for type "
 						+ className, null);
 			}
-			
 
 		} catch (RuntimeException re) {
 			throw re;
@@ -89,7 +99,6 @@ public class XLType {
 					+ className, t);
 		}
 	}
-
 
 	public List<Class<?>> getInputTypes() {
 		return inputTypes;
