@@ -150,10 +150,10 @@ public class XL {
                     synchronized (exited) {
                         exited.t = true;
                     }
+                } catch (Exception d) {
+                    exception.t = d;
                 } catch (ThreadDeath td) {
-                    unit.stop();
-                } catch (Exception e) {
-                    exception.t = e;
+                    
                 }
 
             }
@@ -181,6 +181,7 @@ public class XL {
         if (stop) {
             System.out.println("Timeout for " + unit.getType().getName());
             thread.stop();
+            unit.stop();
         }
 
         if (exception.t != null) {
