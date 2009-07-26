@@ -872,6 +872,10 @@ public class Utilities {
 		
 		
     }
+    
+    public static int iIn (Object object, Object... objects) {
+        return indexOf(objects, object);
+    }
 
     public static class Record6<T1, T2, T3, T4, T5, T6> {
 

@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 
 import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.util.Bijection;
+import net.sf.sdedit.util.Utilities;
 
 @SuppressWarnings("serial")
 public class DateSwitcher extends JPanel implements ActionListener {
@@ -48,6 +49,8 @@ public class DateSwitcher extends JPanel implements ActionListener {
     private JButton previousButton;
 
     private JButton nextButton;
+    
+    private JButton reloadButton;
 
     private List<DateSwitcherListener> listeners;
 
@@ -63,18 +66,26 @@ public class DateSwitcher extends JPanel implements ActionListener {
 
     private void init() {
         setLayout(new BorderLayout());
+        JPanel datePanel = new JPanel();
+        datePanel.setLayout(new BorderLayout());
         dateLabel = new JLabel();
         dateLabel.setHorizontalAlignment(JLabel.CENTER);
+        datePanel.add(dateLabel, BorderLayout.CENTER);
+        reloadButton = new JButton(Icons.getIcon("reload"));
+        reloadButton.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+        datePanel.add(reloadButton, BorderLayout.EAST);
+        
         previousButton = new JButton(Icons.getIcon("previous"));
         previousButton.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 5));
         nextButton = new JButton(Icons.getIcon("next"));
         nextButton.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 2));
         add(previousButton, BorderLayout.WEST);
-        add(dateLabel, BorderLayout.CENTER);
+        add(datePanel, BorderLayout.CENTER);
         add(nextButton, BorderLayout.EAST);
         listeners = new LinkedList<DateSwitcherListener>();
         previousButton.addActionListener(this);
         nextButton.addActionListener(this);
+        reloadButton.addActionListener(this);
         calendar = new GregorianCalendar(TimeZone.getDefault());
 
     }
@@ -115,6 +126,7 @@ public class DateSwitcher extends JPanel implements ActionListener {
                 listeners, DateSwitcherListener.class)) {
             listener.dateSwitched(this, calendar.getTime());
         }
+        dateLabel.requestFocusInWindow();
     }
     
     public String formatDate () {
@@ -136,10 +148,15 @@ public class DateSwitcher extends JPanel implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == previousButton) {
+        switch (Utilities.iIn(e.getSource(), previousButton, nextButton, reloadButton)) {
+        case 0:
             previousDate();
-        } else {
+            break;
+        case 1: 
             nextDate();
+            break;
+        case 2:
+            update();
         }
 
     }
