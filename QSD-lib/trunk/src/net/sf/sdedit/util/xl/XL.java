@@ -25,6 +25,8 @@ public class XL {
     private boolean exitOnException;
 
     private XLTypeChecker typeChecker;
+    
+    private boolean verbose;
 
     public String[] getPackageNames() {
         return packageNames;
@@ -38,6 +40,14 @@ public class XL {
         exitOnException = true;
         this.typeChecker = typeChecker;
         readTypes(program);
+    }
+    
+    public void setVerbose (boolean verbose) {
+    	this.verbose = verbose;
+    }
+    
+    public boolean isVerbose () {
+    	return verbose;
     }
 
     public XL(DOMNode program) {
@@ -200,16 +210,28 @@ public class XL {
 
     protected <T> T input(XLUnit unit, Class<T> cls, int index) {
         if (unit.getPredecessor() != null) {
+        	if (verbose) {
+        		System.out.println("input: " + unit.getPredecessor().xlGetOutputArgument(cls, index));
+        	}
             return unit.getPredecessor().xlGetOutputArgument(cls, index);
         }
         if (unit.getParent() != null) {
+        	if (verbose) {
+        		System.out.println("input: " + unit.getParent().xlGetPassedArgument(cls, index));
+        	}
             return unit.getParent().xlGetPassedArgument(cls, index);
+        }
+        if (verbose) {
+        	System.out.println(cls.cast(arguments[index]));
         }
         return cls.cast(arguments[index]);
 
     }
 
     protected <T> T receive(XLUnit unit, Class<T> cls, int index) {
+    	if (verbose) {
+    		System.out.println(unit.getLastChild().xlGetOutputArgument(cls, index));
+    	}
         return unit.getLastChild().xlGetOutputArgument(cls, index);
     }
 
