@@ -79,6 +79,10 @@ public class Bijection<P,I> {
 		return map.get(preImage);
 	}
 	
+	public int size () {
+	    return map.size();
+	}
+	
 	/**
 	 * Returns the pre-image of the given image
 	 * 

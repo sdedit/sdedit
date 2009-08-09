@@ -31,11 +31,12 @@ public class DateSwitcher extends JPanel implements ActionListener {
         dateComponents = new Bijection<Integer,Integer>();
         dateComponents.add(0, Calendar.YEAR);
         dateComponents.add(1, Calendar.MONTH);
-        dateComponents.add(2, Calendar.DAY_OF_MONTH);
-        dateComponents.add(3, Calendar.HOUR_OF_DAY);
-        dateComponents.add(4, Calendar.MINUTE);
-        dateComponents.add(5, Calendar.SECOND);
-        dateComponents.add(6, Calendar.MILLISECOND);
+        dateComponents.add(2, Calendar.WEEK_OF_YEAR);
+        dateComponents.add(3, Calendar.DAY_OF_MONTH);
+        dateComponents.add(4, Calendar.HOUR_OF_DAY);
+        dateComponents.add(5, Calendar.MINUTE);
+        dateComponents.add(6, Calendar.SECOND);
+        dateComponents.add(7, Calendar.MILLISECOND);
     }
 
     public static interface DateSwitcherListener {
@@ -110,17 +111,22 @@ public class DateSwitcher extends JPanel implements ActionListener {
 
     public void setDate(Date date) {
         calendar.setTime(date);
-        for (int i = granularity+1; i <= 6; i++) {
+        if (granularity == 2) {
+            return;
+        }
+        for (int i = granularity+1; i < dateComponents.size(); i++) {
             int r = 0;
-            if (i == 1 || i == 2) {
+            if (i == 1 || i == 0) {
                 r = 1;
             }
-            calendar.set(dateComponents.getImage(i), r);
+            if (i != 2) {
+                calendar.set(dateComponents.getImage(i), r);
+            }
         }
         update();
     }
 
-    private void update() {
+    public void update() {
         dateLabel.setText(formatDate());
         for (DateSwitcherListener listener : Collections.checkedCollection(
                 listeners, DateSwitcherListener.class)) {
@@ -158,7 +164,5 @@ public class DateSwitcher extends JPanel implements ActionListener {
         case 2:
             update();
         }
-
     }
-
 }

@@ -815,25 +815,27 @@ public class Utilities {
         }
         return null;
     }
-    
-    public static <T> boolean in (T element, T... set) {
-    	for (T s : set) {
-    		if (element.equals(s)) {
-    			return true;
-    		}
-    	}
-    	return false;
+
+    public static <T> boolean in(T element, T... set) {
+        for (T s : set) {
+            if (element.equals(s)) {
+                return true;
+            }
+        }
+        return false;
     }
-    
-    public static Method findMethod (Class<?> clazz, String name, boolean declared) {
-    	for (Method method : declared ? clazz.getDeclaredMethods() : clazz.getMethods()) {
-    		if (method.getName().equals(name)) {
-    			return method;
-    		}
-    	}
-    	return null;
+
+    public static Method findMethod(Class<?> clazz, String name,
+            boolean declared) {
+        for (Method method : declared ? clazz.getDeclaredMethods() : clazz
+                .getMethods()) {
+            if (method.getName().equals(name)) {
+                return method;
+            }
+        }
+        return null;
     }
-    
+
     /**
      * 
      * @param <T>
@@ -844,36 +846,54 @@ public class Utilities {
      * @return true iff both sets are equal
      */
     @SuppressWarnings("unchecked")
-	public static <T> boolean computeDifference (Set<T> set0, Set<T> set1, Ref<Set<T>> set0Only, Ref<Set<T>> set1Only) {
-    	try {
-			set0Only.t = (Set<T>) set0.getClass().newInstance();
-		} catch (RuntimeException re) {
-			throw re;
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Cannot instantiate another " + set0.getClass().getName(), e);
-		
-		}
-    	try {
-			set1Only.t = (Set<T>) set1.getClass().newInstance();
-		} catch (RuntimeException re) {
-			throw re;
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Cannot instantiate another " + set1.getClass().getName(), e);
-		
-		}
-		
-		set0Only.t.addAll(set0);
-		set1Only.t.addAll(set1);
-		
-		set0Only.t.removeAll(set1);
-		set1Only.t.removeAll(set0);
-		
-		return set0Only.t.isEmpty() && set1Only.t.isEmpty();
-		
-		
+    public static <T> boolean computeDifference(Set<T> set0, Set<T> set1,
+            Ref<Set<T>> set0Only, Ref<Set<T>> set1Only) {
+        try {
+            set0Only.t = (Set<T>) set0.getClass().newInstance();
+        } catch (RuntimeException re) {
+            throw re;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cannot instantiate another "
+                    + set0.getClass().getName(), e);
+
+        }
+        try {
+            set1Only.t = (Set<T>) set1.getClass().newInstance();
+        } catch (RuntimeException re) {
+            throw re;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Cannot instantiate another "
+                    + set1.getClass().getName(), e);
+
+        }
+
+        set0Only.t.addAll(set0);
+        set1Only.t.addAll(set1);
+
+        set0Only.t.removeAll(set1);
+        set1Only.t.removeAll(set0);
+
+        return set0Only.t.isEmpty() && set1Only.t.isEmpty();
+
     }
-    
-    public static int iIn (Object object, Object... objects) {
+
+    public static Number round(Number number, Number unit) {
+        double n = number.doubleValue();
+        double u = unit.doubleValue();
+        
+        double r = Math.IEEEremainder(n, u);
+        
+        if (r < n/2) {
+            n -= r;
+        } else {
+            n = n + u - r;
+        }
+        
+        return new Double(n);
+
+    }
+
+    public static int iIn(Object object, Object... objects) {
         return indexOf(objects, object);
     }
 
