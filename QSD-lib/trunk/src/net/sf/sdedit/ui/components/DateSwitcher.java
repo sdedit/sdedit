@@ -116,7 +116,7 @@ public class DateSwitcher extends JPanel implements ActionListener {
         }
         for (int i = granularity+1; i < dateComponents.size(); i++) {
             int r = 0;
-            if (i == 1 || i == 0) {
+            if (granularity == 1 || granularity == 0) {
                 r = 1;
             }
             if (i != 2) {
