@@ -82,4 +82,8 @@ public class StackImpl<T> implements IStack<T>, Serializable {
 	public int size() {
 		return list.size();
 	}
+	
+	public String toString () {
+		return list.toString();
+	}
 }
