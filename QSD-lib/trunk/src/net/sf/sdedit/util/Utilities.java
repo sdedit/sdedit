@@ -157,15 +157,28 @@ public class Utilities {
         return dateFormat.format(date);
     }
 
-    public static <T> T pollFirst(Collection<T> set) {
+    private static <T> T getFirst(Collection<T> set, boolean remove) {
         Iterator<T> iterator = set.iterator();
         if (!iterator.hasNext()) {
             throw new IllegalStateException("The set is empty");
         }
         T first = iterator.next();
-        iterator.remove();
+        if (remove) {
+        	iterator.remove();
+        }
         return first;
     }
+    
+    public static <T> T pollFirst(Collection<T> set) {
+    	return getFirst(set, true);
+    }
+    
+    public static <T> T peekFirst(Collection<T> set) {
+    	return getFirst(set, false);
+    }
+    
+    
+    
 
     public static <T, S extends T, U extends T> T nvl(S obj, U nullObject) {
         if (obj != null) {

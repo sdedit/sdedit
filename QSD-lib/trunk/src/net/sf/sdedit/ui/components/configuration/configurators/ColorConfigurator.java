@@ -90,11 +90,6 @@ public class ColorConfigurator<C extends DataObject> extends
 	}
 
 	@Override
-	protected Color getNullValue() {
-		return Color.WHITE;
-	}
-
-	@Override
 	protected void refresh(Color value) {
 		label.setBackground(value);
 	}

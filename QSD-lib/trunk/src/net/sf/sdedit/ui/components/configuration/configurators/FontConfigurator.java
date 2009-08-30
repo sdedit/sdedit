@@ -138,11 +138,6 @@ public class FontConfigurator<C extends DataObject> extends Configurator<Font, C
 		sampleLabel.setText("The quick brown fox jumps over the lazy dog.");
 	}
 
-	@Override
-	protected Font getNullValue() {
-		return new Font("Dialog", Font.PLAIN, 12);
-	}
-
 	private Font getSelectedFont() {
 		String name = (String) nameComboBox.getSelectedItem();
 		int size = (Integer) sizeSpinner.getValue();

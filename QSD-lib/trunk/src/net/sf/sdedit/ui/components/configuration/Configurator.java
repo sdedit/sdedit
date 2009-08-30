@@ -185,7 +185,10 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 	 * @return a non-null value that is used as a replacement when a property
 	 *         has the value <tt>null</tt>
 	 */
-	protected abstract T getNullValue();
+	@SuppressWarnings("unchecked")
+	protected T getNullValue() {
+		return (T) NullValueProvider.getNullValue(property.getPropertyType());
+	}
 
 	/**
 	 * Returns true if there is no boolean property that the configurability of

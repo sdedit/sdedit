@@ -106,7 +106,6 @@ public class Bean<T extends DataObject> implements Serializable,
 	 *            {@linkplain Adjustable#stringSelectionProvided()}
 	 */
 	public Bean(Class<T> dataClass, StringSelectionProvider ssp) {
-
 		values = new HashMap<String, Object>();
 		this.ssp = ssp;
 		this.dataClass = dataClass;
@@ -153,6 +152,13 @@ public class Bean<T extends DataObject> implements Serializable,
 						}
 						order.put(key, norm(property.getName()));
 						properties.put(norm(property.getName()), property);
+						
+						if (getValue(property) == null) {
+							// may not be null when called in the process of deserialization
+							// (see readObject)
+							setValue(property,NullValueProvider.getNullValue(property.getPropertyType()));
+							
+						}
 					}
 				}
 			} catch (RuntimeException e) {
@@ -325,6 +331,10 @@ public class Bean<T extends DataObject> implements Serializable,
 	public final Object getValue(String property) {
 		return values.get(norm(property));
 	}
+	
+	public final Object getValue (PropertyDescriptor pd) {
+		return getValue(pd.getName());
+	}
 
 	public void load(File file) throws XMLException, IOException {
 		load(file.toURI().toURL());
@@ -416,7 +426,7 @@ public class Bean<T extends DataObject> implements Serializable,
 		if (value == null && !permitNullValues) {
 			return;
 		}
-		if (property.getPropertyType() == String.class) {
+		if (!"".equals(value) && property.getPropertyType() == String.class) {
 			Set<String> choices = getStringsForProperty(property);
 			if (!choices.isEmpty() && !choices.contains(value)) {
 				return;

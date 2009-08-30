@@ -328,10 +328,13 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 	}
 
 	public boolean addAll(Collection<? extends T> c) {
+		if (c == null) {
+			return false;
+		}
 		for (T t : c) {
 			add(t);
 		}
-		return true;
+		return !c.isEmpty();
 	}
 
 	public void clear() {

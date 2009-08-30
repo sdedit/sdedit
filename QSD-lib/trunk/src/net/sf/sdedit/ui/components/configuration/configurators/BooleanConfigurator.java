@@ -62,11 +62,6 @@ implements ActionListener {
 		applyValue(checkBox.isSelected());
 	}
 
-	@Override
-	protected Boolean getNullValue() {
-		return Boolean.FALSE;
-	}
-	
 	protected void _setEnabled(boolean enabled) {
 		checkBox.setEnabled(enabled);
 	}

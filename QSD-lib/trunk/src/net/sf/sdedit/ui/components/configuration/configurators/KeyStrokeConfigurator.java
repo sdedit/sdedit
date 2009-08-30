@@ -85,11 +85,6 @@ public class KeyStrokeConfigurator<C extends DataObject> extends
 	}
 
 	@Override
-	protected KeyStroke getNullValue() {
-		return NULL_KEYSTROKE;
-	}
-
-	@Override
 	protected void refresh(KeyStroke value) {
 		if (value == getNullValue()) {
 			textField.setText("");

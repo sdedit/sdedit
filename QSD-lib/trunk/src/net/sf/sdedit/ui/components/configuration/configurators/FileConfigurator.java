@@ -138,11 +138,6 @@ FocusListener {
 	}
 
 	@Override
-	protected File getNullValue() {
-		return new File (System.getProperty("user.home"), "untitled");
-	}
-
-	@Override
 	protected void refresh(File value) {
 		// A work-around that is a strategy against the NullPointerException
 		// that occurs when null-values from a copy are restored.

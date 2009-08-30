@@ -58,11 +58,6 @@ public abstract class StringConfigurator<C extends DataObject> extends Configura
 	}
 	
 	@Override
-	protected String getNullValue () {
-		return "";
-	}
-
-	@Override
 	public int getLabelWidth() {
 		return label.getPreferredSize().width;
 	}

@@ -121,11 +121,6 @@ public class DateConfigurator<C extends DataObject> extends
 	}
 
 	@Override
-	protected Date getNullValue() {
-		return new Date(0);
-	}
-
-	@Override
 	protected void refresh(Date value) {
 		if (value.equals(getNullValue())) {
 			textField.setText("");

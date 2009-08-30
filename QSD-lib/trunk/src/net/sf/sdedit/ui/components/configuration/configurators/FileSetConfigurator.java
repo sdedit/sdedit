@@ -164,11 +164,6 @@ public class FileSetConfigurator<C extends DataObject> extends
 				&& list.getSelectedIndices().length > 0);
 	}
 
-	@Override
-	protected File[] getNullValue() {
-		return new File[0];
-	}
-
 	private boolean refresh;
 
 	@Override
