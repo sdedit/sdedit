@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.swing.KeyStroke;
 
 import net.sf.sdedit.ui.components.configuration.configurators.KeyStrokeConfigurator;
+import net.sf.sdedit.util.ObjectFactory;
 
 
 public class NullValueProvider {
@@ -24,6 +25,10 @@ public class NullValueProvider {
 		
 		if (objectClass == Boolean.TYPE) {
 			return Boolean.FALSE;
+		}
+		
+		if (objectClass.isPrimitive() || Number.class.isAssignableFrom(objectClass)) {
+			return ObjectFactory.createFromString(objectClass, "0");			
 		}
 		
 		if (objectClass == Date.class) {
@@ -50,11 +55,7 @@ public class NullValueProvider {
 			return KeyStrokeConfigurator.NULL_KEYSTROKE;
 		}
 		
-		if (objectClass == Integer.TYPE) {
-			return 0;
-		}
-		
-		throw new IllegalArgumentException ("Cannot provide null value for " + objectClass.getName());
+		return null;
 		
 	}
 
