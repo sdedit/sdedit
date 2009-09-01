@@ -308,7 +308,7 @@ public final class Actions implements Constants {
 			}
 
 			public void actionPerformed(ActionEvent e) {
-				editor.getUI().help("Help", "help");
+				editor.getUI().help("Help", "help", true);
 			}
 		};
 
@@ -322,7 +322,7 @@ public final class Actions implements Constants {
 
 			public void actionPerformed(ActionEvent e) {
 				editor.getUI().help("Multithreading help",
-						"multithreading_help");
+						"multithreading_help", false);
 			}
 		};
 
@@ -335,7 +335,7 @@ public final class Actions implements Constants {
 			}
 
 			public void actionPerformed(ActionEvent e) {
-				editor.getUI().help("Notes on asynchronous messages", "async");
+				editor.getUI().help("Notes on asynchronous messages", "async", false);
 			}
 		};
 

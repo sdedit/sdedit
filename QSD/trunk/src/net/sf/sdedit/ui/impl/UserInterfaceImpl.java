@@ -260,16 +260,16 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		actionManager().enableComponents();
 	}
 
-	public void help(String title, String file) {
-		if (!tabContainer.existsCategory("Help")) {
-			tabContainer.addCategory("Help", Icons.getIcon("help"));
+	public void help(String title, String file, boolean advanced) {
+		if (!tabContainer.existsCategory("Help pages")) {
+			tabContainer.addCategory("Help pages", Icons.getIcon("help"));
 		}
-		HelpTab tab = HelpTab.getHelpTab(this, file);
+		HelpTab tab = HelpTab.getHelpTab(this, file, advanced);
 		if (tabContainer.exists(tab)) {
 			tabContainer.select(tab);
 		} else {
 			tab.setTitle(title);
-			tabContainer.addTabToCategory(tab, "Help");
+			tabContainer.addTabToCategory(tab, "Help pages");
 		}
 	}
 

@@ -195,7 +195,7 @@ public interface UserInterface {
 	 *            is the path to help.html in the package foo.bar
 	 * 
 	 */
-	public void help(String title, String file);
+	public void help(String title, String file, boolean advanced);
 
 	/**
 	 * Returns the number of tabs currently open.

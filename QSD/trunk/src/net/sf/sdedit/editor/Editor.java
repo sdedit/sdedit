@@ -227,7 +227,7 @@ public final class Editor implements Constants, UserInterfaceListener
 			int last = hyperlink.lastIndexOf(':');
 			String title = hyperlink.substring(first + 1, last);
 			String file = hyperlink.substring(last + 1);
-			ui.help(title, file.replaceAll(".html", ""));
+			ui.help(title, file.replaceAll(".html", ""),false);
 		}
 	}
 
