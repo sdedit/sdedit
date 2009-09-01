@@ -35,6 +35,7 @@ import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -64,7 +65,7 @@ import org.xml.sax.SAXException;
  */
 
 public class DocUtil {
-	
+
 	private static DocumentBuilder documentBuilder;
 
 	private static Transformer transformer;
@@ -79,10 +80,24 @@ public class DocUtil {
 		DocumentBuilderFactory factory = null;
 		try {
 			factory = DocumentBuilderFactory.newInstance();
-			
+
 			factory.setValidating(false);
-			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			try {
+				factory
+						.setFeature(
+								"http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
+								false);
+			} catch (ParserConfigurationException pce) {
+				System.err.println("Warning: " + pce.getMessage());
+			}
+			try {
+				factory
+						.setFeature(
+								"http://apache.org/xml/features/nonvalidating/load-external-dtd",
+								false);
+			} catch (ParserConfigurationException pce) {
+				System.err.println("Warning: " + pce.getMessage());
+			}
 
 			documentBuilder = factory.newDocumentBuilder();
 			documentBuilder.setEntityResolver(null);
@@ -155,84 +170,84 @@ public class DocUtil {
 	public static Document newDocument() {
 		return documentBuilder.newDocument();
 	}
-	
-	public static Node getChild (Node parent, String name) {
-	    NodeList list = parent.getChildNodes();
-	    for (int i = 0; i < list.getLength(); i++) {
-	        if (name.equals(list.item(i).getNodeName())) {
-	            return list.item(i);
-	        }
-	    }
-	    return null;
+
+	public static Node getChild(Node parent, String name) {
+		NodeList list = parent.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			if (name.equals(list.item(i).getNodeName())) {
+				return list.item(i);
+			}
+		}
+		return null;
 	}
-	
-	public static String getAttribute (Element element, String name) {
-	    NamedNodeMap nnm = element.getAttributes();
-	    for (int i = 0; i < nnm.getLength(); i++) {
-	        if (name.equalsIgnoreCase(nnm.item(i).getNodeName())) {
-	            return nnm.item(i).getNodeValue();
-	        }
-	    }
-	    return null;
+
+	public static String getAttribute(Element element, String name) {
+		NamedNodeMap nnm = element.getAttributes();
+		for (int i = 0; i < nnm.getLength(); i++) {
+			if (name.equalsIgnoreCase(nnm.item(i).getNodeName())) {
+				return nnm.item(i).getNodeValue();
+			}
+		}
+		return null;
 	}
-	
-	public static Iterable<Node> iterate (final NodeList nodeList) {
-	    final Iterator<Node> iter = new Iterator<Node>() {
-	        
-	        private int i = 0;
 
-            public boolean hasNext() {
-                return i < nodeList.getLength();
-            }
+	public static Iterable<Node> iterate(final NodeList nodeList) {
+		final Iterator<Node> iter = new Iterator<Node>() {
 
-            public Node next() {
-                return nodeList.item(i++);
-            }
+			private int i = 0;
 
-            public void remove() {
-                                
-            }
-	        
-	        
-	    };
-	    
-	    return new Iterable<Node> () {
+			public boolean hasNext() {
+				return i < nodeList.getLength();
+			}
 
-            public Iterator<Node> iterator() {
-                return iter;
-            }
-	        
-	    };
+			public Node next() {
+				return nodeList.item(i++);
+			}
+
+			public void remove() {
+
+			}
+
+		};
+
+		return new Iterable<Node>() {
+
+			public Iterator<Node> iterator() {
+				return iter;
+			}
+
+		};
 	}
-	
-	public static String toString (Node node) {
-	    if (node == null) {
-	        return "NULL";
-	    }
-	    StringBuffer sb = new StringBuffer();
-	    if (node instanceof Element) {
-	    	
-	    	Element element = (Element) node;
-	        sb.append(element.getNodeName());
-	        NamedNodeMap nnm = element.getAttributes();
-	        boolean first = true;
-	        for (int i = 0; i < nnm.getLength(); i++) {
-	            Node attr = nnm.item(i);
-	            if (!first) {
-	                sb.append(", ");
-	            } else {
-	                sb.append(" ");
-	                first = false;
-	            }
-	            sb.append(attr.getNodeName() + "=\"" + attr.getNodeValue() + "\"");
-	        }
-	        return "<" + sb.toString() + ">";
-	    }
-	    if (node instanceof Text) {
-	        Text text = (Text) node;
-	        return text.getWholeText();
-	    }
-	    return node.toString();
+
+	public static String toString(Node node) {
+		if (node == null) {
+			return "NULL";
+		}
+		StringBuffer sb = new StringBuffer();
+		if (node instanceof Element) {
+
+			Element element = (Element) node;
+			sb.append(element.getNodeName());
+			NamedNodeMap nnm = element.getAttributes();
+			boolean first = true;
+			for (int i = 0; i < nnm.getLength(); i++) {
+				Node attr = nnm.item(i);
+				if (!first) {
+					sb.append(", ");
+				} else {
+					sb.append(" ");
+					first = false;
+				}
+				sb.append(attr.getNodeName() + "=\"" + attr.getNodeValue()
+						+ "\"");
+			}
+			return "<" + sb.toString() + ">";
+		}
+		if (node instanceof Text) {
+			Text text = (Text) node;
+			return text.getWholeText();
+		}
+		return node.toString();
 	}
 
 	/**
@@ -284,13 +299,13 @@ public class DocUtil {
 		}
 		return document;
 	}
-	
-	public static DOMNode toDOMNode (Document document) {
-	    Element elem = document.getDocumentElement();
+
+	public static DOMNode toDOMNode(Document document) {
+		Element elem = document.getDocumentElement();
 		return DOMNodeAdapter.makeNode(elem);
 	}
-	
-	public static DOMNode getDocumentFromURL (URL url, String encoding) {
+
+	public static DOMNode getDocumentFromURL(URL url, String encoding) {
 		try {
 			Document doc = readDocument(url.openStream(), "UTF-8");
 			return toDOMNode(doc);
@@ -300,10 +315,6 @@ public class DocUtil {
 			throw new IllegalArgumentException(t);
 		}
 	}
-	
-	
-
-
 
 	/**
 	 * An <tt>XMLException</tt> is thrown when an XML document is not
