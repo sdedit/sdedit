@@ -7,25 +7,22 @@ import java.net.URL;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileFilter;
 
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
-import net.sf.sdedit.ui.impl.LookAndFeelManager;
 import net.sf.sdedit.ui.impl.UserInterfaceImpl;
-import net.sf.sdedit.util.UIUtilities;
 import net.sf.sdedit.util.Utilities;
 
 public abstract class AbstractFileHandler implements FileHandler {
 
-	private static JFileChooser fileChooser;
+	public static JFileChooser FILE_CHOOSER;
 
 	private static boolean sync;
 
 	static {
-		fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(new File("."));
+		FILE_CHOOSER = new JFileChooser();
+		FILE_CHOOSER.setCurrentDirectory(new File("."));
 		sync = false;
 	}
 
@@ -65,15 +62,11 @@ public abstract class AbstractFileHandler implements FileHandler {
 			if (file != null) {
 				File parent = file.getParentFile();
 				if (parent != null) {
-					fileChooser.setCurrentDirectory(parent);
+					FILE_CHOOSER.setCurrentDirectory(parent);
 				}
 			}
 			sync = true;
 		}
-	}
-
-	private static abstract class MyFileFilter extends FileFilter {
-		String suffix;
 	}
 
 	protected Component getComponent() {
@@ -133,7 +126,8 @@ public abstract class AbstractFileHandler implements FileHandler {
 				confirmation = tab
 						.get_UI()
 						.confirmOrCancel(
-								"<html>" + file.getName()
+								"<html>"
+										+ file.getName()
 										+ " already exists.<br>Do you want to overwrite it?");
 			}
 			if (confirmation == 1) {
@@ -193,87 +187,8 @@ public abstract class AbstractFileHandler implements FileHandler {
 		// fileChooser.setSelectedFile(new File(fileChooser
 		// .getCurrentDirectory(), file));
 		// }
-		fileChooser.setMultiSelectionEnabled(multiple);
 
-		for (FileFilter fileFilter : fileChooser.getChoosableFileFilters()) {
-			if (fileFilter instanceof MyFileFilter) {
-				fileChooser.removeChoosableFileFilter(fileFilter);
-			}
-		}
-
-		if (filter.length > 0) {
-			for (int i = 0; i < filter.length; i += 2) {
-				final String description = filter[i];
-				final String suffix = filter[i + 1].toLowerCase();
-				MyFileFilter fileFilter = new MyFileFilter() {
-
-					@Override
-					public boolean accept(File f) {
-						if (f.isDirectory()) {
-							return true;
-						}
-						String name = f.getName().toLowerCase();
-						return name.endsWith(suffix);
-					}
-
-					@Override
-					public String getDescription() {
-						return description;
-					}
-				};
-				fileFilter.suffix = suffix;
-				fileChooser.addChoosableFileFilter(fileFilter);
-			}
-
-			if (file != null) {
-				int dot = file.lastIndexOf('.');
-				if (dot >= 0) {
-					String type = file.substring(dot + 1);
-					for (FileFilter _filter : fileChooser
-							.getChoosableFileFilters()) {
-						if (_filter instanceof MyFileFilter) {
-							if (((MyFileFilter) _filter).suffix.equals(type)) {
-								fileChooser.setFileFilter(_filter);
-								break;
-							}
-
-						}
-					}
-				}
-			}
-		}
-		fileChooser.setDialogTitle(message);
-		int ret;
-		if (open) {
-			ret = fileChooser.showOpenDialog(getComponent());
-		} else {
-			ret = fileChooser.showSaveDialog(getComponent());
-		}
-		File[] files;
-		if (ret == JFileChooser.APPROVE_OPTION) {
-			if (multiple) {
-				if (fileChooser.getSelectedFiles() == null
-						|| fileChooser.getSelectedFiles().length == 0) {
-					files = null;
-				} else {
-					files = fileChooser.getSelectedFiles();
-				}
-			} else {
-				File selectedFile = fileChooser.getSelectedFile();
-				if (!open) {
-					FileFilter selectedFilter = fileChooser.getFileFilter();
-					if (selectedFilter instanceof MyFileFilter) {
-						String type = ((MyFileFilter) selectedFilter).suffix;
-						selectedFile = UIUtilities
-								.affixType(selectedFile, type);
-					}
-				}
-
-				files = new File[] { selectedFile };
-			}
-		} else {
-			files = null;
-		}
-		return files;
+		return Utilities.chooseFiles(FILE_CHOOSER, getComponent(), open,
+				multiple, message, file, filter);
 	}
 }

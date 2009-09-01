@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.swing.ImageIcon;
-
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
 
