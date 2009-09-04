@@ -117,11 +117,11 @@ FocusListener {
 	private void browse() {
 		File current = getFile();
 		if (current != null && current.getParentFile() != null) {
-			fileChooser.setCurrentDirectory(current.getParentFile());
+			fileChooser().setCurrentDirectory(current.getParentFile());
 		}
-		int val = fileChooser.showOpenDialog(null);
+		int val = fileChooser().showOpenDialog(null);
 		if (val == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
+			File file = fileChooser().getSelectedFile();
 			if (file != null) {
 				refresh(file);
 				_actionPerformed(null);

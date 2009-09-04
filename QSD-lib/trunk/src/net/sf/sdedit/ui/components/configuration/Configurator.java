@@ -58,7 +58,16 @@ import net.sf.sdedit.util.Utilities;
 public abstract class Configurator<T, C extends DataObject> extends JPanel
 		implements PropertyChangeListener, ActionListener {
 
-	protected static JFileChooser fileChooser;
+	protected static JFileChooser _fileChooser;
+	
+	protected static JFileChooser fileChooser() {
+		if (_fileChooser == null) {
+			_fileChooser = new JFileChooser(System.getProperty("user.home"));
+			_fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			_fileChooser.setMultiSelectionEnabled(true);
+		}
+		return _fileChooser;
+	}
 	
 	protected static Set<String> fileTypes = new TreeSet<String>();
 	
@@ -88,8 +97,8 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 		for (String type : types) {
 			fileTypes.add(type.toLowerCase());
 		}
-		if (fileChooser.getChoosableFileFilters().length == 1) {
-			fileChooser.addChoosableFileFilter(fileFilter);
+		if (fileChooser().getChoosableFileFilters().length == 1) {
+			fileChooser().addChoosableFileFilter(fileFilter);
 		}
 	}
 	
@@ -98,15 +107,13 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 			fileTypes.remove(type.toLowerCase());
 		}
 		if (fileTypes.isEmpty()) {
-			fileChooser.resetChoosableFileFilters();
-			fileChooser.setFileFilter(fileChooser.getAcceptAllFileFilter());
+			fileChooser().resetChoosableFileFilters();
+			fileChooser().setFileFilter(fileChooser().getAcceptAllFileFilter());
 		}
 	}
 
 	static {
-		fileChooser = new JFileChooser(System.getProperty("user.home"));
-		fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		fileChooser.setMultiSelectionEnabled(true);
+
 	}
 	
 	

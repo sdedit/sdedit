@@ -24,7 +24,6 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileFilter;
 
 import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.ui.components.configuration.Adjustable;
@@ -33,7 +32,6 @@ import net.sf.sdedit.ui.components.configuration.Configurator;
 import net.sf.sdedit.ui.components.configuration.DataObject;
 import net.sf.sdedit.util.ListModelAdapter;
 import net.sf.sdedit.util.UIUtilities;
-import net.sf.sdedit.util.Utilities;
 
 public class FileSetConfigurator<C extends DataObject> extends
 		Configurator<File[], C> implements ListSelectionListener,
@@ -119,16 +117,16 @@ public class FileSetConfigurator<C extends DataObject> extends
 			}
 		}
 		if (dir != null) {
-			fileChooser.setCurrentDirectory(dir);
+			fileChooser().setCurrentDirectory(dir);
 		}
-		int val = fileChooser.showOpenDialog(null);
+		int val = fileChooser().showOpenDialog(null);
 
 
 		if (val == JFileChooser.APPROVE_OPTION) {
 			List<File> files = new LinkedList<File>(Arrays.asList(castArray(lma
 					.getData(), File.class)));
 
-			for (File selected : fileChooser.getSelectedFiles()) {
+			for (File selected : fileChooser().getSelectedFiles()) {
 				if (!files.contains(selected)) {
 					files.add(selected);
 				}
