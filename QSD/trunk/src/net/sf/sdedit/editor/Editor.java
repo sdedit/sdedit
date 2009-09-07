@@ -60,6 +60,7 @@ import net.sf.sdedit.ui.impl.UserInterfaceImpl;
 import net.sf.sdedit.util.OS;
 import net.sf.sdedit.util.Ref;
 import net.sf.sdedit.util.UIUtilities;
+import net.sf.sdedit.util.Utilities;
 
 /**
  * The control class of the Quick Sequence Diagram Editor.
@@ -337,7 +338,7 @@ public final class Editor implements Constants, UserInterfaceListener
 	}
 
 	private void installPlugins() throws IOException {
-		URL url = getClass().getResource("plugins.txt");
+		URL url = Utilities.getResource("plugins.txt");
 		InputStream stream = url.openStream();
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(

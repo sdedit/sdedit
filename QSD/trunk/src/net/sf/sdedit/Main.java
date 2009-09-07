@@ -52,6 +52,7 @@ import net.sf.sdedit.util.OS;
 import net.sf.sdedit.util.ObjectFactory;
 import net.sf.sdedit.util.Pair;
 import net.sf.sdedit.util.Tooltips;
+import net.sf.sdedit.util.Utilities;
 import net.sf.sdedit.util.DocUtil.XMLException;
 
 import org.apache.commons.cli.CommandLine;
@@ -81,9 +82,9 @@ public class Main implements Constants {
 
 		}
 
-		_LOG_.loadPatterns(Main.class.getResource("logging.patterns"));
+		_LOG_.loadPatterns(Utilities.getResource("logging.patterns"));
 
-		Tooltips.addFile(Main.class.getResource("tooltips"));
+		Tooltips.addFile(Utilities.getResource("tooltips"));
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmd = null;
 		Options options = createBasicOptions();

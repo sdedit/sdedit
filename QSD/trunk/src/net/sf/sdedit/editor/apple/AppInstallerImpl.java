@@ -28,6 +28,7 @@ import java.io.File;
 
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.ui.impl.UserInterfaceImpl;
+import net.sf.sdedit.util.Utilities;
 
 import com.apple.eawt.Application;
 import com.apple.eawt.ApplicationEvent;
@@ -67,8 +68,8 @@ class AppInstallerImpl extends AppInstaller implements ApplicationListener {
 	 * @see com.apple.eawt.ApplicationListener#handleAbout(com.apple.eawt.ApplicationEvent)
 	 */
 	public void handleAbout(ApplicationEvent e) {
-		ui.showAboutDialog(Editor.class
-				.getResource("/net/sf/sdedit/about.html"));
+		ui.showAboutDialog(
+				Utilities.getResource("about.html"));
 		e.setHandled(true);
 	}
 	

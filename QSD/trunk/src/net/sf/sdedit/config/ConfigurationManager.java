@@ -33,6 +33,7 @@ import java.net.URL;
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.util.DocUtil;
+import net.sf.sdedit.util.Utilities;
 import net.sf.sdedit.util.DocUtil.XMLException;
 
 import org.w3c.dom.Document;
@@ -68,7 +69,7 @@ public final class ConfigurationManager {
 		GLOBAL_DEFAULT = new Bean<GlobalConfiguration>(GlobalConfiguration.class,new GlobalConfigurationStrings());
 		LOCAL_DEFAULT = new Bean<Configuration>(Configuration.class,null);
 		PRINT_DEFAULT = new Bean<PrintConfiguration>(PrintConfiguration.class, null);
-		URL url = GlobalConfiguration.class.getResource("default.conf");
+		URL url = Utilities.getResource("default.conf");
 		try {
 			getValuesFromURL(url, GLOBAL_DEFAULT, LOCAL_DEFAULT, PRINT_DEFAULT);
 		} catch (RuntimeException re) {

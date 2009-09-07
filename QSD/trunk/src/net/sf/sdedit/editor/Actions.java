@@ -65,7 +65,7 @@ import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.impl.DiagramTab;
 import net.sf.sdedit.ui.impl.DiagramTextTab;
-import net.sf.sdedit.util.OS;
+import net.sf.sdedit.util.Utilities;
 
 @SuppressWarnings("serial")
 public final class Actions implements Constants {
@@ -482,7 +482,7 @@ public final class Actions implements Constants {
 
 			public void actionPerformed(ActionEvent evt) {
 				editor.getUI().showAboutDialog(
-						Editor.class.getResource("/net/sf/sdedit/about.html"));
+						Utilities.getResource("about.html"));
 			}
 		};
 
