@@ -38,6 +38,7 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 
 import net.sf.sdedit.util.UIUtilities;
+import net.sf.sdedit.util.Utilities;
 
 public final class Icons {
 
@@ -98,7 +99,7 @@ public final class Icons {
 	}
 
 	private static URL findRes(String name) {
-		URL res = Icons.class.getResource(name + ".png");
+		URL res = Utilities.getResource(name + ".png");
 		if (res == null) {
 			for (String base : bases) {
 				res = Icons.class.getResource(base + "/" + name + ".png");

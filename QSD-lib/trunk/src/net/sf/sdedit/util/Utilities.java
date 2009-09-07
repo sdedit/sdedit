@@ -338,6 +338,14 @@ public class Utilities {
 		}
 		return -1;
 	}
+	
+	public static URL getResource (String name) {
+		URL res = Utilities.class.getResource("/resource/" + name);
+		if (res == null) {
+			throw new IllegalArgumentException("resource not found: " + name);
+		}
+		return res;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T[] reverse(T[] array) {
