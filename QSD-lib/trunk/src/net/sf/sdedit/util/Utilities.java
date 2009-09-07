@@ -591,7 +591,7 @@ public class Utilities {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> Iterable<T> wrap(final Iterator iterator,
+	public static <T> Iterable<T> wrap(final Iterator<T> iterator,
 			Class<T> elemClass) {
 		return new Iterable<T>() {
 
@@ -763,15 +763,19 @@ public class Utilities {
 		return new Pair<S, T>(arg1, arg2);
 	}
 
-	public static Object invoke(String methodName, Object object, Object[] args)
-			throws Throwable {
-		Method method;
-		if (object instanceof Class) {
-			method = resolveMethod((Class<?>) object, methodName, args);
-		} else {
-			method = resolveMethod(object.getClass(), methodName, args);
+	public static Object invoke(String methodName, Object object, Object[] args) {
+		try {
+			Method method;
+			if (object instanceof Class<?>) {
+				method = resolveMethod((Class<?>) object, methodName, args);
+			} else {
+				method = resolveMethod(object.getClass(), methodName, args);
+			}
+			method.setAccessible(true);
+			return method.invoke(object, args);
+		} catch (Exception t) {
+			throw new IllegalArgumentException("cannot invoke " + methodName, t);
 		}
-		return method.invoke(object, args);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -811,7 +815,8 @@ public class Utilities {
 	 */
 	public static Method resolveMethod(Class<?> clazz, String name,
 			Object[] args) {
-		Method[] methods = clazz.getMethods();
+		Method[] methods = //clazz.getMethods();
+		Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class);
 		int i;
 		for (i = 0; i < methods.length; i++) {
 			Method m = methods[i];
@@ -863,7 +868,7 @@ public class Utilities {
 	public static <T> boolean computeDifference(Set<T> set0, Set<T> set1,
 			Ref<Set<T>> set0Only, Ref<Set<T>> set1Only) {
 		try {
-			set0Only.t = (Set<T>) set0.getClass().newInstance();
+			set0Only.t = set0.getClass().newInstance();
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception e) {
@@ -872,7 +877,7 @@ public class Utilities {
 
 		}
 		try {
-			set1Only.t = (Set<T>) set1.getClass().newInstance();
+			set1Only.t = set1.getClass().newInstance();
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception e) {

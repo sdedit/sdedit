@@ -63,7 +63,6 @@ public final class Icons {
 			if (name.indexOf('\\') > 0) {
 				for (String subName : name.split("\\\\")) {
 					ImageIcon subIcon = getIcon(subName);
-					System.out.println("subName=" + subName);
 					if (subIcon == null) {
 						icon = null;
 						break;
