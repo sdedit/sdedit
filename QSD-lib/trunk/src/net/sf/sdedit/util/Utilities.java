@@ -46,6 +46,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,11 +67,65 @@ import java.util.TimeZone;
 import java.util.WeakHashMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 public class Utilities {
+
+	public static void main(String[] argv) throws Exception {
+		String key = "3b08856d4f83c2fe98ab079b194361d6ef6ebf01739b8324";
+		
+		FileInputStream fis = new FileInputStream("C:\\devel\\QSD-lib\\src\\net\\sf\\sdedit\\ui\\components\\TestObject.java");
+		byte[] b = encrypt(zip(fis), key);
+		
+		System.out.println(Arrays.toString(b));
+		
+		byte [] code = new byte [] {3, -98, 108, -117, -28, -31, 57, -2, 56, 114, -40, 123, -105, -118, 73, -114, -122, -35, 70, 106, 102, 17, -114, 0, -103, 10, -47, 127, 95, 63, 102, -44, -46, 93, -61, -41, -117, 56, -12, 27, 42, 5, -17, -72, 10, 5, -99, -109, -116, -64, 83, 84, -23, 86, -80, -22, 97, -106, 28, -2, -7, -10, 8, -82, -72, -89, -9, -56, -41, 97, -2, -45, -84, 98, -71, -84, 74, -30, -4, -6, 47, 127, -55, -41, 24, -96, -108, -75, 122, -106, 55, 22, -7, -81, -110, -109, -54, -68, -55, -82, -119, -30, 68, -91, -54, -14, -40, -32, 72, -45, -59, 104, -33, 69, -73, 71, -48, -16, 62, 80, 20, 116, -95, 98, -49, -84, -72, 74, 94, -5, -124, 23, -48, -9, -37, 49, -87, 120, -107, 94, -9, 13, -111, -84, -127, -102, -2, 17, 16, 93, -73, -125, 35, 66, -12, 21, -31, -85, 125, -35, 82, 71, 62, -25, -66, 88, -38, 10, -4, -116, 57, -90, -1, -3, -34, -114, -55, 15, -88, -114, -97, -76, -63, -57, -90, -62, -27, -122, 98, 122, 50, 13, -72, -83, 44, -11, -5, 97, 64, 45, -31, -48, -26, 104, 88, -76, -42, 112, 10, 89, -9, 25, -34, 58, -105, 62, -122, -35, 70, 106, 102, 17, -114, 0, 58, -112, -88, -111, 58, -33, -69, -101, 1, 79, 110, 99, -49, -11, 22, -8, -73, 22, 60, 121, -36, 78, 31, -108, 53, 56, 63, -108, -83, 118, -118, 98};
+		
+		code = unzip(decrypt(code, key));
+		
+		
+
+		
+				
+		//byte[] z = unzip(b);
+		//System.out.println();
+		//System.out.println(Arrays.toString(z));
+		//byte [] code = new byte[]{80, 75, 3, 4, 20, 0, 8, 0, 8, 0, 83, 88, 40, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 88, 45, -115, -63, 10, -62, 48, 16, 68, -49, 45, -12, 31, -106, -98, 90, -112, -36, 67, -113, 94, -68, 121, -80, 63, -112, 38, -85, -115, -90, 73, -56, 110, 40, 69, -4, 119, 19, 17, -122, -127, -31, 61, -104, -88, -12, 75, 61, 16, 60, -78, -96, -69, 32, -125, -58, -78, -56, 86, -24, -80, -59, -32, -47, 51, 77, 93, -37, -75, 49, 47, -50, 106, -48, 78, 17, -63, -116, -60, -41, -27, -119, -102, -31, -35, -75, 77, -55, 31, 91, -49, -80, 42, 90, -49, -63, -32, 48, -2, 96, 115, 59, -120, 113, 19, 33, -77, -120, -87, 8, -50, 15, -3, 37, -20, -26, 56, -63, 30, -110, 51, -3, 56, 85, 45, 33, -25, -28, 65, 74, 89, -25, -89, 126, -106, -6, 2, 80, 75, 7, 8, -52, 62, 91, 109, -120, 0, 0, 0, -97, 0, 0, 0, 80, 75, 1, 2, 20, 0, 20, 0, 8, 0, 8, 0, 83, 88, 40, 59, -52, 62, 91, 109, -120, 0, 0, 0, -97, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 88, 80, 75, 5, 6, 0, 0, 0, 0, 1, 0, 1, 0, 47, 0, 0, 0, -73, 0, 0, 0, 0, 0};
+		Class<?> cls = loadClass("net.sf.sdedit.ui.components.TestObject", code);
+		Object o = cls.newInstance();
+		System.out.println(o.hashCode());
+		
+
+		/*
+		
+		byte [] bytes = "Markus".getBytes();
+		
+		System.out.println(Arrays.toString(bytes));
+		
+		bytes = encrypt(bytes, key);
+		
+		System.out.println(Arrays.toString(bytes));
+		
+		String key1 = "f8ad91ba70a167a7d58525c2a10d02ae6810ab0276f27c85";
+		
+		bytes = decrypt(bytes, key1);
+		
+		System.out.println(Arrays.toString(bytes));
+		*/
+		
+	}
 
 	private static WeakHashMap<PrintWriter, StringWriter> writerMap = new WeakHashMap<PrintWriter, StringWriter>();
 
@@ -78,6 +134,8 @@ public class Utilities {
 	 * wrapper classes.
 	 */
 	static private Map<Class<?>, Class<?>> primitiveClasses;
+	
+	private static CL cl;
 
 	static {
 		primitiveClasses = new HashMap<Class<?>, Class<?>>();
@@ -94,6 +152,13 @@ public class Utilities {
 
 	private Utilities() {
 
+	}
+	
+	private static CL cl () {
+		if (cl == null) {
+			cl = new CL();
+		}
+		return cl;
 	}
 
 	public static PrintWriter createPrintWriter() {
@@ -117,6 +182,33 @@ public class Utilities {
 		}
 	}
 
+	protected static class CL extends ClassLoader {
+
+		private HashMap<String, byte[]> classes;
+
+		CL () {
+			super(CL.class.getClassLoader());
+			classes = new HashMap<String, byte[]>();
+		}
+
+		public void addClass(String name, byte[] code) {
+			classes.put(name, code);
+		}
+
+		protected Class<?> findClass(String name) throws ClassNotFoundException {
+			try {
+				byte[] code = classes.remove(name);
+				Class<?> clazz = defineClass(name, code, 0, code.length);
+				return clazz;
+			} catch (RuntimeException re) {
+				throw re;
+			} catch (Throwable t) {
+				t.printStackTrace();
+				throw new ClassNotFoundException(t.getMessage());
+			}
+		}
+	}
+
 	public static String toString(PrintWriter pw) {
 		pw.flush();
 		StringWriter sw = writerMap.get(pw);
@@ -134,9 +226,65 @@ public class Utilities {
 		}
 		file.delete();
 	}
+	
+	private static int cast (byte b) {
+		if (b >= 0) {
+			return b; 
+		}
+		return 256 + b;
+	}
+	
+	public static byte [] toByteArray (String hexString) {
+		byte [] bytes = new byte[hexString.length()/2];
+		for (int i = 0; i < hexString.length(); i+=2) {
+			String hex = hexString.substring(i, i+2);
+			bytes [i/2] = (byte) Integer.parseInt(hex, 16);
+		}
+		return bytes;
+	}
+	
+	public static String toHexString (byte [] bytes) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < bytes.length; i++) {
+			String h = Integer.toHexString(cast(bytes[i]));
+			if (h.length() == 1) {
+				h = "0" + h;
+			}
+			sb.append(h);
+		}
+		return sb.toString();
+	}
 
 	public static String toString(Date date) {
 		return toString(date, null);
+	}
+	
+	public static Class<?> loadClass (String name, byte [] code) throws ClassNotFoundException {
+		cl().addClass(name, code);
+		return cl().loadClass(name);
+	}
+
+	public static byte[] zip(InputStream is) throws IOException {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ZipOutputStream zos = new ZipOutputStream(bos);
+		ZipEntry ze = new ZipEntry("X");
+		zos.putNextEntry(ze);
+		pipe(is, zos);
+		zos.closeEntry();
+		zos.flush();
+		zos.close();
+		return bos.toByteArray();
+	}
+
+	public static byte[] unzip(byte[] bytes) {
+		try {
+			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+			ZipInputStream zis = new ZipInputStream(bis);
+			zis.getNextEntry();
+			return toByteArray(zis,-1);
+		} catch (IOException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 	public static Date toDate(String string, String format) {
@@ -338,8 +486,8 @@ public class Utilities {
 		}
 		return -1;
 	}
-	
-	public static URL getResource (String name) {
+
+	public static URL getResource(String name) {
 		URL res = Utilities.class.getResource("/resource/" + name);
 		if (res == null) {
 			throw new IllegalArgumentException("resource not found: " + name);
@@ -644,9 +792,7 @@ public class Utilities {
 				int length = Math.min(avail - off, 1024);
 				bis.read(buffer, 0, length);
 				bos.write(buffer, 0, length);
-
 			}
-
 		}
 		bos.flush();
 	}
@@ -770,7 +916,7 @@ public class Utilities {
 	public static <S, T> Pair<S, T> pair(S arg1, T arg2) {
 		return new Pair<S, T>(arg1, arg2);
 	}
-
+	
 	public static Object invoke(String methodName, Object object, Object[] args) {
 		try {
 			Method method;
@@ -823,8 +969,9 @@ public class Utilities {
 	 */
 	public static Method resolveMethod(Class<?> clazz, String name,
 			Object[] args) {
-		Method[] methods = //clazz.getMethods();
-		Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class);
+		Method[] methods = // clazz.getMethods();
+		Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(),
+				Method.class);
 		int i;
 		for (i = 0; i < methods.length; i++) {
 			Method m = methods[i];
@@ -1209,6 +1356,41 @@ public class Utilities {
 
 		private T3 field3;
 
+	}
+	
+	public static String generateKey () {
+		KeyGenerator keygen;
+		try {
+			keygen = KeyGenerator.getInstance("DESede");
+			return toHexString(keygen.generateKey().getEncoded());
+		} catch (NoSuchAlgorithmException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+	
+	public static byte [] encrypt (byte [] bytes, String hexKey) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		SecretKey key = new SecretKeySpec(toByteArray(hexKey), "DESede");
+		Cipher cipher;
+		try {
+			cipher = Cipher.getInstance("DESede");
+		} catch (NoSuchAlgorithmException e) {
+			throw new IllegalStateException(e);
+		} catch (NoSuchPaddingException e) {
+			throw new IllegalStateException(e);
+		}
+		cipher.init(Cipher.ENCRYPT_MODE, key);
+		return cipher.doFinal(bytes);
+	}
+	
+	public static byte [] decrypt (byte [] bytes, String hexKey) throws NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+		SecretKey key = new SecretKeySpec(toByteArray(hexKey), "DESede");
+		try {
+			Cipher cipher = Cipher.getInstance("DESede");
+			cipher.init(Cipher.DECRYPT_MODE, key);
+			return cipher.doFinal(bytes);
+		} catch (NoSuchAlgorithmException e) {
+			throw new IllegalStateException(e);
+		}
 	}
 
 }

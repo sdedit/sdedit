@@ -11,6 +11,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
@@ -86,7 +87,7 @@ public class ToolBar extends JToolBar {
 		button.setOpaque(false);
 		button.setMargin(new Insets(1, 1, 1, 1));
 		buttonMap.put(getId(action), button);
-
+		
 		return button;
 		// registerComponent(button, action, activator);
 	}

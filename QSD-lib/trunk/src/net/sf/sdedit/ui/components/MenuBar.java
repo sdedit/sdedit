@@ -44,17 +44,16 @@ import net.sf.sdedit.util.Predicate;
 /**
  * This is a slightly advanced <tt>JMenuBar</tt> subclass that allows to
  * structure a menu by means of category names, so a user is not required to
- * build <tt>JMenu</tt>s. Furthermore, <tt>MenuBar</tt> provides a
- * convenient way to define mnemonics for menu entries (by using the
- * '&amp;'-notation as known from Qt).
+ * build <tt>JMenu</tt>s. Furthermore, <tt>MenuBar</tt> provides a convenient
+ * way to define mnemonics for menu entries (by using the '&amp;'-notation as
+ * known from Qt).
  * <p>
  * When an <tt>Action</tt> or <tt>JMenuItem</tt> is added to the
  * <tt>MenuBar</tt>, a title string must be specified. If the string has a
  * prefix that starts with '[' and ends with ']', the substring between these
  * square brackets represents the accelerator key for the action or item. The
- * appropriate key for the string is found as described here: <a
- * href="http://java.sun.com/j2se/1.5.0/docs/api/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String)">
- * <tt>javax.swing.Keystroke#getKeyStroke(java.lang.String)</tt></a>.
+ * appropriate key for the string is found as described here: <a href="http://java.sun.com/j2se/1.5.0/docs/api/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String)"
+ * > <tt>javax.swing.Keystroke#getKeyStroke(java.lang.String)</tt></a>.
  * <p>
  * If a title string contains an '&amp;', the following character is used as the
  * mnemonic for the entry or action. This also applies to categories/sub-menus.
@@ -134,9 +133,10 @@ public class MenuBar extends JMenuBar {
 				item.setAccelerator(acc);
 			}
 			return item;
+		} catch (RuntimeException re) {
+			throw re;
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new InternalError();
+			throw new IllegalArgumentException("cannot make menu item", e);
 		}
 	}
 
@@ -182,10 +182,10 @@ public class MenuBar extends JMenuBar {
 	}
 
 	/**
-	 * Adds an <tt>Action</tt> to a (sub-)menu of this <tt>MenuBar</tt>.
-	 * The <tt>Action</tt> must have a name (as set via
-	 * <tt>Action.putValue(Action.NAME,name)</tt>), which may specify a
-	 * mnemonic and accelerator key as described in the class comment:
+	 * Adds an <tt>Action</tt> to a (sub-)menu of this <tt>MenuBar</tt>. The
+	 * <tt>Action</tt> must have a name (as set via
+	 * <tt>Action.putValue(Action.NAME,name)</tt>), which may specify a mnemonic
+	 * and accelerator key as described in the class comment:
 	 * {@linkplain #MenuBar}.
 	 * <p>
 	 * Example: Let <tt>a</tt> be an action to be added to the submenu
@@ -247,12 +247,12 @@ public class MenuBar extends JMenuBar {
 	}
 
 	/**
-	 * Adds a new (sub-)menu to this <tt>MenuBar</tt>. Menus can be
-	 * arbitrarily nested. When a menu for a category on the n n-th (n &gt;= 1)
-	 * level is added, the category string must contain n substrings, separated
-	 * by '.', describing all higher categories in descending order and finally
-	 * the n-th category. All submenus for the categories on the levels 1, ...,
-	 * n-1 must already be present.
+	 * Adds a new (sub-)menu to this <tt>MenuBar</tt>. Menus can be arbitrarily
+	 * nested. When a menu for a category on the n n-th (n &gt;= 1) level is
+	 * added, the category string must contain n substrings, separated by '.',
+	 * describing all higher categories in descending order and finally the n-th
+	 * category. All submenus for the categories on the levels 1, ..., n-1 must
+	 * already be present.
 	 * 
 	 * @param category
 	 *            the category of the (sub-)menu (represented by a string with
@@ -324,7 +324,7 @@ public class MenuBar extends JMenuBar {
 		JMenu categoryMenu = categories.get(getCaption(category));
 		categoryMenu.add(item);
 	}
-	
+
 	public void addToggleAction(String category, String name,
 			String description, String tooltip, Icon icon,
 			final Predicate predicate, boolean initialValue) {

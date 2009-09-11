@@ -28,6 +28,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -83,6 +84,19 @@ public class UIUtilities {
             editableMethods.put(object.getClass().getName(), ref);
         }
         return ref.t;
+    }
+    
+    public static JPanel borderedPanel (JComponent component, int top, int left, int bottom, int right, boolean expand) {
+    	JPanel panel = new JPanel();
+    	if (expand) {
+        	panel.setLayout(new FlowLayout());
+        	panel.setLayout(new BorderLayout());
+    		panel.add(component, BorderLayout.CENTER);
+    	} else {
+    		panel.add(component); 
+    	}
+    	panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
+    	return panel;
     }
 
     public static void setColumnWidths(JTable table, int... widths) {

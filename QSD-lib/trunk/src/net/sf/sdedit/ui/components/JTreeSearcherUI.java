@@ -4,10 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+
+import net.sf.sdedit.util.UIUtilities;
 
 public class JTreeSearcherUI extends JPanel implements ActionListener {
 
@@ -19,13 +22,18 @@ public class JTreeSearcherUI extends JPanel implements ActionListener {
 
 	private JTextField textField;
 
-	public JTreeSearcherUI(JTreeSearcher searcher, JTree tree) {
+	public JTreeSearcherUI(JTreeSearcher searcher, JTree tree, String caption) {
 		this.searcher = searcher;
-		button = new JButton("Search");
+		button = new JButton(caption);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BorderLayout());
+		buttonPanel.add(button, BorderLayout.CENTER);
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(2,0,2,2));
 		textField = new JTextField();
 		setLayout(new BorderLayout());
-		add(textField, BorderLayout.CENTER);
-		add(button, BorderLayout.WEST);
+		JPanel textPanel = UIUtilities.borderedPanel(textField,2,2,2,0,true);
+		add(textPanel, BorderLayout.CENTER);
+		add(buttonPanel, BorderLayout.WEST);
 		textField.addActionListener(this);
 		button.addActionListener(this);
 		this.tree = tree;
@@ -43,8 +51,8 @@ public class JTreeSearcherUI extends JPanel implements ActionListener {
 		
 	}
 
-	public JTreeSearcherUI(JTreeSearcher searcher) {
-		this(searcher, null);
+	public JTreeSearcherUI(JTreeSearcher searcher, String caption) {
+		this(searcher, null, caption);
 	}
 	
 	public JTextField getTextField () {
