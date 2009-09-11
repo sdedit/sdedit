@@ -28,7 +28,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -145,6 +144,10 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 
 	private ActionManager actionManager() {
 		return Editor.getEditor().getActionManager();
+	}
+	
+	public ToolBar getToolbar () {
+		return toolbar;
 	}
 
 	public UserInterfaceImpl() {
