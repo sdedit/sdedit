@@ -32,6 +32,8 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyListener;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JTextPane;
@@ -48,11 +50,12 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
 import net.sf.sdedit.util.PopupActions;
+import net.sf.sdedit.util.Utilities;
 import net.sf.sdedit.util.PopupActions.ContextHandler;
 
 /**
- * A <tt>TextArea</tt> is an advanced <tt>JTextArea</tt> with error marks
- * and undo/redo function.
+ * A <tt>TextArea</tt> is an advanced <tt>JTextArea</tt> with error marks and
+ * undo/redo function.
  * 
  * @author Markus Strauch
  */
@@ -68,11 +71,25 @@ public class TextArea extends JTextPane implements UndoableEditListener,
 	private Object highlight;
 
 	private static final Color ERROR_COLOR = Color.RED;
-	
+
 	private String EOL;
-	
+
 	private PopupActions popupActions;
-	
+
+	private static class LineInfo {
+
+		int lineBegin;
+
+		int spacesOld;
+
+		int spacesNew;
+
+		public String toString () {
+			return "lineBegin=" + lineBegin + ", spacesOld=" + spacesOld + ", spacesNew=" + spacesNew;
+		}
+		
+	}
+
 	//
 	// UndoableEditListener method
 	//
@@ -109,8 +126,10 @@ public class TextArea extends JTextPane implements UndoableEditListener,
 			}
 		});
 		getInputMap().put(KeyStroke.getKeyStroke("control Y"), "Redo");
-		EOL = (String) getDocument().getProperty( DefaultEditorKit.EndOfLineStringProperty );
-		getDocument().putProperty( DefaultEditorKit.EndOfLineStringProperty, "\n" );
+		EOL = (String) getDocument().getProperty(
+				DefaultEditorKit.EndOfLineStringProperty);
+		getDocument().putProperty(DefaultEditorKit.EndOfLineStringProperty,
+				"\n");
 		getDocument().addUndoableEditListener(this);
 	}
 
@@ -158,8 +177,8 @@ public class TextArea extends JTextPane implements UndoableEditListener,
 	/**
 	 * Marks the characters between the two specified positions as erroneous.
 	 * Before this another maybe existing mark will be removed. If the
-	 * <tt>from</tt> position is less than 0, an error mark - if present -
-	 * will be removed.
+	 * <tt>from</tt> position is less than 0, an error mark - if present - will
+	 * be removed.
 	 * 
 	 * @param from
 	 *            the position of the first character
@@ -175,6 +194,48 @@ public class TextArea extends JTextPane implements UndoableEditListener,
 				highlight = highlighter.addHighlight(from, to, this);
 			} catch (BadLocationException ble) {
 				ble.printStackTrace();
+			}
+		}
+	}
+
+	public void prettyPrint(PrettyPrinter prettyPrinter) throws BadLocationException {
+		List<LineInfo> lineInfos = new LinkedList<LineInfo>();
+		String text = getText();
+		int l = text.length();
+		int spaces = 0;
+		int lineBegin = 0;
+		boolean begin = true;
+		for (int i = 0; i <= l; i++) {
+			char c = i == l ? (char) 0 : text.charAt(i);
+			if (i == l || c == (char) 10) {
+				begin = true;
+				LineInfo info = new LineInfo();
+				info.lineBegin = lineBegin;
+				info.spacesOld = spaces;
+				info.spacesNew = prettyPrinter.getAlign(lineBegin+1); // TODO
+				lineInfos.add(info);
+				System.out.println(info);
+				lineBegin = i + 1;
+				spaces = 0;
+			} else if (begin) {
+				if (' ' == c) {
+					spaces++;
+				} else {
+					begin = false;
+				}
+			}
+		}
+		int spacesAdded = 0;
+		for (LineInfo info : lineInfos) {
+			if (info.spacesNew >= 0) {
+				int diff = Math.abs(info.spacesOld - info.spacesNew);
+				if (info.spacesOld < info.spacesNew) {
+					getDocument().insertString(info.lineBegin + spacesAdded, Utilities.pad(' ', diff), null);
+					spacesAdded += diff;
+				} else if (info.spacesOld > info.spacesNew) {
+					getDocument().remove(info.lineBegin + spacesAdded, diff);
+					spacesAdded -= diff;
+				}
 			}
 		}
 	}
@@ -196,45 +257,48 @@ public class TextArea extends JTextPane implements UndoableEditListener,
 		}
 		return line;
 	}
-	
+
 	/**
-	 * Returns the text displayed by this <tt>TextArea</tt>, 
-	 * optionally formatted such that end-of-line characters match
-	 * the platform's behaviour.
+	 * Returns the text displayed by this <tt>TextArea</tt>, optionally
+	 * formatted such that end-of-line characters match the platform's
+	 * behaviour.
 	 * 
-	 * @param format flag denoting if end-of-line characters should be
-	 * represented as usual for the platform (<tt>true</tt>) or by
-	 * '\n' (<tt>false</tt>).
+	 * @param format
+	 *            flag denoting if end-of-line characters should be represented
+	 *            as usual for the platform (<tt>true</tt>) or by '\n' (
+	 *            <tt>false</tt>).
 	 * @return the text displayed by this <tt>TextArea</tt>
 	 */
-	private String getText (boolean format) {
+	private String getText(boolean format) {
 		String text;
 		if (format) {
-			getDocument().putProperty( DefaultEditorKit.EndOfLineStringProperty, EOL );
+			getDocument().putProperty(DefaultEditorKit.EndOfLineStringProperty,
+					EOL);
 			text = super.getText();
-			getDocument().putProperty( DefaultEditorKit.EndOfLineStringProperty, "\n" );
+			getDocument().putProperty(DefaultEditorKit.EndOfLineStringProperty,
+					"\n");
 		} else {
 			text = super.getText();
 		}
 		return text;
 	}
-	
+
 	/**
-	 * Returns the text displayed by this <tt>TextArea</tt>, with
-	 * a single '\n' used as an end-of-line character.
+	 * Returns the text displayed by this <tt>TextArea</tt>, with a single '\n'
+	 * used as an end-of-line character.
 	 * 
 	 * @return the text displayed by this <tt>TextArea</tt>
 	 */
-	public String getText () {
+	public String getText() {
 		return getText(false);
 	}
 
 	/**
-	 * Returns the index of the character at the beginning of
-	 * the current line (where the cursor is)
+	 * Returns the index of the character at the beginning of the current line
+	 * (where the cursor is)
 	 * 
-	 * @return the index of the character at the beginning of
-	 * the current line (where the cursor is)
+	 * @return the index of the character at the beginning of the current line
+	 *         (where the cursor is)
 	 */
 	public int getCurrentLineBegin() {
 		final int caret = getCaretPosition();
@@ -319,7 +383,5 @@ public class TextArea extends JTextPane implements UndoableEditListener,
 		}
 		return popupActions;
 	}
-	
-
 
 }

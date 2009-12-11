@@ -1382,6 +1382,14 @@ public class Utilities {
 		return cipher.doFinal(bytes);
 	}
 	
+	public static List<Integer> getHashCodes (Collection<? extends Object> objects) {
+		List<Integer> hashCodes = new LinkedList<Integer>();
+		for (Object obj : objects) {
+			hashCodes.add(System.identityHashCode(obj));
+		}
+		return hashCodes;
+	}
+	
 	public static byte [] decrypt (byte [] bytes, String hexKey) throws NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		SecretKey key = new SecretKeySpec(toByteArray(hexKey), "DESede");
 		try {
