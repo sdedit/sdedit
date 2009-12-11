@@ -42,6 +42,8 @@ import net.sf.sdedit.util.Direction;
  * 
  */
 public class ForwardMessage extends Message {
+	
+	private final int level;
 
 	/**
 	 * Creates a new forward message to be drawn.
@@ -58,6 +60,11 @@ public class ForwardMessage extends Message {
 	public ForwardMessage(Lifeline caller, Lifeline callee, Diagram diagram,
 			MessageData data) {
 		super(caller, callee, diagram, data);
+		this.level = caller.getCallLevel();
+	}
+	
+	public int getLevel () {
+		return level;
 	}
 
 	/**

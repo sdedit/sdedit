@@ -467,6 +467,7 @@ public final class Editor implements Constants, UserInterfaceListener
 				actions.nonEmptyDiagramActivator);
 		ui.addAction("&Edit", actions.copyVectorGraphicsToClipBoardAction,
 				actions.nonEmptyDiagramActivator);
+		ui.addAction("&Edit", actions.prettyPrintAction, actions.nonEmptyDiagramActivator);
 
 		ui.addCategory("&View", null);
 

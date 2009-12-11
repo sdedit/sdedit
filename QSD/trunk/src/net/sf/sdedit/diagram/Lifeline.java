@@ -35,6 +35,7 @@ import net.sf.sdedit.drawable.Line;
 import net.sf.sdedit.drawable.Rectangle;
 import net.sf.sdedit.log._LOG_;
 import net.sf.sdedit.util.Direction;
+import net.sf.sdedit.util.Utilities;
 
 /**
  * For each object or actor that appears in a diagram and that has not yet been
@@ -347,7 +348,7 @@ public final class Lifeline {
 
 	public int getCallLevel() {
 		int callLevel = 0;
-		for (Lifeline line : getAllLifelines()) {
+		for (Lifeline line : getRoot().getAllLifelines()) {
 			if (line != this && thread == line.thread) {
 				callLevel++;
 			}

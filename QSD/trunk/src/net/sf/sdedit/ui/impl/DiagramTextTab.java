@@ -371,7 +371,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 		getConfiguration().getDataObject().setVerticallySplit(layout == 1);
 	}
 
-	TextArea getTextArea() {
+	public TextArea getTextArea() {
 		return textArea;
 	}
 
@@ -574,7 +574,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 		}
 		return suggestions;
 	}
-
+	
 	public void setConfiguration(Bean<Configuration> configuration) {
 		super.setConfiguration(configuration);
 		oldConfiguration = configuration.copy();
