@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -201,7 +202,7 @@ public final class Editor implements Constants, UserInterfaceListener
 		return null;
 	}
 
-	public void load(URL url) throws IOException {
+	public void load(URL url) throws IOException, URISyntaxException {
 		String file = url.getFile();
 		FileHandler handler = null;
 		int d = file.lastIndexOf('.');
@@ -228,7 +229,7 @@ public final class Editor implements Constants, UserInterfaceListener
 			int last = hyperlink.lastIndexOf(':');
 			String title = hyperlink.substring(first + 1, last);
 			String file = hyperlink.substring(last + 1);
-			ui.help(title, file.replaceAll(".html", ""),false);
+			ui.help(title, file.replaceAll(".html", ""), false);
 		}
 	}
 
@@ -467,7 +468,8 @@ public final class Editor implements Constants, UserInterfaceListener
 				actions.nonEmptyDiagramActivator);
 		ui.addAction("&Edit", actions.copyVectorGraphicsToClipBoardAction,
 				actions.nonEmptyDiagramActivator);
-		ui.addAction("&Edit", actions.prettyPrintAction, actions.nonEmptyDiagramActivator);
+		ui.addAction("&Edit", actions.prettyPrintAction,
+				actions.nonEmptyDiagramActivator);
 
 		ui.addCategory("&View", null);
 

@@ -3,6 +3,7 @@ package net.sf.sdedit.editor.plugin;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 
 import javax.swing.JFileChooser;
@@ -79,28 +80,32 @@ public abstract class AbstractFileHandler implements FileHandler {
 	 */
 	public final void loadFile(URL url, final UserInterface ui)
 			throws IOException {
-		ui.getTabContainer().disableTabHistory();
-		final Tab tab = _loadFile(url);
-		if (tab == null) {
-			return;
-		}
-		if (url.getProtocol().equals("file")) {
-			tab.setFile(Utilities.toFile(url));
-		}
-		File file = tab.getFile();
-		updateFileChooserDirectory(file);
+		if (!"file".equals(url.getProtocol())
+				|| !ui.selectTabWith(Utilities.toFile(url))) {
 
-		tab.setClean(true);
-		if (file != null && file.exists()) {
-			Editor.getEditor().addToRecentFiles(file.getAbsolutePath());
-		}
-		addTabToUI(file, tab, ui);
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				ui.getTabContainer().enableTabHistory();
-				ui.selectTab(tab);
+			ui.getTabContainer().disableTabHistory();
+			final Tab tab = _loadFile(url);
+			if (tab == null) {
+				return;
 			}
-		});
+			if (url.getProtocol().equals("file")) {
+				tab.setFile(Utilities.toFile(url));
+			}
+			File file = tab.getFile();
+			updateFileChooserDirectory(file);
+
+			tab.setClean(true);
+			if (file != null && file.exists()) {
+				Editor.getEditor().addToRecentFiles(file.getAbsolutePath());
+			}
+			addTabToUI(file, tab, ui);
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					ui.getTabContainer().enableTabHistory();
+					ui.selectTab(tab);
+				}
+			});
+		}
 
 	}
 
