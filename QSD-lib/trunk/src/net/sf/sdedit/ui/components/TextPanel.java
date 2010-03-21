@@ -60,24 +60,20 @@ public class TextPanel extends JPanel implements KeyListener, ActionListener {
         return textField.getText();
     }
 
-    @Override
     public void keyPressed(KeyEvent e) {
         /* empty */
     }
 
-    @Override
     public void keyReleased(KeyEvent e) {
         /* empty */
     }
 
-    @Override
     public void keyTyped(KeyEvent e) {
         for (TextPanelListener tpl : listeners) {
             tpl.textChanged(this, getText());
         }
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
         for (TextPanelListener tpl : listeners) {
             tpl.textEntered(this, getText());
