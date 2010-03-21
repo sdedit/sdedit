@@ -60,7 +60,9 @@ public class ForwardMessage extends Message {
 	public ForwardMessage(Lifeline caller, Lifeline callee, Diagram diagram,
 			MessageData data) {
 		super(caller, callee, diagram, data);
-		this.level = caller.getCallLevel();
+		this.level = 0;
+		// TODO ? set level for pretty print
+		// this.level = caller.getCallLevel();
 	}
 	
 	public int getLevel () {

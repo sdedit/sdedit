@@ -34,6 +34,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -694,6 +695,8 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 			try {
 				Editor.getEditor().load(file.toURI().toURL());
 			} catch (IOException e) {
+				errorMessage(e, null, null);
+			} catch (URISyntaxException e) {
 				errorMessage(e, null, null);
 			}
 		}

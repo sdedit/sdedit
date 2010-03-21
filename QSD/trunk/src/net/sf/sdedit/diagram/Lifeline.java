@@ -352,6 +352,7 @@ public final class Lifeline {
 			if (line != this && thread == line.thread) {
 				callLevel++;
 			}
+			
 		}
 		return callLevel;
 	}

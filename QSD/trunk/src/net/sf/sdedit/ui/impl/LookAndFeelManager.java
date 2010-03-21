@@ -30,7 +30,7 @@ import java.net.URLClassLoader;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import com.sun.java.swing.plaf.windows.WindowsTreeUI;
+//import com.sun.java.swing.plaf.windows.WindowsTreeUI;
 
 /**
  * For dynamically changing the look and feel of whole frames and dialogs.
@@ -49,8 +49,8 @@ public/* singleton */class LookAndFeelManager extends URLClassLoader {
 			available[i] = info;
 			i++;
 		}
-		UIManager.put("Tree.expandedIcon",  new WindowsTreeUI.ExpandedIcon()); 
-		UIManager.put("Tree.collapsedIcon", new WindowsTreeUI.CollapsedIcon());
+		//UIManager.put("Tree.expandedIcon",  new WindowsTreeUI.ExpandedIcon()); 
+		//UIManager.put("Tree.collapsedIcon", new WindowsTreeUI.CollapsedIcon());
 
 	}
 
