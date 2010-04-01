@@ -42,7 +42,8 @@ import net.sf.sdedit.ui.components.configuration.configurators.FreeStringConfigu
 import net.sf.sdedit.ui.components.configuration.configurators.KeyStrokeConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.NumberConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.SmallStringSelectionConfigurator;
-import net.sf.sdedit.ui.components.configuration.configurators.StringSelectionConfigurator;
+import net.sf.sdedit.ui.components.configuration.configurators.SingleStringSelectionConfigurator;
+import net.sf.sdedit.ui.components.configuration.configurators.StringSetConfigurator;
 
 /**
  * A <tt>ConfiguratorFactory</tt> creates specialized
@@ -79,13 +80,16 @@ public class ConfiguratorFactory<C extends DataObject> {
 					return new SmallStringSelectionConfigurator<C>(bean,
 							property);
 				} 
-				return new StringSelectionConfigurator<C>(bean, property);
+				return new SingleStringSelectionConfigurator<C>(bean, property);
 			}
 			if ( !property.getWriteMethod().getAnnotation(
 					Adjustable.class).stringSelectionProvided()) {
 				return new FreeStringConfigurator<C>(bean, property);
 			}
-			return new StringSelectionConfigurator<C>(bean, property);
+			return new SingleStringSelectionConfigurator<C>(bean, property);
+		}
+		if (property.getPropertyType().equals(String[].class)) {
+			return new StringSetConfigurator<C>(bean, property);
 		}
 		if (property.getPropertyType().equals(Integer.TYPE)) {
 			return new NumberConfigurator<C>(bean, property);

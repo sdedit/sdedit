@@ -42,14 +42,14 @@ import net.sf.sdedit.ui.components.AutoCompletionComboboxEditor;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.components.configuration.DataObject;
 
-public class StringSelectionConfigurator<C extends DataObject> extends
-		StringConfigurator<C> implements ActionListener, ListCellRenderer {
+public class SingleStringSelectionConfigurator<C extends DataObject> extends
+		StringConfigurator<C> implements ActionListener, ListCellRenderer, StringSelectionReceiver {
 
 	protected JComboBox comboBox;
 
 	private BasicComboBoxRenderer renderer;
 
-	public StringSelectionConfigurator(Bean<C> bean, PropertyDescriptor property) {
+	public SingleStringSelectionConfigurator(Bean<C> bean, PropertyDescriptor property) {
 		super(bean, property);
 		renderer = new BasicComboBoxRenderer();
 		initialize();

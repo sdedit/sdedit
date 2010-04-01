@@ -23,6 +23,10 @@ public class NullValueProvider {
 			return "";
 		}
 		
+		if (objectClass == String[].class) {
+			return new String[0];
+		}
+		
 		if (objectClass == Boolean.TYPE) {
 			return Boolean.FALSE;
 		}

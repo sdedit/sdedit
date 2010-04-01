@@ -42,6 +42,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import net.sf.sdedit.ui.components.configuration.Adjustable;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.components.configuration.Configurator;
 import net.sf.sdedit.ui.components.configuration.DataObject;
@@ -57,6 +58,8 @@ FocusListener {
 	private JLabel label;
 	
 	private String description;
+	
+	private String [] fileTypes;
 	
 	private static ImageIcon openIcon = new ImageIcon(
 			Base64.decodeBase64EncodedImage(
@@ -104,6 +107,8 @@ FocusListener {
 			}
 		});
 		label.setHorizontalAlignment(SwingConstants.RIGHT);
+		this.fileTypes = getProperty().getWriteMethod().getAnnotation(
+				Adjustable.class).filetypes();
 	}
 	
 	public void setFile(java.io.File file) {
@@ -119,6 +124,9 @@ FocusListener {
 		if (current != null && current.getParentFile() != null) {
 			fileChooser().setCurrentDirectory(current.getParentFile());
 		}
+		if (fileTypes.length > 0) {
+			addFileTypes(fileTypes);
+		}
 		int val = fileChooser().showOpenDialog(null);
 		if (val == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser().getSelectedFile();
@@ -127,6 +135,7 @@ FocusListener {
 				_actionPerformed(null);
 			}
 		}
+		removeFileTypes(fileTypes);
 	}
 
 	@Override

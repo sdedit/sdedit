@@ -202,7 +202,6 @@ public class FileSetConfigurator<C extends DataObject> extends
 	@Override
 	public void focus() {
 		list.requestFocusInWindow();
-		
 	}
 
 }

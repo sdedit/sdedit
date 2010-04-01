@@ -54,7 +54,7 @@ import javax.swing.event.ListSelectionListener;
 
 import net.sf.sdedit.ui.components.ATabbedPane;
 import net.sf.sdedit.ui.components.ButtonPanel;
-import net.sf.sdedit.ui.components.configuration.configurators.StringSelectionConfigurator;
+import net.sf.sdedit.ui.components.configuration.configurators.StringSelectionReceiver;
 import net.sf.sdedit.util.Tooltips;
 
 /**
@@ -273,10 +273,10 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 
 	public void updateStringSelections() {
 		for (Configurator<?, C> configurator : getConfigurators()) {
-			if (configurator instanceof StringSelectionConfigurator<?>) {
+			if (configurator instanceof StringSelectionReceiver) {
 				bean.clearStringSelection(configurator.getPropertyDescriptor()
 						.getName());
-				((StringSelectionConfigurator<?>) configurator).reinitialize();
+				((StringSelectionReceiver) configurator).reinitialize();
 			}
 		}
 	}

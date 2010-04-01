@@ -75,6 +75,10 @@ public class BeanConverter {
 		if (value instanceof String) {
 			CDATASection cdata = document.createCDATASection((String) value);
 			elem.appendChild(cdata);
+		} else if (value instanceof String[]) {
+			CDATASection cdata = document.createCDATASection(Utilities.join(
+					";;", (String[]) value));
+			elem.appendChild(cdata);
 		} else if (value instanceof Integer) {
 			elem.setAttribute("value", value.toString());
 		} else if (value instanceof Boolean) {
@@ -100,8 +104,7 @@ public class BeanConverter {
 			elem.setAttribute("value", "" + ((Color) value).getRGB());
 		} else if (value instanceof Date) {
 			elem.setAttribute("value", "" + ((Date) value).getTime());
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("unknown property type: "
 					+ value.getClass().getName());
 		}
@@ -118,6 +121,9 @@ public class BeanConverter {
 			Class<?> type = property.getPropertyType();
 			if (type.equals(String.class)) {
 				value = element.getTextContent();
+			} else if (type.equals(String[].class)) {
+				String text = element.getTextContent();
+				value = text.split(";;");
 			} else if (type.equals(Integer.TYPE)) {
 				value = parseInt(element.getAttribute("value"));
 			} else if (type.equals(Boolean.TYPE)) {

@@ -36,19 +36,20 @@ import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.components.configuration.Configurator;
 import net.sf.sdedit.ui.components.configuration.DataObject;
 
-public class BooleanConfigurator<C extends DataObject> extends Configurator<Boolean,C> 
-implements ActionListener {
-	
+public class BooleanConfigurator<C extends DataObject> extends
+		Configurator<Boolean, C> implements ActionListener {
+
 	private JCheckBox checkBox;
-	
+
 	public BooleanConfigurator(Bean<C> bean, PropertyDescriptor property) {
 		super(bean, property);
 		initialize();
 	}
-	
-	private void initialize () {
+
+	private void initialize() {
 		setLayout(new BorderLayout());
-		checkBox = new JCheckBox(getProperty().getWriteMethod().getAnnotation(Adjustable.class).info());
+		checkBox = new JCheckBox(getProperty().getWriteMethod().getAnnotation(
+				Adjustable.class).info());
 		add(checkBox, BorderLayout.WEST);
 		checkBox.addActionListener(this);
 	}
@@ -63,12 +64,14 @@ implements ActionListener {
 	}
 
 	protected void _setEnabled(boolean enabled) {
-		checkBox.setEnabled(enabled);
+		if (checkBox != null) {
+			checkBox.setEnabled(enabled);
+		}
 	}
 
 	@Override
 	public void focus() {
 		checkBox.requestFocusInWindow();
-		
+
 	}
 }

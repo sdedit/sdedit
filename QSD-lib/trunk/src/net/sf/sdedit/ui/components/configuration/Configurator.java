@@ -59,19 +59,20 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 		implements PropertyChangeListener, ActionListener {
 
 	protected static JFileChooser _fileChooser;
-	
+
 	protected static JFileChooser fileChooser() {
 		if (_fileChooser == null) {
 			_fileChooser = new JFileChooser(System.getProperty("user.home"));
-			_fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			_fileChooser
+					.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			_fileChooser.setMultiSelectionEnabled(true);
 		}
 		return _fileChooser;
 	}
-	
+
 	protected static Set<String> fileTypes = new TreeSet<String>();
-	
-	private static FileFilter fileFilter = new FileFilter () {
+
+	private static FileFilter fileFilter = new FileFilter() {
 
 		@Override
 		public boolean accept(File f) {
@@ -83,17 +84,17 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 			if (c == -1) {
 				return false;
 			}
-			return fileTypes.contains(name.substring(c+1));
+			return fileTypes.contains(name.substring(c + 1));
 		}
 
 		@Override
 		public String getDescription() {
 			return Utilities.join(",", fileTypes);
 		}
-		
+
 	};
-	
-	public void addFileTypes (String... types) {
+
+	public void addFileTypes(String... types) {
 		for (String type : types) {
 			fileTypes.add(type.toLowerCase());
 		}
@@ -101,8 +102,8 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 			fileChooser().addChoosableFileFilter(fileFilter);
 		}
 	}
-	
-	public void removeFileTypes (String... types) {
+
+	public void removeFileTypes(String... types) {
 		for (String type : types) {
 			fileTypes.remove(type.toLowerCase());
 		}
@@ -115,8 +116,6 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 	static {
 
 	}
-	
-	
 
 	/**
 	 * The bean to be configured.
@@ -134,10 +133,13 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 
 	private boolean[] isDependencyEquality;
 
+	private volatile boolean isPerformingAction;
+
 	protected Configurator(Bean<C> bean, PropertyDescriptor property) {
 		super();
 		this.bean = bean;
 		this.property = property;
+		isPerformingAction = false;
 		Adjustable adj = property.getWriteMethod().getAnnotation(
 				Adjustable.class);
 		if (!adj.depends().equals("")) {
@@ -157,8 +159,8 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 					isDependencyEquality[i] = false;
 					split = dependency.split("!=");
 				}
-				dependentProperty[i] = split[0];
-				dependentValue[i] = split[1];
+				dependentProperty[i] = split[0].trim();
+				dependentValue[i] = split[1].trim();
 			}
 		}
 		bean.addPropertyChangeListener(this);
@@ -221,8 +223,8 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 		}
 		return true;
 	}
-	
-	public abstract void focus ();
+
+	public abstract void focus();
 
 	public void setBean(Bean<C> bean) {
 		this.bean = bean;
@@ -315,13 +317,13 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 			comp.setEnabled(enabled);
 		}
 	}
-	
+
 	public void setEditable(boolean editable) {
 		for (Component comp : UIUtilities.getDescendants(this)) {
 			UIUtilities.setEditable(comp, editable);
 		}
 	}
-	
+
 	@Override
 	public void setToolTipText(String tooltip) {
 		super.setToolTipText(tooltip);
@@ -338,11 +340,19 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 		// invoke this later to assert that all component models are in
 		// the appropriate state (reflecting the action) - we then apply the
 		// value to the underlying bean
-		 SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				_actionPerformed(e);
-			}
-		});
+		if (!isPerformingAction) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					isPerformingAction = true;
+					try {
+						_actionPerformed(e);
+					} finally {
+						isPerformingAction = false;
+					}
+
+				}
+			});
+		}
 	}
 
 	protected Adjustable getAdjustable() {

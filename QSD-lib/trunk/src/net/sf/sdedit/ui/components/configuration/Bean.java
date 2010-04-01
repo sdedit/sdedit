@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -126,7 +127,7 @@ public class Bean<T extends DataObject> implements Serializable,
 	}
 
 	public Set<PropertyChangeListener> getPropertyChangeListeners() {
-		return listeners;
+		return Collections.checkedSet(listeners, PropertyChangeListener.class);
 	}
 
 	private void init() {
@@ -152,12 +153,14 @@ public class Bean<T extends DataObject> implements Serializable,
 						}
 						order.put(key, norm(property.getName()));
 						properties.put(norm(property.getName()), property);
-						
+
 						if (getValue(property) == null) {
-							// may not be null when called in the process of deserialization
+							// may not be null when called in the process of
+							// deserialization
 							// (see readObject)
-							setValue(property,NullValueProvider.getNullValue(property.getPropertyType()));
-							
+							setValue(property, NullValueProvider
+									.getNullValue(property.getPropertyType()));
+
 						}
 					}
 				}
@@ -204,7 +207,7 @@ public class Bean<T extends DataObject> implements Serializable,
 			return this;
 		}
 		if (name.equals("isA")) {
-		    return ((Class) args[0]).isAssignableFrom(dataClass);
+			return ((Class) args[0]).isAssignableFrom(dataClass);
 		}
 		if (name.equals("cast")) {
 			return proxy;
@@ -216,9 +219,9 @@ public class Bean<T extends DataObject> implements Serializable,
 		if (name.equals("hashCode") && method.getParameterTypes().length == 1) {
 			return hashCode();
 		}
-		if (name.equals("equals") && method.getParameterTypes().length == 1 &&
-				method.getParameterTypes()[0] == Object.class) {
-			DataObject other = (DataObject) args [0];
+		if (name.equals("equals") && method.getParameterTypes().length == 1
+				&& method.getParameterTypes()[0] == Object.class) {
+			DataObject other = (DataObject) args[0];
 			return this.equals(other.getBean(DataObject.class));
 		}
 		String property = methodToPropertyNameMap.get(name);
@@ -250,8 +253,8 @@ public class Bean<T extends DataObject> implements Serializable,
 		}
 		return list;
 	}
-	
-	public Collection<PropertyDescriptor> getPrimaryProperties () {
+
+	public Collection<PropertyDescriptor> getPrimaryProperties() {
 		List<PropertyDescriptor> list = new LinkedList<PropertyDescriptor>();
 		Collection<PropertyDescriptor> properties = getProperties();
 		for (PropertyDescriptor prop : properties) {
@@ -283,7 +286,8 @@ public class Bean<T extends DataObject> implements Serializable,
 	 *            a listener that is notified when a property is modified via
 	 *            {@linkplain #setValue(PropertyDescriptor, Object)}
 	 */
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
+	public synchronized void addPropertyChangeListener(
+			PropertyChangeListener listener) {
 		listeners.add(listener);
 	}
 
@@ -293,7 +297,7 @@ public class Bean<T extends DataObject> implements Serializable,
 	 * @param listener
 	 *            the listener to be removed
 	 */
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
+	public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -331,8 +335,8 @@ public class Bean<T extends DataObject> implements Serializable,
 	public final Object getValue(String property) {
 		return values.get(norm(property));
 	}
-	
-	public final Object getValue (PropertyDescriptor pd) {
+
+	public final Object getValue(PropertyDescriptor pd) {
 		return getValue(pd.getName());
 	}
 
@@ -464,10 +468,12 @@ public class Bean<T extends DataObject> implements Serializable,
 			}
 		}
 		if (notify) {
+			List<PropertyChangeListener> _listeners;
 			PropertyChangeEvent event = new PropertyChangeEvent(this, property
 					.getName(), oldValue, newValue);
-			List<PropertyChangeListener> _listeners = new LinkedList<PropertyChangeListener>(
-					listeners);
+			synchronized (this) {
+				_listeners = new LinkedList<PropertyChangeListener>(listeners);
+			}
 			for (PropertyChangeListener listener : _listeners) {
 				listener.propertyChange(event);
 			}
