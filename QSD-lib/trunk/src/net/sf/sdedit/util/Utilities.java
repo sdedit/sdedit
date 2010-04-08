@@ -520,9 +520,6 @@ public class Utilities {
 
 	public static URL getResource(String name) {
 		URL res = Utilities.class.getResource("/resource/" + name);
-		if (res == null) {
-			throw new IllegalArgumentException("resource not found: " + name);
-		}
 		return res;
 	}
 
@@ -777,13 +774,29 @@ public class Utilities {
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> Iterable<T> wrap(final Iterator<T> iterator,
-			Class<T> elemClass) {
+	public static <T> Iterable<T> wrap(final Iterator<?> iterator,
+			final Class<T> elemClass) {
 		return new Iterable<T>() {
 
 			public Iterator<T> iterator() {
-				return iterator;
+				return new Iterator<T>() {
+
+                    @Override
+                    public boolean hasNext() {
+                        return iterator.hasNext();
+                    }
+
+                    @Override
+                    public T next() {
+                        return elemClass.cast(iterator.next());
+                    }
+
+                    @Override
+                    public void remove() {
+                        iterator.remove();
+                    }
+				    
+				};
 			}
 
 		};
