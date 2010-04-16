@@ -781,17 +781,14 @@ public class Utilities {
 			public Iterator<T> iterator() {
 				return new Iterator<T>() {
 
-                    @Override
                     public boolean hasNext() {
                         return iterator.hasNext();
                     }
 
-                    @Override
                     public T next() {
                         return elemClass.cast(iterator.next());
                     }
 
-                    @Override
                     public void remove() {
                         iterator.remove();
                     }
