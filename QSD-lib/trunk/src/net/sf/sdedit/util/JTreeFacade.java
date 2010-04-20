@@ -80,7 +80,10 @@ public class JTreeFacade implements PopupActions.Provider,
 	
 	public JTreeFacade(JTree tree) {
 		this.tree = tree;
-		
+	}
+	
+	public JTree getTree () {
+		return tree;
 	}
 
 	public PopupActions getPopupActions(ContextHandler ch) {
@@ -168,6 +171,15 @@ public class JTreeFacade implements PopupActions.Provider,
 			}
 		}
 		return result;
+	}
+	
+	public Object [] getSelectedObjects () {
+		TreePath [] paths = tree.getSelectionPaths();
+		Object [] objects = new Object[paths.length];
+		for (int i = 0; i < paths.length; i++) {
+			objects [i] = paths[i].getLastPathComponent();
+		}
+		return objects;
 	}
 	
 

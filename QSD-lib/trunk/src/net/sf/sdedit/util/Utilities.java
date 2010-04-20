@@ -781,18 +781,18 @@ public class Utilities {
 			public Iterator<T> iterator() {
 				return new Iterator<T>() {
 
-                    public boolean hasNext() {
-                        return iterator.hasNext();
-                    }
+					public boolean hasNext() {
+						return iterator.hasNext();
+					}
 
-                    public T next() {
-                        return elemClass.cast(iterator.next());
-                    }
+					public T next() {
+						return elemClass.cast(iterator.next());
+					}
 
-                    public void remove() {
-                        iterator.remove();
-                    }
-				    
+					public void remove() {
+						iterator.remove();
+					}
+
 				};
 			}
 
@@ -1106,6 +1106,28 @@ public class Utilities {
 
 		return new Double(n);
 
+	}
+
+	public static InputStream filter(String command, InputStream input,
+			File workingDir) throws IOException {
+
+		if (workingDir == null) {
+			workingDir = new File(".");
+		}
+
+		Process process = Runtime.getRuntime().exec(command, new String[0],
+				workingDir);
+		try {
+			process.waitFor();
+		} catch (InterruptedException ie) {
+
+		}
+
+		if (input != null) {
+			pipe(input, process.getOutputStream());
+		}
+
+		return process.getInputStream();
 	}
 
 	public static int iIn(Object object, Object... objects) {
