@@ -47,6 +47,9 @@ import java.util.regex.Pattern;
  * 
  */
 public final class _LOG_ {
+	
+
+	
 
     private _LOG_() {
         /* empty */

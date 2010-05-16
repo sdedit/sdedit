@@ -30,6 +30,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URL;
 import java.util.Iterator;
 
@@ -219,35 +222,41 @@ public class DocUtil {
 		};
 	}
 
-	public static String toString(Node node) {
-		if (node == null) {
-			return "NULL";
-		}
-		StringBuffer sb = new StringBuffer();
+	private static void toString(PrintWriter printWriter, Node node, boolean deep) {
 		if (node instanceof Element) {
-
+			printWriter.print("<");
 			Element element = (Element) node;
-			sb.append(element.getNodeName());
+			printWriter.print(element.getNodeName());
 			NamedNodeMap nnm = element.getAttributes();
-			boolean first = true;
 			for (int i = 0; i < nnm.getLength(); i++) {
 				Node attr = nnm.item(i);
-				if (!first) {
-					sb.append(", ");
-				} else {
-					sb.append(" ");
-					first = false;
-				}
-				sb.append(attr.getNodeName() + "=\"" + attr.getNodeValue()
+				printWriter.print(" " + attr.getNodeName() + "=\"" + attr.getNodeValue()
 						+ "\"");
 			}
-			return "<" + sb.toString() + ">";
+			printWriter.println(">");
+			if (deep) {
+				NodeList list = element.getChildNodes();
+				for (int i = 0; i < list.getLength(); i++) {
+					toString(printWriter, list.item(i), true);
+				}
+			}
+			printWriter.println("</" + element.getNodeName() + ">");
 		}
 		if (node instanceof Text) {
 			Text text = (Text) node;
-			return text.getWholeText();
+			printWriter.println(text.getWholeText());
 		}
-		return node.toString();
+	}
+	
+	public static String toString (Node node) {
+		return toString(node, false);
+	}
+	
+	public static String toString (Node node, boolean deep) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		toString(pw, node, deep);
+		return sw.toString();
 	}
 
 	/**
@@ -264,17 +273,28 @@ public class DocUtil {
 	 */
 
 	public static void writeDocument(Document document, String encoding,
-			OutputStream out) throws IOException, XMLException {
-		OutputStreamWriter writer = new OutputStreamWriter(out, encoding);
+			OutputStream out, Writer writer,
+			boolean omitXMLDeclaration) throws IOException, XMLException {
+		if (writer == null) {
+			writer = new OutputStreamWriter(out, encoding);
+		}
 		transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+				omitXMLDeclaration ? "yes" : "no");
 		Source source = new DOMSource(document);
 		Result result = new StreamResult(writer);
 		try {
 			transformer.transform(source, result);
 		} catch (TransformerException e) {
+			e.printStackTrace();
 			throw new XMLException("writeDocument failed", e);
 		}
 		writer.flush();
+	}
+
+	public static void writeDocument(Document document, String encoding,
+			OutputStream out) throws IOException, XMLException {
+		writeDocument(document, encoding, out, null, false);
 	}
 
 	/**
