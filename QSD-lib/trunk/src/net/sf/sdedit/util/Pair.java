@@ -100,7 +100,9 @@ public class Pair<F,S> implements Comparable<Pair<F,S>>
      */
     public int hashCode ()
     {
-        return (first.hashCode() << 16) | second.hashCode() & 0xFFFF;
+        int fh = first == null ? 0 : first.hashCode();
+        int sh = second == null ? 0 : second.hashCode();
+        return (fh << 16) | (sh & 0xFFFF);
     }
     
     /**

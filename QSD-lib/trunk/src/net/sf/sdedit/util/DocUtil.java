@@ -69,303 +69,311 @@ import org.xml.sax.SAXException;
 
 public class DocUtil {
 
-	private static DocumentBuilder documentBuilder;
+    private static DocumentBuilder documentBuilder;
 
-	private static Transformer transformer;
+    private static Transformer transformer;
 
-	private static XPathFactory xPathFactory = XPathFactory.newInstance();
+    private static XPathFactory xPathFactory = XPathFactory.newInstance();
 
-	private DocUtil() {
-		/* empty */
-	}
+    private DocUtil() {
+        /* empty */
+    }
 
-	static {
-		DocumentBuilderFactory factory = null;
-		try {
-			factory = DocumentBuilderFactory.newInstance();
+    static {
+        DocumentBuilderFactory factory = null;
+        try {
+            factory = DocumentBuilderFactory.newInstance();
 
-			factory.setValidating(false);
-			try {
-				factory
-						.setFeature(
-								"http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
-								false);
-			} catch (ParserConfigurationException pce) {
-				System.err.println("Warning: " + pce.getMessage());
-			}
-			try {
-				factory
-						.setFeature(
-								"http://apache.org/xml/features/nonvalidating/load-external-dtd",
-								false);
-			} catch (ParserConfigurationException pce) {
-				System.err.println("Warning: " + pce.getMessage());
-			}
+            factory.setValidating(false);
+            try {
+                factory
+                        .setFeature(
+                                "http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
+                                false);
+            } catch (ParserConfigurationException pce) {
+                System.err.println("Warning: " + pce.getMessage());
+            }
+            try {
+                factory
+                        .setFeature(
+                                "http://apache.org/xml/features/nonvalidating/load-external-dtd",
+                                false);
+            } catch (ParserConfigurationException pce) {
+                System.err.println("Warning: " + pce.getMessage());
+            }
 
-			documentBuilder = factory.newDocumentBuilder();
-			documentBuilder.setEntityResolver(null);
-			transformer = TransformerFactory.newInstance().newTransformer();
-			factory.setIgnoringElementContentWhitespace(true);
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+            documentBuilder = factory.newDocumentBuilder();
+            documentBuilder.setEntityResolver(null);
+            transformer = TransformerFactory.newInstance().newTransformer();
+            factory.setIgnoringElementContentWhitespace(true);
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public static String evalXPathAsString(Document document, String expression)
-			throws XMLException {
-		XPath xpath = xPathFactory.newXPath();
-		try {
-			return xpath.evaluate(expression, document);
-		} catch (XPathExpressionException xee) {
-			throw new XMLException("Could not evaluate XPath: " + expression,
-					xee);
-		}
-	}
+    public static String evalXPathAsString(Document document, String expression)
+            throws XMLException {
+        XPath xpath = xPathFactory.newXPath();
+        try {
+            return xpath.evaluate(expression, document);
+        } catch (XPathExpressionException xee) {
+            throw new XMLException("Could not evaluate XPath: " + expression,
+                    xee);
+        }
+    }
 
-	public static String evaluateCDATA(Document document, String xPath)
-			throws XMLException {
-		StringBuffer buffer = new StringBuffer();
-		Element elem = (Element) evalXPathAsNode(document, xPath);
-		if (elem != null) {
-			NodeList children = elem.getChildNodes();
-			for (int i = 0; i < children.getLength(); i++) {
-				if (children.item(i) instanceof CDATASection) {
-					buffer.append(((CDATASection) children.item(i))
-							.getTextContent());
-				}
-			}
-		}
-		return buffer.toString();
-	}
+    public static String evaluateCDATA(Document document, String xPath)
+            throws XMLException {
+        StringBuffer buffer = new StringBuffer();
+        Element elem = (Element) evalXPathAsNode(document, xPath);
+        if (elem != null) {
+            NodeList children = elem.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                if (children.item(i) instanceof CDATASection) {
+                    buffer.append(((CDATASection) children.item(i))
+                            .getTextContent());
+                }
+            }
+        }
+        return buffer.toString();
+    }
 
-	public static Node evalXPathAsNode(Document document, String expression)
-			throws XMLException {
-		XPath xpath = xPathFactory.newXPath();
-		try {
-			Node result = (Node) xpath.evaluate(expression, document,
-					XPathConstants.NODE);
-			return result;
-		} catch (XPathExpressionException xee) {
-			throw new XMLException("Could not evaluate XPath: " + expression,
-					xee);
-		}
-	}
+    public static Node evalXPathAsNode(Document document, String expression)
+            throws XMLException {
+        XPath xpath = xPathFactory.newXPath();
+        try {
+            Node result = (Node) xpath.evaluate(expression, document,
+                    XPathConstants.NODE);
+            return result;
+        } catch (XPathExpressionException xee) {
+            throw new XMLException("Could not evaluate XPath: " + expression,
+                    xee);
+        }
+    }
 
-	public static NodeList evalXPathAsNodeList(Document document,
-			String expression) throws XMLException {
-		XPath xpath = xPathFactory.newXPath();
-		try {
-			return (NodeList) xpath.evaluate(expression, document,
-					XPathConstants.NODESET);
-		} catch (XPathExpressionException xee) {
-			throw new XMLException("Could not evaluate XPath: " + expression,
-					xee);
-		}
-	}
+    public static NodeList evalXPathAsNodeList(Document document,
+            String expression) throws XMLException {
+        XPath xpath = xPathFactory.newXPath();
+        try {
+            return (NodeList) xpath.evaluate(expression, document,
+                    XPathConstants.NODESET);
+        } catch (XPathExpressionException xee) {
+            throw new XMLException("Could not evaluate XPath: " + expression,
+                    xee);
+        }
+    }
 
-	/**
-	 * Returns an empty Document.
-	 * 
-	 * @return an empty Document
-	 */
-	public static Document newDocument() {
-		return documentBuilder.newDocument();
-	}
+    /**
+     * Returns an empty Document.
+     * 
+     * @return an empty Document
+     */
+    public static Document newDocument() {
+        return documentBuilder.newDocument();
+    }
 
-	public static Node getChild(Node parent, String name) {
-		NodeList list = parent.getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
-			if (name.equals(list.item(i).getNodeName())) {
-				return list.item(i);
-			}
-		}
-		return null;
-	}
+    public static Node getChild(Node parent, String name) {
+        NodeList list = parent.getChildNodes();
+        for (int i = 0; i < list.getLength(); i++) {
+            if (name.equals(list.item(i).getNodeName())) {
+                return list.item(i);
+            }
+        }
+        return null;
+    }
 
-	public static String getAttribute(Element element, String name) {
-		NamedNodeMap nnm = element.getAttributes();
-		for (int i = 0; i < nnm.getLength(); i++) {
-			if (name.equalsIgnoreCase(nnm.item(i).getNodeName())) {
-				return nnm.item(i).getNodeValue();
-			}
-		}
-		return null;
-	}
+    public static String getAttribute(Element element, String name) {
+        NamedNodeMap nnm = element.getAttributes();
+        for (int i = 0; i < nnm.getLength(); i++) {
+            if (name.equalsIgnoreCase(nnm.item(i).getNodeName())) {
+                return nnm.item(i).getNodeValue();
+            }
+        }
+        return null;
+    }
 
-	public static Iterable<Node> iterate(final NodeList nodeList) {
-		final Iterator<Node> iter = new Iterator<Node>() {
+    public static Iterable<Node> iterate(final NodeList nodeList) {
+        final Iterator<Node> iter = new Iterator<Node>() {
 
-			private int i = 0;
+            private int i = 0;
 
-			public boolean hasNext() {
-				return i < nodeList.getLength();
-			}
+            public boolean hasNext() {
+                return i < nodeList.getLength();
+            }
 
-			public Node next() {
-				return nodeList.item(i++);
-			}
+            public Node next() {
+                return nodeList.item(i++);
+            }
 
-			public void remove() {
+            public void remove() {
 
-			}
+            }
 
-		};
+        };
 
-		return new Iterable<Node>() {
+        return new Iterable<Node>() {
 
-			public Iterator<Node> iterator() {
-				return iter;
-			}
+            public Iterator<Node> iterator() {
+                return iter;
+            }
 
-		};
-	}
+        };
+    }
 
-	private static void toString(PrintWriter printWriter, Node node, boolean deep) {
-		if (node instanceof Element) {
-			printWriter.print("<");
-			Element element = (Element) node;
-			printWriter.print(element.getNodeName());
-			NamedNodeMap nnm = element.getAttributes();
-			for (int i = 0; i < nnm.getLength(); i++) {
-				Node attr = nnm.item(i);
-				printWriter.print(" " + attr.getNodeName() + "=\"" + attr.getNodeValue()
-						+ "\"");
-			}
-			printWriter.println(">");
-			if (deep) {
-				NodeList list = element.getChildNodes();
-				for (int i = 0; i < list.getLength(); i++) {
-					toString(printWriter, list.item(i), true);
-				}
-			}
-			printWriter.println("</" + element.getNodeName() + ">");
-		}
-		if (node instanceof Text) {
-			Text text = (Text) node;
-			printWriter.println(text.getWholeText());
-		}
-	}
-	
-	public static String toString (Node node) {
-		return toString(node, false);
-	}
-	
-	public static String toString (Node node, boolean deep) {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		toString(pw, node, deep);
-		return sw.toString();
-	}
+    private static void toString(PrintWriter printWriter, Node node,
+            boolean deep) {
+        if (node instanceof Element) {
+            printWriter.print("<");
+            Element element = (Element) node;
+            printWriter.print(element.getNodeName());
+            NamedNodeMap nnm = element.getAttributes();
+            for (int i = 0; i < nnm.getLength(); i++) {
+                Node attr = nnm.item(i);
+                printWriter.print(" " + attr.getNodeName() + "=\""
+                        + attr.getNodeValue() + "\"");
+            }
+            if (!deep || element.getChildNodes().getLength() == 0) {
+                printWriter.println("/>");
+            } else {
+                printWriter.println(">");
+            }
 
-	/**
-	 * Writes the XML representation of a Document object.
-	 * 
-	 * @param document
-	 *            the Document instance
-	 * @param encoding
-	 *            the encoding to be used
-	 * @param out
-	 *            the output stream to be used
-	 * @throws XMLException
-	 * @throws IOException
-	 */
+            if (deep) {
+                NodeList list = element.getChildNodes();
+                for (int i = 0; i < list.getLength(); i++) {
+                    toString(printWriter, list.item(i), true);
+                }
+            }
+            if (deep && element.getChildNodes().getLength() > 0) {
+                printWriter.println("</" + element.getNodeName() + ">");
+            }
+        }
+        if (node instanceof Text) {
+            Text text = (Text) node;
+            printWriter.println(text.getWholeText());
+        }
+    }
 
-	public static void writeDocument(Document document, String encoding,
-			OutputStream out, Writer writer,
-			boolean omitXMLDeclaration) throws IOException, XMLException {
-		if (writer == null) {
-			writer = new OutputStreamWriter(out, encoding);
-		}
-		transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-				omitXMLDeclaration ? "yes" : "no");
-		Source source = new DOMSource(document);
-		Result result = new StreamResult(writer);
-		try {
-			transformer.transform(source, result);
-		} catch (TransformerException e) {
-			e.printStackTrace();
-			throw new XMLException("writeDocument failed", e);
-		}
-		writer.flush();
-	}
+    public static String toString(Node node) {
+        return toString(node, false);
+    }
 
-	public static void writeDocument(Document document, String encoding,
-			OutputStream out) throws IOException, XMLException {
-		writeDocument(document, encoding, out, null, false);
-	}
+    public static String toString(Node node, boolean deep) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        toString(pw, node, deep);
+        return sw.toString();
+    }
 
-	/**
-	 * Creates a Document instance from a Reader reading an XML input stream.
-	 * 
-	 * @param in
-	 *            an XML input stream
-	 * @return the Document object created from the XML code
-	 * @throws IOException
-	 *             if the Reader cannot read
-	 * @throws XMLException
-	 */
-	public static Document readDocument(InputStream in, String encoding)
-			throws IOException, XMLException {
-		InputStreamReader reader = new InputStreamReader(in, encoding);
-		InputSource source = new InputSource(new BufferedReader(reader));
-		Document document;
-		try {
-			document = documentBuilder.parse(source);
-		} catch (SAXException e) {
-			throw new XMLException("readDocument failed", e);
-		}
-		return document;
-	}
+    /**
+     * Writes the XML representation of a Document object.
+     * 
+     * @param document
+     *            the Document instance
+     * @param encoding
+     *            the encoding to be used
+     * @param out
+     *            the output stream to be used
+     * @throws XMLException
+     * @throws IOException
+     */
 
-	public static DOMNode toDOMNode(Document document) {
-		Element elem = document.getDocumentElement();
-		return DOMNodeAdapter.makeNode(elem);
-	}
+    public static void writeDocument(Document document, String encoding,
+            OutputStream out, Writer writer, boolean omitXMLDeclaration)
+            throws IOException, XMLException {
+        if (writer == null) {
+            writer = new OutputStreamWriter(out, encoding);
+        }
+        transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+                omitXMLDeclaration ? "yes" : "no");
+        Source source = new DOMSource(document);
+        Result result = new StreamResult(writer);
+        try {
+            transformer.transform(source, result);
+        } catch (TransformerException e) {
+            e.printStackTrace();
+            throw new XMLException("writeDocument failed", e);
+        }
+        writer.flush();
+    }
 
-	public static DOMNode getDocumentFromURL(URL url, String encoding) {
-		try {
-			Document doc = readDocument(url.openStream(), "UTF-8");
-			return toDOMNode(doc);
-		} catch (RuntimeException re) {
-			throw re;
-		} catch (Throwable t) {
-			throw new IllegalArgumentException(t);
-		}
-	}
+    public static void writeDocument(Document document, String encoding,
+            OutputStream out) throws IOException, XMLException {
+        writeDocument(document, encoding, out, null, false);
+    }
 
-	/**
-	 * An <tt>XMLException</tt> is thrown when an XML document is not
-	 * well-formed or not valid.
-	 */
-	public static class XMLException extends Exception {
+    /**
+     * Creates a Document instance from a Reader reading an XML input stream.
+     * 
+     * @param in
+     *            an XML input stream
+     * @return the Document object created from the XML code
+     * @throws IOException
+     *             if the Reader cannot read
+     * @throws XMLException
+     */
+    public static Document readDocument(InputStream in, String encoding)
+            throws IOException, XMLException {
+        InputStreamReader reader = new InputStreamReader(in, encoding);
+        InputSource source = new InputSource(new BufferedReader(reader));
+        Document document;
+        try {
+            document = documentBuilder.parse(source);
+        } catch (SAXException e) {
+            throw new XMLException("readDocument failed", e);
+        }
+        return document;
+    }
 
-		private static final long serialVersionUID = -6835267522941428813L;
+    public static DOMNode toDOMNode(Document document) {
+        Element elem = document.getDocumentElement();
+        return DOMNodeAdapter.makeNode(elem);
+    }
 
-		/**
-		 * Constructor.
-		 * 
-		 * @param msg
-		 *            a descriptive message
-		 */
-		// constructors are declared private because XMLExceptions are only
-		// instantiated in DocUtil
-		private XMLException(String msg) {
-			super(msg);
-		}
+    public static DOMNode getDocumentFromURL(URL url, String encoding) {
+        try {
+            Document doc = readDocument(url.openStream(), "UTF-8");
+            return toDOMNode(doc);
+        } catch (RuntimeException re) {
+            throw re;
+        } catch (Throwable t) {
+            throw new IllegalArgumentException(t);
+        }
+    }
 
-		/**
-		 * Constructor.
-		 * 
-		 * @param msg
-		 *            a descriptive message
-		 * @param cause
-		 *            the exception causing the XMLException
-		 */
-		private XMLException(String msg, Throwable cause) {
-			super(msg, cause);
-		}
-	}
+    /**
+     * An <tt>XMLException</tt> is thrown when an XML document is not
+     * well-formed or not valid.
+     */
+    public static class XMLException extends Exception {
+
+        private static final long serialVersionUID = -6835267522941428813L;
+
+        /**
+         * Constructor.
+         * 
+         * @param msg
+         *            a descriptive message
+         */
+        // constructors are declared private because XMLExceptions are only
+        // instantiated in DocUtil
+        private XMLException(String msg) {
+            super(msg);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param msg
+         *            a descriptive message
+         * @param cause
+         *            the exception causing the XMLException
+         */
+        private XMLException(String msg, Throwable cause) {
+            super(msg, cause);
+        }
+    }
 }

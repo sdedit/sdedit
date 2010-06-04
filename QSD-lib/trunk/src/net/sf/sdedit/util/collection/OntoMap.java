@@ -92,8 +92,8 @@ public class OntoMap<P, I> implements Serializable {
 		reverse.remove(image);
 	}
 
-	public void remove(P preImage, I image) {
-		Collection<?> preImages = reverse.get(image);
+	public void remove(P preImage) {
+		Collection<?> preImages = reverse.get(getImage(preImage));
 		if (preImages != null) {
 			preImages.remove(preImage);
 		}

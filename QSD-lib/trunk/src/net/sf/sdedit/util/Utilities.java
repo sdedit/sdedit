@@ -25,6 +25,10 @@
 package net.sf.sdedit.util;
 
 import java.awt.Component;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -1495,6 +1499,18 @@ public class Utilities {
 		} catch (NoSuchAlgorithmException e) {
 			throw new IllegalStateException(e);
 		}
+	}
+	
+	public static PropertyDescriptor [] getProperties (Class<?> cls) {
+        BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(cls);
+            return beanInfo
+            .getPropertyDescriptors();  
+        } catch (IntrospectionException e) {
+            throw new IllegalArgumentException("Unable to introspect " + cls.getName(), e);
+        }
+    
 	}
 
 }
