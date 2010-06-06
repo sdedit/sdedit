@@ -105,6 +105,16 @@ public class Pair<F,S> implements Comparable<Pair<F,S>>
         return (fh << 16) | (sh & 0xFFFF);
     }
     
+    private boolean equals (Object o1, Object o2) {
+        if (o1 == null && o2 == null) {
+            return true;
+        }
+        if (o1 == null || o2 == null) {
+            return false;
+        }
+        return o1.equals(o2);
+    }
+    
     /**
      * Returns true iff both elements of this Pair equal both elements of
      * another Pair.
@@ -117,7 +127,7 @@ public class Pair<F,S> implements Comparable<Pair<F,S>>
     public boolean equals (Object object)
     {
         Pair<F,S> pair = (Pair<F,S>) object;
-        return first.equals(pair.first) && second.equals(pair.second);
+        return equals(first,pair.first) && equals(second,pair.second);
     }
     
     /**
