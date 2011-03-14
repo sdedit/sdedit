@@ -94,9 +94,17 @@ public final class WindowsRegistry extends Thread {
     	for (String line : Utilities.readLines(command, streamRef)) {
     	    line = line.replaceAll("\\s+", " ").trim();
 			String [] parts = line.split(" ");
-			if (parts.length == 3 && parts [0].trim().equals(key)) {
+			if (parts.length >= 3 && parts [0].trim().equals(key)) {
 				streamRef.t.close();
-				return parts[2].trim();
+				String value = null;
+				for (int i = 2; i < parts.length; i++) {
+					if (value == null) {
+						value = parts[i];
+					} else {
+						value = value + " " + parts[i];
+					}
+				}
+				return value.trim();
 			}
     	}
     	return null;
