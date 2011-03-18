@@ -47,6 +47,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -777,10 +778,10 @@ public class Utilities {
 				+ " is not iterable");
 
 	}
-	
-	public static <T> Iterable<T> iteratorToIterable (final Iterator<?> iterator,
-			final Class<T>elemClass) {
-		final Iterator<T> iter = new Iterator<T> (){
+
+	public static <T> Iterable<T> iteratorToIterable(
+			final Iterator<?> iterator, final Class<T> elemClass) {
+		final Iterator<T> iter = new Iterator<T>() {
 
 			public boolean hasNext() {
 				return iterator.hasNext();
@@ -792,17 +793,17 @@ public class Utilities {
 
 			public void remove() {
 				iterator.remove();
-				
+
 			}
-			
+
 		};
-		
-		return new Iterable <T> (){
+
+		return new Iterable<T>() {
 
 			public Iterator<T> iterator() {
 				return iter;
 			}
-			
+
 		};
 	}
 
@@ -990,19 +991,26 @@ public class Utilities {
 		return new Pair<S, T>(arg1, arg2);
 	}
 
-	public static Object invoke(String methodName, Object object, Object[] args) {
-		try {
-			Method method;
-			if (object instanceof Class<?>) {
-				method = resolveMethod((Class<?>) object, methodName, args);
-			} else {
-				method = resolveMethod(object.getClass(), methodName, args);
-			}
-			method.setAccessible(true);
-			return method.invoke(object, args);
-		} catch (Exception t) {
-			throw new IllegalArgumentException("cannot invoke " + methodName, t);
+	public static Object invoke(String methodName, Object object, Object[] args) 
+	throws Throwable
+	{
+		Method method;
+		if (object instanceof Class<?>) {
+			method = resolveMethod((Class<?>) object, methodName, args);
+		} else {
+			method = resolveMethod(object.getClass(), methodName, args);
 		}
+		method.setAccessible(true);
+		Object result;
+		try {
+			result = method.invoke(object, args);
+		} catch (IllegalAccessException e) {
+			throw new IllegalArgumentException("cannot access method " + methodName + " of " + object.getClass().getName());
+		} catch (InvocationTargetException e) {
+			throw e.getCause();
+		}
+		return result;
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1013,8 +1021,8 @@ public class Utilities {
 			oos.writeObject(t);
 			out.flush();
 
-			ByteArrayInputStream in = new ByteArrayInputStream(out
-					.toByteArray());
+			ByteArrayInputStream in = new ByteArrayInputStream(
+					out.toByteArray());
 			ObjectInputStream ois = new ObjectInputStream(in);
 			T copy = (T) ois.readObject();
 			in.close();
@@ -1500,17 +1508,17 @@ public class Utilities {
 			throw new IllegalStateException(e);
 		}
 	}
-	
-	public static PropertyDescriptor [] getProperties (Class<?> cls) {
-        BeanInfo beanInfo;
-        try {
-            beanInfo = Introspector.getBeanInfo(cls);
-            return beanInfo
-            .getPropertyDescriptors();  
-        } catch (IntrospectionException e) {
-            throw new IllegalArgumentException("Unable to introspect " + cls.getName(), e);
-        }
-    
+
+	public static PropertyDescriptor[] getProperties(Class<?> cls) {
+		BeanInfo beanInfo;
+		try {
+			beanInfo = Introspector.getBeanInfo(cls);
+			return beanInfo.getPropertyDescriptors();
+		} catch (IntrospectionException e) {
+			throw new IllegalArgumentException("Unable to introspect "
+					+ cls.getName(), e);
+		}
+
 	}
 
 }
