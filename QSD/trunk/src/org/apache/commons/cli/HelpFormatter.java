@@ -553,8 +553,8 @@ public class HelpFormatter {
 		}
 
 		// call printWrapped
-		printWrapped(pw, width, buff.toString().indexOf(' ') + 1, buff
-				.toString());
+		printWrapped(pw, width, buff.toString().indexOf(' ') + 1,
+				buff.toString());
 	}
 
 	/**
@@ -746,9 +746,15 @@ public class HelpFormatter {
 		List prefixList = new ArrayList();
 		Option option;
 		List optList = new LinkedList();
-		
-		Collection helpOptions = (Collection)
-		  Utilities.invoke("helpOptions", options, new Object[0]);
+
+		Collection helpOptions = null;
+
+		try {
+			helpOptions = (Collection) Utilities.invoke("helpOptions", options,
+					new Object[0]);
+		} catch (Throwable t) {
+			throw new IllegalStateException(t);
+		}
 
 		optList.addAll(helpOptions);
 
@@ -762,12 +768,12 @@ public class HelpFormatter {
 				optBuf.append(lpad).append("   " + defaultLongOptPrefix)
 						.append(option.getLongOpt());
 			} else {
-				optBuf.append(lpad).append(defaultOptPrefix).append(
-						option.getOpt());
+				optBuf.append(lpad).append(defaultOptPrefix)
+						.append(option.getOpt());
 
 				if (option.hasLongOpt()) {
-					optBuf.append(',').append(defaultLongOptPrefix).append(
-							option.getLongOpt());
+					optBuf.append(',').append(defaultLongOptPrefix)
+							.append(option.getLongOpt());
 				}
 			}
 
@@ -990,10 +996,16 @@ public class HelpFormatter {
 			if (opt1.getLongOpt() == null && opt2.getLongOpt() != null) {
 				return -1;
 			}
-			String key1 = Utilities.invoke("getKey", opt1, new Object[0])
-					.toString();
-			String key2 = Utilities.invoke("getKey", opt2, new Object[0])
-					.toString();
+			String key1 = null;
+			String key2 = null;
+			try {
+				key1 = Utilities.invoke("getKey", opt1, new Object[0])
+						.toString();
+				key2 = Utilities.invoke("getKey", opt2, new Object[0])
+						.toString();
+			} catch (Throwable ignored) {
+
+			}
 			return key1.compareToIgnoreCase(key2);
 		}
 	}
