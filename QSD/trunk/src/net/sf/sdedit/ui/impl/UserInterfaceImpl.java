@@ -71,7 +71,7 @@ import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.editor.TabActivator;
 import net.sf.sdedit.help.HelpTab;
 import net.sf.sdedit.icons.Icons;
-import net.sf.sdedit.log._LOG_;
+
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.TabListener;
 import net.sf.sdedit.ui.UserInterface;
@@ -235,8 +235,6 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 				action.putValue(Action.SMALL_ICON, icon);
 			}
 		}
-		_LOG_.log("adding action with name " + action.getValue(Action.NAME)
-				+ " to menu bar");
 		JMenuItem item = menuBar.addAction(category, action, -1);
 		registerComponent(item, action, activator);
 

@@ -38,7 +38,7 @@ import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.drawable.Note;
 import net.sf.sdedit.error.SyntaxError;
-import net.sf.sdedit.log._LOG_;
+
 import net.sf.sdedit.util.Grep;
 import net.sf.sdedit.util.Pair;
 
@@ -491,11 +491,11 @@ public class TextHandler implements DiagramDataProvider {
 		URI link = null;
 		if (noteText.length == 1) {
 			String linkString = noteText[0].trim();
-			_LOG_.log("linkString=" + linkString);
+
 			if (linkString.startsWith("link:")) {
 				try {
 					linkString = linkString.substring(5).trim();
-					_LOG_.log("linkString=" + linkString);
+
 					link = new URI(linkString);
 					if (link.getPath() == null) {
 						throw new SyntaxError(this, "Empty path in URI: "

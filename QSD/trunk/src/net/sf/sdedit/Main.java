@@ -42,7 +42,7 @@ import net.sf.sdedit.editor.DiagramFileHandler;
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.error.SyntaxError;
-import net.sf.sdedit.log._LOG_;
+
 import net.sf.sdedit.server.Exporter;
 import net.sf.sdedit.text.TextHandler;
 import net.sf.sdedit.ui.ImagePaintDevice;
@@ -82,7 +82,7 @@ public class Main implements Constants {
 
 		}
 
-		_LOG_.loadPatterns(Utilities.getResource("logging.patterns"));
+
 
 		Tooltips.addFile(Utilities.getResource("tooltips"));
 		CommandLineParser parser = new PosixParser();

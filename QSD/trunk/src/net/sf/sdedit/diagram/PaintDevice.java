@@ -40,7 +40,7 @@ import net.sf.sdedit.drawable.ExtensibleDrawable;
 import net.sf.sdedit.drawable.Fragment;
 import net.sf.sdedit.drawable.Line;
 import net.sf.sdedit.drawable.SequenceElement;
-import net.sf.sdedit.log._LOG_;
+
 import net.sf.sdedit.util.Direction;
 
 /**
@@ -159,7 +159,7 @@ public abstract class PaintDevice implements IPaintDevice {
 			for (ExtensibleDrawable view : diagram.getLifelineAt(i)
 					.getAllViews()) {
 				if (view instanceof Line) {
-					_LOG_.log("axis(" + i + ")=" + axis);
+
 					view.setLeft(axis + mainWidth / 2);
 				} else {
 					switch (view.getLifeline().getDirection()) {

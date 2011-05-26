@@ -29,7 +29,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 
 import net.sf.sdedit.diagram.Lifeline;
-import net.sf.sdedit.log._LOG_;
+
 
 public class Line extends ExtensibleDrawable {
 

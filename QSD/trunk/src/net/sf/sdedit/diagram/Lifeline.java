@@ -33,7 +33,7 @@ import net.sf.sdedit.drawable.Figure;
 import net.sf.sdedit.drawable.LabeledBox;
 import net.sf.sdedit.drawable.Line;
 import net.sf.sdedit.drawable.Rectangle;
-import net.sf.sdedit.log._LOG_;
+
 import net.sf.sdedit.util.Direction;
 import net.sf.sdedit.util.Utilities;
 
@@ -619,7 +619,7 @@ public final class Lifeline {
 	 * to this lifeline was called. Thus its active flag is set false.
 	 */
 	public void finish() {
-		_LOG_.log("\"" + name + "\"");
+
 		setActive(false);
 		getRoot().setRectangleBottom(diagram.getVerticalPosition());
 	}

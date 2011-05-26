@@ -41,7 +41,7 @@ import net.sf.sdedit.drawable.Fragment;
 import net.sf.sdedit.drawable.Text;
 import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.error.SyntaxError;
-import net.sf.sdedit.log._LOG_;
+
 import net.sf.sdedit.message.Answer;
 import net.sf.sdedit.message.BroadcastMessage;
 import net.sf.sdedit.message.ForwardMessage;
@@ -263,7 +263,7 @@ public final class Diagram implements Constants {
 	 *             if a message or object specification is semantically wrong
 	 */
 	public void generate() throws SemanticError, SyntaxError {
-		_LOG_.log("");
+
 
 		Fragment frame = null;
 		Text text = null;
@@ -397,16 +397,16 @@ public final class Diagram implements Constants {
 
 			Lifeline caller = null;
 
-			_LOG_.log("read fragments");
+
 
 			if (fragmentManager.readFragments()) {
-				_LOG_.log("continue");
+
 				continue;
 			}
 
 			if (!noteManager.step()) {
 				MessageData data = provider.nextMessage();
-				_LOG_.log("step: " + data.getMessage());
+
 				noteManager.closeNote(data.getCaller());
 				String[] callees = data.getCallees(); // returns an empty array
 				// when there is 1
@@ -423,7 +423,7 @@ public final class Diagram implements Constants {
 					Set<String> calleeSet = new HashSet<String>();
 					Lifeline[] allButLast = new Lifeline[callees.length - 1];
 					for (int i = 0; i < callees.length; i++) {
-						_LOG_.log("callee #" + i);
+
 						String callee = callees[i];
 						if (callee.length() == 0) {
 							throw new SyntaxError(provider,
@@ -485,7 +485,7 @@ public final class Diagram implements Constants {
 			fragmentManager.clearSectionLabel();
 
 		}
-		_LOG_.log("All lines are read");
+
 		finish();
 		for (Lifeline line : getLifelines()) {
 			if (!line.isAlwaysActive()) {
@@ -551,7 +551,7 @@ public final class Diagram implements Constants {
 	}
 
 	public final void extendLifelines(final int amount) {
-		_LOG_.log(amount);
+
 		for (final Lifeline lifeline : getLifelines()) {
 			if (lifeline.isAlive()) {
 				for (final Lifeline line : lifeline.getAllLifelines()) {
@@ -575,7 +575,7 @@ public final class Diagram implements Constants {
 	}
 
 	public void setCallerThread(int callerThread) {
-		_LOG_.log(callerThread);
+
 		this.callerThread = callerThread;
 	}
 
@@ -633,7 +633,7 @@ public final class Diagram implements Constants {
 	 *            the name of the object of which the lifeline is to be removed
 	 */
 	public void removeLifeline(String name) {
-		_LOG_.log(name);
+
 		if (lifelineMap.remove(name) == null) {
 			throw new IllegalArgumentException("lifeline " + name
 					+ " should be removed, but does not exist");
@@ -649,13 +649,13 @@ public final class Diagram implements Constants {
 	}
 
 	public void setFirstCaller(Lifeline caller) {
-		_LOG_.log(caller);
+
 		first.set(callerThread, caller);
 	}
 
 	int spawnThread() {
 		int num = threadStacks.size();
-		_LOG_.log(num);
+
 		threadStacks.add(new LinkedList<Message>());
 		first.add(null);
 		threadStates.add("new");
@@ -680,12 +680,12 @@ public final class Diagram implements Constants {
 	}
 
 	void finish(int thread) throws SemanticError {
-		_LOG_.log("finish(" + thread + ")");
+
 		LinkedList<Message> threadStack = threadStacks.get(thread);
 		if (!conf.isExplicitReturns()) {
 			while (threadStack != null && !threadStack.isEmpty()) {
 				Message answer = threadStack.removeLast();
-				_LOG_.log("sendAnswer from " + answer.getCaller());
+
 				sendAnswer(answer);
 			}
 		}
@@ -703,11 +703,11 @@ public final class Diagram implements Constants {
 	}
 
 	public void sendAnswer(Message answer, boolean removeFromStack) {
-		_LOG_.log(answer);
+
 		if (removeFromStack) {
 			int thread = answer.getThread();
 			threadStacks.get(thread).removeLast();
-			_LOG_.log("removed last from stack " + thread);
+
 		}
 		noteManager.closeNote(answer.getCaller().getName());
 		noteManager.closeNote(answer.getCallee().getName());
@@ -719,7 +719,7 @@ public final class Diagram implements Constants {
 	 * inactive.
 	 */
 	public void finish() throws SemanticError {
-		_LOG_.log("finish all");
+
 		for (int t = 0; t < threadStacks.size(); t++) {
 			finish(t);
 		}

@@ -48,7 +48,7 @@ import net.sf.sdedit.editor.apple.AppInstaller;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.editor.plugin.FileHandler;
 import net.sf.sdedit.editor.plugin.Plugin;
-import net.sf.sdedit.log._LOG_;
+
 import net.sf.sdedit.server.RealtimeServer;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
@@ -172,7 +172,7 @@ public final class Editor implements Constants, UserInterfaceListener
 	}
 
 	public void addFileHandler(FileHandler fileHandler) {
-		_LOG_.log("adding fileHandler");
+
 		fileHandlers.add(fileHandler);
 		ui.addAction("&File.Open",
 				fileActionProvider.getOpenAction(fileHandler, ui),

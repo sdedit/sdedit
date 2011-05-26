@@ -28,7 +28,7 @@ import java.util.LinkedList;
 
 import net.sf.sdedit.error.ObjectNotFound;
 import net.sf.sdedit.error.SemanticError;
-import net.sf.sdedit.log._LOG_;
+
 import net.sf.sdedit.message.Answer;
 import net.sf.sdedit.message.BroadcastMessage;
 import net.sf.sdedit.message.ConstructorMessage;
@@ -379,7 +379,7 @@ final class MessageProcessor {
 			if (!diagram.isThreaded()) {
 				diagram.finish();
 			}
-			_LOG_.log("returns " + rootCaller);
+
 			return rootCaller;
 		}
 
@@ -420,7 +420,7 @@ final class MessageProcessor {
 			 */
 			diagram.setFirstCaller(rootCaller);
 			rootCaller.setActive(true);
-			_LOG_.log("returns " + rootCaller);
+
 			return rootCaller;
 		}
 
@@ -447,7 +447,7 @@ final class MessageProcessor {
 
 			if (lineToBeFound != null) {
 				if (theAnswer.getCaller() == lineToBeFound) {
-					_LOG_.log("returns " + lineToBeFound);
+
 					return lineToBeFound;
 				}
 			} else if (theAnswer.getCaller().getName().equals(data.getCaller())) {
@@ -554,7 +554,7 @@ final class MessageProcessor {
 					theCallee);
 			theCallee.setMnemonic(calleeMnemonic);
 		}
-		_LOG_.log("returns " + theCallee);
+
 		return theCallee;
 	}
 

@@ -34,7 +34,7 @@ import javax.swing.Action;
 
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.editor.TabAction;
-import net.sf.sdedit.log._LOG_;
+
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
 import net.sf.sdedit.ui.components.buttons.Activator;
@@ -126,11 +126,11 @@ public class FileActionProvider {
 				putValue(ManagedAction.NEW_TEXT, handler.getOpenActionName());
 				putValue(Action.SHORT_DESCRIPTION, handler.getOpenDescription());
 				String actionName = handler.getOpenActionName();
-				_LOG_.log("handler is " + handler.getClass().getSimpleName());
+
 				if (handler.getOpenShortCut() != null) {
 					actionName = handler.getOpenShortCut() + actionName;
 				}
-				_LOG_.log("name is " + actionName);
+
 				putValue(Action.NAME, actionName);
 			}
 

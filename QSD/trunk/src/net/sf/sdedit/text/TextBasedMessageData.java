@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.error.SyntaxError;
-import net.sf.sdedit.log._LOG_;
+
 import net.sf.sdedit.util.Grep;
 
 /**
@@ -157,7 +157,7 @@ public class TextBasedMessageData extends MessageData {
 		if (callee.length() >= 2 && callee.charAt(0) == '{'
 				&& callee.charAt(callee.length() - 1) == '}') {
 			setCallees(callee.substring(1, callee.length() - 1).split(","));
-			_LOG_.log(Arrays.asList(getCallees()));
+
 		} else {
 			String[] parts = Grep.parse("(.*)\\[(\\D.*)\\]$", callee);
 			if (parts == null) {
