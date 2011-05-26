@@ -81,7 +81,7 @@ public class TreeNavigatorPane extends JPanel {
 	
 	private boolean historyEnabled;
 
-	public TreeNavigatorPane() {
+	public TreeNavigatorPane(double resizeWeight) {
 		setLayout(new BorderLayout());
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setOneTouchExpandable(true);
@@ -100,6 +100,7 @@ public class TreeNavigatorPane extends JPanel {
 		add(splitPane, BorderLayout.CENTER);
 		splitPane.setLeftComponent(navigationScrollPane);
 		splitPane.setRightComponent(contentPanel);
+		splitPane.setResizeWeight(resizeWeight);
 		categories = new HashSet<String>();
 		componentHistory = new IndexedList<JComponent>();
 		historyEnabled = true;
