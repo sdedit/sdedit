@@ -88,80 +88,6 @@ import javax.swing.filechooser.FileFilter;
 
 public class Utilities {
 
-	public static void main(String[] argv) throws Exception {
-		String key = "3b08856d4f83c2fe98ab079b194361d6ef6ebf01739b8324";
-
-		FileInputStream fis = new FileInputStream(
-				"C:\\devel\\QSD-lib\\src\\net\\sf\\sdedit\\ui\\components\\TestObject.java");
-		byte[] b = encrypt(zip(fis), key);
-
-		System.out.println(Arrays.toString(b));
-
-		byte[] code = new byte[] { 3, -98, 108, -117, -28, -31, 57, -2, 56,
-				114, -40, 123, -105, -118, 73, -114, -122, -35, 70, 106, 102,
-				17, -114, 0, -103, 10, -47, 127, 95, 63, 102, -44, -46, 93,
-				-61, -41, -117, 56, -12, 27, 42, 5, -17, -72, 10, 5, -99, -109,
-				-116, -64, 83, 84, -23, 86, -80, -22, 97, -106, 28, -2, -7,
-				-10, 8, -82, -72, -89, -9, -56, -41, 97, -2, -45, -84, 98, -71,
-				-84, 74, -30, -4, -6, 47, 127, -55, -41, 24, -96, -108, -75,
-				122, -106, 55, 22, -7, -81, -110, -109, -54, -68, -55, -82,
-				-119, -30, 68, -91, -54, -14, -40, -32, 72, -45, -59, 104, -33,
-				69, -73, 71, -48, -16, 62, 80, 20, 116, -95, 98, -49, -84, -72,
-				74, 94, -5, -124, 23, -48, -9, -37, 49, -87, 120, -107, 94, -9,
-				13, -111, -84, -127, -102, -2, 17, 16, 93, -73, -125, 35, 66,
-				-12, 21, -31, -85, 125, -35, 82, 71, 62, -25, -66, 88, -38, 10,
-				-4, -116, 57, -90, -1, -3, -34, -114, -55, 15, -88, -114, -97,
-				-76, -63, -57, -90, -62, -27, -122, 98, 122, 50, 13, -72, -83,
-				44, -11, -5, 97, 64, 45, -31, -48, -26, 104, 88, -76, -42, 112,
-				10, 89, -9, 25, -34, 58, -105, 62, -122, -35, 70, 106, 102, 17,
-				-114, 0, 58, -112, -88, -111, 58, -33, -69, -101, 1, 79, 110,
-				99, -49, -11, 22, -8, -73, 22, 60, 121, -36, 78, 31, -108, 53,
-				56, 63, -108, -83, 118, -118, 98 };
-
-		code = unzip(decrypt(code, key));
-
-		// byte[] z = unzip(b);
-		// System.out.println();
-		// System.out.println(Arrays.toString(z));
-		// byte [] code = new byte[]{80, 75, 3, 4, 20, 0, 8, 0, 8, 0, 83, 88,
-		// 40, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 88, 45, -115,
-		// -63, 10, -62, 48, 16, 68, -49, 45, -12, 31, -106, -98, 90, -112, -36,
-		// 67, -113, 94, -68, 121, -80, 63, -112, 38, -85, -115, -90, 73, -56,
-		// 110, 40, 69, -4, 119, 19, 17, -122, -127, -31, 61, -104, -88, -12,
-		// 75, 61, 16, 60, -78, -96, -69, 32, -125, -58, -78, -56, 86, -24, -80,
-		// -59, -32, -47, 51, 77, 93, -37, -75, 49, 47, -50, 106, -48, 78, 17,
-		// -63, -116, -60, -41, -27, -119, -102, -31, -35, -75, 77, -55, 31, 91,
-		// -49, -80, 42, 90, -49, -63, -32, 48, -2, 96, 115, 59, -120, 113, 19,
-		// 33, -77, -120, -87, 8, -50, 15, -3, 37, -20, -26, 56, -63, 30, -110,
-		// 51, -3, 56, 85, 45, 33, -25, -28, 65, 74, 89, -25, -89, 126, -106,
-		// -6, 2, 80, 75, 7, 8, -52, 62, 91, 109, -120, 0, 0, 0, -97, 0, 0, 0,
-		// 80, 75, 1, 2, 20, 0, 20, 0, 8, 0, 8, 0, 83, 88, 40, 59, -52, 62, 91,
-		// 109, -120, 0, 0, 0, -97, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		// 0, 0, 0, 0, 0, 0, 88, 80, 75, 5, 6, 0, 0, 0, 0, 1, 0, 1, 0, 47, 0, 0,
-		// 0, -73, 0, 0, 0, 0, 0};
-		Class<?> cls = loadClass("net.sf.sdedit.ui.components.TestObject", code);
-		Object o = cls.newInstance();
-		System.out.println(o.hashCode());
-
-		/*
-		 * 
-		 * byte [] bytes = "Markus".getBytes();
-		 * 
-		 * System.out.println(Arrays.toString(bytes));
-		 * 
-		 * bytes = encrypt(bytes, key);
-		 * 
-		 * System.out.println(Arrays.toString(bytes));
-		 * 
-		 * String key1 = "f8ad91ba70a167a7d58525c2a10d02ae6810ab0276f27c85";
-		 * 
-		 * bytes = decrypt(bytes, key1);
-		 * 
-		 * System.out.println(Arrays.toString(bytes));
-		 */
-
-	}
-
 	private static WeakHashMap<PrintWriter, StringWriter> writerMap = new WeakHashMap<PrintWriter, StringWriter>();
 
 	/*
@@ -1519,6 +1445,35 @@ public class Utilities {
 					+ cls.getName(), e);
 		}
 
+	}
+	
+	public static <T> T newInstance(String cls, Class<T> interfaceType) {
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(cls);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("controller class not found: "
+					+ cls, e);
+		}
+		Object obj;
+		try {
+			obj = clazz.newInstance();
+		} catch (InstantiationException e) {
+			throw new IllegalArgumentException(
+					"cannot instantiate controller class: " + cls, e);
+		} catch (IllegalAccessException e) {
+			throw new IllegalArgumentException(
+					"cannot access no-args constructor of controller class: "
+							+ cls, e);
+		}
+		T t;
+		try {
+			t = interfaceType.cast(obj);	
+		} catch (ClassCastException e) {
+			throw new IllegalArgumentException("cannot cast new instance of " + cls + " to interface type " + interfaceType.getName());
+		}
+		
+		return t;
 	}
 
 }
