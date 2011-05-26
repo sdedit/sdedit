@@ -25,6 +25,9 @@
 package net.sf.sdedit.editor.apple;
 
 import java.io.File;
+import java.net.URL;
+
+import javax.swing.ImageIcon;
 
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.ui.impl.UserInterfaceImpl;
@@ -36,103 +39,109 @@ import com.apple.eawt.ApplicationListener;
 
 class AppInstallerImpl extends AppInstaller implements ApplicationListener {
 
-	private Editor editor;
+    private Editor editor;
 
-	private UserInterfaceImpl ui;
-	
-	private File fileToLoad;
-	
-	AppInstallerImpl () {
-		/* empty */
-	}
-	
-	@Override
-	void install(Editor editor) {
-		this.editor = editor;
-		this.ui = (UserInterfaceImpl) editor.getUI();
-		Application app = Application.getApplication();
-		if (app != null) {
-			app.setEnabledPreferencesMenu(true);
-			app.addApplicationListener(this);
-		}
-	}
-	
-	/**
-	 * @see net.sf.sdedit.editor.apple.AppInstaller#fileToLoad()
-	 */
-	public File fileToLoad () {
-		return fileToLoad;
-	}
+    private UserInterfaceImpl ui;
 
-	/**
-	 * @see com.apple.eawt.ApplicationListener#handleAbout(com.apple.eawt.ApplicationEvent)
-	 */
-	public void handleAbout(ApplicationEvent e) {
-		ui.showAboutDialog(
-				Utilities.getResource("about.html"));
-		e.setHandled(true);
-	}
-	
+    private File fileToLoad;
 
+    AppInstallerImpl() {
+        /* empty */
+    }
 
-	/**
-	 * @see com.apple.eawt.ApplicationListener#handlePreferences(com.apple.eawt.ApplicationEvent)
-	 */
-	public void handlePreferences(ApplicationEvent e) {
-		ui.configure(null);
-		e.setHandled(true);
-	}
+    @Override
+    void install(Editor editor) {
+        this.editor = editor;
+        this.ui = (UserInterfaceImpl) editor.getUI();
+        Application app = Application.getApplication();
+        if (app != null) {
+            app.setEnabledPreferencesMenu(true);
+            app.addApplicationListener(this);
+        }
+        URL iconURL = Utilities.getResource("dock-icon.png");
+        ImageIcon imageIcon = new ImageIcon(iconURL);
+        try {
+            Utilities.invoke("setDockIconImage", app, new Object[] { imageIcon.getImage() });
+        } catch (Throwable e) {
+            /* ignored */
+        }
 
-	/**
-	 * @see com.apple.eawt.ApplicationListener#handleQuit(com.apple.eawt.ApplicationEvent)
-	 */
-	public void handleQuit(ApplicationEvent e) {
-		editor.quit();
-		e.setHandled(false);
-	}
+    }
 
-	/**
-	 * @see com.apple.eawt.ApplicationListener#handlePrintFile(com.apple.eawt.ApplicationEvent)
-	 */
-	public void handlePrintFile(com.apple.eawt.ApplicationEvent ae) {
-		ae.setHandled(true);
-	}
+    /**
+     * @see net.sf.sdedit.editor.apple.AppInstaller#fileToLoad()
+     */
+    public File fileToLoad() {
+        return fileToLoad;
+    }
 
-	/**
-	 * @see com.apple.eawt.ApplicationListener#handleReOpenApplication(com.apple.eawt.ApplicationEvent)
-	 */
-	public void handleReOpenApplication(com.apple.eawt.ApplicationEvent ae) {
-		ui.toFront();
-		ae.setHandled(true);
-	}
+    /**
+     * @see com.apple.eawt.ApplicationListener#handleAbout(com.apple.eawt.ApplicationEvent)
+     */
+    public void handleAbout(ApplicationEvent e) {
+        ui.showAboutDialog(Utilities.getResource("about.html"));
+        e.setHandled(true);
+    }
 
-	/**
-	 * @see com.apple.eawt.ApplicationListener#handleOpenFile(com.apple.eawt.ApplicationEvent)
-	 */
-	public void handleOpenFile(com.apple.eawt.ApplicationEvent ae) {
-		File file = new File(ae.getFilename());
-		if (!editor.isSetup()) {
-			fileToLoad = file;
-		} else {
-			try {
-				editor.load(file.toURI().toURL());
-			} catch (RuntimeException re) {
-				throw re;
-			}
-			catch (Exception ex) {
-				ui.errorMessage(ex, null, null);
-			}
-		}
-		ae.setHandled(true);
-	}
+    /**
+     * @see com.apple.eawt.ApplicationListener#handlePreferences(com.apple.eawt.ApplicationEvent)
+     */
+    public void handlePreferences(ApplicationEvent e) {
+        ui.toFront();
+        ui.configure(null);
+        e.setHandled(true);
+    }
 
-	/**
-	 * @see com.apple.eawt.ApplicationListener#handleOpenApplication(com.apple.eawt.ApplicationEvent)
-	 */
-	public void handleOpenApplication(ApplicationEvent event) {
-		if (event.getFilename() != null) {
-			handleOpenFile(event);
-		}
-	}
+    /**
+     * @see com.apple.eawt.ApplicationListener#handleQuit(com.apple.eawt.ApplicationEvent)
+     */
+    public void handleQuit(ApplicationEvent e) {
+        ui.toFront();
+        editor.quit();
+        e.setHandled(false);
+    }
+
+    /**
+     * @see com.apple.eawt.ApplicationListener#handlePrintFile(com.apple.eawt.ApplicationEvent)
+     */
+    public void handlePrintFile(com.apple.eawt.ApplicationEvent ae) {
+        ae.setHandled(true);
+    }
+
+    /**
+     * @see com.apple.eawt.ApplicationListener#handleReOpenApplication(com.apple.eawt.ApplicationEvent)
+     */
+    public void handleReOpenApplication(com.apple.eawt.ApplicationEvent ae) {
+        ui.toFront();
+        ae.setHandled(true);
+    }
+
+    /**
+     * @see com.apple.eawt.ApplicationListener#handleOpenFile(com.apple.eawt.ApplicationEvent)
+     */
+    public void handleOpenFile(com.apple.eawt.ApplicationEvent ae) {
+        File file = new File(ae.getFilename());
+        if (!editor.isSetup()) {
+            fileToLoad = file;
+        } else {
+            try {
+                editor.load(file.toURI().toURL());
+            } catch (RuntimeException re) {
+                throw re;
+            } catch (Exception ex) {
+                ui.errorMessage(ex, null, null);
+            }
+        }
+        ae.setHandled(true);
+    }
+
+    /**
+     * @see com.apple.eawt.ApplicationListener#handleOpenApplication(com.apple.eawt.ApplicationEvent)
+     */
+    public void handleOpenApplication(ApplicationEvent event) {
+        if (event.getFilename() != null) {
+            handleOpenFile(event);
+        }
+    }
 
 }
