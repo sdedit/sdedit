@@ -50,8 +50,8 @@ public class TabNavigatorContainer implements TabContainer,
 	
 	private int id;
 
-	public TabNavigatorContainer() {
-		navigator = new TreeNavigatorPane();
+	public TabNavigatorContainer(double resizeWeight) {
+		navigator = new TreeNavigatorPane(resizeWeight);
 		navigator.setContextActionsProvider(this);
 		navigator.addListener(this);
 		listeners = new LinkedList<TabContainerListener>();
