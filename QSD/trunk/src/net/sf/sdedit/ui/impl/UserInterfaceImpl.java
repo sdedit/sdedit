@@ -305,7 +305,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		Container pane = getContentPane();
 		pane.setLayout(new BorderLayout());
 
-		tabContainer = new TabNavigatorContainer();
+		tabContainer = new TabNavigatorContainer(0.2);
 		tabContainer.addListener(this);
 
 		pane.add(tabContainer.getComponent(), BorderLayout.CENTER);
