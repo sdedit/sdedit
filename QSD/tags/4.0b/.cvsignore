@@ -1,0 +1,10 @@
+.settings
+.project
+.classpath
+bin
+apidoc
+doc
+sdedit*
+
+TODO
+reviews

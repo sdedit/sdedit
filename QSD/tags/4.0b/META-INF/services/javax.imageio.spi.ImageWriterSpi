@@ -1,0 +1,3 @@
+org.freehep.graphicsio.raw.RawImageWriterSpi
+org.freehep.graphicsio.gif.GIFImageWriterSpi
+org.freehep.graphicsio.ppm.PPMImageWriterSpi

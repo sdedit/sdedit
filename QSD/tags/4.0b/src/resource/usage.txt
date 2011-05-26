@@ -1,0 +1,14 @@
+Quick Sequence Diagram Editor - usage:
+
+  java -jar sdedit-{version}.jar [OPTIONS] [sdfiles]
+
+  sdfiles are names of a files that, when specified, will be loaded
+  for editing.
+  
+  OPTIONS:
+  
+    -s port        Starts the diagram server at the given port.
+  
+    -o output.png  a single sdfile must be specified and, without any user
+                   interaction, the resulting diagram is written to
+                   output.png, which is of course in PNG format.

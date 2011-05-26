@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram>
+<source><![CDATA[#![SD SSH2]
+user:Actor
+RNG:RandomNumberGenerator
+known_hosts:Local_File
+/ssh2:AskMySelf
+ssh:Client[p] "SSH-Client"
+ordinary_tcp_layer_local:Layer_End
+/transport_protocol_layer_local:Local_End
+user_authentication_protocol_layer_local:Local_End
+connection_protocol_layer_local:Local_End
+ether:Net "Ethernet"
+/shared_secret:DiffieHellman
+net:Work "Network"
+connection_protocol_layer_remote:Layer_End
+user_authentication_protocol_layer_remote:Layer_End
+/transport_protocol_layer_remote:Layer_End
+ordinary_tcp_layer_remote:Layer_End
+sshd:Daemon [p] "sshd"
+/sshd2:AskMySelf
+dsa_host_key:Remote_File
+openPAM:Remote_Authentication_Scheme
+
+
+
+user:ssh.sshd -2 lipovitan(at)192:168:19:141
+
+ssh:ordinary_tcp_layer_local.us-ascii: "hello, i'm a mac<CR><LF>" (to port22-->)
+ordinary_tcp_layer_local:ordinary_tcp_layer_remote.us-ascii: "hello, i'm a mac<CR><LF>" (to port22-->)
+ordinary_tcp_layer_remote:sshd.(from port22-->) us-ascii: "hello, i'm a mac<CR><LF>"
+
+sshd:ordinary_tcp_layer_remote.(<--to port22) us-ascii: "SSH-2:0-OpenSSH_4:5p1 FreeBSD-20061110<CR><LF>"
+ordinary_tcp_layer_remote:ordinary_tcp_layer_local.(<--to port22) us-ascii: "SSH-2:0-OpenSSH_4:5p1 FreeBSD-20061110<CR><LF>"
+ordinary_tcp_layer_local:ssh.(<--to port22) us-ascii: "SSH-2:0-OpenSSH_4:5p1 FreeBSD-20061110<CR><LF>"
+
+sshd:ordinary_tcp_layer_remote.
+ordinary_tcp_layer_remote:ordinary_tcp_layer_local.
+ordinary_tcp_layer_local:ssh.
+
+ssh:ordinary_tcp_layer_local.
+ordinary_tcp_layer_local:ordinary_tcp_layer_remote.
+ordinary_tcp_layer_remote:sshd.
+
+ssh:transport_protocol_layer_local.new
+sshd:transport_protocol_layer_remote.new
+
+sshd:transport_protocol_layer_remote.SSH_MSG_KEXINIT (beggining 'binary packet parameter negotiation' stage of 'key exchange' phase)
+transport_protocol_layer_remote:transport_protocol_layer_local.SSH_MSG_KEXINIT (beggining 'binary packet parameter negotiation' stage of 'key exchange' phase)
+transport_protocol_layer_local:ssh.SSH_MSG_KEXINIT (beggining 'binary packet parameter negotiation' stage of 'key exchange' phase)
+
+sshd:transport_protocol_layer_remote.
+transport_protocol_layer_remote:transport_protocol_layer_local.
+transport_protocol_layer_local:ssh.
+
+ssh:transport_protocol_layer_local.
+transport_protocol_layer_local:transport_protocol_layer_remote.
+transport_protocol_layer_remote:sshd.
+
+ssh:transport_protocol_layer_local.cookie (random bytes used later)
+transport_protocol_layer_local:transport_protocol_layer_remote.cookie (random bytes used later)
+transport_protocol_layer_remote:sshd.cookie (random bytes used later)
+
+sshd:transport_protocol_layer_remote.cookie (random bytes used later)
+transport_protocol_layer_remote:transport_protocol_layer_local.cookie (random bytes used later)
+transport_protocol_layer_local:ssh.cookie (random bytes used later)
+
+sshd:transport_protocol_layer_remote.
+transport_protocol_layer_remote:transport_protocol_layer_local.
+transport_protocol_layer_local:ssh.
+
+ssh:transport_protocol_layer_local.
+transport_protocol_layer_local:transport_protocol_layer_remote.
+transport_protocol_layer_remote:sshd.
+
+ssh:transport_protocol_layer_local.kex_algorithms, server_host_key_algorithms
+transport_protocol_layer_local:transport_protocol_layer_remote.kex_algorithms, server_host_key_algorithms
+transport_protocol_layer_remote:sshd.kex_algorithms, server_host_key_algorithms
+
+sshd:transport_protocol_layer_remote.kex_algorithms, server_host_key_algorithms
+transport_protocol_layer_remote:transport_protocol_layer_local.kex_algorithms, server_host_key_algorithms
+transport_protocol_layer_local:ssh.kex_algorithms, server_host_key_algorithms
+
+ssh:transport_protocol_layer_local.encryption_algorithms (symmetric)
+transport_protocol_layer_local:transport_protocol_layer_remote.encryption_algorithms (symmetric)
+transport_protocol_layer_remote:sshd.encryption_algorithms (symmetric)
+
+sshd:transport_protocol_layer_remote.encryption_algorithms (symmetric)
+transport_protocol_layer_remote:transport_protocol_layer_local.encryption_algorithms (symmetric)
+transport_protocol_layer_local:ssh.encryption_algorithms (symmetric)
+
+ssh:transport_protocol_layer_local.mac_algorithms
+transport_protocol_layer_local:transport_protocol_layer_remote.mac_algorithms
+transport_protocol_layer_remote:sshd.mac_algorithms
+
+sshd:transport_protocol_layer_remote.mac_algorithms
+transport_protocol_layer_remote:transport_protocol_layer_local.mac_algorithms
+transport_protocol_layer_local:ssh.mac_algorithms
+
+ssh:transport_protocol_layer_local.compression_algorithms
+transport_protocol_layer_local:transport_protocol_layer_remote.compression_algorithms
+transport_protocol_layer_remote:sshd.compression_algorithms
+
+sshd:transport_protocol_layer_remote.compression_algorithms
+transport_protocol_layer_remote:transport_protocol_layer_local.compression_algorithms
+transport_protocol_layer_local:ssh.compression_algorithms
+
+sshd:transport_protocol_layer_remote.
+transport_protocol_layer_remote:transport_protocol_layer_local.
+transport_protocol_layer_local:ssh.
+
+ssh:transport_protocol_layer_local.
+transport_protocol_layer_local:transport_protocol_layer_remote.
+transport_protocol_layer_remote:sshd.
+
+ssh:transport_protocol_layer_local.first_kex_packet_follows
+transport_protocol_layer_local:transport_protocol_layer_remote.first_kex_packet_follows
+transport_protocol_layer_remote:sshd.first_kex_packet_follows
+
+ssh:transport_protocol_layer_local.client's "guessed protocol" packet
+transport_protocol_layer_local:transport_protocol_layer_remote.client's "guessed protocol" packet
+transport_protocol_layer_remote:sshd.client's "guessed protocol" packet
+
+sshd:transport_protocol_layer_remote.server's "guessed protocol" packet
+transport_protocol_layer_remote:transport_protocol_layer_local.server's "guessed protocol" packet
+transport_protocol_layer_local:ssh.server's "guessed protocol" packet
+
+ssh:ssh2.new
+ssh:ssh2.if guessed_algorithm matches, proceed
+ssh:ssh2.otherwise ignore next packet
+ssh2:ssh.guessed_algorithm matches
+ssh:ssh2.let's stick to this packet for key exchange
+
+sshd:sshd2.new
+sshd:sshd2.if guessed_algorithm matches, proceed
+sshd:sshd2.otherwise ignore next packet
+sshd2:sshd.guessed_algorithm_matches
+sshd:sshd2.let's stick to this algorithm for key exchange
+
+ssh:shared_secret.new
+ssh:shared_secret.new shared secret generated every gigabyte or every hour
+ssh:RNG.gimme a big random number
+RNG:ssh.big random number
+
+ssh:=transport_protocol_layer_local.diffie-hellman
+transport_protocol_layer_local:shared_secret.diffie-hellman
+
+sshd:transport_protocol_layer_remote.diffie-hellman
+transport_protocol_layer_remote:shared_secret.diffie-hellman
+
+shared_secret:shared_secret.shared_secret (used for generating encryption and authentication keys)
+shared_secret:shared_secret.exchange_hash (permanent session identifier (does not change with "hourly" new keys))
+
+
+ssh:transport_protocol_layer_local.SSH_MSG_NEWKEYS (begin using new keys (this message is sent with old keys))
+transport_protocol_layer_local:transport_protocol_layer_remote.SSH_MSG_NEWKEYS
+transport_protocol_layer_remote:sshd.SSH_MSG_NEWKEYS
+
+sshd:transport_protocol_layer_remote.SSH_MSG_NEWKEYS (begin using new keys (this message is sent with old keys))
+transport_protocol_layer_remote:transport_protocol_layer_local.SSH_MSG_NEWKEYS
+transport_protocol_layer_local:ssh.SSH_MSG_NEWKEYS
+
+sshd:ordinary_tcp_layer_remote.
+ordinary_tcp_layer_remote:ordinary_tcp_layer_local.
+ordinary_tcp_layer_local:ssh.
+
+ssh:ordinary_tcp_layer_local.
+ordinary_tcp_layer_local:ordinary_tcp_layer_remote.
+ordinary_tcp_layer_remote:sshd.
+
+ssh:transport_protocol_layer_local.SSH_MSG_SERVICE_REQUEST ssh_userauth (i need authentication!)
+transport_protocol_layer_local:transport_protocol_layer_remote.SSH_MSG_SERVICE_REQUEST ssh_userauth
+transport_protocol_layer_remote:sshd.SSH_MSG_SERVICE_REQUEST ssh_userauth
+sshd:openPAM.can you authorize for the lipovitan account now
+openPAM:sshd.sure]]></source>
+<configuration>
+<property name="actorWidth" value="25"/>
+<property name="arrowSize" value="6"/>
+<property name="colorizeThreads" value="true"/>
+<property name="destructorWidth" value="30"/>
+<property family="Dialog" name="font" size="12" style="0"/>
+<property name="fragmentMargin" value="8"/>
+<property name="fragmentPadding" value="10"/>
+<property name="fragmentTextPadding" value="3"/>
+<property name="glue" value="10"/>
+<property name="headHeight" value="35"/>
+<property name="headLabelPadding" value="5"/>
+<property name="headWidth" value="100"/>
+<property name="initialSpace" value="10"/>
+<property name="leftMargin" value="5"/>
+<property name="lineWrap" value="false"/>
+<property name="lowerMargin" value="5"/>
+<property name="mainLifelineWidth" value="8"/>
+<property name="messageLabelSpace" value="3"/>
+<property name="messagePadding" value="6"/>
+<property name="noteMargin" value="6"/>
+<property name="notePadding" value="6"/>
+<property name="opaqueMessageText" value="false"/>
+<property name="returnArrowVisible" value="true"/>
+<property name="rightMargin" value="5"/>
+<property name="selfMessageHorizontalSpace" value="15"/>
+<property name="separatorBottomMargin" value="8"/>
+<property name="separatorTopMargin" value="15"/>
+<property name="spaceBeforeActivation" value="2"/>
+<property name="spaceBeforeAnswerToSelf" value="10"/>
+<property name="spaceBeforeConstruction" value="6"/>
+<property name="spaceBeforeSelfMessage" value="7"/>
+<property name="subLifelineWidth" value="6"/>
+<property name="threadNumbersVisible" value="false"/>
+<property name="threaded" value="false"/>
+<property name="upperMargin" value="5"/>
+<property name="verticallySplit" value="true"/>
+</configuration>
+</diagram>
