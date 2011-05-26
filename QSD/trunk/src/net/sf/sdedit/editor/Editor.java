@@ -164,8 +164,8 @@ public final class Editor implements Constants, UserInterfaceListener
 				} catch (RuntimeException e) {
 					throw e;
 				} catch (Exception e) {
-					ui.errorMessage(e, null, "Cannot load "
-							+ fileToLoad.getAbsolutePath());
+					ui.errorMessage(e, null,
+							"Cannot load " + fileToLoad.getAbsolutePath());
 				}
 			}
 		}
@@ -174,8 +174,9 @@ public final class Editor implements Constants, UserInterfaceListener
 	public void addFileHandler(FileHandler fileHandler) {
 		_LOG_.log("adding fileHandler");
 		fileHandlers.add(fileHandler);
-		ui.addAction("&File.Open", fileActionProvider.getOpenAction(
-				fileHandler, ui), fileActionProvider.getOpenActivator);
+		ui.addAction("&File.Open",
+				fileActionProvider.getOpenAction(fileHandler, ui),
+				fileActionProvider.getOpenActivator);
 
 	}
 
@@ -342,40 +343,21 @@ public final class Editor implements Constants, UserInterfaceListener
 		URL url = Utilities.getResource("plugins.txt");
 		InputStream stream = url.openStream();
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					stream, "UTF-8"));
-			String line = reader.readLine();
-			while (line != null) {
-				String trimmed = line.trim();
-				if (trimmed.length() > 0) {
-					try {
-						installPlugin(trimmed);
-					} catch (RuntimeException re) {
-						throw re;
-					} catch (Throwable e) {
-						e.printStackTrace();
-					}
+			for (String line : Utilities.readLines(stream)) {
+				line = line.trim();
+				if (line.length() > 0 && line.charAt(0) != '#') {
+					installPlugin(line);
 				}
-				line = reader.readLine();
 			}
-
 		} finally {
 			stream.close();
 		}
-
 	}
 
-	private void installPlugin(String pluginClass)
-			throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException {
-		Object plugin = Class.forName(pluginClass).newInstance();
-		if (!(plugin instanceof Plugin)) {
-			throw new IllegalArgumentException(pluginClass
-					+ " does not implement the Plugin interface");
-		}
+	private void installPlugin(String pluginClass) {
+		Plugin plugin = Utilities.newInstance(pluginClass, Plugin.class);
 		((Plugin) plugin).install();
 		plugins.add((Plugin) plugin);
-
 	}
 
 	@SuppressWarnings("serial")
@@ -387,16 +369,19 @@ public final class Editor implements Constants, UserInterfaceListener
 
 		ui.addCategory("&File.Open", "open");
 
-		ui.addAction("&File.Open", fileActionProvider.getOpenAction(
-				defaultFileHandler, ui), fileActionProvider.getOpenActivator);
+		ui.addAction("&File.Open",
+				fileActionProvider.getOpenAction(defaultFileHandler, ui),
+				fileActionProvider.getOpenActivator);
 
 		ui.addCategory("&File.Open &recent file", "open");
 
-		ui.addAction("&File", fileActionProvider.getSaveAction(
-				defaultFileHandler, ui), fileActionProvider.getSaveActivator);
+		ui.addAction("&File",
+				fileActionProvider.getSaveAction(defaultFileHandler, ui),
+				fileActionProvider.getSaveActivator);
 
-		ui.addAction("&File", fileActionProvider.getSaveAsAction(
-				defaultFileHandler, ui), fileActionProvider.getSaveActivator);
+		ui.addAction("&File",
+				fileActionProvider.getSaveAsAction(defaultFileHandler, ui),
+				fileActionProvider.getSaveActivator);
 
 		Action exportAction = actions.getExportAction();
 
@@ -410,9 +395,7 @@ public final class Editor implements Constants, UserInterfaceListener
 					actions.nonEmptyDiagramActivator);
 		}
 
-		ui
-				.addAction("&File", actions.closeTabAction,
-						actions.canCloseActivator);
+		ui.addAction("&File", actions.closeTabAction, actions.canCloseActivator);
 		ui.addAction("&File", actions.closeAllAction, null);
 
 		Action printPDFAction = actions.getPrintAction("pdf");
@@ -476,16 +459,12 @@ public final class Editor implements Constants, UserInterfaceListener
 		ui.addConfigurationAction("&View", autoUpdateAction, null);
 		ui.addConfigurationAction("&View", autoScrollAction, null);
 
-		ui
-				.addAction("&View", actions.redrawAction,
-						actions.diagramTabActivator);
+		ui.addAction("&View", actions.redrawAction, actions.diagramTabActivator);
 
 		ui.addAction("&View", actions.widenAction,
 				actions.canConfigureActivator);
 		ui.addAction("&View", actions.narrowAction, actions.canNarrowActivator);
-		ui
-				.addConfigurationAction("&View", wrapAction,
-						actions.textTabActivator);
+		ui.addConfigurationAction("&View", wrapAction, actions.textTabActivator);
 		ui.addAction("&View", actions.fullScreenAction,
 				actions.supportsFullScreenActivator);
 
@@ -500,14 +479,15 @@ public final class Editor implements Constants, UserInterfaceListener
 
 		ui.addToToolbar(actions.newDiagramAction, null);
 
-		ui.addToToolbar(fileActionProvider
-				.getOpenAction(defaultFileHandler, ui),
+		ui.addToToolbar(
+				fileActionProvider.getOpenAction(defaultFileHandler, ui),
 				fileActionProvider.getOpenActivator);
-		ui.addToToolbar(fileActionProvider
-				.getSaveAction(defaultFileHandler, ui),
+		ui.addToToolbar(
+				fileActionProvider.getSaveAction(defaultFileHandler, ui),
 				fileActionProvider.getSaveActivator);
-		ui.addToToolbar(fileActionProvider.getSaveAsAction(defaultFileHandler,
-				ui), fileActionProvider.getSaveActivator);
+		ui.addToToolbar(
+				fileActionProvider.getSaveAsAction(defaultFileHandler, ui),
+				fileActionProvider.getSaveActivator);
 
 		if (exportAction != null) {
 			ui.addToToolbar(exportAction, actions.nonEmptyDiagramActivator);
@@ -553,16 +533,18 @@ public final class Editor implements Constants, UserInterfaceListener
 			ui.addAction("&Help", actions.showAboutDialogAction, null);
 		}
 
-		ui.addAction("&Help.&Examples", actions.getExampleAction(
-				"Ticket order", "order.sdx"), null);
-		ui.addAction("&Help.&Examples", actions.getExampleAction(
-				"Breadth first search", "bfs.sdx"), null);
-		ui.addAction("&Help.&Examples", actions.getExampleAction(
-				"Levels and mnemonics", "levels.sdx"), null);
+		ui.addAction("&Help.&Examples",
+				actions.getExampleAction("Ticket order", "order.sdx"), null);
+		ui.addAction("&Help.&Examples",
+				actions.getExampleAction("Breadth first search", "bfs.sdx"),
+				null);
+		ui.addAction("&Help.&Examples",
+				actions.getExampleAction("Levels and mnemonics", "levels.sdx"),
+				null);
 		ui.addAction("&Help.&Examples", actions.getExampleAction(
 				"SSH 2 (by courtesy of Carlos Duarte)", "ssh.sdx"), null);
-		ui.addAction("&Help.&Examples", actions.getExampleAction("Webserver",
-				"webserver.sdx"), null);
+		ui.addAction("&Help.&Examples",
+				actions.getExampleAction("Webserver", "webserver.sdx"), null);
 
 	}
 
