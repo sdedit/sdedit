@@ -1,0 +1,32 @@
+
+The JSmooth licensing is a bit sophisticated, but has no constraint on
+your own software.
+
+First, a small executive summary:
+
+- Jsmooth is GPL, but wrappers are LGPL so that there is no constraint
+  added to your own code.
+
+- Regarding the executable: there is no restriction on the executable
+  generated. You can do whatever you want with it.
+
+The full details are below:
+
+- The overall JSmooth package itself is GPL. Any work based on it,
+  specially but not limited to, the full-java executable generation
+  code, is GPL. In other words, if you create derivative work using
+  jsmooth, it has to be GPL as well.
+
+- As an exception, the Skeletons (all the C++ code from jsmooth) used
+  as a basis to create the launchers are LGPL. They can be used by for
+  other programs, or can be linked with, as LGPL. In this case, there
+  is no constraint on the licensing of your own program, but you must
+  mention the LGPL and provide a pointer to the jsmooth skeleton
+  source code.
+
+- As an exception to the exception above, the executable generated
+  (the launchers created by JSmooth) are under the LGPL with a
+  "runtime exception" similar to the gcc licence exception: It is not
+  required that you distribute the source code with, nor that you
+  publish a notice mentionning jsmooth. It's not far from
+  public-domain, but the LGPL warranty-limitation still applies.
