@@ -135,10 +135,7 @@ public class Main implements Constants {
                             }
                         }
                         if (!loaded) {
-                            editor.getUI().addDiagramTextTab(
-                                    "untitled",
-                                    ConfigurationManager
-                                            .createNewDefaultConfiguration());
+                            editor.getUI().addDefaultTab();
                         }
                     }
                 });
@@ -147,10 +144,7 @@ public class Main implements Constants {
                     public void run() {
                         Editor editor = Editor.getEditor();
                         editor.start();
-                        editor.getUI().addDiagramTextTab(
-                                "untitled",
-                                ConfigurationManager
-                                        .createNewDefaultConfiguration());
+                        editor.getUI().addDefaultTab();
                     }
                 });
             }
