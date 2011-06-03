@@ -641,12 +641,24 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		JOptionPane.showMessageDialog(this, message, _caption,
 				JOptionPane.ERROR_MESSAGE);
 	}
+	
+	public void addDefaultTab () {
+        addDiagramTextTab(
+                "untitled",
+                ConfigurationManager
+                        .createNewDefaultConfiguration());
+	}
 
 	public void tabIsClosed(Tab tab) {
 		tabContainer.remove(tab);
+		if (tabContainer.getTabCount() == 0) {
+		    addDefaultTab();
+
+		}
 	}
 
 	public void tabClosing(Tab tab) {
+	    
 	}
 
 	public void tabSelected(Tab previous, Tab current) {
