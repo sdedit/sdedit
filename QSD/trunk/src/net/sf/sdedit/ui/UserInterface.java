@@ -147,6 +147,8 @@ public interface UserInterface {
 	public void addToToolbar(Action action, Activator activator);
 
 	public void addToolbarSeparator();
+	
+	public void addDefaultTab ();
 
 	/**
 	 * Adds a new tab to the user interface which becomes the tab that is
