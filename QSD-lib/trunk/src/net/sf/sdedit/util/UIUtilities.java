@@ -30,9 +30,11 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
@@ -400,6 +402,17 @@ public class UIUtilities {
             }
         }
         
+    }
+    
+    public static void drawPolyline (Graphics g, Point [] points) {
+    	int n = points.length;
+    	int [] xp = new int [n];
+    	int [] yp = new int [n];
+    	for (int i = 0; i < n; i++) {
+    		xp[i] = points[i].x;
+    		yp[i] = points[i].y;
+      	}
+    	g.drawPolyline(xp, yp, n);
     }
     
 }
