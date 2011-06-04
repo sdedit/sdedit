@@ -26,10 +26,13 @@ package net.sf.sdedit.server;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
+
+import net.sf.sdedit.util.Utilities;
 
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.ImageGraphics2D;
@@ -40,39 +43,39 @@ import org.freehep.graphicsio.ps.PSGraphics2D;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.freehep.graphicsio.swf.SWFGraphics2D;
 
-class ExporterImpl extends Exporter
-{
+class ExporterImpl extends Exporter {
     private OutputStream stream;
-    
+
     private String type;
-    
+
     private VectorGraphics vg;
-    
+
     private String orientation;
-    
+
     private String format;
-    
+
     private Dimension dim;
-    
-    public ExporterImpl (String orientation, String format) {
+
+    public ExporterImpl(String orientation, String format) {
         super();
         this.orientation = orientation;
         this.format = format;
     }
-    
-    private VectorGraphics getGraphics () {
+
+    private VectorGraphics getGraphics() {
         VectorGraphics vectorGraphics;
         if (orientation == null) {
-            orientation = dim.getWidth() <= dim.getHeight() ? "Portrait" : "Landscape";
+            orientation = dim.getWidth() <= dim.getHeight() ? "Portrait"
+                    : "Landscape";
         }
         if (type.equals("gif")) {
             vectorGraphics = new GIFGraphics2D(stream, dim);
         } else if (type.equals("png")) {
-            vectorGraphics = new ImageGraphics2D(stream, dim, "png");            
+            vectorGraphics = new ImageGraphics2D(stream, dim, "png");
         } else if (type.equals("bmp")) {
             vectorGraphics = new ImageGraphics2D(stream, dim, "bmp");
         } else if (type.equals("jpg")) {
-            vectorGraphics = new ImageGraphics2D(stream, dim, "jpg");            
+            vectorGraphics = new ImageGraphics2D(stream, dim, "jpg");
         } else if (type.equals("pdf")) {
             PDFGraphics2D pdf = new PDFGraphics2D(stream, dim);
             Properties properties = new Properties();
@@ -80,13 +83,13 @@ class ExporterImpl extends Exporter
             properties.setProperty(PDFGraphics2D.PAGE_SIZE, format);
             pdf.setProperties(properties);
             vectorGraphics = pdf;
-        } else if (type.equals("ps")) {
+        } else if (Utilities.in(type, "ps", "eps")) {
             PSGraphics2D ps = new PSGraphics2D(stream, dim);
             Properties properties = new Properties();
             properties.setProperty(PSGraphics2D.ORIENTATION, orientation);
             properties.setProperty(PSGraphics2D.PAGE_SIZE, format);
             ps.setProperties(properties);
-            ps.setMultiPage(true);
+            ps.setMultiPage("ps".equals(type));
             vectorGraphics = ps;
         } else if (type.equals("emf")) {
             vectorGraphics = new EMFGraphics2D(stream, dim);
@@ -95,15 +98,20 @@ class ExporterImpl extends Exporter
         } else if (type.equals("swf")) {
             vectorGraphics = new SWFGraphics2D(stream, dim);
         } else {
-            throw new IllegalArgumentException ("Unknown type: " + type);
+            throw new IllegalArgumentException("Unknown type: " + type);
         }
         return vectorGraphics;
     }
 
     @Override
     protected Graphics2D createDummyGraphics(boolean bold) {
-        dim = new Dimension(1,1);
-        return getGraphics();
+        dim = new Dimension(1, 1);
+        vg = getGraphics();
+
+        Font font = getFont(bold);
+        vg.setFont(font);
+
+        return vg;
     }
 
     @Override
@@ -126,22 +134,22 @@ class ExporterImpl extends Exporter
     protected void setType(String type) {
         this.type = type.toLowerCase();
     }
-    
+
     /**
      * @see net.sf.sdedit.server.Exporter#export()
      */
     @Override
-    public void export () {
+    public void export() {
         vg.startExport();
-        if (vg instanceof PSGraphics2D) {
+        if (vg instanceof PSGraphics2D && "ps".equals(type)) {
             try {
-                ((PSGraphics2D) vg).openPage(dim,"");
+                ((PSGraphics2D) vg).openPage(dim, "");
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
         }
         drawAll();
-        if (vg instanceof PSGraphics2D) {
+        if (vg instanceof PSGraphics2D && "ps".equals(type)) {
             ((PSGraphics2D) vg).closePage();
         }
         vg.endExport();
