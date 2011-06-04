@@ -100,6 +100,8 @@ public interface Configuration extends DataObject
     
     public Color getFragmentLabelBgColor();
     
+    public Color getNoteBgColor();
+    
 
     
     public Color getTc0 ();
@@ -244,6 +246,9 @@ public interface Configuration extends DataObject
     
     @Adjustable(info="Fragment label background colour",category="Colours")
     public void setFragmentLabelBgColor(Color c);
+    
+    @Adjustable(info="Note background colour",category="Colours")
+    public void setNoteBgColor(Color c);
     
     @Adjustable(info="Thread 0",category="Thread colours")
     public void setTc0 (Color tc0);
