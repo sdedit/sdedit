@@ -36,69 +36,77 @@ import java.util.Map;
  * 
  */
 public final class ObjectFactory {
-	
-    private static final Map<Class<?>, Constructor<?>> stringConstructorMap;
 
-    static {
-        stringConstructorMap = new HashMap<Class<?>, Constructor<?>>();
-    }
+	private static final Map<Class<?>, Constructor<?>> stringConstructorMap;
 
-    private ObjectFactory() {
-        /* empty */
-    }
+	static {
+		stringConstructorMap = new HashMap<Class<?>, Constructor<?>>();
+	}
 
-    /**
-     * Creates an instance of some class from a string by calling the string
-     * constructor of the class with the string as a parameter.
-     * 
-     * @param cls
-     *            the class of which an instance is to be created, if it is a
-     *            primitive type, an instance of the corresponding class will be
-     *            created
-     * @param string
-     *            the string from which the instance is to be created or<tt>null</tt>,
-     *            then an instance resulting from an invokation of the
-     *            no-argument constructor will be returned
-     * @return an instance of <tt>cls</tt>, created from <tt>string</tt>
-     */
-    public static Object createFromString(Class<?> cls, final String string) {
-        if (cls == String.class) {
-            return string == null ? "" : string;
-        }
-        if (cls == Integer.TYPE && string.length() == 1) {
-        	return string.charAt(0) - '0';
-        }
-        if (cls == Font.class) {
-        	return Font.decode(string);
-        }
-        final Class<?> nonPrimitive = Utilities.getWrapperClass(cls);
-        if (nonPrimitive != null) {
-            cls = nonPrimitive;
-        }
-        try {
-            if (string == null) {
-                return cls.newInstance();
-            }
-            Constructor<?> constructor = stringConstructorMap.get(cls);
-            if (constructor == null) {
-                constructor = cls.getConstructor(new Class[] { String.class });
-                stringConstructorMap.put(cls, constructor);
-            }
-            return constructor.newInstance(string);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(cls.getName() + " has no"
-                    + " constructor with a single string as a parameter");
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException(cls.getName() + " has no"
-                    + " constructor with an empty parameter list");
-        } catch (Throwable e) {
-            throw new IllegalArgumentException(cls.getName() + " has a"
-                    + " constructor with a single string as a parameter, but"
-                    + " it cannot be invoked with the argument \"" + string
-                    + "\", which led to an exception/error of type "
-                    + e.getClass().getSimpleName() + " with the message: "
-                    + e.getMessage());
-        }
-    }
+	private ObjectFactory() {
+		/* empty */
+	}
+
+	/**
+	 * Creates an instance of some class from a string by calling the string
+	 * constructor of the class with the string as a parameter.
+	 * 
+	 * @param cls
+	 *            the class of which an instance is to be created, if it is a
+	 *            primitive type, an instance of the corresponding class will be
+	 *            created
+	 * @param string
+	 *            the string from which the instance is to be created or
+	 *            <tt>null</tt>, then an instance resulting from an invokation
+	 *            of the no-argument constructor will be returned
+	 * @return an instance of <tt>cls</tt>, created from <tt>string</tt>
+	 */
+	public static Object createFromString(Class<?> cls, final String string) {
+		if (cls == String.class) {
+			return string == null ? "" : string;
+		}
+		if (cls == Integer.TYPE && string.length() == 1) {
+			return string.charAt(0) - '0';
+		}
+		if (cls == Font.class) {
+			return Font.decode(string);
+		}
+		final Class<?> nonPrimitive = Utilities.getWrapperClass(cls);
+		if (nonPrimitive != null) {
+			cls = nonPrimitive;
+		}
+		try {
+			if (string == null) {
+				return cls.newInstance();
+			}
+			Constructor<?> constructor = stringConstructorMap.get(cls);
+			if (constructor == null) {
+				try {
+					constructor = cls
+							.getConstructor(new Class[] { String.class });
+				} catch (NoSuchMethodException e) {
+					constructor = cls.getConstructor(new Class [] { Integer.TYPE });
+				}
+				stringConstructorMap.put(cls, constructor);
+			}
+			if (constructor.getParameterTypes()[0] == Integer.TYPE) {
+				return constructor.newInstance(Integer.parseInt(string));
+			}
+			return constructor.newInstance(string);
+		} catch (NoSuchMethodException e) {
+			throw new IllegalArgumentException(cls.getName() + " has no"
+					+ " constructor with a single string or integer as a parameter");
+		} catch (InstantiationException e) {
+			throw new IllegalArgumentException(cls.getName() + " has no"
+					+ " constructor with an empty parameter list");
+		} catch (Throwable e) {
+			throw new IllegalArgumentException(cls.getName() + " has a"
+					+ " constructor with a single string or integer as a parameter, but"
+					+ " it cannot be invoked with the argument \"" + string
+					+ "\", which led to an exception/error of type "
+					+ e.getClass().getSimpleName() + " with the message: "
+					+ e.getMessage());
+		}
+	}
 }
-//{{core}}
+// {{core}}
