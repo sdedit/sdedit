@@ -24,8 +24,6 @@
 
 package net.sf.sdedit.drawable;
 
-import java.awt.Graphics2D;
-
 import net.sf.sdedit.diagram.Lifeline;
 
 /**
@@ -109,6 +107,6 @@ public abstract class ExtensibleDrawable extends Drawable {
      *            the vertical position where to end drawing, if it is -1,
      *            drawing ends at {@linkplain #getBottom()}
      */
-    public abstract void drawPartially(Graphics2D g2d, int from, int to);
+    //public abstract void drawPartially(Graphics2D g2d, int from, int to);
 }
 //{{core}}
