@@ -24,11 +24,9 @@
 
 package net.sf.sdedit.editor;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
@@ -48,7 +46,6 @@ import net.sf.sdedit.editor.apple.AppInstaller;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.editor.plugin.FileHandler;
 import net.sf.sdedit.editor.plugin.Plugin;
-
 import net.sf.sdedit.server.RealtimeServer;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
