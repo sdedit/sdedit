@@ -33,6 +33,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -83,8 +85,8 @@ import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.text.TextHandler;
 import net.sf.sdedit.ui.components.AutoCompletion;
-import net.sf.sdedit.ui.components.TextArea;
 import net.sf.sdedit.ui.components.AutoCompletion.SuggestionProvider;
+import net.sf.sdedit.ui.components.TextArea;
 import net.sf.sdedit.ui.components.buttons.ActionManager;
 import net.sf.sdedit.ui.components.buttons.Activator;
 import net.sf.sdedit.ui.components.configuration.Bean;
@@ -438,7 +440,13 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 
 	public void moveCursorToPosition(int position) {
 		textArea.requestFocusInWindow();
+		textArea.setCaretPosition(0);
 		textArea.setCaretPosition(position);
+		
+	    Point p = textArea.getCaret().getMagicCaretPosition();
+	    if (p != null) {
+	        textArea.scrollRectToVisible(new Rectangle(p));
+	    }
 	}
 
 	public void undo() {
