@@ -184,7 +184,13 @@ public final class Diagram implements Constants {
 	public final int mainLifelineWidth;
 
 	public final int messageLabelSpace;
-
+	
+	public final int arrowThickness;
+	
+	public final int activationBarBorderThickness;
+	
+	public final int lifelineThickness;
+	
 	public final boolean returnArrowVisible;
 
 	public final Color[] threadColors;
@@ -220,6 +226,9 @@ public final class Diagram implements Constants {
 		mainLifelineWidth = configuration.getMainLifelineWidth();
 		messageLabelSpace = configuration.getMessageLabelSpace();
 		returnArrowVisible = configuration.isReturnArrowVisible();
+		arrowThickness = configuration.getArrowThickness();
+		activationBarBorderThickness = configuration.getActivationBarBorderThickness();
+		lifelineThickness = configuration.getLifelineThickness();
 		opaqueText = configuration.isOpaqueMessageText();
 		this.paintDevice = paintDevice;
 		lifelineMap = new HashMap<String, Lifeline>();
