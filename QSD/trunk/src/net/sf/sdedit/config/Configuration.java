@@ -137,6 +137,16 @@ public interface Configuration extends DataObject
     public boolean isVerticallySplit();
     
     public boolean isExplicitReturns();
+    
+    public int getArrowThickness ();
+    
+    public int getActivationBarBorderThickness();
+    
+    public int getLifelineThickness ();
+    
+    public int getNoteBorderThickness ();
+    
+    public int getFragmentBorderThickness ();
 
     @Adjustable(dflt=25,min=20,max=100,info="Actor width",category="Lifelines")
     public void setActorWidth(int actorWidth);
@@ -186,7 +196,7 @@ public interface Configuration extends DataObject
     @Adjustable(dflt=5,min=1,max=100,info="Bottom margin",category="Margins")
     public void setLowerMargin(int lowerMargin);
 
-    @Adjustable(dflt=8,min=2,max=50,info="Main lifeline width",category="Lifelines")
+    @Adjustable(dflt=8,min=2,max=50,info="Activation bar width (1st level)",category="Lifelines")
     public void setMainLifelineWidth(int width);
 
     @Adjustable(dflt=3,min=1,max=100,editable=true,info="Space below message label",category="Vertical spaces")
@@ -232,7 +242,7 @@ public interface Configuration extends DataObject
     public void setSpaceBeforeSelfMessage(int spaceBeforeSelfMessage);
 
    
-    @Adjustable(dflt=6,min=2,max=100,info="Sub lifeline width",category="Lifelines")
+    @Adjustable(dflt=6,min=2,max=100,info="Activation bar width (level>1)",category="Lifelines")
     public void setSubLifelineWidth(int subLifelineWidth);
     
     @Adjustable(info="Arrow colour",category="Colours")
@@ -294,5 +304,20 @@ public interface Configuration extends DataObject
     
     @Adjustable(editable=true,info="Require explicit returns",category="Misc")
     public void setExplicitReturns(boolean explicitReturns);
+    
+    @Adjustable(editable=true,info="Arrow thickness", category="Line thickness", min=1)
+    public void setArrowThickness (int arrowThickness);
+    
+    @Adjustable(editable=true,info="Activation bar border thickness", category="Line thickness",min=1)
+    public void setActivationBarBorderThickness(int activationBarBorderThickness);
+    
+    @Adjustable(editable=true,info="(Inactive) Lifeline thickness", category="Line thickness",min=1)
+    public void setLifelineThickness (int lifelineThickness);
+    
+    @Adjustable(editable=true,info="Note border thickness", category="Line thickness",min=1)
+    public void setNoteBorderThickness(int noteBorderThickness);
+    
+    @Adjustable(editable=true,info="Fragment border thickness", category="Line thickness",min=1)
+    public void setFragmentBorderThickness (int fragmentBorderThickness);
 }
 //{{core}}
