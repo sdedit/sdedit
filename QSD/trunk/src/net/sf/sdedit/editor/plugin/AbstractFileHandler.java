@@ -101,7 +101,7 @@ public abstract class AbstractFileHandler implements FileHandler {
 	/**
 	 * @see net.sf.sdedit.editor.plugin.FileHandler#loadFile(java.net.URL)
 	 */
-	public final void loadFile(URL url, final UserInterface ui)
+	public final Tab loadFile(URL url, final UserInterface ui)
 			throws IOException {
 		if (!"file".equals(url.getProtocol())
 				|| !ui.selectTabWith(Utilities.toFile(url))) {
@@ -109,30 +109,40 @@ public abstract class AbstractFileHandler implements FileHandler {
 			ui.getTabContainer().disableTabHistory();
 			final Tab tab = _loadFile(url);
 			if (tab == null) {
-				return;
+				return null;
 			}
 			if (url.getProtocol().equals("file")) {
 				tab.setFile(Utilities.toFile(url));
 			}
-			File file = tab.getFile();
-			updateFileChooserDirectory(file);
+			
 
 			tab.setClean(true);
-			if (file != null && file.exists()) {
-				Editor.getEditor().addToRecentFiles(file.getAbsolutePath());
-			}
-			addTabToUI(file, tab, ui);
+
+			addTabToUI(tab, ui);
 			SwingUtilities.invokeLater(new Runnable() {
+			    
 				public void run() {
+				    
+				    // file processing is deferred (one may load a file in a tab
+				    // and immediately thereafter set the file reference to null)
+				    // see Actions.getExampleAction
+		            if (tab.getFile() != null) {
+		                updateFileChooserDirectory(tab.getFile());
+		                if (tab.getFile().exists()) {
+		                    Editor.getEditor().addToRecentFiles(tab.getFile().getAbsolutePath());
+		                }
+ 		            }
 					ui.getTabContainer().enableTabHistory();
 					ui.selectTab(tab);
 				}
 			});
+			return tab;
 		}
+		return null;
 
 	}
 
-	protected void addTabToUI(File file, Tab tab, UserInterface ui) {
+	protected void addTabToUI(Tab tab, UserInterface ui) {
 		ui.addTab(tab);
 	}
 
