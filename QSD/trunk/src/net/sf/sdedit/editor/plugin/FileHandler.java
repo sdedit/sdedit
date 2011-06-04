@@ -90,13 +90,16 @@ public interface FileHandler {
 
 	/**
 	 * Loads the contents of a file from the given URL, creates
-	 * a {@linkplain Tab} for displaying and adds it to the user interface
+	 * a {@linkplain Tab} for displaying and adds it to the user interface.
+	 * 
+	 * 
 	 * 
 	 * @param file
-	 * @return
+	 * @return the tab for displaying the file or null if the file cannot
+	 * be loaded
 	 * @throws IOException
 	 */
-	public void loadFile(URL file, UserInterface ui) throws IOException;
+	public Tab loadFile(URL file, UserInterface ui) throws IOException;
 
 	/**
 	 * Saves the contents of the given tab to a file.
