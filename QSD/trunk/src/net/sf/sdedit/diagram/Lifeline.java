@@ -343,6 +343,31 @@ public final class Lifeline {
 	}
 
 	public List<ExtensibleDrawable> getAllViews() {
+	    
+	    int lineTop = Integer.MAX_VALUE;
+	    int lineBottom = -1;
+	    Line mainLine = null;
+	    
+	    
+	    
+	    for (ExtensibleDrawable view : allViews) {
+	        if (view instanceof Line) {
+	            
+	            Line line = (Line) view;
+	            if (mainLine == null) {
+	                mainLine = line;
+	                line.setMainLine(true);
+	            }
+	            lineTop = Math.min(lineTop, line.getTop());
+	            lineBottom = Math.max(lineBottom, line.getBottom());
+	        }
+	        
+	    }
+	    if (mainLine != null) {
+	        mainLine.setTop(lineTop);
+	        mainLine.setBottom(lineBottom);
+	    }
+	    
 		return allViews;
 	}
 
