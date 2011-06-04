@@ -1452,7 +1452,7 @@ public class Utilities {
 		try {
 			clazz = Class.forName(cls);
 		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException("controller class not found: "
+			throw new IllegalArgumentException("class not found: "
 					+ cls, e);
 		}
 		Object obj;
@@ -1460,10 +1460,10 @@ public class Utilities {
 			obj = clazz.newInstance();
 		} catch (InstantiationException e) {
 			throw new IllegalArgumentException(
-					"cannot instantiate controller class: " + cls, e);
+					"cannot instantiate class: " + cls, e);
 		} catch (IllegalAccessException e) {
 			throw new IllegalArgumentException(
-					"cannot access no-args constructor of controller class: "
+					"cannot access no-args constructor of class: "
 							+ cls, e);
 		}
 		T t;
