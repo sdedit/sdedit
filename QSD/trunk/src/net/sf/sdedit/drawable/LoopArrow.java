@@ -97,7 +97,7 @@ public class LoopArrow extends Arrow
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    protected void drawObject(Graphics2D g) {
         int t = getMessage().getData().getThread();
         Color back = !diagram.opaqueText ||
             t == -1 ? null : getMessage().getDiagram().threadColors[t];
@@ -109,19 +109,12 @@ public class LoopArrow extends Arrow
         g.setColor(color);
         int sgn = getAlign() == Direction.RIGHT ? 1 : -1;
 
-        g.setStroke(getStroke() == ArrowStroke.SOLID ? solid : dashed);
+        g.setStroke(getStroke() == ArrowStroke.SOLID ? solid() : dashed());
         
         UIUtilities.drawPolyline (g, pts);
         
-        /*
-        
-        g.drawLine(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
-        g.drawLine(pts[1].x, pts[1].y, pts[2].x, pts[2].y);
-        g.drawLine(pts[2].x, pts[2].y, pts[3].x, pts[3].y);
-*/
         drawArrowHead(g, pts[3].x, pts[3].y, sgn);
 
-        g.setStroke(solid);
 
     }
 

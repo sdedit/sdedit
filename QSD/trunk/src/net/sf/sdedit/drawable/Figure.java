@@ -30,6 +30,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.drawable.Strokes.StrokeType;
 
 /**
  * A <tt>Figure</tt> is a drawable representation of an {@linkplain Actor}.
@@ -81,10 +82,9 @@ public class Figure extends Drawable {
     }
 
     /**
-     * @see net.sf.sdedit.drawable.Drawable#draw(java.awt.Graphics2D)
+     * @see net.sf.sdedit.drawable.Drawable#drawObject(java.awt.Graphics2D)
      */
-    public void draw(Graphics2D g2d) {
-        g2d.setStroke(solid);
+    protected void drawObject(Graphics2D g2d) {
         renderActor(g2d, getTop(), getTop() + actorHeight - 2, getLeft()
                 + getWidth() / 2, actorWidth);
 
@@ -113,7 +113,7 @@ public class Figure extends Drawable {
         g.fillOval(axis - headDiameter / 2 + ofs, from + ofs, headDiameter,
                 headDiameter);
 
-        g.setStroke(new BasicStroke(thickness));
+        g.setStroke(Strokes.getStroke(StrokeType.SOLID, thickness));
 
         // the body shadow
         g.drawLine(axis + ofs, from + headDiameter, axis + ofs, from + legs);
@@ -129,7 +129,7 @@ public class Figure extends Drawable {
         g.drawLine(axis + (int) (1.5 * ofs), from + legs + ofs, right
                 + (int) (1.5 * ofs) - 1, to + 1);
 
-        g.setStroke(solid);
+        g.setStroke(Strokes.defaultStroke());
 
         g.setColor(Color.WHITE);
         g.fillOval(axis - headDiameter / 2, from, headDiameter, headDiameter);

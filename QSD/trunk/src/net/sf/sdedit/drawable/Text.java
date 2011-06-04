@@ -54,7 +54,7 @@ public class Text extends Drawable
     }
 
     @Override
-    public void draw(Graphics2D g2d) {
+    protected void drawObject(Graphics2D g2d) {
         g2d.setFont(device.getFont(true));
         drawMultilineString(g2d, text, getLeft(), getBottom() -4 , 
                 simpleHeight, getWidth(), null);

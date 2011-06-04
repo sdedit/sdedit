@@ -33,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.drawable.Strokes.StrokeType;
 import net.sf.sdedit.util.Direction;
 
 /**
@@ -245,14 +246,13 @@ public class Note extends SequenceElement
     }
 
     @Override
-    public void draw(Graphics2D g2d) {
-        g2d.setColor(Color.BLACK);
-        g2d.setStroke(solid);
+    protected void drawObject(Graphics2D g2d) {
         int left = getLeft();
         int cornerx = left + getWidth() - margin - padding;
         int cornery = getTop() + margin + padding;
         
         
+        g2d.setStroke(Strokes.getStroke(StrokeType.SOLID, diagram.getConfiguration().getNoteBorderThickness()));
         
         
         Polygon p1 = new Polygon();
@@ -308,7 +308,7 @@ public class Note extends SequenceElement
                 + getHeight() - margin - padding, null);
         for (Point anchor : targets) {
             Point start = findStart(anchor);
-            g2d.setStroke(dotted);
+            g2d.setStroke(Strokes.getStroke(StrokeType.DOTTED, 1));
             g2d.drawLine(anchor.x, anchor.y, start.x, start.y);
         }
     }

@@ -37,7 +37,7 @@ public class BroadcastArrow extends Arrow {
 		super(message, ArrowStroke.SOLID, align, y);
 	}
 
-	public void draw(Graphics2D g2d) {
+	protected void drawObject(Graphics2D g2d) {
     	ArrowStroke stroke = getStroke();
     	Point [] pts = getPoints();
     	if (getMessage().getData().getBroadcastType() == 1) {
@@ -46,9 +46,9 @@ public class BroadcastArrow extends Arrow {
     	g2d.setColor(Color.BLACK);
         int sgn = getAlign() == Direction.LEFT ? 1 : -1;
         if (stroke != ArrowStroke.NONE) {
-            g2d.setStroke(stroke == ArrowStroke.DASHED ? dashed : solid);
+            g2d.setStroke(stroke == ArrowStroke.DASHED ? dashed() : solid());
             g2d.drawLine(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
-            g2d.setStroke(solid);
+            g2d.setStroke(solid());
             drawArrowHead(g2d, pts[1].x, pts[1].y, sgn);
         }
         if (getMessage().getData().getBroadcastType() == 1) {

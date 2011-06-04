@@ -28,8 +28,10 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Stroke;
 
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.drawable.Strokes.StrokeType;
 import net.sf.sdedit.message.Answer;
 import net.sf.sdedit.message.BroadcastMessage;
 import net.sf.sdedit.message.Message;
@@ -188,10 +190,10 @@ public class Arrow extends SequenceElement {
 	}
 
 	/**
-	 * @see net.sf.sdedit.drawable.Drawable#draw(java.awt.Graphics2D)
+	 * @see net.sf.sdedit.drawable.Drawable#drawObject(java.awt.Graphics2D)
 	 */
     @Override
-	public void draw(Graphics2D g2d) {
+	protected void drawObject(Graphics2D g2d) {
 		Font font = g2d.getFont();
 		g2d.setFont(getFont(font));
 		drawText(g2d);
@@ -200,9 +202,9 @@ public class Arrow extends SequenceElement {
 		int sgn = getAlign() == Direction.LEFT ? 1 : -1;
 
 		if (stroke != ArrowStroke.NONE) {
-			g2d.setStroke(stroke == ArrowStroke.DASHED ? dashed : solid);
+			g2d.setStroke(stroke == ArrowStroke.DASHED ? dashed() : solid());
 			g2d.drawLine(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
-			g2d.setStroke(solid);
+			g2d.setStroke(solid());
 			drawArrowHead(g2d, pts[1].x, pts[1].y, sgn);
 			if (message.getCaller().isExternal()) {
 				int as = diagram.arrowSize;
@@ -282,7 +284,7 @@ public class Arrow extends SequenceElement {
 	 *            otherwise
 	 */
 	protected final void drawArrowHead(Graphics2D g, int x, int y, int sgn) {
-		g.setStroke(solid);
+		g.setStroke(Strokes.getStroke(StrokeType.SOLID, 1));
 		int size = diagram.arrowSize;
 		switch (headType) {
 		case CLOSED:
@@ -314,6 +316,14 @@ public class Arrow extends SequenceElement {
 
 	protected final ArrowStroke getStroke() {
 		return stroke;
+	}
+	
+	protected final Stroke dashed () {
+	    return Strokes.getStroke(StrokeType.DASHED, diagram.arrowThickness);
+	}
+	
+	protected final Stroke solid () {
+	    return Strokes.getStroke(StrokeType.SOLID, diagram.arrowThickness);
 	}
 	
 	@Override

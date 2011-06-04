@@ -30,7 +30,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.sun.tools.doclets.internal.toolkit.Configuration;
+
 import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.drawable.Strokes.StrokeType;
 import net.sf.sdedit.message.ConstructorMessage;
 import net.sf.sdedit.message.Message;
 import net.sf.sdedit.util.Pair;
@@ -222,9 +225,9 @@ public class Fragment extends Drawable
     }
 
     /**
-     * @see net.sf.sdedit.drawable.Drawable#draw(java.awt.Graphics2D)
+     * @see net.sf.sdedit.drawable.Drawable#drawObject(java.awt.Graphics2D)
      */
-    public void draw(Graphics2D g2d) {
+    protected void drawObject(Graphics2D g2d) {
         int typeWidth = diagram.getPaintDevice().getTextWidth(type, true);
         int textWidth = diagram.getPaintDevice().getTextWidth(condition, true);
         int textHeight = diagram.getPaintDevice().getTextHeight(true);
@@ -236,13 +239,16 @@ public class Fragment extends Drawable
         // clear the type corner
         g2d.fillRect(getLeft(), getTop(), typeWidth + 4, textHeight + 2);
 
+        int thickness = diagram.getConfiguration().getFragmentBorderThickness();
    
-        g2d.setStroke(thick);
+        g2d.setStroke(Strokes.getStroke(StrokeType.SOLID, thickness));
 
         g2d.setFont(diagram.getPaintDevice().getFont(true));
 
         g2d.setColor(diagram.getConfiguration().getFragmentEdgeColor());        
         g2d.drawRect(getLeft(), getTop(), getWidth(), getHeight());
+        
+
 
         g2d.setColor(Color.BLACK);
         if (!type.equals("")) {
@@ -272,15 +278,14 @@ public class Fragment extends Drawable
 
         for (Pair<Integer, String> sep : separators) {
             int y = sep.getFirst();
-            g2d.setStroke(thick_dashed);
+            g2d.setStroke(Strokes.getStroke(StrokeType.DASHED, thickness));
             g2d.drawLine(getLeft(), y, getRight(), y);
-            g2d.setStroke(solid);
+            g2d.setStroke(Strokes.defaultStroke());
             g2d.drawString(sep.getSecond(), getLeft() + leftMargin, y
                     + textHeight
                     + diagram.getConfiguration().getSeparatorBottomMargin());
         }
 
-        g2d.setFont(diagram.getPaintDevice().getFont(false));
     }
 
 }

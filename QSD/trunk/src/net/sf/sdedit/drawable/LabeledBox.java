@@ -30,6 +30,7 @@ import java.awt.Stroke;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.drawable.Strokes.StrokeType;
 
 public class LabeledBox extends Drawable {
 	
@@ -73,7 +74,7 @@ public class LabeledBox extends Drawable {
 		} else {
 			setWidth(2 + Math.max(2 * padding + textWidth, headWidth));
 		}
-		stroke = lifeline.isAlwaysActive() ? thick : solid;
+		stroke = lifeline.isAlwaysActive() ? Strokes.getStroke(StrokeType.SOLID, 2) : Strokes.getStroke(StrokeType.SOLID, 1);
 		setHeight(headHeight + 4);
 
 	}
@@ -82,13 +83,12 @@ public class LabeledBox extends Drawable {
 		return !lifeline.isExternal() && super.isVisible();
 	}
 
-	public void draw(Graphics2D g2d) {
+	protected void drawObject(Graphics2D g2d) {
 		int axis = getLeft() + getWidth() / 2;
 		int top = getTop();
 		int width = getWidth();
 
-		g2d.setColor(Color.BLACK);
-		g2d.setStroke(solid);
+
 		g2d.fillRect(axis - width / 2 + 2, top + 2, width + 2, headHeight + 2);
 		
 		g2d.setColor(lifeline.getDiagram().getConfiguration().getLabeledBoxBgColor());
@@ -97,7 +97,7 @@ public class LabeledBox extends Drawable {
 		g2d.setColor(Color.BLACK);
 		g2d.setStroke(stroke);
 		g2d.drawRect(axis - width / 2, top, width, headHeight);
-		g2d.setStroke(solid);
+		g2d.setStroke(Strokes.defaultStroke());
 		int left = axis - textWidth / 2;
 
 		int baseLine = top + headHeight / 2;

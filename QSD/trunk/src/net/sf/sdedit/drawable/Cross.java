@@ -28,6 +28,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.drawable.Strokes.StrokeType;
 
 
 public class Cross extends Drawable
@@ -54,13 +55,11 @@ public class Cross extends Drawable
         return pts;
     }
 
-    public void draw(Graphics2D g2d) {
-        g2d.setStroke(thick);
+    protected void drawObject(Graphics2D g2d) {
+        g2d.setStroke(Strokes.getStroke(StrokeType.SOLID, 2));
         g2d.setColor(Color.BLACK);
         g2d.drawLine(pts[0].x, pts[0].y, pts [1].x, pts [1].y);
         g2d.drawLine(pts[2].x, pts[2].y, pts [3].x, pts [3].y);
-        
-        g2d.setStroke(solid);
     }
 
     public void computeLayoutInformation() {

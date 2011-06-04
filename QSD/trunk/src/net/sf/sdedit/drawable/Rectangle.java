@@ -29,6 +29,7 @@ import java.awt.Graphics2D;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.drawable.Strokes.StrokeType;
 
 public class Rectangle extends ExtensibleDrawable
 {
@@ -53,7 +54,7 @@ public class Rectangle extends ExtensibleDrawable
         return color;
     }
 
-    public void draw(Graphics2D g2d) {
+    protected void drawObject(Graphics2D g2d) {
         drawPartially(g2d, -1, -1);
 
     }
@@ -68,7 +69,7 @@ public class Rectangle extends ExtensibleDrawable
             int remainingHeight = getHeight() - top + getTop();
             height = Math.min(remainingHeight, to - from);
         }
-        g2d.setStroke(solid);
+        g2d.setStroke(Strokes.getStroke(StrokeType.SOLID, getLifeline().getDiagram().activationBarBorderThickness));
         g2d.setColor(color);
         g2d.fillRect(getLeft(), top, getWidth(), height);
         g2d.setColor(Color.BLACK);

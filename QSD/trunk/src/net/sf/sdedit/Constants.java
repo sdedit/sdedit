@@ -29,8 +29,6 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.io.File;
 
-import javax.swing.KeyStroke;
-
 import net.sf.sdedit.util.OS;
 
 /**
@@ -44,6 +42,7 @@ public interface Constants
      * Strokes
      */
     
+    /*
     public static final Stroke dashed = new BasicStroke(1,
             BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1f, new float[] { 5,
                     5 }, 0f);
@@ -65,16 +64,7 @@ public interface Constants
     public static final Stroke thick_dashed = new BasicStroke(2,
             BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1f, new float[] { 5,
                     5 }, 0f);
-
-    /*
-     * Colours
-     */
-    
-//    public static final Color ACTIVE_LIFELINE_COLOR = new Color(0xEEEEEE);
-//    
-//    public static final Color[] THREAD_COLORS = { ACTIVE_LIFELINE_COLOR,
-//        YELLOW, RED, BLUE, GREEN, LIGHT_GRAY, MAGENTA, ORANGE, PINK,
-//        DARK_GRAY, CYAN };
+    */
 
     /*
      * Method names for using FreeHEP ExportDialog class via reflection (in

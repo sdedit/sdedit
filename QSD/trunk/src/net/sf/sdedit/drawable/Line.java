@@ -29,6 +29,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.drawable.Strokes.StrokeType;
 
 
 public class Line extends ExtensibleDrawable {
@@ -53,12 +54,12 @@ public class Line extends ExtensibleDrawable {
 	    return mainLine;
 	}
 
-	public void draw(Graphics2D g2d) {
+	protected void drawObject(Graphics2D g2d) {
 	    if (mainLine) {
 	        int top = getTop();
 	        int bottom = getBottom();
 	        g2d.setColor(Color.BLACK);
-	        g2d.setStroke(dotted);
+	        g2d.setStroke(Strokes.getStroke(StrokeType.DOTTED, getLifeline().getDiagram().lifelineThickness));
 	        g2d.drawLine(getLeft(), top, getLeft(), bottom);
 	    }
 		
