@@ -736,7 +736,12 @@ public final class Actions implements Constants {
 				try {
 					URL url = getClass().getResource(
 							"/net/sf/sdedit/examples/" + file);
-					editor.load(url);
+					DiagramTextTab tab = (DiagramTextTab) editor.load(url);
+					if (tab != null) {
+					    // prevent user from overwriting example file
+					    tab.setFile(null); 
+					}
+				
 				} catch (RuntimeException re) {
 					throw re;
 				}
