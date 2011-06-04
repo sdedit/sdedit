@@ -32,17 +32,37 @@ import net.sf.sdedit.diagram.Lifeline;
 
 
 public class Line extends ExtensibleDrawable {
+    
+    private boolean mainLine;
 
 	public Line(int width, Lifeline lifeline) {
 		super(width, lifeline);
 	}
 
+	/*
 	public void draw(Graphics2D g2d) {
 		drawPartially(g2d, -1, -1);
 	}
+	*/
+	
+	public void setMainLine (boolean mainLine) {
+	    this.mainLine = mainLine;
+	}
+	
+	public boolean isMainLine () {
+	    return mainLine;
+	}
 
-	public void drawPartially(Graphics2D g2d, int from, int to) {
-		int top, bottom;
+	public void draw(Graphics2D g2d) {
+	    if (mainLine) {
+	        int top = getTop();
+	        int bottom = getBottom();
+	        g2d.setColor(Color.BLACK);
+	        g2d.setStroke(dotted);
+	        g2d.drawLine(getLeft(), top, getLeft(), bottom);
+	    }
+		
+		/*
 		if (from == -1) {
 			top = getTop();
 		} else {
@@ -53,9 +73,8 @@ public class Line extends ExtensibleDrawable {
 		} else {
 			bottom = Math.min(to, getTop() + getHeight());
 		}
-		g2d.setColor(Color.BLACK);
-		g2d.setStroke(dotted);
-		g2d.drawLine(getLeft(), top, getLeft(), bottom);
+		*/
+
 
 	}
 
