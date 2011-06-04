@@ -29,6 +29,7 @@ import java.awt.Graphics2D;
 
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.drawable.Drawable;
+import net.sf.sdedit.drawable.Strokes;
 
 
 public abstract class Graphics2DPaintDevice extends PaintDevice
@@ -79,6 +80,7 @@ public abstract class Graphics2DPaintDevice extends PaintDevice
      */
     public void drawAll () {
         g2d.setColor(Color.BLACK);
+        g2d.setStroke(Strokes.defaultStroke());
         for (Drawable drawable : this) {
             drawable.draw(g2d);
         }

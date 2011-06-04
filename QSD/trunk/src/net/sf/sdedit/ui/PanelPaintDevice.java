@@ -45,6 +45,7 @@ import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Fragment;
+import net.sf.sdedit.drawable.Strokes;
 import net.sf.sdedit.ui.components.ZoomPane;
 import net.sf.sdedit.ui.components.Zoomable;
 
@@ -346,7 +347,8 @@ public class PanelPaintDevice extends PaintDevice implements
 							RenderingHints.KEY_ANTIALIASING,
 							RenderingHints.VALUE_ANTIALIAS_ON));
 				}
-				g2.setColor(Color.BLACK);
+		        g2.setColor(Color.BLACK);
+		        g2.setStroke(Strokes.defaultStroke());
 				for (Drawable drawable : PanelPaintDevice.this) {
 					if (drawable.intersects(clipBounds)) {
 						if (drawable == highlighted) {

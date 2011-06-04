@@ -38,6 +38,7 @@ import net.sf.sdedit.config.PrintConfiguration;
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.drawable.Drawable;
+import net.sf.sdedit.drawable.Strokes;
 import net.sf.sdedit.ui.components.ZoomPane;
 import net.sf.sdedit.ui.components.Zoomable;
 
@@ -234,6 +235,8 @@ public class MultipagePaintDevice extends PaintDevice {
 					g2d.translate(xg / 2, 0);
 				}
 			}
+		    g2d.setColor(Color.BLACK);
+		    g2d.setStroke(Strokes.defaultStroke());
 			for (Drawable drawable : MultipagePaintDevice.this) {
 				if (rect == null || drawable.intersects(rect)) {
 					drawable.draw(g2d);

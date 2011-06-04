@@ -35,7 +35,7 @@ import net.sf.sdedit.Constants;
  * semantic aspects of the component, it just provides the information and the
  * behaviour that is necessary to display the component.
  * <p>
- * A {@linkplain #draw(Graphics2D)} method must be implemented, so a
+ * A {@linkplain #drawObject(Graphics2D)} method must be implemented, so a
  * <tt>Drawable</tt> object is able to draw itself into a <tt>Graphics</tt>
  * context.
  * 
@@ -54,6 +54,12 @@ public abstract class Drawable implements Constants {
 	protected Drawable() {
 		visible = true;
 	}
+	
+	public void draw (Graphics2D g2d) {
+	    Graphics2D g2 = (Graphics2D) g2d.create();
+	    drawObject(g2);
+	    g2.dispose();
+	}
 
 	/**
 	 * Draws the sequence diagram element into the given <tt>Graphics2D</tt>
@@ -65,7 +71,7 @@ public abstract class Drawable implements Constants {
 	 *            the Graphics2D context to draw this drawable sequence diagram
 	 *            element into
 	 */
-	public abstract void draw(Graphics2D g2d);
+	protected abstract void drawObject(Graphics2D g2d);
 
 	/**
 	 * This method is called when and if the left and top positions of the
