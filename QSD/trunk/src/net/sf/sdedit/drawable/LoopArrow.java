@@ -28,9 +28,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
 
 import net.sf.sdedit.message.Message;
 import net.sf.sdedit.util.Direction;
+import net.sf.sdedit.util.UIUtilities;
 
 
 public class LoopArrow extends Arrow
@@ -108,11 +110,15 @@ public class LoopArrow extends Arrow
         int sgn = getAlign() == Direction.RIGHT ? 1 : -1;
 
         g.setStroke(getStroke() == ArrowStroke.SOLID ? solid : dashed);
-
+        
+        UIUtilities.drawPolyline (g, pts);
+        
+        /*
+        
         g.drawLine(pts[0].x, pts[0].y, pts[1].x, pts[1].y);
         g.drawLine(pts[1].x, pts[1].y, pts[2].x, pts[2].y);
         g.drawLine(pts[2].x, pts[2].y, pts[3].x, pts[3].y);
-
+*/
         drawArrowHead(g, pts[3].x, pts[3].y, sgn);
 
         g.setStroke(solid);
