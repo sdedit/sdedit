@@ -27,6 +27,7 @@ package net.sf.sdedit.drawable;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
@@ -250,6 +251,46 @@ public class Note extends SequenceElement
         int left = getLeft();
         int cornerx = left + getWidth() - margin - padding;
         int cornery = getTop() + margin + padding;
+        
+        
+        
+        
+        Polygon p1 = new Polygon();
+        
+        
+        
+        p1.addPoint(left + margin, getTop() + margin);
+        p1.addPoint(cornerx, getTop() + margin);
+        // schraeg runter
+        p1.addPoint(left + getWidth() - margin, cornery);
+        // ganz runter
+        p1.addPoint(left + getWidth() - margin, getTop() + getHeight() - margin);
+        // nach links zurueck
+        p1.addPoint(left + margin, getTop() + getHeight() - margin);
+        
+        
+        Polygon p2 = new Polygon();
+        
+        p2.addPoint(cornerx, getTop() + margin);
+        p2.addPoint(cornerx, cornery);
+        p2.addPoint(left + getWidth() - margin, cornery);
+        
+        g2d.setColor(configuration().getNoteBgColor());
+        
+        g2d.fillPolygon(p1);
+        g2d.fillPolygon(p2);
+        
+        g2d.setColor(Color.BLACK);
+        
+        g2d.draw(p1);
+        g2d.draw(p2);
+        
+        
+        /*
+        
+        
+        
+        
         g2d.drawLine(left + margin, getTop() + margin, cornerx, getTop()
                 + margin);
         g2d.drawLine(left + margin, getTop() + margin, left + margin, getTop()
@@ -262,6 +303,7 @@ public class Note extends SequenceElement
         g2d.drawLine(cornerx, cornery, left + getWidth() - margin, cornery);
         g2d.drawLine(cornerx, getTop() + margin, left + getWidth() - margin,
                 cornery);
+                */
         drawMultilineString(g2d, left + margin + padding, getTop()
                 + getHeight() - margin - padding, null);
         for (Point anchor : targets) {
