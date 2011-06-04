@@ -58,7 +58,7 @@ public class Rectangle extends ExtensibleDrawable
 
     }
     
-    public void drawPartially (Graphics2D g2d, int from, int to) {
+    private void drawPartially (Graphics2D g2d, int from, int to) {
         int top, height;
         if (from == -1) {
             top = getTop();
