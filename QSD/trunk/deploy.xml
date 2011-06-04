@@ -20,13 +20,17 @@
 
 
   <tstamp/>
-  <property value="sdedit-${sdedit.version}-light.jar" name="lightjarfile"/>
-  <property value="sdedit-${sdedit.version}.jar" name="jarfile"/>
-  <property value="sdedit-${sdedit.version}.exe" name="exefile"/>
+  <property value="sdedit-${sdedit.version}" name="appname"/>
+  <property value="${appname}-light.jar" name="lightjarfile"/>
+  <property value="${appname}.jar" name="jarfile"/>
+  <property value="${appname}.exe" name="exefile"/>
 
+  <taskdef name="jarbundler" 
+	    classname="net.sourceforge.jarbundler.JarBundler" 
+  	    classpath="tools/jarbundler-2.2.0/jarbundler-2.2.0.jar"/>
   <taskdef name="jsmoothgen" 
-  		classname="net.charabia.jsmoothgen.ant.JSmoothGen" 
-  		classpath="tools/jsmooth-0.9.9-7/lib/jsmoothgen-ant.jar"/>
+		classname="net.charabia.jsmoothgen.ant.JSmoothGen" 
+		classpath="tools/jsmooth-0.9.9-7/lib/jsmoothgen-ant.jar"/>
 	
   <property location="lib" name="lib"/>
   <path id="libs">
@@ -67,6 +71,16 @@
         executable jar, then uses jsmooth to create a single windows .exe and puts 
     	it into ${dist}/sdedit-win32/.
 
+      - macosx
+        compiles the application and unpacks the dependency libs and builds a single
+        executable jar, then uses jarbundler to create a single Mac OS X application
+    	in ${dist}/sdedit-win32/. If the platform running this build file is a Mac,
+    	it then created a DMG file of the folder.
+
+      - all
+    	compiles and builds both the light and heavy jars, the windows executable
+    	and the Mac OS X package.
+    	
      ]]></echo>
   </target>
 	
@@ -187,7 +201,23 @@
 	  <move file="${dist}/sdedit-win32/sdedit.exe" tofile="${dist}/sdedit-win32/${exefile}"/>
   </target>
 
-  <target name="all" description="builds all deployment targets" depends="jar-light,jar,win32"/>
+  <target depends="jar" description="creates Mac OS X executable" name="macosx">
+	  <mkdir dir="${dist}/sdedit-macosx"/>
+	  <copy todir="${dist}/sdedit-macosx" flatten="true">
+	  	<filelist dir="./" files="LICENSE,THIRDPARTYLICENSE,BIN-README"/>
+	  </copy>
+  	  <move file="${dist}/sdedit-macosx/BIN-README" tofile="${dist}/sdedit-macosx/README"/>
+	  <jarbundler
+	  		dir="${dist}/sdedit-macosx"
+	  		name="${appname}"
+	  		mainClass="${mainclass}"
+	  		jar="${dist}/sdedit-jar/${jarfile}"/>
+  	  <exec executable="hdiutil" os="Mac OS X">
+  		    <arg line="create -srcfolder ${dist}/sdedit-macosx ${dist}/${appname}.dmg"/>
+  	  </exec>
+  </target>
+
+  <target name="all" description="builds all deployment targets" depends="jar-light,jar,win32,macosx"/>
 
   <target name="clean" description="deletes the distribution working folder and contents" >
   	<delete dir="${dist}"/>
