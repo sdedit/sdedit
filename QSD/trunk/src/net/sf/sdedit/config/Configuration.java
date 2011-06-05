@@ -147,6 +147,10 @@ public interface Configuration extends DataObject
     public int getNoteBorderThickness ();
     
     public int getFragmentBorderThickness ();
+    
+    public boolean isSlackMode ();
+    
+    public boolean isShouldShadowParticipants();
 
     @Adjustable(dflt=25,min=20,max=100,info="Actor width",category="Lifelines")
     public void setActorWidth(int actorWidth);
@@ -154,7 +158,7 @@ public interface Configuration extends DataObject
     @Adjustable(dflt=6,min=2,max=100,info="Arrowhead size",category="Misc")
     public void setArrowSize(int arrowSize);
 
-    @Adjustable(depends="threaded=true",info="Colourize threads",category="Threads")
+    @Adjustable(depends="threaded=true,slackMode=false",info="Colourize threads",category="Threads")
     public void setColorizeThreads(boolean colorizeThreads);
 
     @Adjustable(dflt=30,min=5,max=100,info="Destructor cross width",category="Misc")
@@ -263,34 +267,34 @@ public interface Configuration extends DataObject
     @Adjustable(info="Thread 0",category="Thread colours")
     public void setTc0 (Color tc0);
     
-    @Adjustable(info="Thread 1",category="Thread colours")
+    @Adjustable(info="Thread 1",depends="slackMode=false,threaded=true",category="Thread colours")
     public void setTc1 (Color tc1);
     
-    @Adjustable(info="Thread 2",category="Thread colours")
+    @Adjustable(info="Thread 2",depends="slackMode=false,threaded=true",category="Thread colours")
     public void setTc2 (Color tc2);
     
-    @Adjustable(info="Thread 3",category="Thread colours")
+    @Adjustable(info="Thread 3",depends="slackMode=false,threaded=true",category="Thread colours")
     public void setTc3 (Color tc3);
     
-    @Adjustable(info="Thread 4",category="Thread colours")
+    @Adjustable(info="Thread 4",depends="slackMode=false,threaded=true",category="Thread colours")
     public void setTc4 (Color tc4);
     
-    @Adjustable(info="Thread 5",category="Thread colours")
+    @Adjustable(info="Thread 5",depends="slackMode=false,threaded=true",category="Thread colours")
     public void setTc5 (Color tc5);
     
-    @Adjustable(info="Thread 6",category="Thread colours")
+    @Adjustable(info="Thread 6",depends="slackMode=false,threaded=true",category="Thread colours")
     public void setTc6 (Color tc6);
     
-    @Adjustable(info="Thread 7",category="Thread colours")
+    @Adjustable(info="Thread 7",depends="slackMode=false,threaded=true",category="Thread colours")
     public void setTc7 (Color tc7);
     
-    @Adjustable(info="Thread 8",category="Thread colours")
+    @Adjustable(info="Thread 8",depends="slackMode=false,threaded=true",category="Thread colours")
     public void setTc8 (Color tc8);
     
-    @Adjustable(info="Thread 9",category="Thread colours")
+    @Adjustable(info="Thread 9",depends="slackMode=false,threaded=true",category="Thread colours")
     public void setTc9 (Color tc9);
     
-    @Adjustable(dflt=0,min=0,max=1,editable=true,info="Enable multithreading",category="Threads")
+    @Adjustable(dflt=0,min=0,max=1,editable=true,info="Enable multithreading",category="Threads",depends="slackMode=false")
     public void setThreaded(boolean threaded);
 
     @Adjustable(depends="threaded=true",dflt=0,min=0,max=1,editable=true,info="Show thread numbers", category="Threads")
@@ -319,5 +323,12 @@ public interface Configuration extends DataObject
     
     @Adjustable(editable=true,info="Fragment border thickness", category="Line thickness",min=1)
     public void setFragmentBorderThickness (int fragmentBorderThickness);
+    
+    @Adjustable(editable=true, category = "Threads", info = "Slack mode")
+    public void setSlackMode (boolean slackMode);
+    
+    @Adjustable(info="Put shadows on participants", category="Lifelines")
+    public void setShouldShadowParticipants(boolean shouldShadowParticipants);
+
 }
 //{{core}}
