@@ -77,6 +77,8 @@ public class TextHandler implements DiagramDataProvider {
 	private Map<Lifeline, String> annotations;
 
 	private int objectSectionEnd;
+	
+	private boolean slackMode;
 
 	/**
 	 * Creates a new <tt>TextHandler</tt> for the given text.
@@ -107,6 +109,7 @@ public class TextHandler implements DiagramDataProvider {
 	 */
 	public void setDiagram(Diagram diagram) {
 		this.diagram = diagram;
+		this.slackMode = diagram.getConfiguration().isSlackMode();
 	}
 
 	/**
@@ -393,12 +396,13 @@ public class TextHandler implements DiagramDataProvider {
 				throw new SyntaxError(this,
 						"processes and actors must be visible");
 			}
+			/*
 			if (hasThread) {
 				throw new SyntaxError(this,
 						"invisible objects cannot have their own thread");
-			}
+			}*/
 			lifeline = new Lifeline(name.substring(1), type, label, false,
-					anon, role, active, false, false, autoDestroy, external,
+					anon, role, active, false, slackMode, /*false*/ autoDestroy, external,
 					diagram);
 		} else {
 
@@ -417,7 +421,7 @@ public class TextHandler implements DiagramDataProvider {
 			}
 
 			lifeline = new Lifeline(parts[0], parts[1], label, true, anon,
-					role, active, process, hasThread, autoDestroy, external,
+					role, active, process, slackMode || hasThread, autoDestroy, external,
 					diagram);
 		}
 
