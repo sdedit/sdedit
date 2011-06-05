@@ -209,7 +209,8 @@
   	  <move file="${dist}/sdedit-macosx/BIN-README" tofile="${dist}/sdedit-macosx/README"/>
 	  <jarbundler
 	  		dir="${dist}/sdedit-macosx"
-	  		name="${appname}"
+	        icon="apple/dock-icon.icns"
+	  	    name="${appname}"
 	  		mainClass="${mainclass}"
 	  		jar="${dist}/sdedit-jar/${jarfile}"/>
   	  <exec executable="hdiutil" os="Mac OS X">
