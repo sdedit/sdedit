@@ -42,7 +42,7 @@ public class Rectangle extends ExtensibleDrawable
     public Rectangle(int width, Lifeline lifeline) {
         super(width, lifeline);
         thread = String.valueOf(getLifeline().getThread());
-        int l = lifeline.getDiagram().getConfiguration().isColorizeThreads() ? 
+        int l = lifeline.getDiagram().getConfiguration().isColorizeThreads() && !lifeline.getDiagram().getConfiguration().isSlackMode() ? 
         		lifeline.getDiagram().threadColors.length
                 : 1;
         color = lifeline.isAlwaysActive() ? Color.WHITE
