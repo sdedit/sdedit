@@ -376,12 +376,7 @@ public final class Actions implements Constants {
 			}
 
 			public void actionPerformed(ActionEvent e) {
-				if (editor.closeAll()) {
-					editor.getUI().addDiagramTextTab(
-							"untitled",
-							ConfigurationManager
-									.createNewDefaultConfiguration());
-				}
+			    editor.closeAll();
 			}
 		};
 
