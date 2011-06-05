@@ -203,6 +203,8 @@ public final class Diagram implements Constants {
 	
 	private final boolean requireReturn;
 	
+	private final boolean slackMode;
+	
 	
 
 	/**
@@ -242,7 +244,7 @@ public final class Diagram implements Constants {
 		threadStacks = new ArrayList<LinkedList<Message>>();
 		threadStates = new ArrayList<String>();
 		drawableBijection = new Bijection<Drawable, Object>();
-		this.threaded = conf.isThreaded();
+		this.threaded = conf.isSlackMode() || conf.isThreaded();
 		if (!threaded) {
 			/* spawn the only single thread */
 			callerThread = spawnThread();
@@ -259,6 +261,7 @@ public final class Diagram implements Constants {
 				configuration.getTc7(), configuration.getTc8(),
 				configuration.getTc9(), };
 		requireReturn = conf.isExplicitReturns();
+		slackMode = conf.isSlackMode();
 
 	}
 
@@ -459,7 +462,7 @@ public final class Diagram implements Constants {
 								part.setSpawnMessage(true);
 							}
 						}
-						part.setReturnsInstantly(data.returnsInstantly());
+						part.setReturnsInstantly(slackMode || data.returnsInstantly());
 						if (i == 0) {
 							part.setNoteNumber(data.getNoteNumber());
 							part.setMessage(data.getMessage());
