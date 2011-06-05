@@ -24,6 +24,7 @@
   <property value="${appname}-light.jar" name="lightjarfile"/>
   <property value="${appname}.jar" name="jarfile"/>
   <property value="${appname}.exe" name="exefile"/>
+  <property value="Sequence Diagram Editor" name="osxfile"/>
 
   <taskdef name="jarbundler" 
 	    classname="net.sourceforge.jarbundler.JarBundler" 
@@ -64,7 +65,7 @@
 
       - jar
         compiles the application and copies the dependency libs and builds a single
-        sdedit-only executable jar, and puts it into ${dist}/sdedit-jar-light/.
+        sdedit-only executable jar, and puts it into ${dist}/sdedit-bin/.
 
       - win32
         compiles the application and unpacks the dependency libs and builds a single
@@ -142,34 +143,49 @@
   	</javadoc>
   </target>
 
-
-  <target depends="compile" description="creates executable java archive" name="jar-light">
-    <mkdir dir="${dist}/sdedit-jar-light/lib"/>
-	<copy todir="${dist}/sdedit-jar-light" flatten="true">
-		<filelist dir="./" files="LICENSE,THIRDPARTYLICENSE,BIN-README"/>
+  <target depends="compile" description="creates source distro" name="src">
+    <mkdir dir="${dist}/sdedit-src/lib"/>
+    <mkdir dir="${dist}/sdedit-src/src"/>
+	<copy todir="${dist}/sdedit-src" flatten="true">
+		<fileset dir="targets/common" />
+		<fileset dir="targets/bin"/>
+		<fileset dir="targets/src"/>
 	</copy>
-  	<copy file="build-bin.xml" tofile="${dist}/sdedit-jar-light/build.xml"/>
-  	<copy todir="${dist}/sdedit-jar-light/lib">
+  	<chmod file="${dist}/sdedit-src/sdedit.sh" perm="a+x"/>
+  	<copy todir="${dist}/sdedit-src/lib">
   		<fileset dir="lib"/>
   	</copy>
-  	<move file="${dist}/sdedit-jar-light/BIN-README" tofile="${dist}/sdedit-jar-light/README"/>
-	<jar destfile="${dist}/sdedit-jar-light/${lightjarfile}" 
-		   excludes="**/ExportFileType">
-   	  <fileset dir="${build}"/>
-	  <manifest>
-	     <attribute name="Main-Class" value="${mainclass}"/>
-	  </manifest>
-	</jar>
+  	<copy todir="${dist}/sdedit-src/src">
+  		<fileset dir="apple"/>
+  		<fileset dir="src"/>
+  		<fileset dir="${sdedit.lib.src}"/>
+  	</copy>
+  	<tar destfile="${dist}/${appname}-src.tar.gz" basedir="${dist}/sdedit-src" compression="gzip"/>
+  </target>
+
+  <target depends="compile" description="creates binary generic java distro" name="bin">
+    <mkdir dir="${dist}/sdedit-bin/lib"/>
+    <mkdir dir="${dist}/sdedit-bin/bin"/>
+	<copy todir="${dist}/sdedit-bin" flatten="true">
+		<fileset dir="targets/common" />
+		<fileset dir="targets/bin"/>
+	</copy>
+  	<chmod file="${dist}/sdedit-bin/sdedit.sh" perm="a+x"/>
+  	<copy todir="${dist}/sdedit-bin/lib">
+  		<fileset dir="lib"/>
+  	</copy>
+  	<copy todir="${dist}/sdedit-bin/bin">
+  		<fileset dir="${build}"/>
+  	</copy>
+  	<tar destfile="${dist}/${appname}-bin.tar.gz" basedir="${dist}/sdedit-bin" compression="gzip"/>
   </target>
 	
   <target depends="compile" description="creates executable java archive" name="jar">
     <mkdir dir="${dist}/tmp/libclasses"/>
     <mkdir dir="${dist}/sdedit-jar"/>
 	<copy todir="${dist}/sdedit-jar" flatten="true">
-		<filelist dir="./" files="LICENSE,THIRDPARTYLICENSE,BIN-README"/>
+		<fileset dir="targets/common" />
 	</copy>
-  	<copy file="build-bin.xml" tofile="${dist}/sdedit-jar-light/build.xml"/>
-  	<move file="${dist}/sdedit-jar/BIN-README" tofile="${dist}/sdedit-jar/README"/>
     <unjar dest="${dist}/tmp/libclasses">
     	<fileset dir="lib/">
     		<include name="*.jar"/>
@@ -190,10 +206,10 @@
   <target depends="jar" description="creates windows executable" name="win32">
 	  <mkdir dir="${dist}/sdedit-win32"/>
 	  <copy todir="${dist}/sdedit-win32" flatten="true">
-	  	<filelist dir="./" files="LICENSE,THIRDPARTYLICENSE,BIN-README,win32/qsde-win32.jsmooth"/>
+		<fileset dir="targets/common" />
+		<fileset dir="targets/win32"/>
 	  </copy>
   	  <replace file="${dist}/sdedit-win32/qsde-win32.jsmooth" token="sdedit.jar" value="${jarfile}"/>
-  	  <move file="${dist}/sdedit-win32/BIN-README" tofile="${dist}/sdedit-win32/README"/>
 	  <jsmoothgen 
 	  		project="${dist}/sdedit-win32/qsde-win32.jsmooth" 
 	  		skeletonroot="tools/jsmooth-0.9.9-7/skeletons"/>
@@ -204,13 +220,13 @@
   <target depends="jar" description="creates Mac OS X executable" name="macosx">
 	  <mkdir dir="${dist}/sdedit-macosx"/>
 	  <copy todir="${dist}/sdedit-macosx" flatten="true">
-	  	<filelist dir="./" files="LICENSE,THIRDPARTYLICENSE,BIN-README"/>
+		<fileset dir="targets/common" />
+		<fileset dir="targets/macosx"/>
 	  </copy>
-  	  <move file="${dist}/sdedit-macosx/BIN-README" tofile="${dist}/sdedit-macosx/README"/>
 	  <jarbundler
 	  		dir="${dist}/sdedit-macosx"
 	        icon="apple/dock-icon.icns"
-	  	    name="${appname}"
+	  	    name="${osxfile}"
 	  		mainClass="${mainclass}"
 	  		jar="${dist}/sdedit-jar/${jarfile}"/>
   	  <exec executable="hdiutil" os="Mac OS X">
@@ -218,7 +234,7 @@
   	  </exec>
   </target>
 
-  <target name="all" description="builds all deployment targets" depends="jar-light,jar,win32,macosx"/>
+  <target name="all" description="builds all deployment targets" depends="src,bin,jar,win32,macosx"/>
 
   <target name="clean" description="deletes the distribution working folder and contents" >
   	<delete dir="${dist}"/>

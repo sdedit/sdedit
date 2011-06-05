@@ -1,0 +1,12 @@
+QUICK SEQUENCE DIAGRAM EDITOR - Microsoft Windows release
+==============================================
+
+You need Java, version 5 or higher, to run this tool. You can get Java
+here: http://java.sun.com/javase/downloads. 
+
+The included Windows executable will try and locate the appropriate Java runtime
+in your system, and if you don't have one it will offer the option to download and
+install it.
+
+Should you experience problems with launching sdedit, please report them
+at http://sdedit.sf.net/feedback/form.html

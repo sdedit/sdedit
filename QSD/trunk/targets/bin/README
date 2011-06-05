@@ -5,11 +5,9 @@ You need Java, version 5 or higher, to run this tool. You can get Java
 here: http://java.sun.com/javase/downloads
 
 Users of UNIX-like operating systems should run sdedit.sh in order to launch 
-Quick Sequence Diagram Editor, users of MS Windows should run sdedit.exe, and
-users of Mac OS X can run the app directly. 
+Quick Sequence Diagram Editor, users of MS Windows should run sdedit.bat. 
 
-If using the JAR file and "ant" (see http://ant.apache.org) is installed, 
-just type "ant".  
+If "ant" (see http://ant.apache.org) is installed, just type "ant".  
 
 Should you experience problems with launching sdedit, please report them
 at http://sdedit.sf.net/feedback/form.html
