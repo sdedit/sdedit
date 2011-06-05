@@ -414,6 +414,12 @@ public final class Editor implements Constants, UserInterfaceListener
                         + "Enable &multithreading",
                 "Create diagrams with arbitrarily many sequences running concurrently",
                 "threads", ui);
+        
+        ConfigurationAction<Configuration> slackAction = new TabConfigurationAction(
+                "slackMode",
+                "Slack mode",
+                "Switch on or off slack mode",
+                "slack", ui);
 
         ConfigurationAction<GlobalConfiguration> autoUpdateAction = new ConfigurationAction<GlobalConfiguration>(
                 "autoUpdate", "Auto-redraw", "Update diagram as you type",
@@ -440,6 +446,9 @@ public final class Editor implements Constants, UserInterfaceListener
         ui.addAction("&Edit", actions.clearAction, actions.textTabActivator);
 
         ui.addConfigurationAction("&Edit", threadedAction,
+                actions.textTabActivator);
+        
+        ui.addConfigurationAction("&Edit", slackAction,
                 actions.textTabActivator);
 
         ui.addAction("&Edit", actions.configureGloballyAction, null);
