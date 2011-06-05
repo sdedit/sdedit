@@ -33,83 +33,88 @@ import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.drawable.Strokes.StrokeType;
 
 public class LabeledBox extends Drawable {
-	
-	private String label;
 
-	private boolean underlined;
+    private String label;
 
-	private int headWidth;
+    private boolean underlined;
 
-	private int headHeight;
+    private int headWidth;
 
-	private int textWidth;
+    private int headHeight;
 
-	private int padding;
+    private int textWidth;
 
-	private Stroke stroke;
+    private int padding;
 
-	private Lifeline lifeline;
+    private Stroke stroke;
 
-	public LabeledBox(Lifeline lifeline, String _label, int y,
-			boolean anonymous, boolean underlined) {
-		setTop(y);
-		this.underlined = underlined;
-		this.lifeline = lifeline;
-		if (lifeline.isExternal()) {
-			label = "";
-		} else if (!_label.equals("")) {
-			label = _label;
-		} else if (anonymous) {
-			label = ":" + lifeline.getType();
-		} else {
-			label = lifeline.getName() + ":" + lifeline.getType();
-		}
-		Configuration conf = lifeline.getDiagram().getConfiguration();
-		headWidth = conf.getHeadWidth();
-		headHeight = conf.getHeadHeight();
-		padding = conf.getHeadLabelPadding();
-		textWidth = lifeline.getDiagram().getPaintDevice().getTextWidth(label);
-		if (lifeline.isExternal()) {
-			setWidth(lifeline.getDiagram().mainLifelineWidth);
-		} else {
-			setWidth(2 + Math.max(2 * padding + textWidth, headWidth));
-		}
-		stroke = lifeline.isAlwaysActive() ? Strokes.getStroke(StrokeType.SOLID, 2) : Strokes.getStroke(StrokeType.SOLID, 1);
-		setHeight(headHeight + 4);
+    private Lifeline lifeline;
 
-	}
-	
-	public boolean isVisible() {
-		return !lifeline.isExternal() && super.isVisible();
-	}
+    public LabeledBox(Lifeline lifeline, String _label, int y,
+            boolean anonymous, boolean underlined) {
+        setTop(y);
+        this.underlined = underlined;
+        this.lifeline = lifeline;
+        if (lifeline.isExternal()) {
+            label = "";
+        } else if (!_label.equals("")) {
+            label = _label;
+        } else if (anonymous) {
+            label = ":" + lifeline.getType();
+        } else {
+            label = lifeline.getName() + ":" + lifeline.getType();
+        }
+        Configuration conf = lifeline.getDiagram().getConfiguration();
+        headWidth = conf.getHeadWidth();
+        headHeight = conf.getHeadHeight();
+        padding = conf.getHeadLabelPadding();
+        textWidth = lifeline.getDiagram().getPaintDevice().getTextWidth(label);
+        if (lifeline.isExternal()) {
+            setWidth(lifeline.getDiagram().mainLifelineWidth);
+        } else {
+            setWidth(2 + Math.max(2 * padding + textWidth, headWidth));
+        }
+        stroke = lifeline.isAlwaysActive() ? Strokes.getStroke(
+                StrokeType.SOLID, 2) : Strokes.getStroke(StrokeType.SOLID, 1);
+        setHeight(headHeight + 4);
 
-	protected void drawObject(Graphics2D g2d) {
-		int axis = getLeft() + getWidth() / 2;
-		int top = getTop();
-		int width = getWidth();
+    }
 
+    public boolean isVisible() {
+        return !lifeline.isExternal() && super.isVisible();
+    }
 
-		g2d.fillRect(axis - width / 2 + 2, top + 2, width + 2, headHeight + 2);
-		
-		g2d.setColor(lifeline.getDiagram().getConfiguration().getLabeledBoxBgColor());
-		g2d.fillRect(axis - width / 2, top, width, headHeight);
+    protected void drawObject(Graphics2D g2d) {
+        int axis = getLeft() + getWidth() / 2;
+        int top = getTop();
+        int width = getWidth();
 
-		g2d.setColor(Color.BLACK);
-		g2d.setStroke(stroke);
-		g2d.drawRect(axis - width / 2, top, width, headHeight);
-		g2d.setStroke(Strokes.defaultStroke());
-		int left = axis - textWidth / 2;
+        if (lifeline.getDiagram().getConfiguration()
+                .isShouldShadowParticipants()) {
+            g2d.fillRect(axis - width / 2 + 2, top + 2, width + 2,
+                    headHeight + 2);
+        }
 
-		int baseLine = top + headHeight / 2;
+        g2d.setColor(lifeline.getDiagram().getConfiguration()
+                .getLabeledBoxBgColor());
+        g2d.fillRect(axis - width / 2, top, width, headHeight);
 
-		if (underlined) {
-			g2d.drawLine(left, baseLine + 2, left + textWidth, baseLine + 2);
-		}
-		g2d.drawString(label, left, baseLine);
-	}
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(stroke);
+        g2d.drawRect(axis - width / 2, top, width, headHeight);
+        g2d.setStroke(Strokes.defaultStroke());
+        int left = axis - textWidth / 2;
 
-	public void computeLayoutInformation() {
-		/* empty */
-	}
+        int baseLine = top + headHeight / 2;
+
+        if (underlined) {
+            g2d.drawLine(left, baseLine + 2, left + textWidth, baseLine + 2);
+        }
+        g2d.drawString(label, left, baseLine);
+    }
+
+    public void computeLayoutInformation() {
+        /* empty */
+    }
 }
-//{{core}}
+// {{core}}

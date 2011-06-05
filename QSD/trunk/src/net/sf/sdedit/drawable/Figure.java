@@ -24,7 +24,6 @@
 
 package net.sf.sdedit.drawable;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -50,6 +49,8 @@ public class Figure extends Drawable {
     private int actorHeight;
 
     private int actorWidth;
+
+    private boolean shouldShadow;
 
     /**
      * Creates a new <tt>Figure</tt>.
@@ -79,6 +80,8 @@ public class Figure extends Drawable {
         actorHeight = actor.getDiagram().getConfiguration().getHeadHeight();
         setHeight(textHeight + actorHeight + 3);
         actorWidth = actor.getDiagram().getConfiguration().getActorWidth();
+        shouldShadow = actor.getDiagram().getConfiguration()
+                .isShouldShadowParticipants();
     }
 
     /**
@@ -107,29 +110,31 @@ public class Figure extends Drawable {
         int headDiameter = (int) (height * 0.3F);
         int legs = (int) (height * 0.6F);
 
-        g.setColor(Color.BLACK);
+        if (shouldShadow) {
 
-        // the head shadow
-        g.fillOval(axis - headDiameter / 2 + ofs, from + ofs, headDiameter,
-                headDiameter);
+            // the head shadow
+            g.fillOval(axis - headDiameter / 2 + ofs, from + ofs, headDiameter,
+                    headDiameter);
 
-        g.setStroke(Strokes.getStroke(StrokeType.SOLID, thickness));
+            g.setStroke(Strokes.getStroke(StrokeType.SOLID, thickness));
 
-        // the body shadow
-        g.drawLine(axis + ofs, from + headDiameter, axis + ofs, from + legs);
+            // the body shadow
+            g.drawLine(axis + ofs, from + headDiameter, axis + ofs, from + legs);
 
-        // the arms shadow
-        g.drawLine(left + ofs, from + arms + ofs, right + ofs, from + arms
-                + ofs);
+            // the arms shadow
+            g.drawLine(left + ofs, from + arms + ofs, right + ofs, from + arms
+                    + ofs);
 
-        // the left leg shadow
-        g.drawLine(axis + ofs, from + legs + ofs, left + ofs, to + ofs);
+            // the left leg shadow
+            g.drawLine(axis + ofs, from + legs + ofs, left + ofs, to + ofs);
 
-        // the right leg shadow
-        g.drawLine(axis + (int) (1.5 * ofs), from + legs + ofs, right
-                + (int) (1.5 * ofs) - 1, to + 1);
+            // the right leg shadow
+            g.drawLine(axis + (int) (1.5 * ofs), from + legs + ofs, right
+                    + (int) (1.5 * ofs) - 1, to + 1);
 
-        g.setStroke(Strokes.defaultStroke());
+            g.setStroke(Strokes.defaultStroke());
+
+        }
 
         g.setColor(Color.WHITE);
         g.fillOval(axis - headDiameter / 2, from, headDiameter, headDiameter);
@@ -168,4 +173,4 @@ public class Figure extends Drawable {
         /* emtpy */
     }
 }
-//{{core}}
+// {{core}}
