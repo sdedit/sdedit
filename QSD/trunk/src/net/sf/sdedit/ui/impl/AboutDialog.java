@@ -28,6 +28,8 @@ import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,71 +38,101 @@ import java.text.DecimalFormat;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 
 import net.sf.sdedit.ui.components.HelpPanel;
 
+@SuppressWarnings("serial")
 public class AboutDialog extends JDialog implements ActionListener {
-	//private static int width = 450;
 
-	//private static int height = 190;
+    private String text;
 
-	public AboutDialog(JFrame frame, URL aboutURL) {
-		super(frame);
-		getContentPane().setLayout(new BorderLayout());
-		String text = "";
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new InputStreamReader(
-					aboutURL.openStream()));
-			for (;;) {
-				String line = br.readLine();
-				if (line == null) {
-					break;
-				}
-				text += line + "\n";
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		long max = Runtime.getRuntime().maxMemory();
-		long total = Runtime.getRuntime().totalMemory();
-		long free = Runtime.getRuntime().freeMemory();
-		
-		double used = 1D * (total - free) / (1 << 20);
-		double avail = 1D * (max - total + free) / (1 << 20);
-		
-	    DecimalFormat format = new DecimalFormat("####.#");
-	    String _used = format.format(used);
-	    String _avail = format.format(avail);
-		
-		text = text.replaceFirst("_USED_", _used + " MB");
-		text = text.replaceFirst("_AVAIL_", _avail + " MB");
-		
-		getContentPane()
-				.add(new HelpPanel(text).getPane(), BorderLayout.CENTER);
-		JButton close = new JButton("Close");
-		close.addActionListener(this);
-		getContentPane().add(close, BorderLayout.SOUTH);
-		setModal(true);
-		setTitle("About sdedit");
-		pack();
-		setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2
-				- getWidth() / 2, Toolkit.getDefaultToolkit().getScreenSize().height
-				/ 2 - getHeight() / 2);
-	}
+    private JEditorPane editorPane;
 
-	public void actionPerformed(ActionEvent e) {
-		setVisible(false);
-		dispose();
-	}
+    public AboutDialog(JFrame frame, URL aboutURL) {
+        super(frame);
+        getContentPane().setLayout(new BorderLayout());
+        text = "";
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(
+                    new InputStreamReader(aboutURL.openStream()));
+            for (;;) {
+                String line = br.readLine();
+                if (line == null) {
+                    break;
+                }
+                text += line + "\n";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        showPanel();
+
+        JButton close = new JButton("Close");
+        close.addActionListener(this);
+        getContentPane().add(close, BorderLayout.SOUTH);
+        setModal(true);
+        setTitle("About sdedit");
+        pack();
+        setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2
+                - getWidth() / 2,
+                Toolkit.getDefaultToolkit().getScreenSize().height / 2
+                        - getHeight() / 2);
+    }
+
+    private void showPanel() {
+        String text = this.text;
+        long max = Runtime.getRuntime().maxMemory();
+        long total = Runtime.getRuntime().totalMemory();
+        long free = Runtime.getRuntime().freeMemory();
+
+        double used = 1D * (total - free) / (1 << 20);
+        double avail = 1D * (max - total + free) / (1 << 20);
+
+        DecimalFormat format = new DecimalFormat("####.#");
+        String _used = format.format(used);
+        String _avail = format.format(avail);
+
+        text = text.replaceFirst("_USED_", _used + " MB");
+        text = text.replaceFirst("_AVAIL_", _avail + " MB");
+
+        if (editorPane != null) {
+            getContentPane().remove(editorPane);
+        }
+
+        editorPane = new HelpPanel(text).getPane();
+        editorPane.addMouseListener(new MouseAdapter(){
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    System.gc();
+                    showPanel();
+                }
+            }
+            
+           
+            
+        });
+
+        getContentPane().add(editorPane, BorderLayout.CENTER);
+
+        editorPane.revalidate();
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        setVisible(false);
+        dispose();
+    }
 }
