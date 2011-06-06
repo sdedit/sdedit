@@ -18,7 +18,7 @@ public class MessageValidator extends SequenceProcessor<MessageData> {
 	}
 
 	@Override
-	public <E extends Exception> void processElement() throws SemanticError,
+	public void processElement() throws SemanticError,
 			SyntaxError {
 		State state = getState();
 		Lifeline rootCallee = state.getRootCallee();

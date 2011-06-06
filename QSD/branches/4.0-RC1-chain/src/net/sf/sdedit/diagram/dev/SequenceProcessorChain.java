@@ -28,6 +28,7 @@ import java.util.LinkedList;
 
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.drawable.Drawable;
+import net.sf.sdedit.drawable.SequenceElement;
 import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.error.SyntaxError;
 import net.sf.sdedit.util.Bijection;
@@ -41,6 +42,8 @@ public class SequenceProcessorChain {
     private Bijection<Drawable,Object>drawableBijection = new Bijection<Drawable, Object>();
     
     private State state;
+    
+    private SequenceEntity currentElement;
     
     public SequenceProcessorChain (Diagram diagram) {
         this.diagram = diagram;
@@ -63,20 +66,25 @@ public class SequenceProcessorChain {
     	return state;
     }
     
-
-    
-    public void callNext (SequenceEntity element, Object state) throws SyntaxError, SemanticError {
+    public void processElement (SequenceEntity element, Object state) throws SyntaxError, SemanticError {
         this.state = new State();
         this.state.setInputState(state);
+        this.currentElement = element;
+        callNext();
+    }
+    
+
+    
+    public void callNext () throws SyntaxError, SemanticError {
         boolean match = false;
         while (!match) {
             if (chain.isEmpty()) {
                 throw new IllegalStateException("no more processors available");
             }
             SequenceProcessor<?> sequenceProcessor = chain.removeFirst();
-            if (sequenceProcessor.getElementClass().isAssignableFrom(element.getClass())) {
+            if (sequenceProcessor.getElementClass().isAssignableFrom(currentElement.getClass())) {
                 match = true;
-                sequenceProcessor.setElement(element);
+                sequenceProcessor.setElement(currentElement);
                 sequenceProcessor.processElement();
             }
         }

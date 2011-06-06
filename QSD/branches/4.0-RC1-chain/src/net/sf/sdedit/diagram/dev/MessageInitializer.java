@@ -17,7 +17,7 @@ public class MessageInitializer extends SequenceProcessor<MessageData> {
 	}
 
 	@Override
-	public <E extends Exception> void processElement() throws SemanticError,
+	public void processElement() throws SemanticError,
 			SyntaxError {
 		MessageData data = getElement();
 		Lifeline rootCaller;

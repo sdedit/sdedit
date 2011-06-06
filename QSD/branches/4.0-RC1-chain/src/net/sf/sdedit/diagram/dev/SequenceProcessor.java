@@ -73,11 +73,15 @@ public abstract class SequenceProcessor<T extends SequenceEntity>{
     	
     }
     
+    protected void callNext () throws SemanticError, SyntaxError {
+        chain.callNext();
+    }
+    
         
     
     protected abstract Class<T> getElementClass ();
     
-    public abstract <E extends Exception> void processElement () throws SemanticError, SyntaxError ;
+    public abstract void processElement () throws SemanticError, SyntaxError ;
     
     
     

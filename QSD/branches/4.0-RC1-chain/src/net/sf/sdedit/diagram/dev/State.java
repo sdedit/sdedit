@@ -16,6 +16,10 @@ public class State {
 	 */
 	private Lifeline rootCallee;
 	
+	private SequenceThread callerThread;
+	
+	private SequenceThread calleeThread;
+	
 	private Object inputState;
 	
 	public State () {
@@ -53,5 +57,25 @@ public class State {
 	public boolean calleeIsActor() {
 		return rootCallee != null && rootCallee.isAlwaysActive();
 	}
+
+    public void setCallerThread(SequenceThread callerThread) {
+        this.callerThread = callerThread;
+    }
+
+    public SequenceThread getCallerThread() {
+        return callerThread;
+    }
+
+    public void setCalleeThread(SequenceThread calleeThread) {
+        this.calleeThread = calleeThread;
+    }
+
+    public SequenceThread getCalleeThread() {
+        return calleeThread;
+    }
+    
+    public boolean isPrimitiveMessage() {
+        return rootCallee == null;
+    }
 
 }
