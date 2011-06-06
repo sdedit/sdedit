@@ -35,13 +35,13 @@ import java.util.Set;
 
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
+import net.sf.sdedit.diagram.dev.ThreadSet;
 import net.sf.sdedit.drawable.Arrow;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Fragment;
 import net.sf.sdedit.drawable.Text;
 import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.error.SyntaxError;
-
 import net.sf.sdedit.message.Answer;
 import net.sf.sdedit.message.BroadcastMessage;
 import net.sf.sdedit.message.ForwardMessage;
@@ -205,6 +205,8 @@ public final class Diagram implements Constants {
 	
 	private final boolean slackMode;
 	
+	private final ThreadSet threadSet;
+	
 	
 
 	/**
@@ -262,7 +264,12 @@ public final class Diagram implements Constants {
 				configuration.getTc9(), };
 		requireReturn = conf.isExplicitReturns();
 		slackMode = conf.isSlackMode();
+		threadSet = new ThreadSet();
 
+	}
+	
+	public ThreadSet getThreadSet () {
+	    return threadSet;
 	}
 
 	/**
