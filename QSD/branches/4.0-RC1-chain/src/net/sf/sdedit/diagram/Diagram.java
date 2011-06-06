@@ -541,7 +541,7 @@ public final class Diagram implements Constants {
 	/**
 	 * Adds a new (root) lifeline for an object with the name and type given.
 	 */
-	private boolean addLifeline(Lifeline lifeline) throws SemanticError {
+	public boolean addLifeline(Lifeline lifeline) throws SemanticError {
 		if (lifelineMap.get(lifeline.getName()) != null) {
 			throw new SemanticError(provider, lifeline.getName()
 					+ " already exists");
