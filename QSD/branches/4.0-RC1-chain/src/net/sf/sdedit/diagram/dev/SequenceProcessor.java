@@ -25,6 +25,7 @@
 package net.sf.sdedit.diagram.dev;
 
 import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.error.ObjectNotFound;
 import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.error.SyntaxError;
 
@@ -56,12 +57,20 @@ public abstract class SequenceProcessor<T extends SequenceEntity>{
         return getChain().getDiagram();
     }
     
-    protected void raiseSemanticError (String message) throws SemanticError {
+    protected State getState () {
+    	return chain.getState();
+    }
+    
+    protected void semanticError (String message) throws SemanticError {
 
     }
     
-    protected void raiseSyntaxError (String message) throws SyntaxError {
+    protected void syntaxError (String message) throws SyntaxError {
 
+    }
+    
+    protected void objectNotFound (String objectName) throws ObjectNotFound {
+    	
     }
     
         

@@ -40,7 +40,7 @@ public class SequenceProcessorChain {
     
     private Bijection<Drawable,Object>drawableBijection = new Bijection<Drawable, Object>();
     
-    private Object state;
+    private State state;
     
     public SequenceProcessorChain (Diagram diagram) {
         this.diagram = diagram;
@@ -59,10 +59,15 @@ public class SequenceProcessorChain {
         drawableBijection.add(drawable, state);
     }
     
+    public State getState () {
+    	return state;
+    }
+    
 
     
     public void callNext (SequenceEntity element, Object state) throws SyntaxError, SemanticError {
-        this.state = state;
+        this.state = new State();
+        this.state.setInputState(state);
         boolean match = false;
         while (!match) {
             if (chain.isEmpty()) {

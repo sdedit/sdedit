@@ -26,10 +26,10 @@ public class LifelineProcessor extends SequenceProcessor<Lifeline>{
         Lifeline lifeline = getElement();
         getChain().addDrawable(lifeline.getHead());
         if (lifelineMap.containsKey(lifeline.getName())) {
-            raiseSyntaxError(lifeline.getName() + " already exists.");
+            syntaxError(lifeline.getName() + " already exists.");
         }
         if (!getDiagram().isThreaded() && lifeline.hasThread()) {
-            raiseSemanticError(lifeline.getName() + " cannot have its own thread when multithreading is not enabled");
+            semanticError(lifeline.getName() + " cannot have its own thread when multithreading is not enabled");
         }
         getDiagram().addLifeline(lifeline);
         
