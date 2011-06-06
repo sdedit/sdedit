@@ -26,6 +26,7 @@ package net.sf.sdedit.diagram;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.sf.sdedit.diagram.dev.SequenceEntity;
 import net.sf.sdedit.drawable.Cross;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.ExtensibleDrawable;
@@ -33,9 +34,7 @@ import net.sf.sdedit.drawable.Figure;
 import net.sf.sdedit.drawable.LabeledBox;
 import net.sf.sdedit.drawable.Line;
 import net.sf.sdedit.drawable.Rectangle;
-
 import net.sf.sdedit.util.Direction;
-import net.sf.sdedit.util.Utilities;
 
 /**
  * For each object or actor that appears in a diagram and that has not yet been
@@ -49,7 +48,7 @@ import net.sf.sdedit.util.Utilities;
  * 
  * @author Markus Strauch
  */
-public final class Lifeline {
+public final class Lifeline implements SequenceEntity {
 
 	/**
 	 * The direction of the lifeline, for root lifelines Direction.CENTER, for

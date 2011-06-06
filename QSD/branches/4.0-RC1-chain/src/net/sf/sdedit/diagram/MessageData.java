@@ -23,6 +23,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.diagram;
 
+import net.sf.sdedit.diagram.dev.SequenceEntity;
 import net.sf.sdedit.message.BroadcastMessage;
 
 /**
@@ -31,7 +32,7 @@ import net.sf.sdedit.message.BroadcastMessage;
  * 
  * @author Markus Strauch
  */
-public class MessageData {
+public class MessageData implements SequenceEntity {
 
 	private String caller;
 

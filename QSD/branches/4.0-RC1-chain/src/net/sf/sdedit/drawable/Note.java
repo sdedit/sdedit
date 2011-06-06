@@ -33,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.diagram.dev.SequenceEntity;
 import net.sf.sdedit.drawable.Strokes.StrokeType;
 import net.sf.sdedit.util.Direction;
 
@@ -46,7 +47,7 @@ import net.sf.sdedit.util.Direction;
  * @author Markus Strauch
  * 
  */
-public class Note extends SequenceElement
+public class Note extends SequenceElement implements SequenceEntity
 {
 
     /**
