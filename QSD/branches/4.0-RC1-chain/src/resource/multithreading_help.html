@@ -1,0 +1,295 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<style type="text/css">
+<!--
+        div.section {margin-bottom:15px;} 
+        div.para {margin-top:3px; margin-bottom:3px; } 
+        pre {margin-left:15px;margin-bottom:0px;margin-top:5px;border-style:solid;border-width:1px; padding:5px;font-weight:700;width:60%}
+        h1 {margin-bottom:2px; } 
+        h2 {margin-bottom:2px; } 
+        h3 {margin-bottom:1px; } 
+        h4 {margin-bottom:1px; }
+        body {background-color:white; font-family:Arial,Helvetica,SansSerif;
+              font-size:11px;margin-left:30px;margin-right:30px;}-->
+</style>
+<title>Multithreading</title>
+</head>
+<body>
+  
+<h1>
+<a name="threads">Multithreading</a>
+</h1>
+    
+<div class="para">
+      Multithreading support is an advanced feature that is available
+      since version 2.2. If you are not interested, you can completely
+      ignore it.
+    </div>
+    
+<div class="para">
+      If you are interested, you may enable it in the
+      "Threads" menu.
+    </div>
+    
+<div class="para">
+      When multithreading is enabled, you can create diagrams that model
+      arbitarily many sequences running in parallel, not just a single
+      one. The sequences can (at your option) be distinguished by the
+      colours of their corresponding lifelines. There is still no real
+      parallelism, as the messages must be specified in some order. This
+      order can be interpreted as one of many possible
+      interleavings
+      of the threads. A single-processor system would execute them in a
+      similar way.
+    </div>
+  
+  
+<h1>
+<a name="spec">Specifying diagrams with multiple threads</a>
+</h1>
+    
+<div class="para">
+      Specifying a multithreaded diagram is only slightly harder than
+      specifying a diagram with a single thread.
+    </div>
+    
+<h2>
+<a name="spec.spawn">Spawning threads</a>
+</h2>
+      
+<div class="para">
+        A newly spawned thread can be distinguished from older threads
+        by the colour of its corresponding lifelines. If you spawn too
+        many threads, colours may be repeated. Threads have successive
+        numbers, starting with 0.
+      </div>
+      
+<h3>
+<a name="spec.spawn.static">Statically spawned threads</a>
+</h3>
+        
+<div class="para">
+          Objects that have been declared with the "t" flag
+          set, for example:
+        </div>
+        
+<pre>o:Object[t]</pre>
+        
+<div class="para">
+          have their own (statically spawned) thread. The first thing
+          that happens on this thread must be a message sent by the
+          corresponding object.
+        </div>
+        
+<div class="para">
+          If there is no object with a "t" flag, there is a
+          single thread nonetheless. It starts executing when the first
+          message is sent by an object.
+        </div>
+      
+      
+<h3>
+<a name="spec.spawn.dynamic">Dynamically spawned threads</a>
+</h3>
+        
+<div class="para">
+          As a rule, a message sent by an actor to an object
+          (dynamically) spawns a new thread.
+        </div>
+        
+<div class="para">
+          So do messages sent to "active objects". An object
+          can be declared to be active by setting the
+          <tt>v</tt>
+          flag. Example:
+        </div>
+        
+<pre>worker:BackgroundWorker[v]</pre>
+        
+<div class="para">
+          Messages sent and received by ordinary objects may also spawn
+          new threads. In order to specify that such a message is
+          spawning, use a colon followed by a "&gt;" to
+          separate the caller from the message. Example:
+        </div>
+        
+<pre>object:&gt;bar.foo()</pre>
+        
+<div class="para">
+          This means that
+          <tt>object</tt>
+          spawns a new thread and the first thing this new thread does
+          is executing the
+          <tt>foo</tt>
+          method of the
+          <tt>bar</tt>
+          object.
+        </div>
+        
+<div class="para">
+          Note that you cannot specify answers to messages that spawn
+          threads. If an object running on a new thread wants to
+          communicate with the spawning object, it must explicitly send
+          a message.
+        </div>
+      
+      
+<h3>
+<a name="spec.spawn.broadcast">Broadcast messages</a>
+</h3>
+        
+<div class="para">
+          A message can have more than one callee, specified in set
+          notation. In this case, it is a broadcast message. Example:
+        </div>
+        
+<pre>caller:{callee1,callee2,callee3}.broadcast</pre>
+        
+<div class="para">
+          A callee may not occur more than once in the callee set, the
+          caller may not occur at all in there. The effect of a
+          broadcast message is that a new thread is spawned for each
+          callee.
+        </div>
+        
+<div class="para">
+          It is currently not possible to define mnemonics for objects
+          that are activated by a broadcast message.
+        </div>
+      
+
+    
+    
+<h2>
+<a name="spec.thread">Specifying the thread where an activity occurs</a>
+</h2>
+      
+<div class="para">
+        When more than one thread is used, we need to be able to tell on
+        which of the threads a message occurs. So the level of a caller
+        (specified in square brackets) may be followed by the number of
+        the thread, where level and thread are separated by a comma.
+        Example:
+      </div>
+      
+<pre>object[0,3]:bar.foo()</pre>
+      
+<div class="para">
+        This means that
+        <tt>object</tt>
+        is sending a
+        <tt>foo()</tt>
+        message to
+        <tt>bar</tt>
+        on the thread number 3.
+      </div>
+      
+<div class="para">
+        If an object is used by a single thread only, the number of the
+        thread can be omitted. If there is more than one thread using an
+        object and the thread number is omitted, the editor assumes that
+        the message is to be sent on the same thread as the most recent
+        message. If you spawn a new thread, the next message will, if
+        not otherwise specified, be sent on that new thread. It is also
+        possible to omit the level and only specify the thread, so
+        <tt>object[,3]:bar.foo()</tt>
+        is equivalent to the example above, as 0 is the default level.
+      </div>
+      
+<div class="para">
+        You can also use a mnemonic between square brackets. When a
+        mnemonic is defined for an object, the mnemonic determines both
+        the level and the thread number.
+      </div>
+      
+<div class="para">
+        Thread numbers can be made visible at your option (see the
+        "Threads" menu): They are shown at the top of the
+        active lifelines.
+      </div>
+    
+    
+<h2>
+<a name="spec.return">Instant return</a>
+</h2>
+      
+<div class="para">
+        Normally, the focus of a thread's activity stays on the object
+        that has received the most recent message, unless the thread is
+        stopped or another message is sent. Sometimes, however, it may
+        seem inappropriate to have a thread's focus resting on an object
+        for so long. In that case a message should be ended by an
+        "&amp;". This means that the answer to the message
+        will be sent immediately. Note that a message sent later cannot
+        have the callee of the instantly returning message as a caller
+        of course. Example:
+      </div>
+      
+<pre>foo:bar.notify()&amp;</pre>
+      
+<div class="para">
+        If a spawning message is suffixed with an "&amp;", the
+        spawned thread does nothing and dies instantly. Such messages
+        might be interpreted as asynchronous signals.
+      </div>
+    
+    
+<h2>
+<a name="spec.stop">Stopping threads</a>
+</h2>
+      
+<div class="para">
+        Normally, a thread runs until the end of the diagram. But maybe
+        you would like to model that it dies at some point. This is done
+        by inserting a pseudo message of the form:
+      </div>
+      
+<pre>object:stop</pre>
+      
+<div class="para">
+        (where of course also a thread number may be specified).
+        Stopping a thread may be necessary before an object can be
+        destroyed, if the thread's activity does not return from the
+        object otherwise. The text of the pseudo message (i. e.
+        "stop") will not appear on the diagram. The visible
+        effect rather is that the corresponding lifeline ends at that
+        point.
+      </div>
+    
+    
+<h2>
+<a name="spec.flowreturn">Returning control flow</a>
+</h2>
+
+      
+<div class="para">
+        Before an object sends a message, a thread's control flow has to
+        return to it, which implies that some answers pending on the
+        thread might have to be sent. Sometimes one wants to manipulate
+        the control flow like this without the need to send a new
+        message, e. g. for representing that a certain set of actions is
+        finished now or for simply doing some "clean-up". This
+        can be done by inserting a pseudo message consisting of just an
+        underscore:
+      </div>
+
+      
+<pre>object:_</pre>
+
+      
+<div class="para">
+        The effect is that enough pending answers will be sent such that
+        "object"
+        <em>could</em>
+        send a message now on its current thread (again, a special
+        thread number may be specified). The pseudo message does not
+        appear on the diagram and there will be no extra space consumed
+        (apart from the space needed for the answers).
+      </div>
+    
+
+  
+
+</body>
+</html>

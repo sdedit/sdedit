@@ -1,0 +1,156 @@
+// Copyright (c) 2006 - 2011, Markus Strauch.
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+// 
+// * Redistributions of source code must retain the above copyright notice, 
+// this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright notice, 
+// this list of conditions and the following disclaimer in the documentation 
+// and/or other materials provided with the distribution.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+// THE POSSIBILITY OF SUCH DAMAGE.
+
+package net.sf.sdedit.editor;
+
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+
+import net.sf.sdedit.config.ConfigurationManager;
+import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.drawable.Drawable;
+import net.sf.sdedit.icons.Icons;
+import net.sf.sdedit.text.TextHandler;
+import net.sf.sdedit.util.Grep;
+
+/**
+ * This action generates an HTML map file from the diagram currently being
+ * displayed.
+ * <p>
+ * The name/id of the map is equal to the name of the diagram file (so there
+ * must be a file associated to the diagram). The map contains a
+ * &quot;hot-spot&quot; resp. <tt>AREA</tt> tag for each head of a lifeline
+ * that occurs in the diagram. By default, the <tt>href</tt> attribute
+ * contains the name of the object/lifeline. If you add an active comment,
+ * starting with <tt>#!</tt>, behind the object declaration, the content of
+ * the comment is used for the <tt>href</tt> attribute.
+ * 
+ * @author Markus Strauch
+ */
+@SuppressWarnings("serial")
+class ExportMapAction extends AbstractAction {
+
+	private Editor editor;
+
+	private File directory;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param editor
+	 */
+	ExportMapAction(Editor editor) {
+		this.editor = editor;
+		putValue(Action.NAME, "Export &HTML map file");
+		putValue(Action.SHORT_DESCRIPTION, "Create an HTML file with"
+				+ " an image map for the diagram currently being displayed");
+		putValue(Action.SMALL_ICON, Icons.getIcon("map"));
+	}
+
+	/**
+	 * See {@linkplain ExportMapAction}.
+	 * 
+	 * @param e
+	 */
+	public void actionPerformed(ActionEvent e) {
+//		Diagram diagram = editor.getUI().getDiagram();
+//		if (diagram == null || diagram.getLifelines().isEmpty()) {
+//			return;
+//		}
+//		TextHandler textHandler = (TextHandler) diagram.getDataProvider();
+//		File currentFile = editor.getUI().getCurrentFile();
+//		if (currentFile == null) {
+//			editor.getUI().message("Please save the diagram as a file first.");
+//			return;
+//		}
+//		String name = currentFile.getName();
+//		int dot = Math.min(name.length(), name.lastIndexOf('.'));
+//		name = currentFile.getName().substring(0, dot);
+//		if (directory == null) {
+//			directory = currentFile.getParentFile();
+//		}
+//
+//		File[] target = editor.getUI().getFiles(false, false,
+//				"Export HTML map file", name + ".html", directory, "HTML files", "html");
+//		if (target != null && target.length > 0) {
+//			directory = target[0].getParentFile();
+//			if (!target[0].exists()
+//					|| 1 == editor.getUI().confirmOrCancel(
+//							"Overwrite existing file:\n"
+//									+ target[0].getAbsolutePath() + "?")) {
+//				try {
+//					generateMapFile(diagram, textHandler, name, target[0]);
+//				} catch (IOException ex) {
+//					editor.getUI().errorMessage(
+//							"The map file could not be saved due to an exception of type\n"
+//									+ ex.getClass().getSimpleName()
+//									+ " with the message: " + ex.getMessage());
+//				}
+//			}
+//		}
+	}
+
+	private void generateMapFile(Diagram diagram, TextHandler textHandler,
+			String mapName, File target) throws IOException {
+		String encoding = ConfigurationManager.getGlobalConfiguration().getFileEncoding();
+		FileOutputStream fos = new FileOutputStream(target);
+		OutputStreamWriter osw = new OutputStreamWriter(fos, encoding);
+		PrintWriter pw = new PrintWriter(osw);
+		pw.println("<!-- Generated by Quick Sequence Diagram Editor -->");
+		pw.println("<!-- encoding: " + encoding + " -->");
+		pw
+				.println("<!-- You may append '#!href=\"<url>\"' to an object declaration\nin order to set"
+						+ " the 'href' attribute of an AREA tag -->");
+		pw.println("<map id=\"" + mapName + "\" name=\"" + mapName + "\">");
+		for (Lifeline lifeline : diagram.getAllLifelines()) {
+			String annotation = textHandler.getAnnotation(lifeline);
+			String file = lifeline.getName();
+			if (annotation != null) {
+				String href[] = Grep.parse("^.*?href=\"(.*?)\".*$", annotation);
+				if (href != null) {
+					file = href[0];
+				}
+			}
+			Drawable drawable = lifeline.getHead();
+			int x1 = drawable.getLeft();
+			int y1 = drawable.getTop();
+			int x2 = drawable.getRight();
+			int y2 = drawable.getBottom();
+			String coords = x1 + "," + y1 + "," + x2 + "," + y2;
+			pw.println("  <area shape=\"rect\" coords=\"" + coords + "\""
+					+ " href=\"" + file + "\"/>");
+		}
+		pw.println("</map>");
+		pw.flush();
+		pw.close();
+	}
+}
