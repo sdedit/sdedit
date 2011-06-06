@@ -203,18 +203,38 @@
     </jar>
   </target>
 
-  <target depends="jar" description="creates windows executable" name="win32">
+  <target depends="jar" description="creates windows executable" name="win-jsmooth">
 	  <mkdir dir="${dist}/sdedit-win32"/>
 	  <copy todir="${dist}/sdedit-win32" flatten="true">
 		<fileset dir="targets/common" />
 		<fileset dir="targets/win32"/>
 	  </copy>
+	  <delete file="${dist}/sdedit-win32/sdedit.exe.xml"/>
   	  <replace file="${dist}/sdedit-win32/qsde-win32.jsmooth" token="sdedit.jar" value="${jarfile}"/>
 	  <jsmoothgen 
 	  		project="${dist}/sdedit-win32/qsde-win32.jsmooth" 
 	  		skeletonroot="tools/jsmooth-0.9.9-7/skeletons"/>
 	  <delete file="${dist}/sdedit-win32/qsde-win32.jsmooth"/>
 	  <move file="${dist}/sdedit-win32/sdedit.exe" tofile="${dist}/sdedit-win32/${exefile}"/>
+  </target>
+
+  <target depends="jar" description="creates windows executable" name="windows">
+	  <mkdir dir="${dist}/sdedit-win32"/>
+	  <copy todir="${dist}/sdedit-win32" flatten="true">
+		<fileset dir="targets/common" />
+		<fileset dir="targets/win32"/>
+	  </copy>
+  	  <delete file="${dist}/sdedit-win32/qsde-win32.jsmooth"/>
+  	  <dirname property="dist.full" file="${dist}/sdedit-win32"/>
+	  <replace file="${dist}/sdedit-win32/sdedit.exe.xml" 
+	  			token="%%JARFILE%%" value="${dist.full}/sdedit-jar/${jarfile}"/>
+	  <replace file="${dist}/sdedit-win32/sdedit.exe.xml" 
+	  			token="%%EXEFILE%%" value="${dist.full}/sdedit-win32/${exefile}"/>
+  	  <java fork="true" dir="tools/launch4j-3.0.2/${os.name}/" 
+  	  					jar="tools/launch4j-3.0.2/${os.name}/launch4j.jar">
+		<arg line="${dist.full}/sdedit-win32/sdedit.exe.xml"/>
+  	  </java>
+	  <delete file="${dist}/sdedit-win32/sdedit.exe.xml"/>
   </target>
 
   <target depends="jar" description="creates Mac OS X executable" name="macosx">
@@ -234,7 +254,7 @@
   	  </exec>
   </target>
 
-  <target name="all" description="builds all deployment targets" depends="src,bin,jar,win32,macosx"/>
+  <target name="all" description="builds all deployment targets" depends="src,bin,jar,windows,macosx"/>
 
   <target name="clean" description="deletes the distribution working folder and contents" >
   	<delete dir="${dist}"/>
