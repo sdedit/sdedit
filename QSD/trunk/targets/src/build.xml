@@ -61,6 +61,7 @@
       	<include name="**/*.html"/>
       	<include name="**/*.txt"/>
         <include name="**/*.conf"/>
+      	<include name="**/tooltips"/>
       </fileset>
     </copy>
     <javac debug="off" 
