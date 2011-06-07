@@ -148,7 +148,8 @@
     <mkdir dir="${dist}/sdedit-src/src"/>
 	<copy todir="${dist}/sdedit-src" flatten="true">
 		<fileset dir="targets/common" />
-		<fileset dir="targets/bin"/>
+		<fileset file="targets/bin/sdedit.bat"/>
+		<fileset file="targets/bin/sdedit.sh"/>
 		<fileset dir="targets/src"/>
 	</copy>
   	<chmod file="${dist}/sdedit-src/sdedit.sh" perm="a+x"/>
