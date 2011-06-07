@@ -67,9 +67,14 @@
         compiles the application and copies the dependency libs and builds a single
         sdedit-only executable jar, and puts it into ${dist}/sdedit-bin/.
 
-      - win32
+      - win-jsmooth
         compiles the application and unpacks the dependency libs and builds a single
         executable jar, then uses jsmooth to create a single windows .exe and puts 
+      	it into ${dist}/sdedit-win32/.
+
+      - windows
+        compiles the application and unpacks the dependency libs and builds a single
+        executable jar, then uses launch4j to create a single windows .exe and puts 
     	it into ${dist}/sdedit-win32/.
 
       - macosx
