@@ -735,6 +735,7 @@ public final class Actions implements Constants {
 					if (tab != null) {
 					    // prevent user from overwriting example file
 					    tab.setFile(null); 
+					    tab.setName(file);
 					}
 				
 				} catch (RuntimeException re) {
