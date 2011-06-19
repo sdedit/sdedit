@@ -271,7 +271,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 			tabContainer.select(tab);
 		} else {
 			tab.setTitle(title);
-			tabContainer.addTabToCategory(tab, "Help pages");
+			tabContainer.addTabToCategory(tab, "Help pages", true);
 		}
 	}
 
@@ -381,16 +381,16 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 
 	}
 
-	public String addTab(Tab tab) {
-		return tabContainer.addTab(tab);
+	public String addTab(Tab tab, boolean selectIt) {
+		return tabContainer.addTab(tab, selectIt);
 	}
 
 	public DiagramTextTab addDiagramTextTab(String tabTitle,
-			Bean<Configuration> configuration) {
+			Bean<Configuration> configuration, boolean selectIt) {
 		DiagramTextTab tab = new DiagramTextTab(this, ConfigurationManager
 				.getGlobalConfiguration().getEditorFont(), configuration);
 		tab.setTitle(tabTitle);
-		addTab(tab);
+		addTab(tab, selectIt);
 		enableComponents();
 		return tab;
 	}
@@ -646,7 +646,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
         addDiagramTextTab(
                 "untitled",
                 ConfigurationManager
-                        .createNewDefaultConfiguration());
+                        .createNewDefaultConfiguration(), true);
 	}
 
 	public void tabIsClosed(Tab tab) {
