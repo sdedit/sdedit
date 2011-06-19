@@ -120,11 +120,11 @@ public class TreeNavigatorModel implements TreeModel {
 		return null;
 	}
 
-	public void addChild(TreeNavigatorNode parent, TreeNavigatorNode child) {
-		int i = parent.getChildCount();
-		parent.addChild(child);
+	public void addChild(TreeNavigatorNode parent, TreeNavigatorNode child, TreeNavigatorNode previousSibling) {
+		//int i = parent.getChildCount();
+		int p = parent.addChild(child, previousSibling);
 		TreeModelEvent tme = new TreeModelEvent(this, parent.getTreePath(),
-				new int[] { i }, new Object[] { child });
+				new int[] { p }, new Object[] { child });
 		for (TreeModelListener l : listeners) {
 			l.treeNodesInserted(tme);
 		}
