@@ -143,7 +143,7 @@ public abstract class AbstractFileHandler implements FileHandler {
 	}
 
 	protected void addTabToUI(Tab tab, UserInterface ui) {
-		ui.addTab(tab);
+		ui.addTab(tab, true);
 	}
 
 	/**
