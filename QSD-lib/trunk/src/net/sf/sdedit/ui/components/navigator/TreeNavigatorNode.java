@@ -39,7 +39,7 @@ public class TreeNavigatorNode {
 	
 	private JComponent component;
 	
-	private List<TreeNavigatorNode> children;
+	private LinkedList<TreeNavigatorNode> children;
 	
 	private TreeNavigatorNode parent;
 	
@@ -78,9 +78,28 @@ public class TreeNavigatorNode {
 		return component;
 	}
 	
-	public void addChild (TreeNavigatorNode child) {
-		children.add(child);
+	public int addChild (TreeNavigatorNode child, TreeNavigatorNode previousSibling) {
+	    int pos;
+	    if (previousSibling == null) {
+	        pos = children.size();
+	        children.add(child);
+	    } else {
+	        pos = children.indexOf(previousSibling) + 1;
+	        if (pos < children.size() - 1) {
+	            List<TreeNavigatorNode> tail = new LinkedList<TreeNavigatorNode>();
+	            for (TreeNavigatorNode node : children.subList(pos, children.size())) {
+	                tail.add(node);
+	            }
+	            children.set(pos, child);
+	            children.add(null);
+	            int i = 0;
+	            for (TreeNavigatorNode tailNode : tail) {
+	                children.set(pos+i+1, tailNode);
+	            }
+	        }
+	    }
 		child.parent = this;
+		return pos;
 	}
 	
 	public void removeChild (TreeNavigatorNode child) {
@@ -97,6 +116,11 @@ public class TreeNavigatorNode {
 			}
 		}
 		return;
+	}
+	
+	public boolean equals (Object o) {
+	    TreeNavigatorNode tnn = (TreeNavigatorNode) o;
+	    return tnn.component == component;
 	}
 	
 	public TreeNavigatorNode [] getChildren () {
