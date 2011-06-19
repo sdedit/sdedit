@@ -100,12 +100,19 @@ public class TableModelAdapter implements TableModel,
 		this.rowEditor = rowEditor;
 	}
 	
+	private Object [] expand (Object row) {
+	    if (rowExpansion == null) {
+	        return new Object[]{row};
+	    }
+	    return rowExpansion.expand(row);
+	}
+	
 	public void setData(Collection<?> data) {
 		this.rawData = data.toArray();
 		this.data = new Object[data.size()][columns.length];
 		int i = 0;
 		for (Object row : rawData) {
-			Object [] expanded = rowExpansion.expand(row);
+			Object [] expanded = expand(row);
 			for (int j = 0; j < expanded.length; j++) {
 				this.data[i][j] = expanded[j];
 			}
@@ -140,7 +147,7 @@ public class TableModelAdapter implements TableModel,
 
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return rowEditor != null &&
-		rowEditor.isEditable(data[rowIndex], columnIndex);
+		rowEditor.isEditable(rawData[rowIndex], columnIndex);
 
 	}
 
