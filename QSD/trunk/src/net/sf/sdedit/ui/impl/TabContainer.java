@@ -48,11 +48,11 @@ public interface TabContainer {
 	
 	public void addCategory (String category, ImageIcon icon);
 	
-	public String addTabToCategory (Tab tab, String category);
+	public String addTabToCategory (Tab tab, String category, boolean selectIt);
 	
-	public String addChildTab (Tab tab, Tab parent);
+	public String addChildTab (Tab tab, Tab parent, boolean selectIt, Tab previousTab);
 	
-	public String addTab (Tab tab);
+	public String addTab (Tab tab, boolean selectIt);
 	
 	public boolean exists (Tab tab);
 	
