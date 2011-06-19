@@ -48,6 +48,10 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -58,6 +62,7 @@ import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramDataProvider;
+import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.error.DiagramError;
@@ -418,5 +423,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 	public boolean canGoHome () {
 		return true;
 	}
+	
+
 	
 }
