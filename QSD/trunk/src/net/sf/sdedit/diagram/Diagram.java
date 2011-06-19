@@ -165,6 +165,8 @@ public final class Diagram implements Constants {
 	 * corresponding lifeline.
 	 */
 	private final Map<String, Map<String, Lifeline>> mnemonicMap;
+	
+	private final List<ForwardMessage> messages;
 
 	private final FragmentManager fragmentManager;
 
@@ -262,6 +264,7 @@ public final class Diagram implements Constants {
 				configuration.getTc9(), };
 		requireReturn = conf.isExplicitReturns();
 		slackMode = conf.isSlackMode();
+		messages = new LinkedList<ForwardMessage>();
 
 	}
 
@@ -488,6 +491,7 @@ public final class Diagram implements Constants {
 					} else {
 						ForwardMessage msg = processor.processMessage(data,
 								caller);
+						messages.add(msg);
 						processor.execute(msg);
 						caller = null;
 					}
@@ -504,6 +508,10 @@ public final class Diagram implements Constants {
 				line.terminate();
 			}
 		}
+	}
+	
+	public List<ForwardMessage> getMessages() {
+	    return messages;
 	}
 
 	public int getNextFreeNoteNumber() {
