@@ -363,7 +363,7 @@ public final class Actions implements Constants {
 			public void actionPerformed(ActionEvent e) {
 				Bean<Configuration> conf = ConfigurationManager
 						.createNewDefaultConfiguration();
-				editor.getUI().addDiagramTextTab("untitled", conf);
+				editor.getUI().addDiagramTextTab("untitled", conf, true);
 			}
 
 		};
