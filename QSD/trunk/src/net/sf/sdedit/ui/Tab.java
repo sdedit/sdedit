@@ -122,7 +122,7 @@ public abstract class Tab extends JPanel implements Stainable,
 		cleanLabel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (SwingUtilities.isLeftMouseButton(e)) {
+				if (SwingUtilities.isLeftMouseButton(e) && canClose()) {
 					close(true);
 				}
 			}
@@ -376,7 +376,10 @@ public abstract class Tab extends JPanel implements Stainable,
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			Tab.this.close(true);
+		    if (Tab.this.canClose()) {
+		        Tab.this.close(true);    
+		    }
+			
 		}
 	};
 
