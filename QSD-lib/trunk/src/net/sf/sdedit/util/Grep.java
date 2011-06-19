@@ -27,7 +27,9 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,17 +42,43 @@ import java.util.regex.Pattern;
  * 
  */
 public final class Grep {
-    
+
     private Grep() {
         /* there are no Grep instances */
     }
 
-    private static final Map<String, Pattern> patternCache = 
-        new HashMap<String, Pattern>();
-    
-    private static final Map<Class<?>, Map<String, PropertyDescriptor>> descriptorCache =
-        new HashMap<Class<?>, Map<String, PropertyDescriptor>>();
-    
+    private static final Map<String, Pattern> patternCache = new HashMap<String, Pattern>();
+
+    private static final Map<Class<?>, Map<String, PropertyDescriptor>> descriptorCache = new HashMap<Class<?>, Map<String, PropertyDescriptor>>();
+
+    public static class Region {
+
+        private final int start;
+
+        private final int end;
+
+        private final String text;
+
+        protected Region(String text, int start, int end) {
+            this.start = start;
+            this.end = end;
+            this.text = text;
+        }
+
+        public int getStart() {
+            return start;
+        }
+
+        public int getEnd() {
+            return end;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+    }
+
     /**
      * Matches a string against a regular expression and returns an array of the
      * substrings corresponding to the groups of the regular expression, or
@@ -65,7 +93,13 @@ public final class Grep {
      *         match the regular expression
      */
     public static String[] parse(final String regexp, final String string) {
-        //final String escaped = Escaper.escape(string);
+        return parse(regexp, string, null);
+    }
+    
+    
+    public static String[] parse(final String regexp, final String string,
+            List<Region> regions) {
+        // final String escaped = Escaper.escape(string);
         Pattern pattern = patternCache.get(regexp);
         if (pattern == null) {
             pattern = Pattern.compile(regexp);
@@ -75,42 +109,47 @@ public final class Grep {
         if (!matcher.matches()) {
             return null;
         }
+
         final String[] groups = new String[matcher.groupCount()];
         for (int i = 0; i < groups.length; i++) {
             groups[i] = unescape(matcher.group(i + 1));
+            if (regions != null) {
+                regions.add(new Region(matcher.group(i+1), matcher.start(i + 1),
+                        matcher.end(i + 1)));
+            }
         }
         return groups;
     }
-    
-    private static final String unescape (String string) {
-    	if (string == null) {
-    		return null;
-    	}
-    	StringBuffer unescaped = new StringBuffer ();
-    	int state = 0;
-    	
-    	for (int i = 0; i < string.length(); i++) {
-    		char c = string.charAt(i);
-    		switch (state) {
-    		case 0:
-    			if (c != '\\') {
-    				unescaped.append(c);
-    			} else {
-    				state = 1;
-    			}
-    			break;
-    		case 1:
-    			unescaped.append(c);
-    			state = 0;
-    			break;
-    		default:
-    		   		    		
-    		}
-    	}
-    	if (state == 1) {
-    		unescaped.append('\\');
-    	}
-    	return unescaped.toString();
+
+    private static final String unescape(String string) {
+        if (string == null) {
+            return null;
+        }
+        StringBuffer unescaped = new StringBuffer();
+        int state = 0;
+
+        for (int i = 0; i < string.length(); i++) {
+            char c = string.charAt(i);
+            switch (state) {
+            case 0:
+                if (c != '\\') {
+                    unescaped.append(c);
+                } else {
+                    state = 1;
+                }
+                break;
+            case 1:
+                unescaped.append(c);
+                state = 0;
+                break;
+            default:
+
+            }
+        }
+        if (state == 1) {
+            unescaped.append('\\');
+        }
+        return unescaped.toString();
     }
 
     /**
@@ -133,10 +172,17 @@ public final class Grep {
      * @throws IntrospectionException
      *             if the bean could not be introspected
      */
-    public static boolean parseAndSetProperties(final Object bean, final String regexp,
-            final String string, final String... properties) {
+    public static boolean parseAndSetProperties(final Object bean,
+            final String regexp, final String string,
+            final Map<String, Region> propertyRegions,
+            final String... properties) {
 
-        final String[] parsed = parse(regexp, string);
+        ArrayList<Region> regions = null;
+        if (propertyRegions != null) {
+            regions = new ArrayList<Region>();
+        }
+
+        final String[] parsed = parse(regexp, string, regions);
         if (parsed == null) {
             return false;
         }
@@ -144,16 +190,19 @@ public final class Grep {
             throw new IllegalArgumentException("number of groups does not"
                     + " match number of properties");
         }
-        Map<String, PropertyDescriptor> descriptors = descriptorCache.get(bean.getClass());
+        Map<String, PropertyDescriptor> descriptors = descriptorCache.get(bean
+                .getClass());
         if (descriptors == null) {
-        	BeanInfo beanInfo;
-        	try {
-        		beanInfo = Introspector.getBeanInfo(bean.getClass());
-        	} catch (IntrospectionException ie) {
-        		throw new IllegalStateException ("Cannot introspect " + bean.getClass().getName(), ie);
-        	}
+            BeanInfo beanInfo;
+            try {
+                beanInfo = Introspector.getBeanInfo(bean.getClass());
+            } catch (IntrospectionException ie) {
+                throw new IllegalStateException("Cannot introspect "
+                        + bean.getClass().getName(), ie);
+            }
             descriptors = new HashMap<String, PropertyDescriptor>();
-            for (PropertyDescriptor descriptor : beanInfo.getPropertyDescriptors()) {
+            for (PropertyDescriptor descriptor : beanInfo
+                    .getPropertyDescriptors()) {
                 if (descriptor.getWriteMethod() != null) {
                     descriptors.put(descriptor.getName(), descriptor);
                 }
@@ -167,8 +216,12 @@ public final class Grep {
                 throw new IllegalArgumentException("property " + properties[i]
                         + " does not exist");
             }
-            final Object value = ObjectFactory.createFromString(pd.getPropertyType(),
-                    parsed[i]);
+            if (propertyRegions != null) {
+                propertyRegions.put(pd.getName(), regions.get(i));                
+            }
+
+            final Object value = ObjectFactory.createFromString(
+                    pd.getPropertyType(), parsed[i]);
             try {
                 pd.getWriteMethod().invoke(bean, value);
             } catch (Exception e) {
@@ -180,4 +233,4 @@ public final class Grep {
         return true;
     }
 }
-//{{core}}
+// {{core}}
