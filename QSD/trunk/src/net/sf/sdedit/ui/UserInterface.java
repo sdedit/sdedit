@@ -165,9 +165,9 @@ public interface UserInterface {
 	 *         the original title)
 	 */
 	public DiagramTextTab addDiagramTextTab(String title,
-			Bean<Configuration> configuration);
+			Bean<Configuration> configuration, boolean selectIt);
 
-	public String addTab(Tab tab);
+	public String addTab(Tab tab, boolean selectIt);
 
 	/**
 	 * Removes the current tab. If the parameter <tt>check</tt> is <tt>true</tt>
