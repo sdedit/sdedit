@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,8 +39,8 @@ import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.drawable.Note;
 import net.sf.sdedit.error.SyntaxError;
-
 import net.sf.sdedit.util.Grep;
+import net.sf.sdedit.util.Grep.Region;
 import net.sf.sdedit.util.Pair;
 
 /**
@@ -354,9 +355,10 @@ public class TextHandler implements DiagramDataProvider {
 			throw new SyntaxError(this,
 					"not a valid object declaration - ':' missing");
 		}
+		ArrayList<Region> regions = new ArrayList<Region>();
 		String[] parts = Grep.parse(
 				"(\\/?.+?):([^\\[\\]]+?)\\s*(\\[.*?\\]|)\\s*(\".*\"|)",
-				currentLine);
+				currentLine, regions);
 		if (parts == null || parts.length != 4) {
 			String msg;
 			if (currentLine.indexOf('.') >= 0) {
@@ -424,6 +426,8 @@ public class TextHandler implements DiagramDataProvider {
 					role, active, process, slackMode || hasThread, autoDestroy, external,
 					diagram);
 		}
+		
+		lifeline.setNameRegion(regions.get(0));
 
 		int cmt = rawLine.indexOf("#!");
 		if (cmt >= 0 && cmt + 2 < rawLine.length() - 1) {

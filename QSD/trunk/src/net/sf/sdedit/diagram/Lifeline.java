@@ -35,6 +35,7 @@ import net.sf.sdedit.drawable.Line;
 import net.sf.sdedit.drawable.Rectangle;
 
 import net.sf.sdedit.util.Direction;
+import net.sf.sdedit.util.Grep.Region;
 import net.sf.sdedit.util.Utilities;
 
 /**
@@ -49,7 +50,7 @@ import net.sf.sdedit.util.Utilities;
  * 
  * @author Markus Strauch
  */
-public final class Lifeline {
+public final class Lifeline implements Comparable<Lifeline>{
 
 	/**
 	 * The direction of the lifeline, for root lifelines Direction.CENTER, for
@@ -183,6 +184,8 @@ public final class Lifeline {
 	private final boolean external;
 
 	private boolean waiting;
+	
+	private Region nameRegion;
 	
 	public String toString () {
 		String string = name + ":" + type;
@@ -785,5 +788,17 @@ public final class Lifeline {
 	public Cross getCross() {
 		return cross;
 	}
+
+    public int compareTo(Lifeline lifeline) {
+        return this.name.compareTo(lifeline.name);
+    }
+
+    public void setNameRegion(Region region) {
+        this.nameRegion = region;
+    }
+
+    public Region getNameRegion() {
+        return nameRegion;
+    }
 }
 // {{core}}
