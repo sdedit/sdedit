@@ -28,7 +28,6 @@ import java.util.ListIterator;
 
 import javax.swing.SwingUtilities;
 
-import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramDataProvider;
 import net.sf.sdedit.error.DiagramError;
