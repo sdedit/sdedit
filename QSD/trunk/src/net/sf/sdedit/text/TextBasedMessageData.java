@@ -24,12 +24,13 @@
 package net.sf.sdedit.text;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.error.SyntaxError;
-
 import net.sf.sdedit.util.Grep;
+import net.sf.sdedit.util.Grep.Region;
 
 /**
  * MessageData is data derived from strings representing messages exchanged
@@ -66,6 +67,8 @@ public class TextBasedMessageData extends MessageData {
 	private static final String EQ = "(?<!\\\\)=";
 
 	private String string;
+	
+	private final Map<String,Grep.Region> regions;
 
 	static {
 		for (Method method : TextBasedMessageData.class.getMethods()) {
@@ -88,6 +91,7 @@ public class TextBasedMessageData extends MessageData {
 	public TextBasedMessageData(String string) throws SyntaxError {
 		super();
 		this.string = string;
+		this.regions = new HashMap<String, Grep.Region>();
 		parse();
 	}
 
@@ -104,38 +108,38 @@ public class TextBasedMessageData extends MessageData {
 		}
 		success = /* Level, thread, and answer */
 		Grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON + "(.*)" + EQ
-				+ "(.+?)" + DOT + "(.*)", string, "noteId", "dummy", "caller",
+				+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy", "caller",
 				"dummy", "levelString", "threadString", "levelString",
 				"callerMnemonic", "answer", "callee", "message")
 				/* Level, thread, no answer */
 				|| Grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON
-						+ "(.+?)" + DOT + "(.*)", string, "noteId", "dummy",
+						+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy",
 						"caller", "dummy", "levelString", "threadString",
 						"levelString", "callerMnemonic", "callee", "message")
 				/* No level/thread, but answer */
 				|| Grep.parseAndSetProperties(this, PREFIX + COLON + "(.*)"
-						+ EQ + "(.+?)" + DOT + "(.*)", string, "noteId",
+						+ EQ + "(.+?)" + DOT + "(.*)", string, regions, "noteId",
 						"dummy", "caller", "answer", "callee", "message")
 				/* No level/thread, no answer */
 				|| Grep.parseAndSetProperties(this, PREFIX + COLON + "(.*?)"
-						+ DOT + "(.*)", string, "noteId", "dummy", "caller",
+						+ DOT + "(.*)", string, regions, "noteId", "dummy", "caller",
 						"callee", "message")
 				/* primitive with level */
 				|| Grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON
-						+ "(.*)", string, "noteId", "dummy", "caller", "dummy",
+						+ "(.*)", string, regions, "noteId", "dummy", "caller", "dummy",
 						"levelString", "threadString", "levelString",
 						"callerMnemonic", "message")
 				/* primitive without level */
 				|| Grep.parseAndSetProperties(this, PREFIX + COLON + "(.*)",
-						string, "noteId", "dummy", "caller", "message")
+						string, regions, "noteId", "dummy", "caller", "message")
 				/* spawn with level */
 				|| Grep.parseAndSetProperties(this, PREFIX + LEVELS + SPAWN
-						+ "(.+?)" + DOT + "(.*)", string, "noteId", "dummy",
+						+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy",
 						"spawner", "dummy", "levelString", "threadString",
 						"levelString", "callerMnemonic", "callee", "message")
 				/* spawn without level */
 				|| Grep.parseAndSetProperties(this, PREFIX + SPAWN + "(.+?)"
-						+ DOT + "(.*)", string, "noteId", "dummy", "spawner",
+						+ DOT + "(.*)", string, regions, "noteId", "dummy", "spawner",
 						"callee", "message");
 
 		if (!success) {
@@ -213,6 +217,10 @@ public class TextBasedMessageData extends MessageData {
 				setAnswerNoteNumber(Integer.parseInt(ids[1]));
 			}
 		}
+	}
+	
+	public Region getRegion (String property) {
+	    return regions.get(property);
 	}
 }
 // {{core}}
