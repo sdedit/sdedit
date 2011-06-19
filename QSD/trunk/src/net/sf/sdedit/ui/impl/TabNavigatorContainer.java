@@ -63,13 +63,13 @@ public class TabNavigatorContainer implements TabContainer,
 		navigator.addRootCategory(category, icon);
 	}
 
-	public String addChildTab(Tab tab, Tab parent) {
+	public String addChildTab(Tab tab, Tab parent, boolean selectIt, Tab previousTab) {
 		String title = Utilities.findUniqueName(tab.getTitle(), navigator
 				.getAllTitles());
 		tab.setTitle(title);
 		addListener(tab);
 		tab.addTabListener(this);
-		navigator.addComponent(tab.getTitle(), tab, tab.getIcon(), parent);
+		navigator.addComponent(tab.getTitle(), tab, tab.getIcon(), parent, selectIt, previousTab);
 		id++;
 		tab.setId(id);
 		return title;
@@ -79,11 +79,11 @@ public class TabNavigatorContainer implements TabContainer,
 		listeners.add(listener);
 	}
 
-	public String addTab(Tab tab) {
-		return addTabToCategory(tab, "Modeling");
+	public String addTab(Tab tab, boolean selectIt) {
+		return addTabToCategory(tab, "Modeling", selectIt);
 	}
 
-	public String addTabToCategory(Tab tab, String category) {
+	public String addTabToCategory(Tab tab, String category, boolean selectIt) {
 		String title = Utilities.findUniqueName(tab.getTitle(), navigator
 				.getAllTitles());
 		tab.setTitle(title);
@@ -91,7 +91,7 @@ public class TabNavigatorContainer implements TabContainer,
 		tab.addTabListener(this);
 		id++;
 		tab.setId(id);
-		navigator.addComponent(tab.getTitle(), tab, tab.getIcon(), category);
+		navigator.addComponent(tab.getTitle(), tab, tab.getIcon(), category, selectIt, null);
 		return title;
 	}
 
@@ -197,7 +197,7 @@ public class TabNavigatorContainer implements TabContainer,
 	}
 
 	public Tab getParentTab(Tab tab) {
-		return (Tab) navigator.getParentComponent(tab);
+	    return (Tab) navigator.getParentComponent(tab);
 	}
 
 	public void goToNextTab() {
