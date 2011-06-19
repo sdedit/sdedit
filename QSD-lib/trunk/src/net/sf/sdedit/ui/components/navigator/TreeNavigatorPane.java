@@ -40,6 +40,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 
 import net.sf.sdedit.ui.components.Stainable;
+import net.sf.sdedit.util.Utilities;
 import net.sf.sdedit.util.collection.IndexedList;
 import net.sf.sdedit.util.tree.BreadthFirstSearch;
 
@@ -121,23 +122,33 @@ public class TreeNavigatorPane extends JPanel {
 	public void addRootCategory(String category, ImageIcon icon) {
 		TreeNavigatorNode rootNode = new TreeNavigatorNode(category, icon, null);
 		categories.add(category);
-		treeModel.addChild(treeModel.getRoot(), rootNode);
+		treeModel.addChild(treeModel.getRoot(), rootNode, null);
+	}
+	
+	public TreeNavigatorNode getNode (JComponent component) {
+	    if (component == null) {
+	        return null;
+	    }
+	    return treeModel.find(component);
 	}
 
 	public void addComponent(String title, JComponent comp, Icon icon,
-			String rootCategory) {
+			String rootCategory, boolean selectIt, JComponent previousSibling) {
 		TreeNavigatorNode node = new TreeNavigatorNode(title, icon, comp);
 		TreeNavigatorNode categoryNode = treeModel
 				.getCategoryNode(rootCategory);
-		treeModel.addChild(categoryNode, node);
+		treeModel.addChild(categoryNode, node, getNode(previousSibling));
 		if (comp instanceof Stainable) {
 			((Stainable) comp).addStainedListener(ctrl);
 		}
-		setSelectedComponent(comp);
+		if (selectIt) {
+		    setSelectedComponent(comp);    
+		}
+		
 	}
 
 	public void addComponent(String title, JComponent child, Icon icon,
-			JComponent parent) {
+			JComponent parent, boolean selectIt, JComponent previousSibling) {
 		TreeNavigatorNode node = new TreeNavigatorNode(title, icon, child);
 		TreeNavigatorNode parentNode;
 		if (parent != null) {
@@ -145,15 +156,19 @@ public class TreeNavigatorPane extends JPanel {
 		} else {
 			parentNode = treeModel.getRoot();
 		}
-		treeModel.addChild(parentNode, node);
+		treeModel.addChild(parentNode, node, getNode(previousSibling));
 		if (child instanceof Stainable) {
 			((Stainable) child).addStainedListener(ctrl);
 		}
-		setSelectedComponent(child);
+		if (selectIt) {
+		    setSelectedComponent(child);    
+		}
+		
 	}
 
 	public JComponent[] removeComponent(JComponent comp,
 			boolean removeDescendants) {
+	    JComponent [] selected = getSelectedComponents();
 		List<JComponent> list = new LinkedList<JComponent>();
 		TreeNavigatorNode node = treeModel.find(comp);
 		if (node != null) {
@@ -178,10 +193,14 @@ public class TreeNavigatorPane extends JPanel {
 				list.add(comp);
 			}
 		}
+		boolean isSelected = false;
+		
 		for (JComponent cmp : list) {
+		    isSelected |= Utilities.in(cmp, selected);
 			componentHistory.remove(cmp);
+			
 		}
-		if (!componentHistory.isEmpty()) {
+		if (isSelected && !componentHistory.isEmpty()) {
 			setSelectedComponent(componentHistory.getLast());
 		}
 		return list.toArray(new JComponent[list.size()]);
@@ -192,7 +211,7 @@ public class TreeNavigatorPane extends JPanel {
 		if (node.getChildCount() > 0) {
 			TreeNavigatorNode parent = node.getParent();
 			for (TreeNavigatorNode child : node.getChildren()) {
-				treeModel.addChild(parent, child);
+				treeModel.addChild(parent, child, null);
 				treeModel.removeChild(node, child);
 			}
 		}
