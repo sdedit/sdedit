@@ -229,11 +229,8 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
     private int addWhitespace(Document document, int lineBegin)
             throws BadLocationException {
         int w = 0;
-        while (Character.isWhitespace(document.getText(lineBegin + w, 1)
+        while (Character.isWhitespace(document.getText(lineBegin + w - 1, 1)
                 .charAt(0))) {
-            w++;
-        }
-        if (w > 0) {
             w++;
         }
         return lineBegin + w;
