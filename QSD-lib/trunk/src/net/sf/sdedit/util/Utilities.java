@@ -577,6 +577,16 @@ public class Utilities {
         }
         return result;
     }
+    
+	public static byte[] load(File file) throws IOException {
+		InputStream in = new FileInputStream(file);
+		try {
+			in = new BufferedInputStream(in);
+			return toByteArray(in, -1);
+		} finally {
+			in.close();
+		}
+	}
 
     /**
      * Saves a byte array to a file.
@@ -1504,5 +1514,7 @@ public class Utilities {
         return result;
 
     }
+    
+
 
 }
