@@ -24,6 +24,7 @@
 
 package net.sf.sdedit.ui.impl;
 
+import java.awt.Component;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,13 +32,14 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.swing.Action;
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.border.TitledBorder;
+import javax.swing.border.Border;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
@@ -50,6 +52,7 @@ import net.sf.sdedit.text.TextBasedMessageData;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.components.Zoomable;
 import net.sf.sdedit.ui.components.buttons.Activator;
+import net.sf.sdedit.util.EF;
 import net.sf.sdedit.util.Grep.Region;
 import net.sf.sdedit.util.Pair;
 import net.sf.sdedit.util.TableModelAdapter;
@@ -57,6 +60,12 @@ import net.sf.sdedit.util.TableModelAdapter.RowEditor;
 import net.sf.sdedit.util.TableModelAdapter.RowExpansion;
 import net.sf.sdedit.util.Utilities;
 import net.sf.sdedit.util.collection.MultiMap;
+
+import com.zookitec.layout.ContainerEF;
+import com.zookitec.layout.ExplicitConstraints;
+import com.zookitec.layout.ExplicitLayout;
+import com.zookitec.layout.Expression;
+import com.zookitec.layout.MathEF;
 
 public class ClassTab extends Tab implements RowExpansion, RowEditor {
 
@@ -67,20 +76,26 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
     private MultiMap<String, ForwardMessage, LinkedList<?>, TreeMap<?, ?>> messages;
 
     private static final String[] LIFELINE_TABLE_COLUMN_NAMES = { "Name",
-            "Thread" };
+            "Anonymous", "External", "Thread" };
 
     private static final Class<?>[] LIFELINE_TABLE_COLUMN_TYPES = {
-            String.class, Boolean.class };
+            String.class, Boolean.class, Boolean.class, Boolean.class };
 
     private static final String[] METHOD_TABLE_COLUMN_NAMES = { "Method",
             "#Occurrences" };
 
     private static final Class<?>[] METHOD_TABLE_COLUMN_TYPES = { String.class,
-            Integer.class };
+            String.class };
 
     private boolean canClose;
 
     private DiagramTextTab diagramTextTab;
+    
+    private JPanel content;
+    
+    private JLabel nameLabel;
+    
+    private static final int NAME_LABEL_MARGIN = 3;
 
     public ClassTab(DiagramTextTab diagramTextTab, String className) {
         super(diagramTextTab.get_UI());
@@ -101,25 +116,53 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
         }
         messages.add(method, message);
     }
-
+    
+    private void addNameLabel () {
+        nameLabel = new JLabel();
+        nameLabel.setText("Class " + className);
+        nameLabel.setBorder(BorderFactory.createEmptyBorder(NAME_LABEL_MARGIN, NAME_LABEL_MARGIN, NAME_LABEL_MARGIN, NAME_LABEL_MARGIN));
+        ExplicitConstraints c = new ExplicitConstraints(nameLabel);
+        c.setX(EF.centeredX(content, nameLabel));
+        content.add(nameLabel, c);
+    }
+    
+    private JScrollPane addScrollPane (Component comp, Expression y, Expression height, String title, int borderWidth) {
+        JScrollPane scrollPane = new JScrollPane(comp);
+        ExplicitConstraints c = EF.inheritBounds(scrollPane, content);
+        c.setY(y);
+        c.setHeight(height);
+        c.setX(ContainerEF.left(content));
+        Border outer = BorderFactory.createEmptyBorder(borderWidth, borderWidth, borderWidth, borderWidth);
+        Border inner = BorderFactory.createTitledBorder(title);
+        scrollPane.setBorder(BorderFactory.createCompoundBorder(outer, inner));
+        content.add(scrollPane, c);
+        return scrollPane;
+    }
+    
     public void updateData(Collection<Lifeline> lifelines,
             Collection<ForwardMessage> collection) {
         getContentPanel().removeAll();
-        getContentPanel().setLayout(
-                new BoxLayout(getContentPanel(), BoxLayout.Y_AXIS));
+        getContentPanel().setLayout(new ExplicitLayout());
         messages.clear();
-        JLabel nameLabel = new JLabel();
-        nameLabel.setText(className);
-        getContentPanel().add(nameLabel);
+        
+        content = new JPanel();
+        content.setLayout(new ExplicitLayout());
+        ExplicitConstraints c = EF.inheritBounds(content, getContentPanel());
+        c.setWidth(MathEF.min(MathEF.constant(640), ContainerEF.width(getContentPanel())));
+        getContentPanel().add(content, c);
+
+        addNameLabel();
+        
+        Expression height = EF.underHeight(nameLabel, 0).divide(2);
+        Expression objPaneY = EF.underY(nameLabel, 0);
+        Expression metPaneY = objPaneY.add(height);
+        
         TableModelAdapter tma = new TableModelAdapter(
                 LIFELINE_TABLE_COLUMN_NAMES, LIFELINE_TABLE_COLUMN_TYPES, this,
                 this);
         tma.setData(lifelines);
         JTable lifelineTable = new JTable(tma);
-
-        JScrollPane lifelineScrollPane = new JScrollPane(lifelineTable);
-        lifelineScrollPane.setBorder(new TitledBorder("Instances"));
-        getContentPanel().add(lifelineScrollPane);
+        addScrollPane(lifelineTable, objPaneY, height, "Instances", 5);
 
         for (ForwardMessage message : collection) {
             addMessage(message);
@@ -130,14 +173,10 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
                 this);
         methodTableModelAdapter.setData(this.messages.entries());
         JTable methodTable = new JTable(methodTableModelAdapter);
-
-        JScrollPane methodTableScrollPane = new JScrollPane(methodTable);
-        methodTableScrollPane.setBorder(new TitledBorder("Methods"));
-        getContentPanel().add(methodTableScrollPane);
-
+        addScrollPane(methodTable, metPaneY, height, "Methods", 5);
+        
         getContentPanel().invalidate();
         getContentPanel().revalidate();
-
     }
 
     @Override
@@ -179,17 +218,17 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
         Object[] expanded = null;
         if (row instanceof Lifeline) {
             Lifeline line = (Lifeline) row;
-            expanded = new Object[] { line.getName(), line.hasThread() };
+            expanded = new Object[] { line.getName(), line.isAnonymous(), line.isExternal(), line.hasThread() };
         } else if (row instanceof Entry) {
             @SuppressWarnings("unchecked")
             Entry<String, Collection<ForwardMessage>> entry = (Entry<String, Collection<ForwardMessage>>) row;
-            expanded = new Object[] { entry.getKey(), entry.getValue().size() };
+            expanded = new Object[] { entry.getKey(), String.valueOf(entry.getValue().size()) };
         }
         return expanded;
 
     }
-    
-    public void forceClose () {
+
+    public void forceClose() {
         canClose = true;
         close(false);
     }
@@ -201,7 +240,7 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
         return false;
     }
 
-    public void setValue(Object row, int index, Object value){
+    public void setValue(Object row, int index, Object value) {
         if (row instanceof Lifeline) {
             Lifeline lifeline = (Lifeline) row;
             if (index == 0) {
@@ -210,7 +249,6 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
                     for (Lifeline existing : diagramTextTab.getDiagram()
                             .getAllLifelines()) {
                         if (existing.getName().equals(newName)) {
-                            get_UI().message("A lifeline named '" + newName + "' already exists.");
                             return;
                         }
                     }
