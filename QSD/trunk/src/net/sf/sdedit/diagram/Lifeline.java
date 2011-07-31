@@ -768,6 +768,10 @@ public final class Lifeline implements Comparable<Lifeline>{
 	public Drawable getHead() {
 		return head;
 	}
+	
+	public boolean isAnonymous () {
+        return anonymous;
+	}
 
 	private int computeDrawableWidth() {
 		return sideLevel == 0 ? diagram.getConfiguration()
