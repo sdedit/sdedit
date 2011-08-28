@@ -577,16 +577,16 @@ public class Utilities {
         }
         return result;
     }
-    
-	public static byte[] load(File file) throws IOException {
-		InputStream in = new FileInputStream(file);
-		try {
-			in = new BufferedInputStream(in);
-			return toByteArray(in, -1);
-		} finally {
-			in.close();
-		}
-	}
+
+    public static byte[] load(File file) throws IOException {
+        InputStream in = new FileInputStream(file);
+        try {
+            in = new BufferedInputStream(in);
+            return toByteArray(in, -1);
+        } finally {
+            in.close();
+        }
+    }
 
     /**
      * Saves a byte array to a file.
@@ -1514,7 +1514,13 @@ public class Utilities {
         return result;
 
     }
-    
 
+    public static URL asURL(Class<?> clazz) {
+        String className = clazz.getName().substring(
+                clazz.getPackage().getName().length() + 1);
+        String resourceName = className.replace('.', '$') + ".class";
+        URL url = clazz.getResource(resourceName);
+        return url;
+    }
 
 }
