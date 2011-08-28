@@ -1516,8 +1516,9 @@ public class Utilities {
     }
 
     public static URL asURL(Class<?> clazz) {
+        int pkg = clazz.getPackage() == null ? 0 : clazz.getPackage().getName().length() + 1;
         String className = clazz.getName().substring(
-                clazz.getPackage().getName().length() + 1);
+                pkg);
         String resourceName = className.replace('.', '$') + ".class";
         URL url = clazz.getResource(resourceName);
         return url;
