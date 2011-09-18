@@ -110,6 +110,12 @@ public class Utilities {
         primitiveClasses.put(Float.TYPE, Float.class);
         primitiveClasses.put(Double.TYPE, Double.class);
     }
+    
+    private static final String CR = "\r";
+    
+    private static final String LF = "\n";
+    
+    private static final String CRLF = CR + LF;
 
     private Utilities() {
 
@@ -1522,6 +1528,51 @@ public class Utilities {
         String resourceName = className.replace('.', '$') + ".class";
         URL url = clazz.getResource(resourceName);
         return url;
+    }
+    
+    public static <T> T replicate(T object) {
+        if (object == null) {
+            return null;
+        }
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream os = new ObjectOutputStream(bos);
+            os.writeObject(object);
+            os.flush();
+            os.close();
+            byte[] bytes = bos.toByteArray();
+            ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+            ObjectInputStream is = new ObjectInputStream(bis);
+            @SuppressWarnings("unchecked")
+            T t = (T) is.readObject();
+            is.close();
+            return t;
+        } catch (RuntimeException re) {
+            throw re;
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "Cannot replicate object of type "
+                            + object.getClass().getName(), e);
+        }
+
+    }
+    
+    private static String changeNewlines (String string, String newline) {
+        string = string.replaceAll(CR,"");
+        string = string.replaceAll(LF,newline);
+        return string;
+    }
+    
+    public static String unixEncode (String string) {
+        return changeNewlines(string, LF);
+    }
+    
+    public static String dosEncode (String string) {
+        return changeNewlines(string, CRLF);
+    }
+    
+    public static String platformEncode (String string) {
+        return changeNewlines (string, System.getProperty("line.separator"));
     }
 
 }
