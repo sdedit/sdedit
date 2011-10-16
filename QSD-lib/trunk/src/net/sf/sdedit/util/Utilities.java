@@ -51,6 +51,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
@@ -110,11 +111,11 @@ public class Utilities {
         primitiveClasses.put(Float.TYPE, Float.class);
         primitiveClasses.put(Double.TYPE, Double.class);
     }
-    
+
     private static final String CR = "\r";
-    
+
     private static final String LF = "\n";
-    
+
     private static final String CRLF = CR + LF;
 
     private Utilities() {
@@ -1522,14 +1523,14 @@ public class Utilities {
     }
 
     public static URL asURL(Class<?> clazz) {
-        int pkg = clazz.getPackage() == null ? 0 : clazz.getPackage().getName().length() + 1;
-        String className = clazz.getName().substring(
-                pkg);
+        int pkg = clazz.getPackage() == null ? 0 : clazz.getPackage().getName()
+                .length() + 1;
+        String className = clazz.getName().substring(pkg);
         String resourceName = className.replace('.', '$') + ".class";
         URL url = clazz.getResource(resourceName);
         return url;
     }
-    
+
     public static <T> T replicate(T object) {
         if (object == null) {
             return null;
@@ -1556,23 +1557,33 @@ public class Utilities {
         }
 
     }
-    
-    private static String changeNewlines (String string, String newline) {
-        string = string.replaceAll(CR,"");
-        string = string.replaceAll(LF,newline);
+
+    private static String changeNewlines(String string, String newline) {
+        string = string.replaceAll(CR, "");
+        string = string.replaceAll(LF, newline);
         return string;
     }
-    
-    public static String unixEncode (String string) {
+
+    public static String unixEncode(String string) {
         return changeNewlines(string, LF);
     }
-    
-    public static String dosEncode (String string) {
+
+    public static String dosEncode(String string) {
         return changeNewlines(string, CRLF);
     }
+
+    public static String platformEncode(String string) {
+        return changeNewlines(string, System.getProperty("line.separator"));
+    }
+
+    public static String toString(byte[] bytes, String encoding) {
+        Charset cs = Charset.forName(encoding);
+        return new String(bytes, cs);
+    }
     
-    public static String platformEncode (String string) {
-        return changeNewlines (string, System.getProperty("line.separator"));
+    public static byte[] getBytes (String string, String encoding) {
+        Charset cs = Charset.forName(encoding);
+        return string.getBytes(cs);
     }
 
 }
