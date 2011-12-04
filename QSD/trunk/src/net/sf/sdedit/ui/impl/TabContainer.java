@@ -50,7 +50,11 @@ public interface TabContainer {
 	
 	public String addTabToCategory (Tab tab, String category, boolean selectIt);
 	
+	public String addTabToCategory (Tab tab, String category);
+	
 	public String addChildTab (Tab tab, Tab parent, boolean selectIt, Tab previousTab);
+	
+	   public String addChildTab(Tab tab, Tab parent) ;
 	
 	public String addTab (Tab tab, boolean selectIt);
 	

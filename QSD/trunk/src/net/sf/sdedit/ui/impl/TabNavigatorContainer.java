@@ -74,6 +74,10 @@ public class TabNavigatorContainer implements TabContainer,
 		tab.setId(id);
 		return title;
 	}
+	
+	public String addChildTab(Tab tab, Tab parent) {
+	    return addChildTab(tab, parent, true, null);
+	}
 
 	public void addListener(TabContainerListener listener) {
 		listeners.add(listener);
@@ -93,6 +97,10 @@ public class TabNavigatorContainer implements TabContainer,
 		tab.setId(id);
 		navigator.addComponent(tab.getTitle(), tab, tab.getIcon(), category, selectIt, null);
 		return title;
+	}
+	
+	public String addTabToCategory(Tab tab, String category) {
+	    return addTabToCategory(tab, category, true);
 	}
 
 	public JComponent getComponent() {
