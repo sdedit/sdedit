@@ -24,58 +24,58 @@
 
 package net.sf.sdedit.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  * Utility class for accessing the Windows registry by means of the
  * <tt>reg.exe</tt> tool.
  * 
  * @author Markus Strauch
- *
+ * 
  */
 public final class WindowsRegistry extends Thread {
-	
+
 	private volatile String result;
-	
+
 	private String category;
-	
+
 	private String key;
-	
-	private WindowsRegistry (String category, String key) {
+
+	private WindowsRegistry(String category, String key) {
 		this.category = category;
 		this.key = key;
 	}
-	
+
 	/**
 	 * @see java.lang.Thread#run()
 	 */
-	public void run () {
+	public void run() {
 		try {
-			result = fetchValue ();
+			result = fetchValue();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Starts a process on a newly created thread that uses the reg.exe tool
-	 * in order to compute the value for the given category and key. If the
-	 * tool does not perform the task in at most two seconds, or if the
-	 * tool does not find the key, we return <tt>null</tt>
+	 * Starts a process on a newly created thread that uses the reg.exe tool in
+	 * order to compute the value for the given category and key. If the tool
+	 * does not perform the task in at most two seconds, or if the tool does not
+	 * find the key, we return <tt>null</tt>
 	 * 
-	 * @param category the registry category in which to lookup the key
-	 * @param key the name of the key
+	 * @param category
+	 *            the registry category in which to lookup the key
+	 * @param key
+	 *            the name of the key
 	 * @return the value for the key
 	 */
-	public static String getValue (String category, String key) {
+	public static String getValue(String category, String key) {
 		if (key == null) {
 			key = "<NO NAME>";
 		}
-		WindowsRegistry registry = new WindowsRegistry (category, key);
+		WindowsRegistry registry = new WindowsRegistry(category, key);
 		registry.start();
 		try {
 			registry.join(2000);
@@ -84,17 +84,16 @@ public final class WindowsRegistry extends Thread {
 		}
 		return registry.result;
 	}
-	
-    private String fetchValue ()
-    throws IOException
-    {
-    	category = category.replace('/', '\\');
-    	String command = "reg QUERY \"" + category + "\"";
-    	Ref<InputStream> streamRef = new Ref<InputStream>();
-    	for (String line : Utilities.readLines(command, streamRef)) {
-    	    line = line.replaceAll("\\s+", " ").trim();
-			String [] parts = line.split(" ");
-			if (parts.length >= 3 && parts [0].trim().equals(key)) {
+
+	private String fetchValue() throws IOException {
+		category = category.replace('/', '\\');
+		String command = "reg QUERY \"" + category + "\"";
+		Ref<InputStream> streamRef = new Ref<InputStream>();
+		for (String line : Utilities.readLines(command, streamRef,
+				Charset.defaultCharset())) {
+			line = line.replaceAll("\\s+", " ").trim();
+			String[] parts = line.split(" ");
+			if (parts.length >= 3 && parts[0].trim().equals(key)) {
 				streamRef.t.close();
 				String value = null;
 				for (int i = 2; i < parts.length; i++) {
@@ -106,8 +105,8 @@ public final class WindowsRegistry extends Thread {
 				}
 				return value.trim();
 			}
-    	}
-    	return null;
-    }
+		}
+		return null;
+	}
 }
-//{{core}}
+// {{core}}
