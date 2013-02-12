@@ -244,7 +244,7 @@ public class Main implements Constants {
                     ImagePaintDevice paintDevice = new ImagePaintDevice();
                     new Diagram(conf.getDataObject(), th, paintDevice)
                             .generate();
-                    paintDevice.writeToStream(out);
+                    paintDevice.writeToStream("png", out);
                 } else {
                     Exporter paintDevice = Exporter.getExporter(type,
                             orientation, format, out);
