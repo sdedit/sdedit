@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -341,7 +342,7 @@ public final class Editor implements Constants, UserInterfaceListener
         URL url = Utilities.getResource("plugins.txt");
         InputStream stream = url.openStream();
         try {
-            for (String line : Utilities.readLines(stream)) {
+            for (String line : Utilities.readLines(stream, Charset.defaultCharset())) {
                 line = line.trim();
                 if (line.length() > 0 && line.charAt(0) != '#') {
                     installPlugin(line);
