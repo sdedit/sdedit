@@ -681,7 +681,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
 
     public void displayDiagram(Diagram diagram, DiagramError error) {
         super.displayDiagram(diagram, error);
-        addClassTabs();
+        //addClassTabs();
     }
 
     @Override
