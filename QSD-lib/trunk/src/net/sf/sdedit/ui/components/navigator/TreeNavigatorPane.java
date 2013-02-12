@@ -56,319 +56,320 @@ import net.sf.sdedit.util.tree.BreadthFirstSearch;
  */
 public class TreeNavigatorPane extends JPanel {
 
-	private static final long serialVersionUID = -610209631378617019L;
+    private static final long serialVersionUID = -610209631378617019L;
 
-	private final JSplitPane splitPane;
+    private final JSplitPane splitPane;
 
-	private final JScrollPane navigationScrollPane;
+    private final JScrollPane navigationScrollPane;
 
-	private final JTree navigationTree;
+    private final JTree navigationTree;
 
-	private JComponent selected;
+    private JComponent selected;
 
-	private final JPanel contentPanel;
+    private final JPanel contentPanel;
 
-	private final TreeNavigatorNodeRenderer renderer;
+    private final TreeNavigatorNodeRenderer renderer;
 
-	private final TreeNavigatorModel treeModel;
+    private final TreeNavigatorModel treeModel;
 
-	private final TreeNavigatorControl ctrl;
+    private final TreeNavigatorControl ctrl;
 
-	private final LinkedList<TreeNavigatorPaneListener> listeners;
+    private final LinkedList<TreeNavigatorPaneListener> listeners;
 
-	private final IndexedList<JComponent> componentHistory;
+    private final IndexedList<JComponent> componentHistory;
 
-	private final Set<String> categories;
-	
-	private boolean historyEnabled;
+    private final Set<String> categories;
 
-	public TreeNavigatorPane(double resizeWeight) {
-		setLayout(new BorderLayout());
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.setOneTouchExpandable(true);
-		treeModel = new TreeNavigatorModel();
-		navigationTree = new JTree(treeModel);
-		navigationTree.setRootVisible(false);
-		ctrl = new TreeNavigatorControl(this, treeModel);
-		navigationTree.addMouseListener(ctrl);
-		navigationTree.addTreeSelectionListener(ctrl);
-		renderer = new TreeNavigatorNodeRenderer();
-		contentPanel = new JPanel();
-		contentPanel.setLayout(new BorderLayout());
-		listeners = new LinkedList<TreeNavigatorPaneListener>();
-		navigationTree.setCellRenderer(renderer);
-		navigationScrollPane = new JScrollPane(navigationTree);
-		add(splitPane, BorderLayout.CENTER);
-		splitPane.setLeftComponent(navigationScrollPane);
-		splitPane.setRightComponent(contentPanel);
-		splitPane.setResizeWeight(resizeWeight);
-		categories = new HashSet<String>();
-		componentHistory = new IndexedList<JComponent>();
-		historyEnabled = true;
-	}
+    private boolean historyEnabled;
 
-	protected JTree getTree() {
-		return navigationTree;
-	}
+    public TreeNavigatorPane(double resizeWeight) {
+        setLayout(new BorderLayout());
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setOneTouchExpandable(true);
+        treeModel = new TreeNavigatorModel();
+        navigationTree = new JTree(treeModel);
+        navigationTree.setRootVisible(false);
+        ctrl = new TreeNavigatorControl(this, treeModel);
+        navigationTree.addMouseListener(ctrl);
+        navigationTree.addTreeSelectionListener(ctrl);
+        renderer = new TreeNavigatorNodeRenderer();
+        contentPanel = new JPanel();
+        contentPanel.setLayout(new BorderLayout());
+        listeners = new LinkedList<TreeNavigatorPaneListener>();
+        navigationTree.setCellRenderer(renderer);
+        navigationScrollPane = new JScrollPane(navigationTree);
+        add(splitPane, BorderLayout.CENTER);
+        splitPane.setLeftComponent(navigationScrollPane);
+        splitPane.setRightComponent(contentPanel);
+        splitPane.setResizeWeight(resizeWeight);
+        categories = new HashSet<String>();
+        componentHistory = new IndexedList<JComponent>();
+        historyEnabled = true;
+    }
 
-	public void addListener(TreeNavigatorPaneListener listener) {
-		listeners.add(listener);
-	}
+    protected JTree getTree() {
+        return navigationTree;
+    }
 
-	public void removeListener(TreeNavigatorPaneListener listener) {
-		listeners.remove(listener);
-	}
+    public void addListener(TreeNavigatorPaneListener listener) {
+        listeners.add(listener);
+    }
 
-	public void addRootCategory(String category, ImageIcon icon) {
-		TreeNavigatorNode rootNode = new TreeNavigatorNode(category, icon, null);
-		categories.add(category);
-		treeModel.addChild(treeModel.getRoot(), rootNode, null);
-	}
-	
-	public TreeNavigatorNode getNode (JComponent component) {
-	    if (component == null) {
-	        return null;
-	    }
-	    return treeModel.find(component);
-	}
+    public void removeListener(TreeNavigatorPaneListener listener) {
+        listeners.remove(listener);
+    }
 
-	public void addComponent(String title, JComponent comp, Icon icon,
-			String rootCategory, boolean selectIt, JComponent previousSibling) {
-		TreeNavigatorNode node = new TreeNavigatorNode(title, icon, comp);
-		TreeNavigatorNode categoryNode = treeModel
-				.getCategoryNode(rootCategory);
-		treeModel.addChild(categoryNode, node, getNode(previousSibling));
-		if (comp instanceof Stainable) {
-			((Stainable) comp).addStainedListener(ctrl);
-		}
-		if (selectIt) {
-		    setSelectedComponent(comp);    
-		}
-		
-	}
+    public void addRootCategory(String category, ImageIcon icon) {
+        TreeNavigatorNode rootNode = new TreeNavigatorNode(category, icon, null);
+        categories.add(category);
+        treeModel.addChild(treeModel.getRoot(), rootNode, null);
+    }
 
-	public void addComponent(String title, JComponent child, Icon icon,
-			JComponent parent, boolean selectIt, JComponent previousSibling) {
-		TreeNavigatorNode node = new TreeNavigatorNode(title, icon, child);
-		TreeNavigatorNode parentNode;
-		if (parent != null) {
-			parentNode = treeModel.find(parent);
-		} else {
-			parentNode = treeModel.getRoot();
-		}
-		treeModel.addChild(parentNode, node, getNode(previousSibling));
-		if (child instanceof Stainable) {
-			((Stainable) child).addStainedListener(ctrl);
-		}
-		if (selectIt) {
-		    setSelectedComponent(child);    
-		}
-		
-	}
+    public TreeNavigatorNode getNode(JComponent component) {
+        if (component == null) {
+            return null;
+        }
+        return treeModel.find(component);
+    }
 
-	public JComponent[] removeComponent(JComponent comp,
-			boolean removeDescendants) {
-	    JComponent [] selected = getSelectedComponents();
-		List<JComponent> list = new LinkedList<JComponent>();
-		TreeNavigatorNode node = treeModel.find(comp);
-		if (node != null) {
-			if (removeDescendants) {
-				BreadthFirstSearch bfs = new BreadthFirstSearch(treeModel, node);
-				LinkedList<Object> nodes = new LinkedList<Object>();
-				TreePath current;
-				do {
-					current = bfs.next();
-					if (current != null) {
-						nodes.add(current.getLastPathComponent());
-					}
-				} while (current != null);
-				while (!nodes.isEmpty()) {
-					TreeNavigatorNode last = (TreeNavigatorNode) nodes
-							.removeLast();
-					list.add(last.getComponent());
-					removeNode(last);
-				}
-			} else {
-				removeNode(node);
-				list.add(comp);
-			}
-		}
-		boolean isSelected = false;
-		
-		for (JComponent cmp : list) {
-		    isSelected |= Utilities.in(cmp, selected);
-			componentHistory.remove(cmp);
-			
-		}
-		if (isSelected && !componentHistory.isEmpty()) {
-			setSelectedComponent(componentHistory.getLast());
-		}
-		return list.toArray(new JComponent[list.size()]);
-	}
+    public void addComponent(String title, JComponent comp, Icon icon,
+            String rootCategory, boolean selectIt, JComponent previousSibling) {
+        TreeNavigatorNode node = new TreeNavigatorNode(title, icon, comp);
+        TreeNavigatorNode categoryNode = treeModel
+                .getCategoryNode(rootCategory);
+        treeModel.addChild(categoryNode, node, getNode(previousSibling));
+        if (comp instanceof Stainable) {
+            ((Stainable) comp).addStainedListener(ctrl);
+        }
+        if (selectIt) {
+            setSelectedComponent(comp);
+        }
 
+    }
 
-	private void removeNode(TreeNavigatorNode node) {
-		if (node.getChildCount() > 0) {
-			TreeNavigatorNode parent = node.getParent();
-			for (TreeNavigatorNode child : node.getChildren()) {
-				treeModel.addChild(parent, child, null);
-				treeModel.removeChild(node, child);
-			}
-		}
-		treeModel.removeChild(node.getParent(), node);
-	}
+    public void addComponent(String title, JComponent child, Icon icon,
+            JComponent parent, boolean selectIt, JComponent previousSibling) {
+        TreeNavigatorNode node = new TreeNavigatorNode(title, icon, child);
+        TreeNavigatorNode parentNode;
+        if (parent != null) {
+            parentNode = treeModel.find(parent);
+        } else {
+            parentNode = treeModel.getRoot();
+        }
+        treeModel.addChild(parentNode, node, getNode(previousSibling));
+        if (child instanceof Stainable) {
+            ((Stainable) child).addStainedListener(ctrl);
+        }
+        if (selectIt) {
+            setSelectedComponent(child);
+        }
 
-	public boolean existsCategory(String category) {
-		return categories.contains(category);
-	}
+    }
 
-	public boolean setSelectedComponent(JComponent comp) {
-		return setSelectedComponent(comp, true, true);
-	}
+    public JComponent[] removeComponent(JComponent comp,
+            boolean removeDescendants) {
+        JComponent[] selected = getSelectedComponents();
+        List<JComponent> list = new LinkedList<JComponent>();
+        TreeNavigatorNode node = treeModel.find(comp);
+        if (node != null) {
+            if (removeDescendants) {
+                BreadthFirstSearch bfs = new BreadthFirstSearch(treeModel, node);
+                LinkedList<Object> nodes = new LinkedList<Object>();
+                TreePath current;
+                do {
+                    current = bfs.next();
+                    if (current != null) {
+                        nodes.add(current.getLastPathComponent());
+                    }
+                } while (current != null);
+                while (!nodes.isEmpty()) {
+                    TreeNavigatorNode last = (TreeNavigatorNode) nodes
+                            .removeLast();
+                    list.add(last.getComponent());
+                    removeNode(last);
+                }
+            } else {
+                removeNode(node);
+                list.add(comp);
+            }
+        }
+        boolean isSelected = false;
 
-	public void setContextActionsProvider(ContextActionsProvider provider) {
-		ctrl.setContextActionsProvider(provider);
-	}
+        for (JComponent cmp : list) {
+            isSelected |= Utilities.in(cmp, selected);
+            componentHistory.remove(cmp);
 
-	private boolean setSelectedComponentEntered = false;
+        }
+        if (isSelected && !componentHistory.isEmpty()) {
+            setSelectedComponent(componentHistory.getLast());
+        }
+        return list.toArray(new JComponent[list.size()]);
+    }
 
-	protected boolean setSelectedComponent(final JComponent comp,
-			boolean selectInTree, boolean updateHistory) {
-		if (setSelectedComponentEntered) {
-			return true;
-		}
-		if (historyEnabled && updateHistory) {
-			componentHistory.remove(comp);
-			componentHistory.add(comp);
-		}
-		setSelectedComponentEntered = true;
-		try {
-			this.selected = comp;
-			TreeNavigatorNode node = treeModel.find(comp);
-			if (node == null) {
-				return false;
-			}
-			if (selectInTree) {
-				TreePath path = node.getTreePath();
-				// this would lead to another invocation of this method
-				// (avoided by the setSelectedComponentEntered flag)
-				navigationTree.setSelectionPath(path);
-			}
-			contentPanel.removeAll();
-			contentPanel.add(comp, BorderLayout.CENTER);
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					navigationTree.revalidate();
-					contentPanel.revalidate();
-					repaint();
-					for (TreeNavigatorPaneListener listener : listeners) {
-						listener.componentSelected(comp);
-					}
-				}
-			});
-			return true;
-		} finally {
-			setSelectedComponentEntered = false;
-		}
-	}
+    private void removeNode(TreeNavigatorNode node) {
+        if (node.getChildCount() > 0) {
+            TreeNavigatorNode parent = node.getParent();
+            for (TreeNavigatorNode child : node.getChildren()) {
+                treeModel.addChild(parent, child, null);
+                treeModel.removeChild(node, child);
+            }
+        }
+        treeModel.removeChild(node.getParent(), node);
+    }
 
-	public JComponent getSelectedComponent() {
-		return selected;
-	}
+    public boolean existsCategory(String category) {
+        return categories.contains(category);
+    }
 
-	public JComponent[] getSelectedComponents() {
-		List<JComponent> list = new LinkedList<JComponent>();
-		TreePath[] paths = navigationTree.getSelectionPaths();
-		if (paths != null) {
-			for (TreePath path : paths) {
-				TreeNavigatorNode node = (TreeNavigatorNode) path
-						.getLastPathComponent();
-				if (node.getComponent() != null) {
-					list.add(node.getComponent());
-				}
-			}
-		}
-		return list.toArray(new JComponent[list.size()]);
-	}
+    public boolean setSelectedComponent(JComponent comp) {
+        return setSelectedComponent(comp, true, true);
+    }
 
-	public void setTitle(JComponent comp, String title) {
-		TreeNavigatorNode node = treeModel.find(comp);
-		if (node != null) {
-			treeModel.setTitle(node, title);
-		}
-		navigationTree.repaint();
-	}
+    public void setContextActionsProvider(ContextActionsProvider provider) {
+        ctrl.setContextActionsProvider(provider);
+    }
 
-	public List<String> getAllTitles() {
-		return treeModel.getAllTitles();
-	}
+    private boolean setSelectedComponentEntered = false;
 
-	public int getCompCount() {
-		return treeModel.getComponents().size();
-	}
+    protected boolean setSelectedComponent(final JComponent comp,
+            boolean selectInTree, boolean updateHistory) {
+        if (setSelectedComponentEntered) {
+            return true;
+        }
+        if (historyEnabled && updateHistory) {
+            componentHistory.remove(comp);
+            componentHistory.add(comp);
+        }
+        setSelectedComponentEntered = true;
+        try {
+            this.selected = comp;
+            TreeNavigatorNode node = treeModel.find(comp);
+            if (node == null) {
+                return false;
+            }
+            if (selectInTree) {
+                TreePath path = node.getTreePath();
+                // this would lead to another invocation of this method
+                // (avoided by the setSelectedComponentEntered flag)
+                navigationTree.setSelectionPath(path);
+            }
+            contentPanel.removeAll();
+            contentPanel.add(comp, BorderLayout.CENTER);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    navigationTree.revalidate();
+                    contentPanel.revalidate();
+                    repaint();
+                    for (TreeNavigatorPaneListener listener : listeners) {
+                        listener.componentSelected(comp);
+                    }
+                }
+            });
+            return true;
+        } finally {
+            setSelectedComponentEntered = false;
+        }
+    }
 
-	public List<JComponent> getAllComponents() {
-		return treeModel.getComponents();
-	}
-	
-	public List<JComponent> getSuccessors(JComponent comp) {
-		TreeNavigatorNode node = treeModel.find(comp);
-		TreeNavigatorNode[] children = node.getChildren();
-		List<JComponent> succs = new LinkedList<JComponent>();
-		for (TreeNavigatorNode child : children) {
-			succs.add(child.getComponent());
-		}
-		return succs;
-	}
+    public JComponent getSelectedComponent() {
+        return selected;
+    }
 
-	public List<JComponent> getDescendants(JComponent root) {
-		TreeNavigatorNode rootNode = treeModel.find(root);
-		BreadthFirstSearch bfs = new BreadthFirstSearch(treeModel, rootNode);
-		List<JComponent> descendants = new LinkedList<JComponent>();
-		TreePath desc;
-		while ((desc = bfs.next()) != null) {
-			TreeNavigatorNode current = (TreeNavigatorNode) desc
-					.getLastPathComponent();
-			if (current != rootNode) {
-				descendants.add(current.getComponent());
-			}
-		}
-		return descendants;
-	}
+    public JComponent[] getSelectedComponents() {
+        List<JComponent> list = new LinkedList<JComponent>();
+        TreePath[] paths = navigationTree.getSelectionPaths();
+        if (paths != null) {
+            for (TreePath path : paths) {
+                TreeNavigatorNode node = (TreeNavigatorNode) path
+                        .getLastPathComponent();
+                if (node.getComponent() != null) {
+                    list.add(node.getComponent());
+                }
+            }
+        }
+        return list.toArray(new JComponent[list.size()]);
+    }
 
-	public JComponent getParentComponent(JComponent comp) {
-		TreeNavigatorNode node = treeModel.find(comp);
-		return node.getParent().getComponent();
-	}
+    public void setTitle(JComponent comp, String title) {
+        TreeNavigatorNode node = treeModel.find(comp);
+        if (node != null) {
+            treeModel.setTitle(node, title);
+        }
+        navigationTree.repaint();
+    }
 
-	public void goToNextComponent() {
-		JComponent next = componentHistory.next(selected);
-		if (next != null) {
-			setSelectedComponent(next, true, false);
-		}
-	}
+    public List<String> getAllTitles() {
+        return treeModel.getAllTitles();
+    }
 
-	public boolean nextComponentExists() {
-		return componentHistory.next(selected) != null;
-	}
+    public int getCompCount() {
+        return treeModel.getComponents().size();
+    }
 
-	public void goToPreviousComponent() {
-		JComponent previous = componentHistory.previous(selected);
-		if (previous != null) {
-			setSelectedComponent(previous, true, false);
-		}
-	}
+    public List<JComponent> getAllComponents() {
+        return treeModel.getComponents();
+    }
 
-	public boolean previousComponentExists() {
-		return componentHistory.previous(selected) != null;
-	}
-	
-	public void enableHistory () {
-		historyEnabled = true;
-	}
-	
-	public void disableHistory () {
-		historyEnabled = false;		
-	}
+    public List<JComponent> getSuccessors(JComponent comp) {
+        TreeNavigatorNode node = treeModel.find(comp);
+        TreeNavigatorNode[] children = node.getChildren();
+        List<JComponent> succs = new LinkedList<JComponent>();
+        for (TreeNavigatorNode child : children) {
+            succs.add(child.getComponent());
+        }
+        return succs;
+    }
+
+    public List<JComponent> getDescendants(JComponent root) {
+        TreeNavigatorNode rootNode = treeModel.find(root);
+        BreadthFirstSearch bfs = new BreadthFirstSearch(treeModel, rootNode);
+        List<JComponent> descendants = new LinkedList<JComponent>();
+        TreePath desc;
+        while ((desc = bfs.next()) != null) {
+            TreeNavigatorNode current = (TreeNavigatorNode) desc
+                    .getLastPathComponent();
+            if (current != rootNode) {
+                descendants.add(current.getComponent());
+            }
+        }
+        return descendants;
+    }
+
+    public JComponent getParentComponent(JComponent comp) {
+        TreeNavigatorNode node = treeModel.find(comp);
+        return node.getParent().getComponent();
+    }
+
+    public void goToNextComponent() {
+        JComponent next = componentHistory.next(selected);
+        if (next != null) {
+            setSelectedComponent(next, true, false);
+        }
+    }
+
+    public boolean nextComponentExists() {
+        return componentHistory.contains(selected)
+                && componentHistory.next(selected) != null;
+    }
+
+    public void goToPreviousComponent() {
+        JComponent previous = componentHistory.previous(selected);
+        if (previous != null) {
+            setSelectedComponent(previous, true, false);
+        }
+    }
+
+    public boolean previousComponentExists() {
+        return componentHistory.contains(selected)
+                && componentHistory.previous(selected) != null;
+    }
+
+    public void enableHistory() {
+        historyEnabled = true;
+    }
+
+    public void disableHistory() {
+        historyEnabled = false;
+    }
 
 }
