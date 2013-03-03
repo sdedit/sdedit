@@ -102,8 +102,6 @@ public interface Configuration extends DataObject
     
     public Color getNoteBgColor();
     
-
-    
     public Color getTc0 ();
     
     public Color getTc1 ();
@@ -151,6 +149,8 @@ public interface Configuration extends DataObject
     public boolean isSlackMode ();
     
     public boolean isShouldShadowParticipants();
+    
+    public boolean isReuseSpace();
 
     @Adjustable(dflt=25,min=20,max=100,info="Actor width",category="Lifelines")
     public void setActorWidth(int actorWidth);
@@ -245,7 +245,6 @@ public interface Configuration extends DataObject
     @Adjustable(dflt=7,min=3,max=100,info="Space before message to self",category="Vertical spaces")
     public void setSpaceBeforeSelfMessage(int spaceBeforeSelfMessage);
 
-   
     @Adjustable(dflt=6,min=2,max=100,info="Activation bar width (level>1)",category="Lifelines")
     public void setSubLifelineWidth(int subLifelineWidth);
     
@@ -329,6 +328,9 @@ public interface Configuration extends DataObject
     
     @Adjustable(info="Put shadows on participants", category="Lifelines")
     public void setShouldShadowParticipants(boolean shouldShadowParticipants);
+    
+    @Adjustable(editable=true, category="Misc", info="Reuse space of destroyed objects")
+    public void setReuseSpace(boolean reuseSpace);
 
 }
 //{{core}}
