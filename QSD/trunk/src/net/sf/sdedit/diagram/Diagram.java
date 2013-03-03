@@ -28,9 +28,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.sf.sdedit.Constants;
@@ -41,12 +43,12 @@ import net.sf.sdedit.drawable.Fragment;
 import net.sf.sdedit.drawable.Text;
 import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.error.SyntaxError;
-
 import net.sf.sdedit.message.Answer;
 import net.sf.sdedit.message.BroadcastMessage;
 import net.sf.sdedit.message.ForwardMessage;
 import net.sf.sdedit.message.Message;
 import net.sf.sdedit.util.Bijection;
+import net.sf.sdedit.util.MultiIterator;
 
 /**
  * This class encapsulates the data for and the process of the generation of a
@@ -88,7 +90,7 @@ import net.sf.sdedit.util.Bijection;
  * 
  * @author Markus Strauch
  */
-public final class Diagram implements Constants {
+public final class Diagram implements Constants, Iterable<Lifeline> {
 	/**
 	 * Maps names of objects onto their root lifelines.
 	 */
@@ -97,7 +99,7 @@ public final class Diagram implements Constants {
 	/**
 	 * A list of root lifelines.
 	 */
-	private final List<Lifeline> lifelineList;
+	private final List<List<Lifeline>> lifelineList;
 
 	/**
 	 * The current vertical position. For all messages that have already been
@@ -207,8 +209,21 @@ public final class Diagram implements Constants {
 	
 	private final boolean slackMode;
 	
+	/**
+	 * Maps lifeline names onto lifeline positions.
+	 */
+	private final Map<String,Integer> positionMap;
 	
-
+	/**
+	 * Maps the name of a lifeline onto the id of the message, where the
+	 * lifeline has most recently participated.
+	 */
+	private Map<String,Integer> idMap;
+	
+	private Map<Integer,List<String>> reverseIdMap;
+	
+	private int messageId;
+	
 	/**
 	 * Creates a new diagram that is to be generated based on the data delivered
 	 * by the given <tt>DiagramDataProvider</tt>.
@@ -236,7 +251,7 @@ public final class Diagram implements Constants {
 		opaqueText = configuration.isOpaqueMessageText();
 		this.paintDevice = paintDevice;
 		lifelineMap = new HashMap<String, Lifeline>();
-		lifelineList = new ArrayList<Lifeline>();
+		lifelineList = new ArrayList<List<Lifeline>>();
 		conf = configuration;
 		paintDevice.setDiagram(this);
 		verticalPosition = 0;
@@ -265,7 +280,27 @@ public final class Diagram implements Constants {
 		requireReturn = conf.isExplicitReturns();
 		slackMode = conf.isSlackMode();
 		messages = new LinkedList<ForwardMessage>();
-
+		positionMap = new HashMap<String,Integer>();
+		messageId = -1;
+		idMap = new HashMap<String,Integer>();
+	}
+	
+	public void setReverseIdMap (Map<Integer,List<String>>map) {
+	    this.reverseIdMap = map;
+	    idMap = null;
+	}
+	
+	public Map<Integer,List<String>> makeReverseIdMap () {
+	    Map<Integer,List<String>> reverse = new HashMap<Integer,List<String>>(messageId+1);
+	    for (Entry<String, Integer> entry : idMap.entrySet()) {
+	        int messageId = entry.getValue();
+	        String lifelineName = entry.getKey();
+	        if (!reverse.containsKey(messageId)) {
+	            reverse.put(messageId, new ArrayList<String>());
+	        }
+	        reverse.get(messageId).add(lifelineName);
+	    }
+	    return reverse;
 	}
 
 	/**
@@ -277,7 +312,7 @@ public final class Diagram implements Constants {
 	 * @throws SemanticError
 	 *             if a message or object specification is semantically wrong
 	 */
-	public void generate() throws SemanticError, SyntaxError {
+	protected void generate() throws SemanticError, SyntaxError {
 
 
 		Fragment frame = null;
@@ -308,18 +343,18 @@ public final class Diagram implements Constants {
 		paintDevice.reinitialize();
 		try {
 
-			for (Lifeline lifeline : lifelineList) {
+			for (Lifeline lifeline : this) {
 				paintDevice.addOtherDrawable(lifeline.getHead());
 				verticalPosition = Math.max(verticalPosition, lifeline
 						.getHead().getTop()
 						+ lifeline.getHead().getHeight());
 			}
-			for (Lifeline lifeline : lifelineList) {
+			for (Lifeline lifeline : this) {
 				lifeline.getView().setBottom(verticalPosition);
 			}
 			extendLifelines(conf.getInitialSpace());
 
-			for (Lifeline lifeline : lifelineList) {
+			for (Lifeline lifeline : this) {
 				if (lifeline.hasThread()) {
 					lifeline.setActive(true);
 				}
@@ -338,7 +373,7 @@ public final class Diagram implements Constants {
 				paintDevice.computeBounds();
 
 				// fixes bug 2019730 (notes appear outside of diagram)
-				for (Lifeline lifeline : getAllLifelines()) {
+				for (Lifeline lifeline : this) {
 					noteManager.closeNote(lifeline.getName());
 				}
 				//
@@ -565,14 +600,50 @@ public final class Diagram implements Constants {
 			first.set(thread, lifeline);
 			lifeline.setThread(thread);
 		}
-		lifelineList.add(lifeline);
+		if (!lifeline.isSavingSpace()) {
+	        positionMap.put(lifeline.getName(), add(lifeline));		    
+		}
 		lifelineMap.put(lifeline.getName(), lifeline);
 		return true;
 	}
+	
+	/**
+	 * Adds a new lifeline sub list with the given lifeline as a single
+	 * element.
+	 * 
+	 * @param lifeline
+	 * @return
+	 */
+	private int add (Lifeline lifeline) {
+        int position = lifelineList.size();
+        lifelineList.add(new ArrayList<Lifeline>());
+        lifelineList.get(position).add(lifeline);
+        return position;
+	}
+	
+	public void reuseSpace(Lifeline lifeline) {
+	    int i = 0;
+	    int position = -1;
+	    for (List<Lifeline> list  : lifelineList) {
+	        Lifeline line = list.get(list.size()-1);
+	        if (line.getCross() != null) {
+	            list.add(lifeline);
+	            positionMap.put(lifeline.getName(), i);
+	            position = i;
+	            break;
+	        }
+	        i++;
+	    }
+	    if (position == -1) {
+	        position = add(lifeline);
+	        paintDevice.addLifelineSlot();
+	    }
+	    positionMap.put(lifeline.getName(), position);
+	    paintDevice.addOtherDrawable(lifeline.getHead());
+	}
 
 	public final void extendLifelines(final int amount) {
-
-		for (final Lifeline lifeline : getLifelines()) {
+	    for (final Lifeline lifeline : getLifelines()) {
 			if (lifeline.isAlive()) {
 				for (final Lifeline line : lifeline.getAllLifelines()) {
 					line.getView().extend(amount);
@@ -583,7 +654,7 @@ public final class Diagram implements Constants {
 	}
 
 	int getPositionOf(Lifeline lifeline) {
-		return lifelineList.indexOf(lifeline.getRoot());
+		return positionMap.get(lifeline.getRoot().getName());
 	}
 
 	public boolean isThreaded() {
@@ -632,17 +703,6 @@ public final class Diagram implements Constants {
 	 */
 	public Collection<Lifeline> getLifelines() {
 		return lifelineMap.values();
-	}
-
-	/**
-	 * Returns a collection of all lifelines, whether visible or not, and
-	 * whether already destroyed or not.
-	 * 
-	 * @return a collection of all lifelines, whether visible or not, and
-	 *         whether already destroyed or not
-	 */
-	public Collection<Lifeline> getAllLifelines() {
-		return lifelineList;
 	}
 
 	/**
@@ -731,7 +791,7 @@ public final class Diagram implements Constants {
 		}
 		noteManager.closeNote(answer.getCaller().getName());
 		noteManager.closeNote(answer.getCallee().getName());
-		answer.updateView();
+		answer.executeMessage();
 	}
 
 	/**
@@ -752,7 +812,12 @@ public final class Diagram implements Constants {
 	}
 
 	public Lifeline getLifelineAt(int position) {
-		return lifelineList.get(position);
+	    List<Lifeline> list = lifelineList.get(position);
+	    return list.get(list.size()-1);
+	}
+	
+	public List<Lifeline> getLifelinesAt(int position) {
+	    return lifelineList.get(position);
 	}
 
 	public Lifeline getLifeline(String name) {
@@ -832,5 +897,33 @@ public final class Diagram implements Constants {
 		}
 		return lifelines;
 	}
+
+    public Iterator<Lifeline> iterator() {
+        List<Iterator<Lifeline>> iterators = new ArrayList<Iterator<Lifeline>>();
+        for (List<Lifeline> list : lifelineList) {
+            iterators.add(list.iterator());
+        }
+        return new MultiIterator<Lifeline>(iterators);
+    }
+
+    public void afterExecution(Message message) {
+        messageId++;
+        if (idMap != null) {
+            idMap.put(message.getCaller().getName(), messageId);
+            if (message.getCallee() != null) {
+                idMap.put(message.getCallee().getName(), messageId);
+            }
+        }
+        if (reverseIdMap != null && reverseIdMap.containsKey(messageId)) {
+            for (String name : reverseIdMap.get(messageId)) {
+                Lifeline lifeline = getLifeline(name);
+                if (lifeline != null && lifeline.isAutodestroy()) {
+                    // terminate will be called once again on termination of the diagram
+                    // FIXME
+                    lifeline.terminate();
+                }
+            }
+        }
+    }
 }
 // {{core}}
