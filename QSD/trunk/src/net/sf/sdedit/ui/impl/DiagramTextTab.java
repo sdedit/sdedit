@@ -587,7 +587,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
         List<String> suggestions = new LinkedList<String>();
         Diagram diag = getDiagram();
         if (diag != null) {
-            for (Lifeline lifeline : diag.getAllLifelines()) {
+            for (Lifeline lifeline : diag) {
                 String name = lifeline.getName();
                 if (pattern.matcher(name).matches()) {
                     // if (name.startsWith(prefix)) {
@@ -653,8 +653,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
         return Editor.getEditor().getDefaultFileHandler();
     }
 
-    @Override
-    public DiagramDataProvider getProvider() {
+    public DiagramDataProvider createProvider() {
         return new TextHandler(getCode());
     }
 
@@ -820,7 +819,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
         MultiMap<String, ForwardMessage, LinkedList<?>, TreeMap<?, ?>> messages = new MultiMap<String, ForwardMessage, LinkedList<?>, TreeMap<?, ?>>(
                 LinkedList.class, TreeMap.class);
 
-        for (Lifeline lifeline : getDiagram().getAllLifelines()) {
+        for (Lifeline lifeline : getDiagram()) {
             String className;
             className = lifeline.getType();
             classNames.add(className, lifeline);

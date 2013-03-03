@@ -49,9 +49,7 @@ import javax.swing.border.TitledBorder;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.PrintConfiguration;
-import net.sf.sdedit.diagram.DiagramDataProvider;
-import net.sf.sdedit.error.SemanticError;
-import net.sf.sdedit.error.SyntaxError;
+import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.multipage.MultipageExporter;
 import net.sf.sdedit.ui.components.ButtonPanel;
 import net.sf.sdedit.ui.components.configuration.Bean;
@@ -277,16 +275,13 @@ public class PrintDialog extends JDialog implements ConfigurationUIListener,
 
 	private void reinitialize() {
 		Configuration configuration = tab.getConfiguration().getDataObject();
-		DiagramDataProvider provider = tab.getProvider();
 		exporter = new MultipageExporter(printerProperties.getDataObject(),
-				provider, configuration);
+				tab, configuration);
 		try {
 			exporter.init();
 		} catch (RuntimeException re) {
 			throw re;
-		} catch (SemanticError se) {
-			/* ignored */
-		} catch (SyntaxError se) {
+		} catch (DiagramError se) {
 			/* ignored */
 		}
 		int scale = (int) (100 * exporter.getScale());

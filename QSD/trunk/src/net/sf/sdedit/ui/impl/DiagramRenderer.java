@@ -29,11 +29,10 @@ import java.util.ListIterator;
 import javax.swing.SwingUtilities;
 
 import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.diagram.DiagramDataProvider;
+import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.error.FatalError;
 import net.sf.sdedit.ui.PanelPaintDevice;
-import net.sf.sdedit.util.Pair;
 
 /**
  * A <tt>DiagramRenderer</tt> (typically a singleton instance) is responsible
@@ -45,45 +44,41 @@ import net.sf.sdedit.util.Pair;
  */
 public class DiagramRenderer implements Runnable {
 
-	private LinkedList<Pair<DiagramTab, Diagram>> queue;
+	private LinkedList<DiagramFactory> queue;
 
 	public DiagramRenderer() {
-		queue = new LinkedList<Pair<DiagramTab, Diagram>>();
+		queue = new LinkedList<DiagramFactory>();
 		Thread thread = new Thread(this);
 		thread.setDaemon(true);
 		thread.setName("DiagramRenderer-Thread");
 		thread.start();
 	}
 
-	private synchronized void enqueue(DiagramTab tab, Diagram diagram) {
-		Pair<DiagramTab, Diagram> newPair = new Pair<DiagramTab, Diagram>(tab,
-				diagram);
-		ListIterator<Pair<DiagramTab, Diagram>> iter = queue.listIterator();
+	private synchronized void enqueue(DiagramFactory factory) {
+		ListIterator<DiagramFactory> iter = queue.listIterator();
 		while (iter.hasNext()) {
-			Pair<DiagramTab, Diagram> pair = iter.next();
-			if (pair.getFirst() == newPair.getFirst()) {
+			DiagramFactory theFactory = iter.next();
+			if (theFactory.getProvider() == factory.getProvider()) {
 				iter.remove();
 				break;
 			}
 		}
-		queue.addFirst(newPair);
+		queue.addFirst(factory);
 		notify();
 	}
 
 	public void renderDiagram(DiagramTab tab) {
-		DiagramDataProvider provider = tab.getProvider();
-		PanelPaintDevice ppd = new PanelPaintDevice(true);
-		if (tab.getInteraction() != null) {
-			ppd.setPartner(tab.getInteraction());
-		}
-		Diagram diagram = new Diagram(tab.getConfiguration().getDataObject(),
-				provider, ppd);
-		enqueue(tab, diagram);
+        PanelPaintDevice ppd = new PanelPaintDevice(true);
+        if (tab.getInteraction() != null) {
+            ppd.setPartner(tab.getInteraction());
+        }	           
+	    DiagramFactory factory = new DiagramFactory(tab, ppd);
+	    enqueue(factory);
 	}
 
 	public void run() {
 		while (true) {
-			Pair<DiagramTab, Diagram> pair;
+			DiagramFactory factory;
 			DiagramError err = null;
 			synchronized (this) {
 				while (queue.isEmpty()) {
@@ -93,18 +88,18 @@ public class DiagramRenderer implements Runnable {
 						Thread.currentThread().interrupt();
 					}
 				}
-				pair = queue.removeLast();
+				factory = queue.removeLast();
 			}
-			Diagram diagram = pair.getSecond();
+			DiagramTab tab = (DiagramTab) factory.getProviderFactory();
 			try {
-				diagram.generate();
+				factory.generateDiagram(tab.getConfiguration().getDataObject());
 			} catch (RuntimeException e) {
 				e.printStackTrace();
-				err = new FatalError(diagram.getDataProvider(), e);
+				err = new FatalError(factory.getProvider(), e);
 			} catch (DiagramError e) {
 				err = e;
 			}
-			doDisplay(pair.getFirst(), diagram, err);
+			doDisplay(tab, factory.getDiagram(), err);
 		}
 	}
 

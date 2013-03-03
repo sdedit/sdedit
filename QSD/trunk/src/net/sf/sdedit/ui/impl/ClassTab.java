@@ -246,8 +246,7 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
             if (index == 0) {
                 String newName = (String) value;
                 if (newName != null && newName.length() > 0) {
-                    for (Lifeline existing : diagramTextTab.getDiagram()
-                            .getAllLifelines()) {
+                    for (Lifeline existing : diagramTextTab.getDiagram()) {
                         if (existing.getName().equals(newName)) {
                             return;
                         }

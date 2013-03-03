@@ -48,10 +48,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -61,8 +57,8 @@ import javax.swing.SwingUtilities;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.diagram.DiagramDataProvider;
-import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.diagram.DiagramDataProviderFactory;
+import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.error.DiagramError;
@@ -80,7 +76,7 @@ import net.sf.sdedit.ui.components.configuration.Bean;
 
 @SuppressWarnings("serial")
 public abstract class DiagramTab extends Tab implements PropertyChangeListener,
-		Transferable {
+		Transferable, DiagramDataProviderFactory {
 
 	final protected static DiagramRenderer renderer = new DiagramRenderer();
 
@@ -235,8 +231,6 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		get_UI().enableComponents();
 	}
 
-	public abstract DiagramDataProvider getProvider();
-
 	protected abstract void handleDiagramError(DiagramError error);
 
 	public void scrollToDrawable(Drawable drawable, boolean highlight) {
@@ -326,15 +320,12 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 	private InputStream getTransferDataVector (String format) throws IOException {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		Exporter exporter = Exporter.getExporter(format, "Landscape", "A0", stream);
-		Diagram diag = new Diagram(getConfiguration().getDataObject(),
-				getProvider(), exporter);
+		DiagramFactory factory = new DiagramFactory(this, exporter);
 		try {
-			diag.generate();
+			factory.generateDiagram(getConfiguration().getDataObject());
 		} catch (RuntimeException re) {
 			throw re;
-		} catch (SemanticError e) {
-			/* ignored */
-		} catch (SyntaxError e) {
+		} catch (DiagramError e) {
 			/* ignored */
 		}
 		exporter.export();
@@ -345,15 +336,12 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 	
 	private Image getTransferDataBitmap () throws IOException {
 		ImagePaintDevice ipd = new ImagePaintDevice(false);
-		Diagram diag = new Diagram(getConfiguration().getDataObject(),
-				getProvider(), ipd);
+		DiagramFactory factory = new DiagramFactory(this, ipd);
 		try {
-			diag.generate();
+		    factory.generateDiagram(getConfiguration().getDataObject());
 		} catch (RuntimeException re) {
 			throw re;
-		} catch (SemanticError e) {
-			/* ignored */
-		} catch (SyntaxError e) {
+		} catch (DiagramError e) {
 			/* ignored */
 		}
 		ipd.drawAll();
