@@ -41,6 +41,8 @@ public interface IPaintDevice extends Iterable<Drawable> {
 	 * known.
 	 */
 	public void reinitialize();
+	
+    public void addLifelineSlot();
 
 	public Font getFont(boolean bold);
 
