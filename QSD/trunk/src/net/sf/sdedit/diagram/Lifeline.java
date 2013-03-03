@@ -33,10 +33,8 @@ import net.sf.sdedit.drawable.Figure;
 import net.sf.sdedit.drawable.LabeledBox;
 import net.sf.sdedit.drawable.Line;
 import net.sf.sdedit.drawable.Rectangle;
-
 import net.sf.sdedit.util.Direction;
 import net.sf.sdedit.util.Grep.Region;
-import net.sf.sdedit.util.Utilities;
 
 /**
  * For each object or actor that appears in a diagram and that has not yet been
@@ -187,6 +185,8 @@ public final class Lifeline implements Comparable<Lifeline>{
 	
 	private Region nameRegion;
 	
+	private final boolean saveSpace;
+	
 	public String toString () {
 		String string = name + ":" + type;
 		if (label.length() > 0) {
@@ -246,7 +246,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 	public Lifeline(String name, String type, String label, boolean alive,
 			boolean anonymous, boolean role, boolean activeObject,
 			boolean process, boolean hasThread, boolean autodestroy,
-			boolean external, Diagram diagram) {
+			boolean external, boolean saveSpace, Diagram diagram) {
 		this.diagram = diagram;
 		this.name = name;
 		this.type = type;
@@ -261,6 +261,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 		this.external = external;
 		this.label = label;
 		this.anonymous = anonymous;
+		this.saveSpace = saveSpace;
 		parent = null;
 		root = this;
 		sideLevel = 0;
@@ -314,6 +315,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 		this.external = root.external;
 		this.label = root.label;
 		this.anonymous = root.anonymous;
+		this.saveSpace = root.saveSpace;
 		autodestroy = false;
 		hasThread = false;
 		diagram = root.diagram;
@@ -565,7 +567,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 	 * Call this method when an object is created via a 'new' message.
 	 */
 	public void giveBirth() {
-		alive = true;
+ 		alive = true;
 		head.setVisible(true);
 		view.setVisible(true);
 	}
@@ -803,6 +805,14 @@ public final class Lifeline implements Comparable<Lifeline>{
 
     public Region getNameRegion() {
         return nameRegion;
+    }
+    
+    public boolean isSavingSpace () {
+        return saveSpace;
+    }
+    
+    public boolean isAutodestroy () {
+        return autodestroy;
     }
 }
 // {{core}}
