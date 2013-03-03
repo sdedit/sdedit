@@ -33,17 +33,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.editor.DiagramFileHandler;
 import net.sf.sdedit.editor.Editor;
-import net.sf.sdedit.error.SemanticError;
-import net.sf.sdedit.error.SyntaxError;
+import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.server.Exporter;
-import net.sf.sdedit.text.TextHandler;
 import net.sf.sdedit.ui.ImagePaintDevice;
 import net.sf.sdedit.ui.components.configuration.Adjustable;
 import net.sf.sdedit.ui.components.configuration.Bean;
@@ -209,7 +206,7 @@ public class Main implements Constants {
     }
 
     private static void createImage(CommandLine cmd) throws IOException,
-            XMLException, SyntaxError, SemanticError {
+            XMLException, DiagramError {
         File inFile = new File(getInputFiles(cmd)[0]);
         File outFile = new File(cmd.getOptionValue('o'));
         String type = "png";
@@ -237,19 +234,19 @@ public class Main implements Constants {
                 Pair<String, Bean<Configuration>> pair = DiagramFileHandler
                         .load(in, ConfigurationManager.getGlobalConfiguration()
                                 .getFileEncoding());
-                TextHandler th = new TextHandler(pair.getFirst());
+                String text = pair.getFirst();
                 Bean<Configuration> conf = pair.getSecond();
                 configure(conf, cmd);
                 if (type.equals("png")) {
                     ImagePaintDevice paintDevice = new ImagePaintDevice();
-                    new Diagram(conf.getDataObject(), th, paintDevice)
-                            .generate();
+                    DiagramFactory factory = new DiagramFactory(text, paintDevice);
+                    factory.generateDiagram(conf.getDataObject());
                     paintDevice.writeToStream("png", out);
                 } else {
                     Exporter paintDevice = Exporter.getExporter(type,
                             orientation, format, out);
-                    new Diagram(conf.getDataObject(), th, paintDevice)
-                            .generate();
+                    DiagramFactory factory = new DiagramFactory(text, paintDevice);
+                    factory.generateDiagram(conf.getDataObject());
                     paintDevice.export();
                 }
                 out.flush();
