@@ -32,6 +32,7 @@ import java.util.Map;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.text.TextHandler;
 import net.sf.sdedit.ui.ImagePaintDevice;
 
@@ -68,7 +69,7 @@ import com.sun.tools.doclets.internal.toolkit.taglets.TagletWriter;
  * javadoc:docFile.append(output) [/c] [/c]
  * 
  * @author Markus Strauch
- * @author Øystein Lunde
+ * @author ï¿½ystein Lunde
  */
 public class SequenceTaglet implements Taglet
 {
@@ -207,10 +208,11 @@ public class SequenceTaglet implements Taglet
         conf.setThreaded(true);
         conf.setGlue(3);
         ImagePaintDevice device = new ImagePaintDevice();
-        TextHandler handler = new TextHandler(specification);
+        DiagramFactory factory = new DiagramFactory(specification, device);
         try {
-            new Diagram(conf, handler, device).generate();
+            factory.generateDiagram(conf);
         } catch (Exception e) {
+            TextHandler handler = (TextHandler) factory.getProvider();
             int error = handler.getLineNumber();
             StringBuffer code = new StringBuffer("<br><tt>");
             for (int i = 0; i < source.length; i++) {
