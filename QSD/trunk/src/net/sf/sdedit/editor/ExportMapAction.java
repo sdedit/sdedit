@@ -131,7 +131,7 @@ class ExportMapAction extends AbstractAction {
 				.println("<!-- You may append '#!href=\"<url>\"' to an object declaration\nin order to set"
 						+ " the 'href' attribute of an AREA tag -->");
 		pw.println("<map id=\"" + mapName + "\" name=\"" + mapName + "\">");
-		for (Lifeline lifeline : diagram.getAllLifelines()) {
+		for (Lifeline lifeline : diagram) {
 			String annotation = textHandler.getAnnotation(lifeline);
 			String file = lifeline.getName();
 			if (annotation != null) {
