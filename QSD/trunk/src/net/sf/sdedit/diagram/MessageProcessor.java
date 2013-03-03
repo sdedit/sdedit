@@ -614,7 +614,7 @@ final class MessageProcessor {
 			return;
 		}
 
-		message.updateView();
+		message.executeMessage();
 		if (provider.getState() != null) {
 			diagram.addToStateMap(message.getArrow(), provider.getState());
 		}
