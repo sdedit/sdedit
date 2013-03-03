@@ -35,6 +35,7 @@ import java.util.PriorityQueue;
 
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.error.SyntaxError;
 import net.sf.sdedit.text.TextHandler;
@@ -145,7 +146,7 @@ public class DiagramServer extends Thread {
 							.getInputStream(), "utf-8");
 					BufferedReader reader = new BufferedReader(isr);
 					String type = reader.readLine().trim();
-					StringBuffer buffer = new StringBuffer();
+					StringBuilder buffer = new StringBuilder();
 					String line;
 					while (true) {
 						line = reader.readLine();
@@ -165,10 +166,9 @@ public class DiagramServer extends Thread {
 							throw new RuntimeException(
 									"FreeHEP library missing.");
 						}
-						Diagram diagram = new Diagram(ConfigurationManager
-								.createNewDefaultConfiguration().getDataObject(),
-								new TextHandler(buffer.toString()), exporter);
-						diagram.generate();
+						DiagramFactory factory = new DiagramFactory(buffer.toString(), exporter);
+						factory.generateDiagram(ConfigurationManager
+                                .createNewDefaultConfiguration().getDataObject());
 						exporter.export();
 					} catch (SyntaxError se) {
 						TextHandler th = (TextHandler) se.getProvider();
