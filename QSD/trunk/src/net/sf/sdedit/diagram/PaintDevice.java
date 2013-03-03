@@ -52,338 +52,353 @@ import net.sf.sdedit.util.Direction;
  */
 public abstract class PaintDevice implements IPaintDevice {
 
-	private int height;
+    private int height;
 
-	/**
-	 * The i-th entry of this list is the set of sequence elements that appear
-	 * in the space between the i-th and the (i+1)-th lifeline, where n+1
-	 * corresponds to rightBound
-	 */
-	private final ArrayList<Set<SequenceElement>> leftOf;
+    /**
+     * The i-th entry of this list is the set of sequence elements that appear
+     * in the space between the i-th and the (i+1)-th lifeline, where n+1
+     * corresponds to rightBound
+     */
+    private final ArrayList<Set<SequenceElement>> leftOf;
 
-	private final List<Drawable> other;
+    private final List<Drawable> other;
 
-	private Diagram diagram;
+    private Diagram diagram;
 
-	private final Line rightBound;
+    private final Line rightBound;
 
-	private Font plainFont;
+    private Font plainFont;
 
-	private Font boldFont;
+    private Font boldFont;
 
-	protected PaintDevice() {
-		height = 0;
-		leftOf = new ArrayList<Set<SequenceElement>>();
-		other = new LinkedList<Drawable>();
-		rightBound = new Line(1, null);
-	}
-	
-	public void setDiagram (Diagram diagram) {
-		this.diagram = diagram;
-		plainFont = diagram.getConfiguration().getFont();
-		boldFont = new Font(plainFont.getName(), Font.BOLD,
-				plainFont.getSize() + 1);
-	}
+    protected PaintDevice() {
+        height = 0;
+        leftOf = new ArrayList<Set<SequenceElement>>();
+        other = new LinkedList<Drawable>();
+        rightBound = new Line(1, null);
+    }
 
-	/**
-	 * This method is called by the diagram when all objects/lifelines are
-	 * known.
-	 */
-	public void reinitialize() {
-		leftOf.clear();
-		other.clear();
-		rightBound.setLeft(0);
-		height = 0;
-		for (int i = 0; i < diagram.getNumberOfLifelines(); i++) {
-			leftOf.add(new HashSet<SequenceElement>());
-		}
-	}
+    public void setDiagram(Diagram diagram) {
+        this.diagram = diagram;
+        plainFont = diagram.getConfiguration().getFont();
+        boldFont = new Font(plainFont.getName(), Font.BOLD,
+                plainFont.getSize() + 1);
+    }
 
-	public Font getFont(boolean bold) {
-		return bold ? boldFont : plainFont;
-	}
+    /**
+     * This method is called by the diagram when all objects/lifelines are
+     * known.
+     */
+    public void reinitialize() {
+        leftOf.clear();
+        other.clear();
+        rightBound.setLeft(0);
+        height = 0;
+        for (int i = 0; i < diagram.getNumberOfLifelines(); i++) {
+            addLifelineSlot();
+        }
+    }
 
-	public Line getRightBound() {
-		return rightBound;
-	}
+    public void addLifelineSlot() {
+        leftOf.add(new HashSet<SequenceElement>());
+    }
 
-	public void addOtherDrawable(Drawable drawable) {
-		other.add(drawable);
-		if (drawable.getRight() > rightBound.getLeft()) {
-			rightBound.setLeft(drawable.getRight());
-		}
-		if (drawable.getBottom() > height) {
-			height = drawable.getBottom();
-		}
-	}
+    public Font getFont(boolean bold) {
+        return bold ? boldFont : plainFont;
+    }
 
-	public void addSequenceElement(SequenceElement elem) {
-		int index;
-		ExtensibleDrawable left, right;
-		if (elem.getAlign() == Direction.RIGHT) {
-			index = elem.getLeftEndpoint().getLifeline().getPosition();
-			left = elem.getLeftEndpoint().getLifeline().getRightmost()
-					.getView();
-			if (index == diagram.getNumberOfLifelines() - 1) {
-				right = rightBound;
-			} else {
-				right = diagram.getLifelineAt(index + 1).getLeftmost()
-						.getView();
-			}
-		} else { // Direction.LEFT
-			index = elem.getRightEndpoint().getLifeline().getPosition() - 1;
-			right = elem.getRightEndpoint().getLifeline().getLeftmost()
-					.getView();
-			left = diagram.getLifelineAt(index).getRightmost().getView();
-		}
-		leftOf.get(index).add(elem);
-		elem.setLeftLimit(left);
-		elem.setRightLimit(right);
-		diagram.getFragmentManager().addSequenceElement(elem);
-	}
+    public Line getRightBound() {
+        return rightBound;
+    }
 
-	public boolean isEmpty() {
-		return diagram == null || diagram.getNumberOfLifelines() == 0;
-	}
+    public void addOtherDrawable(Drawable drawable) {
+        other.add(drawable);
+        if (drawable.getRight() > rightBound.getLeft()) {
+            rightBound.setLeft(drawable.getRight());
+        }
+        if (drawable.getBottom() > height) {
+            height = drawable.getBottom();
+        }
+    }
 
-	public void computeAxes(int leftAxis) {
-		int n = diagram.getNumberOfLifelines();
-		int axis = leftAxis;
-		int mainWidth = diagram.getConfiguration().getMainLifelineWidth();
-		int subWidth = diagram.getConfiguration().getSubLifelineWidth();
+    public void addSequenceElement(SequenceElement elem) {
+        int index;
+        ExtensibleDrawable left, right;
+        if (elem.getAlign() == Direction.RIGHT) {
+            index = elem.getLeftEndpoint().getLifeline().getPosition();
+            left = elem.getLeftEndpoint().getLifeline().getRightmost()
+                    .getView();
+            if (index == diagram.getNumberOfLifelines() - 1) {
+                right = rightBound;
+            } else {
+                right = diagram.getLifelineAt(index + 1).getLeftmost()
+                        .getView();
+            }
+        } else { // Direction.LEFT
+            index = elem.getRightEndpoint().getLifeline().getPosition() - 1;
+            right = elem.getRightEndpoint().getLifeline().getLeftmost()
+                    .getView();
+            left = diagram.getLifelineAt(index).getRightmost().getView();
+        }
+        leftOf.get(index).add(elem);
+        elem.setLeftLimit(left);
+        elem.setRightLimit(right);
+        diagram.getFragmentManager().addSequenceElement(elem);
+    }
 
-		for (int i = 0; i < n; i++) {
-			if (i > 0) {
-				axis += diagram.getConfiguration().getGlue();
-			}
-			for (ExtensibleDrawable view : diagram.getLifelineAt(i)
-					.getAllViews()) {
-				if (view instanceof Line) {
+    public boolean isEmpty() {
+        return diagram == null || diagram.getNumberOfLifelines() == 0;
+    }
 
-					view.setLeft(axis + mainWidth / 2);
-				} else {
-					switch (view.getLifeline().getDirection()) {
-					case CENTER:
-						view.setLeft(axis);
-						break;
-					case LEFT:
-						view.setLeft(axis - view.getLifeline().getSideLevel()
-								* subWidth);
-						break;
-					case RIGHT:
-						view.setLeft(axis + mainWidth
-								+ (view.getLifeline().getSideLevel() - 1)
-								* subWidth);
-					}
-				}
-			}
+    public void computeAxes(int leftAxis) {
+        int n = diagram.getNumberOfLifelines();
+        int axis = leftAxis;
+        int mainWidth = diagram.getConfiguration().getMainLifelineWidth();
+        int subWidth = diagram.getConfiguration().getSubLifelineWidth();
 
-			Lifeline lifeline = diagram.getLifelineAt(i);
-			Drawable head = lifeline.getHead();
+        for (int i = 0; i < n; i++) {
+            if (i > 0) {
+                axis += diagram.getConfiguration().getGlue();
+            }
+            int j = 0;
+            for (Lifeline lifeline : diagram.getLifelinesAt(i)) {
 
-			int offset = mainWidth / 2;
-			// int offset = lifeline.getView().getWidth() / 2;
-			head.setLeft(axis - head.getWidth() / 2 + offset);
+                for (ExtensibleDrawable view : lifeline.getAllViews()) {
+                    if (view instanceof Line) {
 
-			if (lifeline.getCross() != null) {
-				lifeline.getCross().setLeft(
-						axis - diagram.getConfiguration().getDestructorWidth()
-								/ 2 + mainWidth / 2);
-			}
+                        view.setLeft(axis + mainWidth / 2);
+                    } else {
+                        switch (view.getLifeline().getDirection()) {
+                        case CENTER:
+                            view.setLeft(axis);
+                            break;
+                        case LEFT:
+                            view.setLeft(axis
+                                    - view.getLifeline().getSideLevel()
+                                    * subWidth);
+                            break;
+                        case RIGHT:
+                            view.setLeft(axis + mainWidth
+                                    + (view.getLifeline().getSideLevel() - 1)
+                                    * subWidth);
+                        }
+                    }
+                }
 
-			if (i < diagram.getNumberOfLifelines() - 1) {
-				axis += head.getWidth() / 2
-						+ diagram.getLifelineAt(i + 1).getHead().getWidth() / 2;
-			} else {
-				axis += head.getWidth() / 2 + mainWidth / 2;
-			}
+                Drawable head = lifeline.getHead();
 
-			// iterate over the sequence elements with their contents (text)
-			// to the left of the (i+1)-th lifeline
-			for (SequenceElement arrow : leftOf.get(i)) {
-				int left = arrow.getLeftLimit().getRight();
-				int level;
-				if (arrow.getRightLimit() == rightBound) {
-					level = 0;
-				} else {
-					level = arrow.getRightLimit().getLifeline().getSideLevel();
-				}
-				axis = Math.max(axis, left + arrow.getSpace()
-						+ arrow.getWidth() + level * subWidth);
-			}
-		}
-		rightBound.setLeft(axis);
-	}
+                int offset = mainWidth / 2;
+                // int offset = lifeline.getView().getWidth() / 2;
+                head.setLeft(axis - head.getWidth() / 2 + offset);
 
-	public abstract int getTextWidth(String text, boolean bold);
+                if (lifeline.getCross() != null) {
+                    lifeline.getCross().setLeft(
+                            axis
+                                    - diagram.getConfiguration()
+                                            .getDestructorWidth() / 2
+                                    + mainWidth / 2);
+                }
+                //FIXME different head sizes?
+                if (j == 0) {
+                    if (i < diagram.getNumberOfLifelines() - 1) {
+                        axis += head.getWidth()
+                                / 2
+                                + diagram.getLifelineAt(i + 1).getHead()
+                                        .getWidth() / 2;
+                    } else {
+                        axis += head.getWidth() / 2 + mainWidth / 2;
+                    }
+                }
+                j++;
+            }
 
-	public int getTextWidth(String text) {
-		return getTextWidth(text, false);
-	}
+            // iterate over the sequence elements with their contents (text)
+            // to the left of the (i+1)-th lifeline
+            for (SequenceElement arrow : leftOf.get(i)) {
+                int left = arrow.getLeftLimit().getRight();
+                int level;
+                if (arrow.getRightLimit() == rightBound) {
+                    level = 0;
+                } else {
+                    level = arrow.getRightLimit().getLifeline().getSideLevel();
+                }
+                axis = Math.max(axis,
+                        left + arrow.getSpace() + arrow.getWidth() + level
+                                * subWidth);
+            }
+        }
+        rightBound.setLeft(axis);
+    }
 
-	public abstract int getTextHeight(boolean bold);
+    public abstract int getTextWidth(String text, boolean bold);
 
-	public int getTextHeight() {
-		return getTextHeight(false);
-	}
+    public int getTextWidth(String text) {
+        return getTextWidth(text, false);
+    }
 
-	public int getWidth() {
-		return diagram == null ? 0 : rightBound.getLeft() + 6
-				+ diagram.getConfiguration().getRightMargin();
-	}
+    public abstract int getTextHeight(boolean bold);
 
-	public int getHeight() {
-		return height;
-	}
+    public int getTextHeight() {
+        return getTextHeight(false);
+    }
 
-	public void clear() {
-		// as a result of this, iterator() will return an empty iterator
-		diagram = null;
-	}
+    public int getWidth() {
+        return diagram == null ? 0 : rightBound.getLeft() + 6
+                + diagram.getConfiguration().getRightMargin();
+    }
 
-	/**
-	 * Computes the width and height of this PaintDevice (this is necessary
-	 * before a frame and a descriptive text can be set).
-	 */
-	public void computeBounds() {
-		for (int i = 0; i < diagram.getNumberOfLifelines(); i++) {
-			for (Drawable view : diagram.getLifelineAt(i).getAllViews()) {
-				processDrawable(view);
-			}
-		}
-		for (int i = 0; i < leftOf.size(); i++) {
-			for (SequenceElement arrow : leftOf.get(i)) {
-				processDrawable(arrow);
-			}
-		}
-		for (Drawable d : other) {
-			processDrawable(d);
-		}
-		height += diagram.getConfiguration().getLowerMargin();
-	}
+    public int getHeight() {
+        return height;
+    }
 
-	/**
-	 * This method is called once when no {@linkplain Drawable} object will be
-	 * added anymore. Its default implementation is empty.
-	 */
-	public void close() {
-		/* empty */
-	}
+    public void clear() {
+        // as a result of this, iterator() will return an empty iterator
+        diagram = null;
+    }
 
-	private void processDrawable(Drawable drawable) {
-		height = Math.max(height, drawable.getTop() + drawable.getHeight());
-		drawable.computeLayoutInformation();
-		if (drawable instanceof Fragment) {
-			int r = rightBound.getLeft();
-			rightBound.setLeft(Math.max(r, drawable.getLeft()
-					+ drawable.getWidth()));
-		}
-	}
-	
-	public void announce (int height) {
-		/* empty */
-	}
+    /**
+     * Computes the width and height of this PaintDevice (this is necessary
+     * before a frame and a descriptive text can be set).
+     */
+    public void computeBounds() {
+        for (int i = 0; i < diagram.getNumberOfLifelines(); i++) {
+            for (Drawable view : diagram.getLifelineAt(i).getAllViews()) {
+                processDrawable(view);
+            }
+        }
+        for (int i = 0; i < leftOf.size(); i++) {
+            for (SequenceElement arrow : leftOf.get(i)) {
+                processDrawable(arrow);
+            }
+        }
+        for (Drawable d : other) {
+            processDrawable(d);
+        }
+        height += diagram.getConfiguration().getLowerMargin();
+    }
 
-	public Diagram getDiagram() {
-		return diagram;
-	}
+    /**
+     * This method is called once when no {@linkplain Drawable} object will be
+     * added anymore. Its default implementation is empty.
+     */
+    public void close() {
+        /* empty */
+    }
 
-	public void writeToStream(OutputStream stream) throws IOException {
-		throw new UnsupportedOperationException("writeToStream not supported");
-	}
+    private void processDrawable(Drawable drawable) {
+        height = Math.max(height, drawable.getTop() + drawable.getHeight());
+        drawable.computeLayoutInformation();
+        if (drawable instanceof Fragment) {
+            int r = rightBound.getLeft();
+            rightBound.setLeft(Math.max(r,
+                    drawable.getLeft() + drawable.getWidth()));
+        }
+    }
 
-	/**
-	 * Returns an iterator over the <i>visible</i> drawable elements that are
-	 * displayed by this <tt>PanelPaintDevice</tt>.
-	 * 
-	 * @return an iterator over the <i>visible</i> drawable elements that are
-	 *         displayed by this <tt>PanelPaintDevice</tt>
-	 */
-	public Iterator<Drawable> iterator() {
-		return new Iter();
-	}
+    public void announce(int height) {
+        /* empty */
+    }
 
-	private class Iter implements Iterator<Drawable> {
+    public Diagram getDiagram() {
+        return diagram;
+    }
 
-		// counts through indices of lifelines and sets in the leftOf list
-		private int counter;
+    public void writeToStream(OutputStream stream) throws IOException {
+        throw new UnsupportedOperationException("writeToStream not supported");
+    }
 
-		// the current iterator, suitable for the counter value
-		private Iterator<? extends Drawable> iterator;
+    /**
+     * Returns an iterator over the <i>visible</i> drawable elements that are
+     * displayed by this <tt>PanelPaintDevice</tt>.
+     * 
+     * @return an iterator over the <i>visible</i> drawable elements that are
+     *         displayed by this <tt>PanelPaintDevice</tt>
+     */
+    public Iterator<Drawable> iterator() {
+        return new Iter();
+    }
 
-		private Drawable next;
+    private class Iter implements Iterator<Drawable> {
 
-		private final Diagram diagram;
+        // counts through indices of lifelines and sets in the leftOf list
+        private int counter;
 
-		private void nextIterator() {
-			if (diagram == null || !diagram.isFinished()) {
-				iterator = null;
-				return;
-			}
-			counter++;
-			if (counter < diagram.getNumberOfLifelines()) {
-				iterator = diagram.getLifelineAt(counter).getAllViews()
-						.iterator();
-			} else if (counter < 2 * diagram.getNumberOfLifelines()) {
-				iterator = leftOf.get(counter - diagram.getNumberOfLifelines())
-						.iterator();
-			} else if (counter == 2 * diagram.getNumberOfLifelines()) {
-				iterator = other.iterator();
-			} else {
-				iterator = null;
-			}
-		}
+        // the current iterator, suitable for the counter value
+        private Iterator<? extends Drawable> iterator;
 
-		Iter() {
-			this.diagram = PaintDevice.this.diagram;
-			counter = -1;
-			nextIterator();
-		}
+        private Drawable next;
 
-		public boolean hasNext() {
-			if (diagram != null && diagram != PaintDevice.this.diagram) {
-				return false;
-			}
-			if (next == null) {
-				findNext();
-			}
-			return next != null;
-		}
+        private final Diagram diagram;
 
-		/**
-		 * Sets <tt>next</tt> to the next element, if there is one. As a
-		 * precondition, next must be null.
-		 */
-		private void findNext() {
-			while (iterator != null) {
-				while (iterator.hasNext()) {
-					next = iterator.next();
-					if (next.isVisible()) {
-						return;
-					}
-				}
-				nextIterator();
-			}
-			if (next != null && !next.isVisible()) {
-				next = null;
-			}
-		}
+        private void nextIterator() {
+            if (diagram == null || !diagram.isFinished()) {
+                iterator = null;
+                return;
+            }
+            counter++;
+            if (counter < diagram.getNumberOfLifelines()) {
+                iterator = diagram.getLifelineAt(counter).getAllViews()
+                        .iterator();
+            } else if (counter < 2 * diagram.getNumberOfLifelines()) {
+                iterator = leftOf.get(counter - diagram.getNumberOfLifelines())
+                        .iterator();
+            } else if (counter == 2 * diagram.getNumberOfLifelines()) {
+                iterator = other.iterator();
+            } else {
+                iterator = null;
+            }
+        }
 
-		public Drawable next() {
-			if (next == null) {
-				findNext();
-			}
-			if (next != null) {
-				Drawable ret = next;
-				next = null;
-				return ret;
-			}
-			throw new NoSuchElementException();
-		}
+        Iter() {
+            this.diagram = PaintDevice.this.diagram;
+            counter = -1;
+            nextIterator();
+        }
 
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-	}
+        public boolean hasNext() {
+            if (diagram != null && diagram != PaintDevice.this.diagram) {
+                return false;
+            }
+            if (next == null) {
+                findNext();
+            }
+            return next != null;
+        }
+
+        /**
+         * Sets <tt>next</tt> to the next element, if there is one. As a
+         * precondition, next must be null.
+         */
+        private void findNext() {
+            while (iterator != null) {
+                while (iterator.hasNext()) {
+                    next = iterator.next();
+                    if (next.isVisible()) {
+                        return;
+                    }
+                }
+                nextIterator();
+            }
+            if (next != null && !next.isVisible()) {
+                next = null;
+            }
+        }
+
+        public Drawable next() {
+            if (next == null) {
+                findNext();
+            }
+            if (next != null) {
+                Drawable ret = next;
+                next = null;
+                return ret;
+            }
+            throw new NoSuchElementException();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
 }
-//{{core}}
+// {{core}}
