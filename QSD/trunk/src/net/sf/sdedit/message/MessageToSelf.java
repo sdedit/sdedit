@@ -76,7 +76,7 @@ public class MessageToSelf extends ForwardMessage
     }
     
     @Override
-    public void updateView() {
+    protected void execute() {
     	getDiagram().getPaintDevice().announce(getConfiguration().getSpaceBeforeActivation() +
     			Arrow.getInnerHeight(this) + diagram.arrowSize / 2);
         extendLifelines(getConfiguration().getSpaceBeforeSelfMessage());

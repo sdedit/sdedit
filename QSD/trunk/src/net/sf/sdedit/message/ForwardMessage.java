@@ -109,7 +109,7 @@ public class ForwardMessage extends Message {
 				&& !getCaller().isAlwaysActive();
 	}
 
-	public void updateView() {
+	protected void execute() {
 		if (!(getCallee().isAlwaysActive())) {
 			extendLifelines(getConfiguration().getSpaceBeforeActivation());
 		}

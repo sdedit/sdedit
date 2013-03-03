@@ -56,9 +56,9 @@ public class DestructorAnswer extends Answer
         super(caller, callee, diagram, data, forward);
     }
 
-    public void updateView() {
+    protected void execute() {
 
-        super.updateView();
+        super.execute();
         
         
         getCaller().destroy();

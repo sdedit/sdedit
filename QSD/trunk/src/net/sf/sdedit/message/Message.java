@@ -84,6 +84,11 @@ public abstract class Message implements Constants {
     public final Arrow getArrow() {
         return arrow;
     }
+    
+    public void executeMessage () {
+        execute();
+        getDiagram().afterExecution(this);
+    }
 
     /**
      * Creates some space on the diagram, so that the message arrow and its
@@ -94,7 +99,7 @@ public abstract class Message implements Constants {
      * {@linkplain #extendLifelines(int)}.
      * 
      */
-    public abstract void updateView();
+    protected abstract void execute();
 
     /**
      * Returns the diagram on which the message is to be drawn.

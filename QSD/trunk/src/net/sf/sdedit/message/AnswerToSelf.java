@@ -40,7 +40,7 @@ public class AnswerToSelf extends Answer
         super(caller, callee, diagram, data, forward);
     }
     
-    public void updateView() {
+    protected void execute() {
     	
     	getDiagram().getPaintDevice().announce(getConfiguration().getSpaceBeforeAnswerToSelf()+
     			Arrow.getInnerHeight(this) + diagram.arrowSize / 2);

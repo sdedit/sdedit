@@ -64,7 +64,7 @@ public class BroadcastMessage extends ForwardMessage {
 	}
 
 	@Override
-	public void updateView() {
+	protected void execute() {
 		if (getData().getBroadcastType() == FIRST) {
 			getDiagram().getPaintDevice().announce(getConfiguration().getSpaceBeforeActivation() + 3 +
 					Arrow.getInnerHeight(this) + diagram.arrowSize / 2);

@@ -74,7 +74,7 @@ public class Answer extends Message
         return forward;
     }
 
-    public void updateView() {
+    protected void execute() {
 
         getDiagram().getFragmentManager().finishFragmentsNotIncluding(this);
     	if (getCallee().isAlwaysActive()) {

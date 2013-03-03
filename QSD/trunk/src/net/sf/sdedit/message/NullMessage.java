@@ -39,7 +39,7 @@ public class NullMessage extends ForwardMessage {
 	}
 
 	@Override
-	public void updateView() {
+	protected void execute() {
 		extendLifelines(getConfiguration().getSpaceBeforeActivation());
 		getDiagram().setCallerThread(getCallee().getThread());
 		getDiagram().setFirstCaller(getCallee());

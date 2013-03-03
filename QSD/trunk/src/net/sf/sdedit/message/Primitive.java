@@ -54,7 +54,7 @@ public final class Primitive extends ForwardMessage {
 		super(caller, null, diagram, data);
 	}
 
-	public void updateView() {
+	protected void execute() {
 		
 		/*
 		 PROPOSED IMPLEMENTATION:
