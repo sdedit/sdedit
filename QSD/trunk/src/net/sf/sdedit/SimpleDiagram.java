@@ -36,12 +36,9 @@ import java.io.StringWriter;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
-import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.diagram.DiagramDataProvider;
+import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.IPaintDevice;
-import net.sf.sdedit.error.SemanticError;
-import net.sf.sdedit.error.SyntaxError;
-import net.sf.sdedit.text.TextHandler;
+import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.ui.ImagePaintDevice;
 import net.sf.sdedit.ui.components.configuration.Bean;
 
@@ -67,11 +64,11 @@ public class SimpleDiagram {
 		ConfigurationManager.storeConfigurations();
 	}
 	
-	public void saveToFile (String name, String format) throws SemanticError, SyntaxError, IOException {
+	public void saveToFile (String name, String format) throws DiagramError, IOException {
 		getImagePaintDevice().saveImage(format, name);
 	}
 	
-	public Image toImage () throws SemanticError, SyntaxError {
+	public Image toImage () throws DiagramError {
 		return getImagePaintDevice().getImage();
 	}
 	
@@ -105,16 +102,13 @@ public class SimpleDiagram {
 		out.close();
 	}
 	
-    private ImagePaintDevice getImagePaintDevice() throws SemanticError, SyntaxError {
+    private ImagePaintDevice getImagePaintDevice() throws DiagramError {
 		if (paintDevice instanceof ImagePaintDevice) {
 			return (ImagePaintDevice) paintDevice;
 		}
-		DiagramDataProvider diagramDataProvider =
-			new TextHandler(text);
 		paintDevice = new ImagePaintDevice();
-		Diagram diagram = new Diagram(configuration.getDataObject(), diagramDataProvider,
-				paintDevice);
-		diagram.generate();
+		DiagramFactory factory = new DiagramFactory(text, paintDevice);
+		factory.generateDiagram(configuration.getDataObject());
 		((ImagePaintDevice) paintDevice).drawAll();
 		return (ImagePaintDevice) paintDevice;
 	}
