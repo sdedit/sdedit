@@ -59,7 +59,7 @@ public class ConstructorMessage extends ForwardMessage
         super(caller, callee, diagram, data);
     }
 
-    public void updateView() {
+    protected void execute() {
     	
         int headHeight = getCallee().getHead().getHeight();
 
@@ -68,6 +68,12 @@ public class ConstructorMessage extends ForwardMessage
     		+ headHeight + getDiagram().getConfiguration().getInitialSpace());
     	
         extendLifelines(getConfiguration().getSpaceBeforeConstruction());
+        
+        // find a space where there is no active line and get its position
+        if (getCallee().isSavingSpace()) {
+            getDiagram().reuseSpace(getCallee());
+        }
+  
         
         int s = 0;
         Arrow arrow;
