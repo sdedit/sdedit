@@ -36,10 +36,9 @@ import javax.swing.JPanel;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.PrintConfiguration;
-import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.diagram.DiagramDataProvider;
-import net.sf.sdedit.error.SemanticError;
-import net.sf.sdedit.error.SyntaxError;
+import net.sf.sdedit.diagram.DiagramDataProviderFactory;
+import net.sf.sdedit.diagram.DiagramFactory;
+import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.ui.components.ZoomPane;
 
 import org.freehep.graphicsio.PageConstants;
@@ -70,7 +69,7 @@ public class MultipageExporter extends JPanel {
 		return pdf != null;
 	}
 
-	private DiagramDataProvider provider;
+	private DiagramDataProviderFactory provider;
 
 	private Configuration configuration;
 
@@ -84,7 +83,7 @@ public class MultipageExporter extends JPanel {
 
 	private PrintConfiguration properties;
 
-	public MultipageExporter(PrintConfiguration properties, DiagramDataProvider provider,
+	public MultipageExporter(PrintConfiguration properties, DiagramDataProviderFactory provider,
 			Configuration configuration) {
 		super();
 		this.properties = properties;
@@ -108,9 +107,10 @@ public class MultipageExporter extends JPanel {
 		return paintDevice.getScale();
 	}
 
-	public void init() throws SyntaxError, SemanticError {
+	public void init() throws DiagramError {
 		paintDevice = new MultipagePaintDevice(properties, size);
-		new Diagram(configuration, provider, paintDevice).generate();
+		DiagramFactory factory = new DiagramFactory(provider, paintDevice);
+		factory.generateDiagram(configuration);
 		int n = paintDevice.getPanels().size();
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		int i = 0;
