@@ -40,7 +40,6 @@ import net.sf.sdedit.drawable.ExtensibleDrawable;
 import net.sf.sdedit.drawable.Fragment;
 import net.sf.sdedit.drawable.Line;
 import net.sf.sdedit.drawable.SequenceElement;
-
 import net.sf.sdedit.util.Direction;
 
 /**
@@ -149,6 +148,17 @@ public abstract class PaintDevice implements IPaintDevice {
     public boolean isEmpty() {
         return diagram == null || diagram.getNumberOfLifelines() == 0;
     }
+    
+    private int getMaxHeadWidthAt(int position) {
+        int maxHeadWidth = 0;
+        List<Lifeline> list = diagram.getLifelinesAt(position);
+        for (Lifeline line : list) {
+            if (line.getHead().getWidth() > maxHeadWidth) {
+                maxHeadWidth = line.getHead().getWidth();
+            }
+        }
+        return maxHeadWidth;
+    }
 
     public void computeAxes(int leftAxis) {
         int n = diagram.getNumberOfLifelines();
@@ -161,7 +171,9 @@ public abstract class PaintDevice implements IPaintDevice {
                 axis += diagram.getConfiguration().getGlue();
             }
             int j = 0;
-            for (Lifeline lifeline : diagram.getLifelinesAt(i)) {
+            List<Lifeline> list = diagram.getLifelinesAt(i);
+            final int maxHeadWidth = getMaxHeadWidthAt(i);
+            for (Lifeline lifeline : list) {
 
                 for (ExtensibleDrawable view : lifeline.getAllViews()) {
                     if (view instanceof Line) {
@@ -198,15 +210,15 @@ public abstract class PaintDevice implements IPaintDevice {
                                             .getDestructorWidth() / 2
                                     + mainWidth / 2);
                 }
-                //FIXME different head sizes?
-                if (j == 0) {
+                
+                if (j == list.size()-1) {
+                 // the final iteration for the current (i-th) lifeline slot
                     if (i < diagram.getNumberOfLifelines() - 1) {
-                        axis += head.getWidth()
+                        axis += maxHeadWidth
                                 / 2
-                                + diagram.getLifelineAt(i + 1).getHead()
-                                        .getWidth() / 2;
+                                + getMaxHeadWidthAt(i+1) / 2;
                     } else {
-                        axis += head.getWidth() / 2 + mainWidth / 2;
+                        axis += maxHeadWidth / 2 + mainWidth / 2;
                     }
                 }
                 j++;
@@ -262,7 +274,7 @@ public abstract class PaintDevice implements IPaintDevice {
      */
     public void computeBounds() {
         for (int i = 0; i < diagram.getNumberOfLifelines(); i++) {
-            for (Drawable view : diagram.getLifelineAt(i).getAllViews()) {
+            for (Drawable view : getAllViewsAt(i)) {
                 processDrawable(view);
             }
         }
@@ -317,6 +329,14 @@ public abstract class PaintDevice implements IPaintDevice {
     public Iterator<Drawable> iterator() {
         return new Iter();
     }
+    
+    private List<ExtensibleDrawable> getAllViewsAt(int position) {
+        List<ExtensibleDrawable> allViews = new ArrayList<ExtensibleDrawable>();
+        for (Lifeline line : diagram.getLifelinesAt(position)) {
+            allViews.addAll(line.getAllViews());
+        }
+        return allViews;
+    }
 
     private class Iter implements Iterator<Drawable> {
 
@@ -337,7 +357,7 @@ public abstract class PaintDevice implements IPaintDevice {
             }
             counter++;
             if (counter < diagram.getNumberOfLifelines()) {
-                iterator = diagram.getLifelineAt(counter).getAllViews()
+                iterator = getAllViewsAt(counter)
                         .iterator();
             } else if (counter < 2 * diagram.getNumberOfLifelines()) {
                 iterator = leftOf.get(counter - diagram.getNumberOfLifelines())
