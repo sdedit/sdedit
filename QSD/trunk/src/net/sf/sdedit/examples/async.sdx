@@ -5,7 +5,7 @@ server:Server[a]
 job:BackgroundJob[a]
 db:Database[a]
 
-user:server[s].start
+user:server.start
       
 # Here comes the asynchronous message that implicitly spawns
 # a new thread. Thanks to the mnemnonic 'j' the job object
@@ -13,18 +13,18 @@ user:server[s].start
 # you do not even have to deal with thread numbers.
 
 [c asynchronous message]
-server:>job[j].start
+server:>job.start
 [/c]
       
 job:db.do 1'000'000 queries
-server[s]:server.do something useful
-job[j]:job.analyze queries
-job[j]:job.compute result
-server[s]:server.wait for result
-job[j]:server.send back result
+server:server.do something useful
+job:job.analyze queries
+job:job.compute result
+server:server.wait for result
+job:server.send back result
 
-job[j]:stop
-server[s]:user.send result to user]]></source>
+job:stop
+server:user.send result to user]]></source>
 <configuration>
 <property name="actorWidth" value="25"/>
 <property name="arrowSize" value="6"/>
