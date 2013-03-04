@@ -115,7 +115,7 @@
 <li>
           
 <a href="levels.sdx">
-            Example illustrating levels and mnemonics
+            Example illustrating levels
           </a>
         
 </li>
@@ -316,14 +316,6 @@
       </div>
       
 <div class="para">
-        If &lt;s&gt; is not a number, it is a mnemonic. A mnemonic can
-        be defined for a callee (by using the optional [&lt;m&gt;]
-        part). If &lt;s&gt; is a mnemonic that has been defined for the
-        object &lt;caller&gt; and &lt;caller&gt; is still active,
-        &lt;caller&gt;[&lt;s&gt;] references this object.
-      </div>
-      
-<div class="para">
         &lt;answer&gt;= is optional and &lt;answer&gt; is simply a
         string representing the answer to the message. This string is
         used as a label of a dashed arrow from the &lt;callee&gt; to the
@@ -338,13 +330,6 @@
         specified, &lt;message&gt; is interpreted as an description of a
         simple action (not another invocation of a method/procedure)
         performed by the caller.
-      </div>
-      
-<div class="para">
-        [&lt;m&gt;] is optional and &lt;m&gt; is a mnemonic containing
-        at least one character that is not a digit. As long as the
-        callee is active, it can be referenced as a caller by its name
-        followed by [&lt;m&gt;].
       </div>
       
 <div class="para">
