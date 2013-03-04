@@ -80,8 +80,7 @@ public class ForwardMessage extends Message {
 	 *         <tt>null</tt>
 	 */
 	public Answer getAnswerMessage() {
-		if (getCallee().isAlwaysActive() || getData().isSpawnMessage()
-				|| getCallee().isActiveObject()) {
+		if (getCallee().isAlwaysActive() || getData().isSpawnMessage()) {
 			return null;
 		}
 		if (getCaller().isAlwaysActive() && getData().returnsInstantly()) {

@@ -70,12 +70,6 @@ public final class Lifeline implements Comparable<Lifeline>{
 	private final String label;
 
 	/**
-	 * A mnemonic for distinguishing between lifelines belonging to the same
-	 * object.
-	 */
-	private String mnemonic;
-
-	/**
 	 * The original lifeline belonging to this one.
 	 */
 	private final Lifeline root;
@@ -139,11 +133,6 @@ public final class Lifeline implements Comparable<Lifeline>{
 	private int thread;
 
 	/**
-	 * Flag denoting if this lifeline belongs to an active object
-	 */
-	private final boolean activeObject;
-
-	/**
 	 * Flag denoting if this lifeline belongs to a process (a passive actor)
 	 */
 	private final boolean process;
@@ -196,7 +185,6 @@ public final class Lifeline implements Comparable<Lifeline>{
 			string = "/" + string;
 		}
 		String flags = "";
-		if (activeObject) flags += "v";
 		if (process) flags += "p";
 		if (external) flags += "e";
 		if (autodestroy) flags += "x";
@@ -244,8 +232,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 	 *            the diagram to which the lifeline belongs
 	 */
 	public Lifeline(String name, String type, String label, boolean alive,
-			boolean anonymous, boolean role, boolean activeObject,
-			boolean process, boolean hasThread, boolean autodestroy,
+			boolean anonymous, boolean role, boolean process, boolean hasThread, boolean autodestroy,
 			boolean external, boolean saveSpace, Diagram diagram) {
 		this.diagram = diagram;
 		this.name = name;
@@ -254,7 +241,6 @@ public final class Lifeline implements Comparable<Lifeline>{
 		this.alive = alive;
 		this.thread = 0;
 		this.level = 0;
-		this.activeObject = activeObject;
 		this.process = process;
 		this.hasThread = hasThread;
 		this.autodestroy = autodestroy;
@@ -309,7 +295,6 @@ public final class Lifeline implements Comparable<Lifeline>{
 		this.name = root.name;
 		this.type = root.type;
 		this.direction = direction;
-		this.activeObject = root.activeObject;
 		this.root = root;
 		this.thread = thread;
 		this.external = root.external;
@@ -387,10 +372,6 @@ public final class Lifeline implements Comparable<Lifeline>{
 		return callLevel;
 	}
 
-	public boolean isActiveObject() {
-		return activeObject;
-	}
-
 	public boolean hasThread() {
 		return hasThread;
 	}
@@ -401,14 +382,6 @@ public final class Lifeline implements Comparable<Lifeline>{
 
 	public int getThread() {
 		return thread;
-	}
-
-	public void setMnemonic(String mnemnonic) {
-		this.mnemonic = mnemnonic;
-	}
-
-	public String getMnemonic() {
-		return mnemonic;
 	}
 
 	public boolean isWaiting() {
@@ -737,8 +710,6 @@ public final class Lifeline implements Comparable<Lifeline>{
 				view.setTop(parent.getView().getTop()
 						+ parent.getView().getHeight());
 				view.setHeight(0);
-			} else {
-				diagram.clearMnemonic(this);
 			}
 			return;
 		}
@@ -749,7 +720,6 @@ public final class Lifeline implements Comparable<Lifeline>{
 		} else {
 			// view = new Line(computeDrawableWidth(), this);
 			view = new Line(1, this);
-			diagram.clearMnemonic(this);
 			lastLine = (Line) view;
 		}
 		view.setTop(y);

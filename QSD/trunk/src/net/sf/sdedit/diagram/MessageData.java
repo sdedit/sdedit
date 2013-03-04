@@ -47,10 +47,6 @@ public class MessageData {
 
 	private String message;
 
-	private String callerMnemonic;
-
-	private String calleeMnemonic;
-
 	private String[] callees;
 
 	private boolean returnsInstantly;
@@ -70,8 +66,6 @@ public class MessageData {
 		// the user, the default remains assigned
 		caller = "";
 		callee = "";
-		callerMnemonic = "";
-		calleeMnemonic = "";
 		noteNumber = 0;
 		level = 0;
 		answer = "";
@@ -285,47 +279,6 @@ public class MessageData {
 	 */
 	public void setThread(int thread) {
 		this.thread = thread;
-	}
-
-	/**
-	 * Returns a mnemonic for the callee object, if one is defined in this
-	 * message, otherwise an empty string.
-	 * 
-	 * @return a mnemonic for the callee object
-	 */
-	public String getCalleeMnemonic() {
-		return calleeMnemonic;
-	}
-
-	/**
-	 * Sets a mnemonic for the callee object.
-	 * 
-	 * @param calleeMnemonic
-	 *            a mnemonic for the callee object
-	 */
-	public void setCalleeMnemonic(String calleeMnemonic) {
-		this.calleeMnemonic = calleeMnemonic;
-	}
-
-	/**
-	 * Returns the mnemonic identifying this message's caller object, if there
-	 * is such a mnemonic, otherwise an empty string.
-	 * 
-	 * @return the mnemonic identifying this message's caller object
-	 */
-	public String getCallerMnemonic() {
-		return callerMnemonic;
-	}
-
-	/**
-	 * Sets the mnemonic identifying this message's caller object.
-	 * 
-	 * @param callerMnemonic
-	 *            the mnemonic identifying this message's caller object
-	 * 
-	 */
-	public void setCallerMnemonic(String callerMnemonic) {
-		this.callerMnemonic = callerMnemonic;
 	}
 
 	public void setReturnsInstantly(boolean on) {

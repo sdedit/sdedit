@@ -71,7 +71,6 @@ import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.editor.TabActivator;
 import net.sf.sdedit.help.HelpTab;
 import net.sf.sdedit.icons.Icons;
-
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.TabListener;
 import net.sf.sdedit.ui.UserInterface;

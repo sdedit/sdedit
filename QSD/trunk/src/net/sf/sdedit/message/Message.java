@@ -152,7 +152,7 @@ public abstract class Message implements Constants {
      * @return true if at least one of the caller or callee is an actor
      */
     public boolean isSynchronous() {
-        return !getCallee().isActiveObject() && !data.isSpawnMessage()
+        return !data.isSpawnMessage()
                 && !(getCaller().isAlwaysActive())
                 && !(getCallee().isAlwaysActive());
     }

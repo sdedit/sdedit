@@ -162,12 +162,6 @@ public final class Diagram implements Constants, Iterable<Lifeline> {
 	 */
 	private final NoteManager noteManager;
 
-	/**
-	 * Maps a lifeline name onto a map that maps a lifeline mnemonic onto the
-	 * corresponding lifeline.
-	 */
-	private final Map<String, Map<String, Lifeline>> mnemonicMap;
-	
 	private final List<ForwardMessage> messages;
 
 	private final FragmentManager fragmentManager;
@@ -206,8 +200,6 @@ public final class Diagram implements Constants, Iterable<Lifeline> {
 	public final boolean opaqueText;
 	
 	private final boolean requireReturn;
-	
-	private final boolean slackMode;
 	
 	/**
 	 * Maps lifeline names onto lifeline positions.
@@ -261,12 +253,11 @@ public final class Diagram implements Constants, Iterable<Lifeline> {
 		threadStacks = new ArrayList<LinkedList<Message>>();
 		threadStates = new ArrayList<String>();
 		drawableBijection = new Bijection<Drawable, Object>();
-		this.threaded = conf.isSlackMode() || conf.isThreaded();
+		this.threaded = conf.isThreaded();
 		if (!threaded) {
 			/* spawn the only single thread */
 			callerThread = spawnThread();
 		}
-		mnemonicMap = new HashMap<String, Map<String, Lifeline>>();
 		noteManager = new NoteManager(this);
 		fragmentManager = new FragmentManager(this);
 		processor = new MessageProcessor(this);
@@ -278,7 +269,6 @@ public final class Diagram implements Constants, Iterable<Lifeline> {
 				configuration.getTc7(), configuration.getTc8(),
 				configuration.getTc9(), };
 		requireReturn = conf.isExplicitReturns();
-		slackMode = conf.isSlackMode();
 		messages = new LinkedList<ForwardMessage>();
 		positionMap = new HashMap<String,Integer>();
 		messageId = -1;
@@ -416,10 +406,6 @@ public final class Diagram implements Constants, Iterable<Lifeline> {
 			if (lifeline == null) {
 				return;
 			}
-			if (lifeline.isActiveObject() && !threaded) {
-				throw new SemanticError(provider,
-						"v flag for active object cannot be set when multithreading is disabled");
-			}
 			if (provider.getState() != null) {
 				drawableBijection.add(lifeline.getHead(), provider.getState());
 			}
@@ -500,7 +486,7 @@ public final class Diagram implements Constants, Iterable<Lifeline> {
 								part.setSpawnMessage(true);
 							}
 						}
-						part.setReturnsInstantly(slackMode || data.returnsInstantly());
+						part.setReturnsInstantly(data.returnsInstantly());
 						if (i == 0) {
 							part.setNoteNumber(data.getNoteNumber());
 							part.setMessage(data.getMessage());
@@ -844,37 +830,9 @@ public final class Diagram implements Constants, Iterable<Lifeline> {
 		drawableBijection.add(drawable, state);
 	}
 
-	public Lifeline getLifelineByMnemonic(String lifelineName, String mnemonic) {
-		Map<String, Lifeline> map = mnemonicMap.get(lifelineName);
-		return map == null ? null : map.get(mnemonic);
-	}
-
-	public void associateLifeline(String lifelineName, String mnemonic,
-			Lifeline lifeline) throws SemanticError {
-		Map<String, Lifeline> map = mnemonicMap.get(lifelineName);
-		if (map == null) {
-			map = new HashMap<String, Lifeline>();
-			mnemonicMap.put(lifelineName, map);
-		}
-		if (map.put(mnemonic, lifeline) != null) {
-			throw new SemanticError(provider, "The mnemonic \"" + mnemonic
-					+ "\" is already defined for the lifeline " + "\""
-					+ lifeline.getName());
-		}
-
-	}
 
 	public void associateMessage(int number, Message msg) {
 		noteManager.associateMessage(number, msg);
-	}
-
-	public void clearMnemonic(Lifeline lifeline) {
-		String mnemonic = lifeline.getMnemonic();
-		if (mnemonic == null) {
-			return;
-		}
-		Map<String, Lifeline> map = mnemonicMap.get(lifeline.getName());
-		map.remove(mnemonic);
 	}
 
 	public void toggleWaitingStatus(int thread) {

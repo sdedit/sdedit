@@ -30,8 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import com.sun.tools.doclets.internal.toolkit.Configuration;
-
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.drawable.Strokes.StrokeType;
 import net.sf.sdedit.message.ConstructorMessage;

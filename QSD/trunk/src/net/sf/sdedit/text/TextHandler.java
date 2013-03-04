@@ -79,8 +79,6 @@ public class TextHandler implements DiagramDataProvider {
 
 	private int objectSectionEnd;
 	
-	private boolean slackMode;
-	
 	private boolean reuseSpace;
 
 	/**
@@ -112,7 +110,6 @@ public class TextHandler implements DiagramDataProvider {
 	 */
 	public void setDiagram(Diagram diagram) {
 		this.diagram = diagram;
-		this.slackMode = diagram.getConfiguration().isSlackMode();
 		this.reuseSpace = diagram.getConfiguration().isReuseSpace();
 	}
 
@@ -383,12 +380,11 @@ public class TextHandler implements DiagramDataProvider {
 
 		boolean anon = flags.indexOf('a') >= 0;
 		boolean role = flags.indexOf('r') >= 0;
-		boolean active = flags.indexOf('v') >= 0;
 		boolean process = flags.indexOf('p') >= 0;
 		boolean hasThread = flags.indexOf('t') >= 0;
 		boolean autoDestroy = flags.indexOf('x') >= 0;
 		boolean external = flags.indexOf('e') >= 0;
-		boolean saveSpace = reuseSpace && flags.indexOf('s') >= 0;
+		boolean saveSpace = reuseSpace && flags.indexOf('f') == -1;
 
 		Lifeline lifeline;
 
@@ -408,7 +404,7 @@ public class TextHandler implements DiagramDataProvider {
 						"invisible objects cannot have their own thread");
 			}*/
 			lifeline = new Lifeline(name.substring(1), type, label, false,
-					anon, role, active, false, slackMode, /*false*/ autoDestroy, external, saveSpace,
+					anon, role, false, false, autoDestroy, external, saveSpace,
 					diagram);
 		} else {
 
@@ -427,7 +423,7 @@ public class TextHandler implements DiagramDataProvider {
 			}
 
 			lifeline = new Lifeline(parts[0], parts[1], label, true, anon,
-					role, active, process, slackMode || hasThread, autoDestroy, external, false,
+					role, process, hasThread, autoDestroy, external, false,
 					diagram);
 		}
 		

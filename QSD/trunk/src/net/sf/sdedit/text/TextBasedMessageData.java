@@ -54,7 +54,7 @@ import net.sf.sdedit.util.Grep.Region;
 public class TextBasedMessageData extends MessageData {
 
 	private final static String LEVELS = "(" + "\\[(\\d*),(\\d+)\\]" + "|"
-			+ "\\[(\\d+)\\]" + "|" + "\\[(\\D.*)\\]" + ")";
+			+ "\\[(\\d+)\\]" + ")";
 
 	private final static String PREFIX = "(\\(\\d*(,\\d+)?\\))?\\s*(.+)";
 
@@ -110,12 +110,12 @@ public class TextBasedMessageData extends MessageData {
 		Grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON + "(.*)" + EQ
 				+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy", "caller",
 				"dummy", "levelString", "threadString", "levelString",
-				"callerMnemonic", "answer", "callee", "message")
+				"answer", "callee", "message")
 				/* Level, thread, no answer */
 				|| Grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON
 						+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy",
 						"caller", "dummy", "levelString", "threadString",
-						"levelString", "callerMnemonic", "callee", "message")
+						"levelString", "callee", "message")
 				/* No level/thread, but answer */
 				|| Grep.parseAndSetProperties(this, PREFIX + COLON + "(.*)"
 						+ EQ + "(.+?)" + DOT + "(.*)", string, regions, "noteId",
@@ -128,7 +128,7 @@ public class TextBasedMessageData extends MessageData {
 				|| Grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON
 						+ "(.*)", string, regions, "noteId", "dummy", "caller", "dummy",
 						"levelString", "threadString", "levelString",
-						"callerMnemonic", "message")
+						"message")
 				/* primitive without level */
 				|| Grep.parseAndSetProperties(this, PREFIX + COLON + "(.*)",
 						string, regions, "noteId", "dummy", "caller", "message")
@@ -136,7 +136,7 @@ public class TextBasedMessageData extends MessageData {
 				|| Grep.parseAndSetProperties(this, PREFIX + LEVELS + SPAWN
 						+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy",
 						"spawner", "dummy", "levelString", "threadString",
-						"levelString", "callerMnemonic", "callee", "message")
+						"levelString", "callee", "message")
 				/* spawn without level */
 				|| Grep.parseAndSetProperties(this, PREFIX + SPAWN + "(.+?)"
 						+ DOT + "(.*)", string, regions, "noteId", "dummy", "spawner",
@@ -163,6 +163,8 @@ public class TextBasedMessageData extends MessageData {
 			setCallees(callee.substring(1, callee.length() - 1).split(","));
 
 		} else {
+			super.setCallee(callee);
+			/*
 			String[] parts = Grep.parse("(.*)\\[(\\D.*)\\]$", callee);
 			if (parts == null) {
 				super.setCallee(callee);
@@ -170,6 +172,7 @@ public class TextBasedMessageData extends MessageData {
 				super.setCallee(parts[0]);
 				super.setCalleeMnemonic(parts[1]);
 			}
+			*/
 		}
 	}
 

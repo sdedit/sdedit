@@ -28,7 +28,6 @@ import java.util.LinkedList;
 
 import net.sf.sdedit.error.ObjectNotFound;
 import net.sf.sdedit.error.SemanticError;
-
 import net.sf.sdedit.message.Answer;
 import net.sf.sdedit.message.BroadcastMessage;
 import net.sf.sdedit.message.ConstructorMessage;
@@ -94,10 +93,6 @@ final class MessageProcessor {
 	private Answer answer;
 
 	private boolean requireReturn;
-
-	private boolean calleeIsActiveObject() {
-		return rootCallee != null && rootCallee.isActiveObject();
-	}
 
 	private boolean callerIsActor() {
 		return rootCaller != null && rootCaller.isAlwaysActive();
@@ -171,10 +166,6 @@ final class MessageProcessor {
 	}
 
 	private void noThreadingChecks() throws SemanticError {
-		if (rootCallee != null && rootCallee.isActiveObject()) {
-			throw new SemanticError(provider,
-					"Active objects are not permitted when multithreading is not enabled.");
-		}
 		if (data.isSpawnMessage()) {
 			throw new SemanticError(provider,
 					"Threads cannot be spawned when multithreading is not enabled.");
@@ -294,46 +285,31 @@ final class MessageProcessor {
 			callerThread = diagram.spawnThread();
 		} else {
 
-			Lifeline lineToBeFound = null;
-
-			if (!data.getCallerMnemonic().equals("")) {
-				lineToBeFound = diagram.getLifelineByMnemonic(data.getCaller(),
-						data.getCallerMnemonic());
-				if (lineToBeFound == null) {
-					throw new SemanticError(provider,
-							"There is no lifeline named \"" + data.getCaller()
-									+ "\" associated to mnemonic \""
-									+ data.getCallerMnemonic() + "\"");
+			/*
+			 * If the MessageData specifies a thread number, we'll take it as
+			 * the current thread number, otherwise we check if the caller
+			 * object (represented by callerRoot) is just by only a single
+			 * thread.
+			 */
+			if (data.getThread() >= 0) {
+				if (data.getThread() >= diagram.getNumberOfThreads()) {
+					throw new SemanticError(provider, "Illegal thread number: "
+							+ data.getThread());
 				}
-				callerThread = lineToBeFound.getThread();
-
+				callerThread = data.getThread();
 			} else {
-
-				/*
-				 * If the MessageData specifies a thread number, we'll take it
-				 * as the current thread number, otherwise we check if the
-				 * caller object (represented by callerRoot) is just by only a
-				 * single thread.
-				 */
-				if (data.getThread() >= 0) {
-					if (data.getThread() >= diagram.getNumberOfThreads()) {
-						throw new SemanticError(provider,
-								"Illegal thread number: " + data.getThread());
-					}
-					callerThread = data.getThread();
+				final int uniqueThread = rootCaller.getUniqueThread();
+				if (uniqueThread >= 0) {
+					callerThread = uniqueThread;
 				} else {
-					final int uniqueThread = rootCaller.getUniqueThread();
-					if (uniqueThread >= 0) {
-						callerThread = uniqueThread;
-					} else {
-						if (calleeThread == -1) {
-							throw new SemanticError(provider,
-									"Explicit thread number required.");
-						}
-						callerThread = calleeThread;
+					if (calleeThread == -1) {
+						throw new SemanticError(provider,
+								"Explicit thread number required.");
 					}
+					callerThread = calleeThread;
 				}
 			}
+
 		}
 
 		boolean spawning = data.isSpawnMessage();
@@ -344,7 +320,7 @@ final class MessageProcessor {
 			}
 		}
 
-		if ((spawning || calleeIsActiveObject()) && !data.returnsInstantly()) {
+		if (spawning && !data.returnsInstantly()) {
 			calleeThread = diagram.spawnThread();
 		} else {
 			calleeThread = callerThread;
@@ -383,26 +359,10 @@ final class MessageProcessor {
 			return rootCaller;
 		}
 
-		final String mnemonic = data.getCallerMnemonic();
-
 		/*
 		 * If lineToBeFound is not null, we just look for it, ignoring level and
 		 * thread specification of the MessageData.
 		 */
-		Lifeline lineToBeFound = null;
-
-		/* TODO: prevent mnemonics for actors */
-
-		if (!mnemonic.equals("")) {
-			lineToBeFound = diagram.getLifelineByMnemonic(data.getCaller(),
-					mnemonic);
-			if (lineToBeFound == null) {
-				throw new SemanticError(provider,
-						"There is no lifeline named \"" + data.getCaller()
-								+ "\" associated to mnemonic \"" + mnemonic
-								+ "\"");
-			}
-		}
 
 		final LinkedList<Message> currentStack = diagram.currentStack();
 
@@ -436,7 +396,9 @@ final class MessageProcessor {
 			final Message theAnswer = currentStack.getLast();
 
 			if (dropOneAnswer) {
-				if (theAnswer.isSynchronous() && theAnswer.getCallee().getName().equals(data.getCaller())) {
+				if (theAnswer.isSynchronous()
+						&& theAnswer.getCallee().getName()
+								.equals(data.getCaller())) {
 					diagram.sendAnswer(theAnswer, true);
 					return theAnswer.getCallee();
 				} else {
@@ -445,12 +407,7 @@ final class MessageProcessor {
 				}
 			}
 
-			if (lineToBeFound != null) {
-				if (theAnswer.getCaller() == lineToBeFound) {
-
-					return lineToBeFound;
-				}
-			} else if (theAnswer.getCaller().getName().equals(data.getCaller())) {
+			if (theAnswer.getCaller().getName().equals(data.getCaller())) {
 				// An answer with the right level and the actual caller
 				// as a caller is not sent. It can only be sent when
 				// the current message has been executed (including its
@@ -469,7 +426,7 @@ final class MessageProcessor {
 			currentStack.removeLast();
 
 			if (requireReturn) {
-				throw new SemanticError (provider, "Explicit answer required.");
+				throw new SemanticError(provider, "Explicit answer required.");
 			}
 			diagram.sendAnswer(theAnswer);
 		}
@@ -489,18 +446,14 @@ final class MessageProcessor {
 			 */
 			occured++;
 		}
-		throw objectNotFound(occured, lineToBeFound);
+		throw objectNotFound(occured);
 
 	}
 
-	private SemanticError objectNotFound(final int occured,
-			final Lifeline lineToBeFound) {
+	private SemanticError objectNotFound(final int occured) {
 		final String msg;
 
-		if (lineToBeFound != null) {
-			msg = data.getCaller() + "[" + data.getCallerMnemonic()
-					+ "] is not active";
-		} else if (occured == 0) {
+		if (occured == 0) {
 			msg = data.getCaller() + " is not active at all";
 		} else if (occured == 1) {
 			msg = data.getCaller() + "[" + data.getLevel() + "]"
@@ -546,13 +499,6 @@ final class MessageProcessor {
 			} else { // theCallee == rootCallee
 				theCallee.setThread(calleeThread);
 			}
-		}
-
-		final String calleeMnemonic = data.getCalleeMnemonic();
-		if (!calleeMnemonic.equals("")) {
-			diagram.associateLifeline(data.getCallee(), calleeMnemonic,
-					theCallee);
-			theCallee.setMnemonic(calleeMnemonic);
 		}
 
 		return theCallee;
@@ -622,12 +568,9 @@ final class MessageProcessor {
 
 		diagram.setCallerThread(calleeThread);
 
-		if (diagram.isThreaded()
-				&& !calleeIsActor()
-				&& !data.returnsInstantly()
-				&& !(message instanceof Primitive)
-				&& (calleeIsActiveObject() || data.isSpawnMessage() || caller
-						.isAlwaysActive())) {
+		if (diagram.isThreaded() && !calleeIsActor()
+				&& !data.returnsInstantly() && !(message instanceof Primitive)
+				&& (data.isSpawnMessage() || caller.isAlwaysActive())) {
 			diagram.setFirstCaller(callee);
 			diagram.setThreadState("running");
 		}
