@@ -46,6 +46,7 @@ import java.io.ObjectStreamClass;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -1599,13 +1600,23 @@ public class Utilities {
 	}
 
 	public static String toString(byte[] bytes, String encoding) {
-		Charset cs = Charset.forName(encoding);
-		return new String(bytes, cs);
+		String string;
+		try {
+			string = new String(bytes, encoding);
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException("Illegal encoding: " + encoding);
+		}
+		return string;
 	}
 
 	public static byte[] getBytes(String string, String encoding) {
-		Charset cs = Charset.forName(encoding);
-		return string.getBytes(cs);
+		byte [] bytes;
+		try {
+			bytes = string.getBytes(encoding);
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException("Illegal encoding: " + encoding);
+		}
+		return bytes;
 	}
 
 }
