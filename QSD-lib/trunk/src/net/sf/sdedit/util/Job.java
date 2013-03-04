@@ -60,8 +60,16 @@ public class Job extends DefaultBoundedRangeModel implements JobListener, Runnab
     }
     
     public void start () {
-        thread = new Thread(this);
-        thread.start();
+    	start(false);
+    }
+    
+    public void start(boolean synchronous) {
+    	if (synchronous) {
+    		run();
+    	} else {
+            thread = new Thread(this);
+            thread.start();    		
+    	}
     }
     
     public void interrupt () {
@@ -120,8 +128,6 @@ public class Job extends DefaultBoundedRangeModel implements JobListener, Runnab
         } else {
             try {
                 doJob ();
-            } catch (RuntimeException re) {
-                throw re;
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
             } catch (Exception ex) {
