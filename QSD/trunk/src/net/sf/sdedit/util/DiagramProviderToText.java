@@ -31,6 +31,8 @@ import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramDataProvider;
+import net.sf.sdedit.diagram.DiagramDataProviderFactory;
+import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.IPaintDevice;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
@@ -61,22 +63,30 @@ public class DiagramProviderToText implements DiagramDataProvider {
 		return text;
 	}
 
-	public static String getText(DiagramDataProvider provider) {
-		DiagramProviderToText dptt = new DiagramProviderToText(provider);
+	public static String getText(final DiagramDataProviderFactory providerFactory) {
 		IPaintDevice ipd = new NullPaintDevice();
 		Configuration conf = ConfigurationManager
 				.createNewDefaultConfiguration().getDataObject();
 		conf.setThreaded(true);
-		Diagram diagram = new Diagram(conf, dptt, ipd);
+		conf.setReuseSpace(false);
+		DiagramDataProviderFactory myFactory = new 
+		DiagramDataProviderFactory() {
+			
+			public DiagramDataProvider createProvider() {
+				DiagramDataProvider provider = providerFactory.createProvider();
+				return new DiagramProviderToText(provider);
+			}
+		};
+		DiagramFactory factory = new DiagramFactory(myFactory, ipd);
 		try {
-			diagram.generate();
+			factory.generateDiagram(conf);
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (DiagramError de) {
 			de.printStackTrace();
 		}
+		DiagramProviderToText dptt = (DiagramProviderToText) factory.getProvider();
 		return dptt.getText();
-
 	}
 
 	
