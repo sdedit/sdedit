@@ -303,7 +303,7 @@ public interface Configuration extends DataObject
     @Adjustable(editable=false,info="Vertical split",category="Misc")
     public void setVerticallySplit(boolean verticallySplit);
     
-    @Adjustable(editable=true,info="Require explicit returns",category="Misc")
+    @Adjustable(editable=false,info="Require explicit returns",category="Misc")
     public void setExplicitReturns(boolean explicitReturns);
     
     @Adjustable(editable=true,info="Arrow thickness", category="Line thickness", min=1)
