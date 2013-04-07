@@ -797,7 +797,7 @@ public class Utilities {
 		BufferedInputStream bis = new BufferedInputStream(from);
 		BufferedOutputStream bos = new BufferedOutputStream(to);
 		int avail;
-		while ((avail = from.available()) > 0) {
+		while ((avail = bis.available()) > 0) {
 			for (int off = 0; off < avail; off += 1024) {
 				int length = Math.min(avail - off, 1024);
 				bis.read(buffer, 0, length);
