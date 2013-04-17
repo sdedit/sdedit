@@ -1526,10 +1526,7 @@ public class Utilities {
 		return url;
 	}
 
-	public static <T> T replicate(T object, final ClassLoader classloader) {
-		if (object == null) {
-			return null;
-		}
+	public static byte[] serialize(Object object) {
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(bos);
@@ -1537,6 +1534,19 @@ public class Utilities {
 			os.flush();
 			os.close();
 			byte[] bytes = bos.toByteArray();
+			return bytes;
+		} catch (RuntimeException re) {
+			throw re;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(
+					"Cannot replicate object of type "
+							+ object.getClass().getName(), e);
+		}
+	}
+
+	public static <T> T deserialize(byte[] bytes, final ClassLoader classloader,
+			Class<T> cls) {
+		try {
 			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 			final HashMap<String, Class<?>> primClasses = new HashMap<String, Class<?>>(
 					8, 1.0F);
@@ -1575,10 +1585,18 @@ public class Utilities {
 			throw re;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(
-					"Cannot replicate object of type "
-							+ object.getClass().getName(), e);
+					"Cannot replicate object of type " + cls.getName(), e);
 		}
+	}
 
+	public static <T> T replicate(T object, ClassLoader classloader) {
+		if (object == null) {
+			return null;
+		}
+		byte[] bytes = serialize(object);
+		@SuppressWarnings("unchecked")
+		Class<T> cls = (Class<T>) object.getClass();
+		return deserialize(bytes, classloader, cls);
 	}
 
 	private static String changeNewlines(String string, String newline) {
@@ -1610,7 +1628,7 @@ public class Utilities {
 	}
 
 	public static byte[] getBytes(String string, String encoding) {
-		byte [] bytes;
+		byte[] bytes;
 		try {
 			bytes = string.getBytes(encoding);
 		} catch (UnsupportedEncodingException e) {
