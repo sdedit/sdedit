@@ -24,7 +24,7 @@
 
 package net.sf.sdedit.message;
 
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.drawable.Arrow;
@@ -50,7 +50,7 @@ public final class Primitive extends ForwardMessage {
 	 * @param data
 	 *            encapsulates the description of the primitive action
 	 */
-	public Primitive(Lifeline caller, Diagram diagram, MessageData data) {
+	public Primitive(Lifeline caller, SequenceDiagram diagram, MessageData data) {
 		super(caller, null, diagram, data);
 	}
 
@@ -95,7 +95,7 @@ public final class Primitive extends ForwardMessage {
 			final Arrow arrow = new Arrow(this, ArrowStroke.NONE, direction,
 					v());
 			setArrow(arrow);
-			getDiagram().getPaintDevice().addSequenceElement(arrow);
+			getDiagram().getPaintDevice().append(arrow);
 			extendLifelines(arrow.getInnerHeight());
 		}
 	}

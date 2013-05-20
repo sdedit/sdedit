@@ -26,7 +26,7 @@ package net.sf.sdedit.message;
 
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.drawable.Arrow;
@@ -44,7 +44,7 @@ public abstract class Message implements Constants {
 
     private final Lifeline callee;
 
-    protected final Diagram diagram;
+    protected final SequenceDiagram diagram;
 
     private final MessageData data;
 
@@ -52,7 +52,7 @@ public abstract class Message implements Constants {
 
     private Arrow arrow;
         
-    protected Message(Lifeline sender, Lifeline receiver, Diagram diagram,
+    protected Message(Lifeline sender, Lifeline receiver, SequenceDiagram diagram,
             MessageData data) {
         this.caller = sender;
         this.callee = receiver;
@@ -106,7 +106,7 @@ public abstract class Message implements Constants {
      * 
      * @return the diagram on which the message is to be drawn
      */
-    public final Diagram getDiagram() {
+    public final SequenceDiagram getDiagram() {
         return diagram;
     }
 

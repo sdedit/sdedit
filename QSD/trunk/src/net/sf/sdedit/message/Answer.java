@@ -24,7 +24,7 @@
 
 package net.sf.sdedit.message;
 
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.drawable.Arrow;
@@ -59,7 +59,7 @@ public class Answer extends Message
      * @param forwardMsg
      *            the message that this is the answer to
      */
-    public Answer(Lifeline caller, Lifeline callee, Diagram diagram,
+    public Answer(Lifeline caller, Lifeline callee, SequenceDiagram diagram,
             MessageData data, ForwardMessage forwardMsg) {
         super(caller, callee, diagram, data);
         forward = forwardMsg;
@@ -96,7 +96,7 @@ public class Answer extends Message
         }
         arrow.setVisible(getText().length()>0 || diagram.returnArrowVisible);
         setArrow(arrow);
-        getDiagram().getPaintDevice().addSequenceElement(arrow);
+        getDiagram().getPaintDevice().append(arrow);
         extendLifelines(arrow.getInnerHeight());
         if (!(getCaller().isAlwaysActive())) {
             terminate();

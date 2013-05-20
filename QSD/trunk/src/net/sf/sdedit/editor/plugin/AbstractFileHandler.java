@@ -119,6 +119,7 @@ public abstract class AbstractFileHandler implements FileHandler {
 			tab.setClean(true);
 
 			addTabToUI(tab, ui);
+			
 			SwingUtilities.invokeLater(new Runnable() {
 			    
 				public void run() {

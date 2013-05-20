@@ -105,7 +105,7 @@ public class RealtimeServer extends Thread implements Constants {
 			if (title.length() > 0) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						DiagramTextTab tab = editor.getUI().addDiagramTextTab(title,
+						DiagramTextTab tab = (DiagramTextTab) editor.getUI().addSequenceDiagramTextTab(title,
 								ConfigurationManager.createNewDefaultConfiguration(), true);
 						Receiver receiver = new Receiver(tab,
 								decodingReader, socket);

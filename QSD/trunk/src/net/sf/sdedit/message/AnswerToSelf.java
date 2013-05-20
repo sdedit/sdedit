@@ -24,7 +24,7 @@
 
 package net.sf.sdedit.message;
 
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.drawable.Arrow;
@@ -35,7 +35,7 @@ import net.sf.sdedit.util.Direction;
 public class AnswerToSelf extends Answer
 {
 
-    public AnswerToSelf(Lifeline caller, Lifeline callee, Diagram diagram,
+    public AnswerToSelf(Lifeline caller, Lifeline callee, SequenceDiagram diagram,
             MessageData data, ForwardMessage forward) {
         super(caller, callee, diagram, data, forward);
     }
@@ -52,7 +52,7 @@ public class AnswerToSelf extends Answer
                 align, v());
         arrow.setVisible(getText().length()>0 || diagram.returnArrowVisible);
         setArrow(arrow);
-        getDiagram().getPaintDevice().addSequenceElement(arrow);
+        getDiagram().getPaintDevice().append(arrow);
         
         terminate();
         

@@ -24,9 +24,6 @@
 
 package net.sf.sdedit.diagram;
 
-import java.awt.Font;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,7 +46,7 @@ import net.sf.sdedit.util.Direction;
  * 
  * @author Markus Strauch
  */
-public abstract class PaintDevice implements IPaintDevice {
+public class PaintDevice extends AbstractPaintDevice {
 
     private int height;
 
@@ -62,26 +59,22 @@ public abstract class PaintDevice implements IPaintDevice {
 
     private final List<Drawable> other;
 
-    private Diagram diagram;
+    private SequenceDiagram diagram;
 
     private final Line rightBound;
-
-    private Font plainFont;
-
-    private Font boldFont;
-
-    protected PaintDevice() {
+    
+    public PaintDevice(GraphicDevice graphic) {
+        super(graphic);
         height = 0;
         leftOf = new ArrayList<Set<SequenceElement>>();
         other = new LinkedList<Drawable>();
         rightBound = new Line(1, null);
     }
-
+    
     public void setDiagram(Diagram diagram) {
-        this.diagram = diagram;
-        plainFont = diagram.getConfiguration().getFont();
-        boldFont = new Font(plainFont.getName(), Font.BOLD,
-                plainFont.getSize() + 1);
+        this.diagram = (SequenceDiagram) diagram;
+        getGraphicDevice().initialize(diagram);
+
     }
 
     /**
@@ -102,10 +95,6 @@ public abstract class PaintDevice implements IPaintDevice {
         leftOf.add(new HashSet<SequenceElement>());
     }
 
-    public Font getFont(boolean bold) {
-        return bold ? boldFont : plainFont;
-    }
-
     public Line getRightBound() {
         return rightBound;
     }
@@ -120,7 +109,7 @@ public abstract class PaintDevice implements IPaintDevice {
         }
     }
 
-    public void addSequenceElement(SequenceElement elem) {
+    public void append(SequenceElement elem) {
         int index;
         ExtensibleDrawable left, right;
         if (elem.getAlign() == Direction.RIGHT) {
@@ -242,17 +231,7 @@ public abstract class PaintDevice implements IPaintDevice {
         rightBound.setLeft(axis);
     }
 
-    public abstract int getTextWidth(String text, boolean bold);
 
-    public int getTextWidth(String text) {
-        return getTextWidth(text, false);
-    }
-
-    public abstract int getTextHeight(boolean bold);
-
-    public int getTextHeight() {
-        return getTextHeight(false);
-    }
 
     public int getWidth() {
         return diagram == null ? 0 : rightBound.getLeft() + 6
@@ -293,9 +272,7 @@ public abstract class PaintDevice implements IPaintDevice {
      * This method is called once when no {@linkplain Drawable} object will be
      * added anymore. Its default implementation is empty.
      */
-    public void close() {
-        /* empty */
-    }
+
 
     private void processDrawable(Drawable drawable) {
         height = Math.max(height, drawable.getTop() + drawable.getHeight());
@@ -311,12 +288,8 @@ public abstract class PaintDevice implements IPaintDevice {
         /* empty */
     }
 
-    public Diagram getDiagram() {
+    public SequenceDiagram getDiagram() {
         return diagram;
-    }
-
-    public void writeToStream(OutputStream stream) throws IOException {
-        throw new UnsupportedOperationException("writeToStream not supported");
     }
 
     /**
@@ -348,7 +321,7 @@ public abstract class PaintDevice implements IPaintDevice {
 
         private Drawable next;
 
-        private final Diagram diagram;
+        private final SequenceDiagram diagram;
 
         private void nextIterator() {
             if (diagram == null || !diagram.isFinished()) {
@@ -420,5 +393,6 @@ public abstract class PaintDevice implements IPaintDevice {
             throw new UnsupportedOperationException();
         }
     }
+
 }
 // {{core}}

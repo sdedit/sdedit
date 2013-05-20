@@ -55,7 +55,8 @@ public class TabNavigatorContainer implements TabContainer,
 		navigator.setContextActionsProvider(this);
 		navigator.addListener(this);
 		listeners = new LinkedList<TabContainerListener>();
-		addCategory("Modeling", Icons.getIcon("text"));
+		addCategory("Sequence diagrams", Icons.getIcon("text"));
+		addCategory("Flow charts", Icons.getIcon("text"));
 		id = 0;
 	}
 
@@ -83,11 +84,8 @@ public class TabNavigatorContainer implements TabContainer,
 		listeners.add(listener);
 	}
 
-	public String addTab(Tab tab, boolean selectIt) {
-		return addTabToCategory(tab, "Modeling", selectIt);
-	}
 
-	public String addTabToCategory(Tab tab, String category, boolean selectIt) {
+	public String addTab(Tab tab, boolean selectIt) {
 		String title = Utilities.findUniqueName(tab.getTitle(), navigator
 				.getAllTitles());
 		tab.setTitle(title);
@@ -95,12 +93,13 @@ public class TabNavigatorContainer implements TabContainer,
 		tab.addTabListener(this);
 		id++;
 		tab.setId(id);
+		String category = tab.getCategory();
 		navigator.addComponent(tab.getTitle(), tab, tab.getIcon(), category, selectIt, null);
 		return title;
 	}
 	
-	public String addTabToCategory(Tab tab, String category) {
-	    return addTabToCategory(tab, category, true);
+	public String addTab(Tab tab) {
+	    return addTab(tab, true);
 	}
 
 	public JComponent getComponent() {

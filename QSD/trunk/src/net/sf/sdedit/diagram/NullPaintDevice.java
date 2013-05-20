@@ -1,8 +1,6 @@
 package net.sf.sdedit.diagram;
 
 import java.awt.Font;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -17,7 +15,7 @@ public class NullPaintDevice implements IPaintDevice {
     public void addOtherDrawable(Drawable drawable) {
     }
 
-    public void addSequenceElement(SequenceElement elem) {
+    public void append(SequenceElement elem) {
     }
 
     public void announce(int height) {
@@ -80,9 +78,6 @@ public class NullPaintDevice implements IPaintDevice {
 
     public void setDiagram(Diagram diagram) {
         this.diagram = diagram;
-    }
-
-    public void writeToStream(OutputStream stream) throws IOException {
     }
 
     public Iterator<Drawable> iterator() {

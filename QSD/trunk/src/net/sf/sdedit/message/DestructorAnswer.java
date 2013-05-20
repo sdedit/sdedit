@@ -24,7 +24,7 @@
 
 package net.sf.sdedit.message;
 
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 
@@ -51,7 +51,7 @@ public class DestructorAnswer extends Answer
      * @param data
      *            encapsulates the answer
      */
-    public DestructorAnswer(Lifeline caller, Lifeline callee, Diagram diagram,
+    public DestructorAnswer(Lifeline caller, Lifeline callee, SequenceDiagram diagram,
             MessageData data, ForwardMessage forward) {
         super(caller, callee, diagram, data, forward);
     }

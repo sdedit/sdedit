@@ -109,7 +109,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 	 */
 	private final int sideLevel;
 
-	private final Diagram diagram;
+	private final SequenceDiagram diagram;
 
 	/**
 	 * The current graphical representation, changes as time passes (a line for
@@ -233,7 +233,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 	 */
 	public Lifeline(String name, String type, String label, boolean alive,
 			boolean anonymous, boolean role, boolean process, boolean hasThread, boolean autodestroy,
-			boolean external, boolean saveSpace, Diagram diagram) {
+			boolean external, boolean saveSpace, SequenceDiagram diagram) {
 		this.diagram = diagram;
 		this.name = name;
 		this.type = type;
@@ -729,7 +729,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 		rectangleBottom = Math.max(rectangleBottom, bottom);
 	}
 
-	public Diagram getDiagram() {
+	public SequenceDiagram getDiagram() {
 		return diagram;
 	}
 

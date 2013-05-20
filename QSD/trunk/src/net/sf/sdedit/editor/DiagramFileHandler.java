@@ -44,9 +44,10 @@ import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.components.configuration.BeanConverter;
 import net.sf.sdedit.ui.impl.DiagramTextTab;
+import net.sf.sdedit.ui.impl.SequenceDiagramTextTab;
 import net.sf.sdedit.util.DocUtil;
-import net.sf.sdedit.util.Pair;
 import net.sf.sdedit.util.DocUtil.XMLException;
+import net.sf.sdedit.util.Pair;
 
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
@@ -107,7 +108,7 @@ public class DiagramFileHandler extends AbstractFileHandler {
 			Font editorFont = ConfigurationManager.getGlobalConfiguration()
 					.getEditorFont();
 			Pair<String, Bean<Configuration>> result = load(stream, encoding);
-			DiagramTextTab tab = new DiagramTextTab(getUI(), editorFont, result
+			DiagramTextTab tab = new SequenceDiagramTextTab(getUI(), editorFont, result
 					.getSecond());
 			tab.setCode(result.getFirst());
 			return tab;

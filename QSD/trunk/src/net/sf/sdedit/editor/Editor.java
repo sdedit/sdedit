@@ -364,7 +364,9 @@ public final class Editor implements Constants, UserInterfaceListener
 
         actions = new Actions(this);
 
-        ui.addAction("&File", actions.newDiagramAction, null);
+        ui.addAction("&File", actions.newSequenceDiagramAction, null);
+        
+        ui.addAction("&File", actions.newFlowChartAction, null);
 
         ui.addCategory("&File.Open", "open");
 
@@ -478,8 +480,9 @@ public final class Editor implements Constants, UserInterfaceListener
             ui.setQuitAction(actions.quitAction);
         }
 
-        ui.addToToolbar(actions.newDiagramAction, null);
-
+        ui.addToToolbar(actions.newSequenceDiagramAction, null);
+        ui.addToToolbar(actions.newFlowChartAction, null);
+        
         ui.addToToolbar(
                 fileActionProvider.getOpenAction(defaultFileHandler, ui),
                 fileActionProvider.getOpenActivator);

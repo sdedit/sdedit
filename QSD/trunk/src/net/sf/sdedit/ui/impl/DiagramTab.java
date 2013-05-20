@@ -36,16 +36,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,16 +50,16 @@ import javax.swing.SwingUtilities;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
+import net.sf.sdedit.diagram.AbstractPaintDevice;
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramDataProviderFactory;
 import net.sf.sdedit.diagram.DiagramFactory;
+import net.sf.sdedit.diagram.IPaintDevice;
+import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.error.DiagramError;
-import net.sf.sdedit.error.SemanticError;
-import net.sf.sdedit.error.SyntaxError;
 import net.sf.sdedit.server.Exporter;
-import net.sf.sdedit.text.TextHandler;
 import net.sf.sdedit.ui.ImagePaintDevice;
 import net.sf.sdedit.ui.PanelPaintDevice;
 import net.sf.sdedit.ui.Tab;
@@ -208,6 +202,12 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		this.redraw = redraw;
 		renderer.renderDiagram(this);
 	}
+	
+	protected PanelPaintDevice graphic () {
+        AbstractPaintDevice apd = (AbstractPaintDevice) diagram.getPaintDevice();
+        PanelPaintDevice pg = (PanelPaintDevice) apd.getGraphicDevice();
+        return pg;
+	}
 
 	/**
 	 * This method is called by {@linkplain DiagramRenderer} when a diagram is
@@ -220,12 +220,11 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 	 *            an error that has occurred while rendering the diagram, if any
 	 */
 	public void displayDiagram(Diagram diagram, DiagramError error) {
+	    this.diagram = diagram;
 		if (redraw
 				|| ConfigurationManager.getGlobalConfiguration().isAutoUpdate()) {
-			getZoomPane().setViewportView(
-					((PanelPaintDevice) diagram.getPaintDevice()).getPanel());
+		    getZoomPane().setViewportView(graphic().getPanel());
 		}
-		this.diagram = diagram;
 		this.error = error;
 		handleDiagramError(error);
 		get_UI().enableComponents();
@@ -235,8 +234,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 
 	public void scrollToDrawable(Drawable drawable, boolean highlight) {
 		if (highlight) {
-			((PanelPaintDevice) getDiagram().getPaintDevice())
-					.highlight(drawable);
+			graphic().highlight(drawable);
 			repaint();
 		}
 		getZoomPane().scrollToRectangle(drawable.getRectangle());
@@ -262,46 +260,17 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		return !isEmpty();
 	}
 
-	protected void handleBug(Diagram diagram, RuntimeException ex) {
-
-		String name = "sdedit-errorlog-" + System.currentTimeMillis();
-
-		File errorLogFile = new File(name);
-		try {
-			errorLogFile.createNewFile();
-		} catch (IOException e0) {
-			try {
-				errorLogFile = new File(System.getProperty("user.home"), name);
-				errorLogFile.createNewFile();
-			} catch (IOException e1) {
-				errorLogFile = new File(System.getProperty("java.io.tmpdir",
-						name));
-			}
-		}
-
-		try {
-			saveLog(errorLogFile, ex, (TextHandler) diagram.getDataProvider());
-		} catch (IOException e) {
-			get_UI().errorMessage(e, null,
-					"An error log file could not be saved.");
-		}
-
-	}
 
 	@Override
 	protected Zoomable<? extends JComponent> getZoomable() {
 		Diagram diagram = getDiagram();
 		if (diagram != null) {
-			PanelPaintDevice ppd = (PanelPaintDevice) diagram.getPaintDevice();
+			AbstractPaintDevice ppd = (AbstractPaintDevice) diagram.getPaintDevice();
 			if (!ppd.isEmpty()) {
-				return ppd.getPanel();
+			    return ((PanelPaintDevice) ppd.getGraphicDevice()).getPanel();
 			}
 		}
 		return null;
-	}
-
-	private static final String getFatalErrorDescription(Throwable ex) {
-		return "A FATAL ERROR has occurred: " + ex.getClass().getSimpleName();
 	}
 
 	public Object getTransferData(DataFlavor flavor)
@@ -317,10 +286,13 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		}
 	}
 	
+	public abstract DiagramFactory createFactory (IPaintDevice paintDevice);
+	
 	private InputStream getTransferDataVector (String format) throws IOException {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		Exporter exporter = Exporter.getExporter(format, "Landscape", "A0", stream);
-		DiagramFactory factory = new DiagramFactory(this, exporter);
+		PaintDevice paintDevice = new PaintDevice(exporter);
+		DiagramFactory factory = createFactory(paintDevice);
 		try {
 			factory.generateDiagram(getConfiguration().getDataObject());
 		} catch (RuntimeException re) {
@@ -336,7 +308,8 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 	
 	private Image getTransferDataBitmap () throws IOException {
 		ImagePaintDevice ipd = new ImagePaintDevice(false);
-		DiagramFactory factory = new DiagramFactory(this, ipd);
+		PaintDevice paintDevice = new PaintDevice(ipd);
+		DiagramFactory factory = createFactory(paintDevice);
 		try {
 		    factory.generateDiagram(getConfiguration().getDataObject());
 		} catch (RuntimeException re) {
@@ -362,55 +335,11 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 				.setContents(this, null);
 	}
 
-	private void saveLog(File logFile, Throwable exception,
-			TextHandler textHandler) throws IOException {
-
-		FileOutputStream stream = new FileOutputStream(logFile);
-		try {
-			PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(
-					stream, ConfigurationManager.getGlobalConfiguration()
-							.getFileEncoding()));
-			BufferedReader bufferedReader = new BufferedReader(
-					new StringReader(textHandler.getText()));
-			int error = textHandler.getLineNumber();
-			printWriter.println(exception.getClass().getSimpleName()
-					+ " has occurred in line " + error + "\n");
-			int i = 0;
-			for (;;) {
-				String line = bufferedReader.readLine();
-				if (line == null) {
-					bufferedReader.close();
-					break;
-				}
-				line = line.trim();
-				if (i == error - 1) {
-					line = ">>>>>>>>>>>>>> " + line;
-				}
-				printWriter.println(line);
-				i++;
-			}
-			printWriter.println("\n\n:::::::::::::::::::::::::::::\n\n");
-			exception.printStackTrace(printWriter);
-			printWriter.flush();
-			printWriter.close();
-			get_UI()
-					.errorMessage(
-							null,
-							"FATAL ERROR",
-							getFatalErrorDescription(exception)
-									+ "\n\nAn error log file has been saved under \n"
-									+ logFile.getAbsolutePath()
-									+ "\n\n"
-									+ "Please send an e-mail with this file as an attachment to:\n"
-									+ "sdedit@users.sourceforge.net");
-		} finally {
-			stream.close();
-		}
-	}
-	
 	public boolean canGoHome () {
 		return true;
 	}
+	
+	public abstract AbstractPaintDevice createPaintDevice ();
 	
 
 	

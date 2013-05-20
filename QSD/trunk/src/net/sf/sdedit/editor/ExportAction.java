@@ -26,6 +26,8 @@ package net.sf.sdedit.editor;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -34,10 +36,10 @@ import javax.swing.Action;
 
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.ui.PanelPaintDevice;
 import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.impl.DiagramTab;
-import net.sf.sdedit.ui.impl.LookAndFeelManager;
 
 import org.freehep.util.export.ExportDialog;
 import org.freehep.util.export.ExportDialogListener;
@@ -61,7 +63,9 @@ public class ExportAction extends TabAction<DiagramTab> implements
 
     private Properties properties;
     
-    private PanelPaintDevice exportDevice;
+    private PaintDevice exportDevice;
+    
+    private PanelPaintDevice exportGraphic;
     
     public ExportAction (Editor editor) {
     	super(DiagramTab.class, editor.getUI());
@@ -77,7 +81,8 @@ public class ExportAction extends TabAction<DiagramTab> implements
     	if (diagram == null) {
     		return;
     	}
-        exportDevice = (PanelPaintDevice) diagram.getPaintDevice();
+        exportDevice = (PaintDevice) diagram.getPaintDevice();
+        exportGraphic = (PanelPaintDevice) exportDevice.getGraphicDevice();
         if (exportDevice.isEmpty()) {
             return;
         }
@@ -111,20 +116,32 @@ public class ExportAction extends TabAction<DiagramTab> implements
                     .showExportDialog(
                             tab,
                             "Export via FreeHEP library (see http://www.freehep.org/vectorgraphics)",
-                            exportDevice.getPanel().asJComponent(), "untitled");
+                            exportGraphic.getPanel().asJComponent(), "untitled");
 
         } catch (Exception ex) {
             ex.printStackTrace();
             ui.errorMessage(ex, null,
                     "Export failed");
         } finally {
-            exportDevice.setAntialiasing(true);
+            exportGraphic.setAntialiasing(true);
         }
     }
 
     public void writeFile(String type) {
         if (vectorFormats.contains(type)) {
-            exportDevice.setAntialiasing(false);
+            exportGraphic.setAntialiasing(false);
         }
+    }
+    
+    public static void main (String [] argv) throws Exception {
+        Class c = Class.forName("sun.font.FontManager"); 
+        Field field = c.getDeclaredField("compFonts");
+        field.setAccessible(true);
+        Object array = field.get(null);
+        System.out.println(Array.getLength(array));
+        Class ct = array.getClass().getComponentType();
+        Object narray = Array.newInstance(ct, 40);
+        System.arraycopy(array, 0, narray, 0, 20);
+        field.set(null, narray);
     }
 }

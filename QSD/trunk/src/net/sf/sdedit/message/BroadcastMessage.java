@@ -24,7 +24,7 @@
 
 package net.sf.sdedit.message;
 
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.drawable.Arrow;
@@ -41,7 +41,7 @@ public class BroadcastMessage extends ForwardMessage {
 
 	public static final int LAST = 3;
 
-	public BroadcastMessage(Lifeline caller, Lifeline callee, Diagram diagram,
+	public BroadcastMessage(Lifeline caller, Lifeline callee, SequenceDiagram diagram,
 			MessageData data) {
 		super(caller, callee, diagram, data);
 	}
@@ -89,7 +89,7 @@ public class BroadcastMessage extends ForwardMessage {
 			}
 
 		}
-		getDiagram().getPaintDevice().addSequenceElement(arrow);
+		getDiagram().getPaintDevice().append(arrow);
 	}
 
 	@Override

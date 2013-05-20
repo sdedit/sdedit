@@ -23,13 +23,13 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.message;
 
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 
 public class NullMessage extends ForwardMessage {
 
-	public NullMessage(Lifeline receiver, Diagram diagram, MessageData data) {
+	public NullMessage(Lifeline receiver, SequenceDiagram diagram, MessageData data) {
 		super(null, receiver, diagram, data);
 	}
 

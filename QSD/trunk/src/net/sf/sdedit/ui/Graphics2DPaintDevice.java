@@ -27,12 +27,12 @@ package net.sf.sdedit.ui;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.AbstractGraphicDevice;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Strokes;
 
 
-public abstract class Graphics2DPaintDevice extends PaintDevice
+public abstract class Graphics2DPaintDevice extends AbstractGraphicDevice
 {
     /**
      * Creates a graphics context belonging to a back-end that has a size
@@ -66,22 +66,13 @@ public abstract class Graphics2DPaintDevice extends PaintDevice
     }
     
     /**
-     * @see net.sf.sdedit.diagram.IPaintDevice#close()
-     */
-    @Override
-    public void close () {
-        super.close();
-        g2d = createGraphics();
-    }
-    
-    /**
      * Draws all of the diagram's elements into the graphics context
      * created via {@linkplain #createGraphics()}.
      */
     public void drawAll () {
         g2d.setColor(Color.BLACK);
         g2d.setStroke(Strokes.defaultStroke());
-        for (Drawable drawable : this) {
+        for (Drawable drawable : drawables()) {
             drawable.draw(g2d);
         }
     }
@@ -98,17 +89,21 @@ public abstract class Graphics2DPaintDevice extends PaintDevice
             boldDummy = createDummyGraphics(true);
         }
         return boldDummy;
-        
     }
 
-    @Override
     public int getTextHeight(boolean bold) {
         return (bold ? boldDummy() : dummy()).getFontMetrics().getHeight();
     }
 
-    @Override
     public int getTextWidth(String text, boolean bold) {
         return (bold ? boldDummy() : dummy()).getFontMetrics().stringWidth(text);
     }
+
+    public void close(int width, int height, boolean empty) {
+        super.close(width, height, empty);
+        g2d = createGraphics(); 
+    }
+
+
 }
 //{{core}}

@@ -38,6 +38,8 @@ import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.PrintConfiguration;
 import net.sf.sdedit.diagram.DiagramDataProviderFactory;
 import net.sf.sdedit.diagram.DiagramFactory;
+import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.ui.components.ZoomPane;
 
@@ -46,11 +48,12 @@ import org.freehep.graphicsio.PageConstants;
 @SuppressWarnings("unchecked")
 public class MultipageExporter extends JPanel {
 
-	private static Class<? extends Graphics2D> ps;
+    private static final long serialVersionUID = 6686854000552365972L;
+
+    private static Class<? extends Graphics2D> ps;
 
 	private static Class<? extends Graphics2D> pdf;
 
-	
 	static {
 		
 		try {
@@ -75,7 +78,7 @@ public class MultipageExporter extends JPanel {
 
 	private Dimension size;
 
-	private MultipagePaintDevice paintDevice;
+	private MultipagePaintDevice graphicDevice;
 
 	private double scale;
 
@@ -104,17 +107,18 @@ public class MultipageExporter extends JPanel {
 	}
 
 	public double getScale() {
-		return paintDevice.getScale();
+		return graphicDevice.getScale();
 	}
 
 	public void init() throws DiagramError {
-		paintDevice = new MultipagePaintDevice(properties, size);
-		DiagramFactory factory = new DiagramFactory(provider, paintDevice);
+		graphicDevice = new MultipagePaintDevice(properties, size);
+		PaintDevice pd = new PaintDevice(graphicDevice);
+		DiagramFactory factory = new SequenceDiagramFactory(provider, pd);
 		factory.generateDiagram(configuration);
-		int n = paintDevice.getPanels().size();
+		int n = graphicDevice.getPanels().size();
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		int i = 0;
-		for (MultipagePaintDevice.MultipagePanel panel : paintDevice
+		for (MultipagePaintDevice.MultipagePanel panel : graphicDevice
 				.getPanels()) {
 			i++;
 			JPanel wrap = new JPanel();
@@ -144,7 +148,7 @@ public class MultipageExporter extends JPanel {
 		// OutputStream stream = new FileOutputStream(file);
 		Class<? extends Graphics2D> gc = type.toLowerCase().equals("pdf") ? pdf
 				: ps;
-		ExportDocument export = new ExportDocument(gc, paintDevice, stream,
+		ExportDocument export = new ExportDocument(gc, graphicDevice, stream,
 				properties.getFormat(), properties.getOrientation());
 		export.export();
 	}

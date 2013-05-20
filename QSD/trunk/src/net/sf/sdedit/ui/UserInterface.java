@@ -164,8 +164,11 @@ public interface UserInterface {
 	 * @return the actual unique title of the newly added tab (may differ from
 	 *         the original title)
 	 */
-	public DiagramTextTab addDiagramTextTab(String title,
+	public Tab addSequenceDiagramTextTab(String title,
 			Bean<Configuration> configuration, boolean selectIt);
+	
+	public Tab addFlowChartTextTab(String title,
+	            Bean<Configuration> configuration, boolean selectIt);
 
 	public String addTab(Tab tab, boolean selectIt);
 

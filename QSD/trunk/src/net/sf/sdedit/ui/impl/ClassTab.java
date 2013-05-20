@@ -43,8 +43,8 @@ import javax.swing.border.Border;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.editor.plugin.FileHandler;
 import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.message.ForwardMessage;
@@ -246,7 +246,7 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
             if (index == 0) {
                 String newName = (String) value;
                 if (newName != null && newName.length() > 0) {
-                    for (Lifeline existing : diagramTextTab.getDiagram()) {
+                    for (Lifeline existing : (SequenceDiagram) diagramTextTab.getDiagram()) {
                         if (existing.getName().equals(newName)) {
                             return;
                         }
@@ -288,7 +288,7 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
     private void renameLifeline(Lifeline lifeline, String newName)
             throws BadLocationException {
         diagramTextTab.setIgnoreChanges(true);
-        Diagram diagram = diagramTextTab.getDiagram();
+        SequenceDiagram diagram = (SequenceDiagram) diagramTextTab.getDiagram();
         Document document = diagramTextTab.getTextArea().getDocument();
 
         int lineBegin = (Integer) diagram.getStateForDrawable(lifeline
@@ -313,6 +313,11 @@ public class ClassTab extends Tab implements RowExpansion, RowEditor {
         }
         diagramTextTab.setIgnoreChanges(false);
         diagramTextTab.refresh(true);
+    }
+
+    @Override
+    public String getCategory() {
+        return "Sequence diagrams";
     }
 
 }

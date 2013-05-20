@@ -402,5 +402,7 @@ public abstract class Tab extends JPanel implements Stainable,
 	protected abstract List<Pair<Action, Activator>> getOverloadedActions();
 
 	public abstract FileHandler getFileHandler();
+	
+	public abstract String getCategory ();
 
 }

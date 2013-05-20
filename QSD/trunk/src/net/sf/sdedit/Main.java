@@ -37,6 +37,8 @@ import javax.swing.SwingUtilities;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.diagram.DiagramFactory;
+import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.editor.DiagramFileHandler;
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.error.DiagramError;
@@ -238,16 +240,18 @@ public class Main implements Constants {
                 Bean<Configuration> conf = pair.getSecond();
                 configure(conf, cmd);
                 if (type.equals("png")) {
-                    ImagePaintDevice paintDevice = new ImagePaintDevice();
-                    DiagramFactory factory = new DiagramFactory(text, paintDevice);
+                    ImagePaintDevice graphicDevice = new ImagePaintDevice();
+                    PaintDevice paintDevice = new PaintDevice(graphicDevice);
+                    DiagramFactory factory = new SequenceDiagramFactory(text, paintDevice);
                     factory.generateDiagram(conf.getDataObject());
-                    paintDevice.writeToStream("png", out);
+                    graphicDevice.writeToStream("png", out);
                 } else {
-                    Exporter paintDevice = Exporter.getExporter(type,
+                    Exporter graphicDevice = Exporter.getExporter(type,
                             orientation, format, out);
-                    DiagramFactory factory = new DiagramFactory(text, paintDevice);
+                    PaintDevice paintDevice = new PaintDevice(graphicDevice);
+                    DiagramFactory factory = new SequenceDiagramFactory(text, paintDevice);
                     factory.generateDiagram(conf.getDataObject());
-                    paintDevice.export();
+                    graphicDevice.export();
                 }
                 out.flush();
             } finally {

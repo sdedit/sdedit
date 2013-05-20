@@ -163,4 +163,9 @@ public class HelpTab extends Tab {
 		return false;
 	}
 
+    @Override
+    public String getCategory() {
+        return "Help pages";
+    }
+
 }

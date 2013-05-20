@@ -35,7 +35,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import net.sf.sdedit.config.ConfigurationManager;
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.icons.Icons;
@@ -119,7 +119,7 @@ class ExportMapAction extends AbstractAction {
 //		}
 	}
 
-	private void generateMapFile(Diagram diagram, TextHandler textHandler,
+	private void generateMapFile(SequenceDiagram diagram, TextHandler textHandler,
 			String mapName, File target) throws IOException {
 		String encoding = ConfigurationManager.getGlobalConfiguration().getFileEncoding();
 		FileOutputStream fos = new FileOutputStream(target);

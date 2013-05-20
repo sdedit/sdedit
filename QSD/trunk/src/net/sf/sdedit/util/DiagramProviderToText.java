@@ -29,27 +29,28 @@ import java.io.StringWriter;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
-import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.diagram.DiagramDataProvider;
 import net.sf.sdedit.diagram.DiagramDataProviderFactory;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.IPaintDevice;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.diagram.NullPaintDevice;
+import net.sf.sdedit.diagram.SequenceDiagram;
+import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
+import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.drawable.Note;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.error.SyntaxError;
 
-public class DiagramProviderToText implements DiagramDataProvider {
+public class DiagramProviderToText implements SequenceDiagramDataProvider {
 
 	private StringWriter stringWriter;
 
 	private PrintWriter printWriter;
 
-	private DiagramDataProvider provider;
+	private SequenceDiagramDataProvider provider;
 
-	public DiagramProviderToText(DiagramDataProvider provider) {
+	public DiagramProviderToText(SequenceDiagramDataProvider provider) {
 		this.provider = provider;
 		stringWriter = new StringWriter();
 		printWriter = new PrintWriter(stringWriter);
@@ -71,13 +72,14 @@ public class DiagramProviderToText implements DiagramDataProvider {
 		conf.setReuseSpace(false);
 		DiagramDataProviderFactory myFactory = new 
 		DiagramDataProviderFactory() {
-			
-			public DiagramDataProvider createProvider() {
-				DiagramDataProvider provider = providerFactory.createProvider();
+		    
+			public SequenceDiagramDataProvider createProvider() {
+				SequenceDiagramDataProvider provider = (SequenceDiagramDataProvider) providerFactory.createProvider();
 				return new DiagramProviderToText(provider);
 			}
+			
 		};
-		DiagramFactory factory = new DiagramFactory(myFactory, ipd);
+		DiagramFactory factory = new SequenceDiagramFactory(myFactory, ipd);
 		try {
 			factory.generateDiagram(conf);
 		} catch (RuntimeException re) {
@@ -179,11 +181,11 @@ public class DiagramProviderToText implements DiagramDataProvider {
 		return of;
 	}
 	
-	public Diagram getDiagram () {
+	public SequenceDiagram getDiagram () {
 		return provider.getDiagram();
 	}
 
-	public void setDiagram(Diagram diagram) {
+	public void setDiagram(SequenceDiagram diagram) {
 		provider.setDiagram(diagram);
 
 	}

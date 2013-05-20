@@ -47,9 +47,9 @@ public class NoteManager {
 
 	private int freeNoteNumber;
 
-	private final Diagram diagram;
+	private final SequenceDiagram diagram;
 
-	public NoteManager(Diagram diagram) {
+	public NoteManager(SequenceDiagram diagram) {
 		this.diagram = diagram;
 		notes = new LinkedList<Note>();
 		messageAssociation = new HashMap<Integer, List<Message>>();
@@ -132,7 +132,7 @@ public class NoteManager {
 		Note note = diagram.getDataProvider().getNote();
 		if (note != null) {
 			freeNoteNumber = Math.max(freeNoteNumber, note.getNumber() + 1);
-			diagram.getPaintDevice().addSequenceElement(note);
+			diagram.getPaintDevice().append(note);
 			notes.add(note);
 			closeNote(note.getLocation().getName());
 			diagram.getFragmentManager().openFragments();

@@ -45,10 +45,7 @@ import java.beans.PropertyChangeListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.regex.Pattern;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -71,23 +68,16 @@ import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.GlobalConfiguration;
 import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.diagram.DiagramDataProvider;
-import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.drawable.Arrow;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Figure;
 import net.sf.sdedit.drawable.LabeledBox;
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.editor.EditorHint;
-import net.sf.sdedit.editor.EditorHintFactory;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.editor.plugin.FileHandler;
 import net.sf.sdedit.error.DiagramError;
-import net.sf.sdedit.error.FatalError;
-import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.icons.Icons;
-import net.sf.sdedit.message.ForwardMessage;
-import net.sf.sdedit.text.TextHandler;
 import net.sf.sdedit.ui.components.AutoCompletion;
 import net.sf.sdedit.ui.components.AutoCompletion.SuggestionProvider;
 import net.sf.sdedit.ui.components.TextArea;
@@ -98,7 +88,6 @@ import net.sf.sdedit.ui.components.configuration.configurators.KeyStrokeConfigur
 import net.sf.sdedit.util.Pair;
 import net.sf.sdedit.util.PopupActions;
 import net.sf.sdedit.util.Ref;
-import net.sf.sdedit.util.collection.MultiMap;
 
 /**
  * A single tab in the user interface, consisting of a diagram view, a text pane
@@ -110,7 +99,7 @@ import net.sf.sdedit.util.collection.MultiMap;
  * @author Markus Strauch
  * 
  */
-public class DiagramTextTab extends DiagramTab implements DocumentListener,
+public abstract class DiagramTextTab extends DiagramTab implements DocumentListener,
         SuggestionProvider, PropertyChangeListener, ActionListener,
         PopupActions.ContextHandler {
 
@@ -168,7 +157,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
     private boolean ignoreChanges;
 
     private Map<String, ClassTab> classTabs;
-
+    
     public DiagramTextTab(UserInterfaceImpl ui, Font codeFont,
             Bean<Configuration> configuration
 
@@ -582,20 +571,11 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
      * @see net.sf.sdedit.ui.components.AutoCompletion.SuggestionProvider#getSuggestions(java.lang.String)
      */
     public List<String> getSuggestions(String prefix) {
-        String regexp = "^" + prefix.replaceAll("\\*", ".*") + ".*$";
-        Pattern pattern = Pattern.compile(regexp);
-        List<String> suggestions = new LinkedList<String>();
         Diagram diag = getDiagram();
         if (diag != null) {
-            for (Lifeline lifeline : diag) {
-                String name = lifeline.getName();
-                if (pattern.matcher(name).matches()) {
-                    // if (name.startsWith(prefix)) {
-                    suggestions.add(name);
-                }
-            }
+            return diag.getSuggestions(prefix);
         }
-        return suggestions;
+        return new LinkedList<String>();
     }
 
     public void setConfiguration(Bean<Configuration> configuration) {
@@ -653,10 +633,6 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
         return Editor.getEditor().getDefaultFileHandler();
     }
 
-    public DiagramDataProvider createProvider() {
-        return new TextHandler(getCode());
-    }
-
     @Override
     public void activate(ActionManager actionManager,
             FileActionProvider faProvider) {
@@ -678,66 +654,14 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
         changeTimer.stop();
     }
 
-    public void displayDiagram(Diagram diagram, DiagramError error) {
+    /*
+    public void displayDiagram(SequenceDiagram diagram, DiagramError error) {
         super.displayDiagram(diagram, error);
         //addClassTabs();
     }
+    */
 
-    @Override
-    protected void handleDiagramError(DiagramError error) {
-        // TODO Auto-generated method stub
-        if (error == null) {
-            setError(false, "", -1, -1, null);
-            if (getDiagram().getFragmentManager().openFragmentsExist()) {
-                setError(
-                        true,
-                        "Warning: There are open comments. Use [c:<type> <text>]...[/c]",
-                        -1, -1, null);
-            }
-
-            int noteNumber = getDiagram().getNextFreeNoteNumber();
-            if (noteNumber == 0) {
-                setStatus("");
-            } else {
-                setStatus("Next note number: "
-                        + getDiagram().getNextFreeNoteNumber());
-            }
-        } else {
-            setStatus("");
-            if (error instanceof FatalError) {
-                FatalError fatal = (FatalError) error;
-                System.err
-                        .println("********************************************************");
-                System.err
-                        .println("*                                                      *");
-                System.err
-                        .println("*            A FATAL ERROR HAS OCCURED.                *");
-                System.err
-                        .println("*                                                      *");
-                System.err
-                        .println("********************************************************");
-                error.getCause().printStackTrace();
-                // cautiously embedding this call into a try/catch-block
-                try {
-                    handleBug(getDiagram(), fatal.getCause());
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            } else {
-                TextHandler handler = (TextHandler) error.getProvider();
-                String prefix = "";
-
-                if (error instanceof SemanticError) {
-                    prefix = getDiagram().isThreaded()
-                            && getDiagram().getCallerThread() != -1 ? "Thread "
-                            + getDiagram().getCallerThread() + ": " : "";
-                }
-                setError(false, prefix + error.getMessage(),
-                        handler.getLineBegin() - 1, handler.getLineEnd(),
-                        EditorHintFactory.createHint(this, error));
-            }
-        }
-    }
+    protected abstract void handleDiagramError(DiagramError error);
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == changeTimer) {
@@ -813,6 +737,7 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
         }
     }
 
+    /*
     private void addClassTabs() {
         MultiMap<String, Lifeline, TreeSet<?>, TreeMap<?, ?>> classNames = new MultiMap<String, Lifeline, TreeSet<?>, TreeMap<?, ?>>(
                 TreeSet.class, TreeMap.class);
@@ -855,9 +780,8 @@ public class DiagramTextTab extends DiagramTab implements DocumentListener,
                     (LinkedList<ForwardMessage>) messages.getValues(entry
                             .getKey()));
         }
-
-        // get_UI().selectTab(this);
     }
+    */
 
     public void setIgnoreChanges(boolean ignoreChanges) {
         this.ignoreChanges = ignoreChanges;

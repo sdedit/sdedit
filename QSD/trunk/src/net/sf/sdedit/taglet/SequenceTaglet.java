@@ -31,8 +31,9 @@ import java.util.Map;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
-import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramFactory;
+import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.text.TextHandler;
 import net.sf.sdedit.ui.ImagePaintDevice;
 
@@ -208,7 +209,8 @@ public class SequenceTaglet implements Taglet
         conf.setThreaded(true);
         conf.setGlue(3);
         ImagePaintDevice device = new ImagePaintDevice();
-        DiagramFactory factory = new DiagramFactory(specification, device);
+        PaintDevice paintDevice = new PaintDevice(device);
+        DiagramFactory factory = new SequenceDiagramFactory(specification, paintDevice);
         try {
             factory.generateDiagram(conf);
         } catch (Exception e) {

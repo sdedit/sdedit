@@ -25,9 +25,10 @@
 package net.sf.sdedit.editor;
 
 import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.error.AddObjectHint;
-import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.error.ObjectNotFound;
+import net.sf.sdedit.error.SequenceDiagramError;
 import net.sf.sdedit.text.TextHandler;
 import net.sf.sdedit.ui.impl.DiagramTextTab;
 
@@ -37,9 +38,10 @@ public class EditorHintFactory {
 		
 	}
 
-	public static EditorHint createHint(DiagramTextTab tab, DiagramError error) {
-		if (error instanceof ObjectNotFound) {
-			Diagram diagram = tab.getDiagram();
+	public static EditorHint createHint(DiagramTextTab tab, SequenceDiagramError error) {
+	    Diagram diag = tab.getDiagram();
+		if (diag instanceof SequenceDiagram && error instanceof ObjectNotFound) {
+			SequenceDiagram diagram = (SequenceDiagram) diag;
 			if (diagram.getDataProvider() instanceof TextHandler) {
 				TextHandler textHandler = (TextHandler) diagram
 						.getDataProvider();

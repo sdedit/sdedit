@@ -34,8 +34,9 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 import net.sf.sdedit.config.ConfigurationManager;
-import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramFactory;
+import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.error.SyntaxError;
 import net.sf.sdedit.text.TextHandler;
@@ -166,7 +167,8 @@ public class DiagramServer extends Thread {
 							throw new RuntimeException(
 									"FreeHEP library missing.");
 						}
-						DiagramFactory factory = new DiagramFactory(buffer.toString(), exporter);
+						PaintDevice paintDevice = new PaintDevice(exporter);
+						DiagramFactory factory = new SequenceDiagramFactory(buffer.toString(), paintDevice);
 						factory.generateDiagram(ConfigurationManager
                                 .createNewDefaultConfiguration().getDataObject());
 						exporter.export();

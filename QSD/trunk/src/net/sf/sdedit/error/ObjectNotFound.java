@@ -24,13 +24,13 @@
 
 package net.sf.sdedit.error;
 
-import net.sf.sdedit.diagram.DiagramDataProvider;
+import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 
 public class ObjectNotFound extends SemanticError {
 	
 	private String objectName;
 
-	public ObjectNotFound(DiagramDataProvider provider, String objectName) {
+	public ObjectNotFound(SequenceDiagramDataProvider provider, String objectName) {
 		super(provider, objectName + " does not exist");
 		this.objectName = objectName;
 	}

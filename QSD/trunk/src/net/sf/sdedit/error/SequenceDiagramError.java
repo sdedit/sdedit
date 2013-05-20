@@ -21,68 +21,44 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
 // THE POSSIBILITY OF SUCH DAMAGE.
-package net.sf.sdedit.ui.impl;
 
-import java.util.List;
+package net.sf.sdedit.error;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
+import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 
-import net.sf.sdedit.ui.Tab;
+public class SequenceDiagramError extends DiagramError {
 
-public interface TabContainer {
-	
-	public JComponent getComponent();
-	
-	public int getTabCount ();
-	
-	public boolean select (Tab tab);
-	
-	public void remove (Tab tab);
-	
-	public Tab getSelectedTab ();
-	
-	public Tab[] getSelectedTabs ();
-	
-	public List<Tab> getTabs ();
-	
-	public void addCategory (String category, ImageIcon icon);
-	
-	public String addTab (Tab tab, boolean selectIt);
-	
-	public String addTab (Tab tab);
-	
-	public String addChildTab (Tab tab, Tab parent, boolean selectIt, Tab previousTab);
-	
-	public String addChildTab(Tab tab, Tab parent) ;
-	
-	//public String addTab (Tab tab, boolean selectIt);
-	
-	public boolean exists (Tab tab);
-	
-	public boolean existsCategory (String title);
-	
-	public void addListener (TabContainerListener listener);
-	
-	public void removeListener (TabContainerListener listener);
-	
-	public List<Tab> getSuccessors(Tab tab);
-	
-	public List<Tab> getDescendants(Tab root);
-	
-	public Tab getParentTab (Tab tab);
-	
-	public void disableTabHistory ();
-	
-	public void enableTabHistory ();
-	
-	public void goToNextTab ();
-	
-	public void goToPreviousTab ();
-	
-	public boolean nextTabExists ();
-	
-	public boolean previousTabExists ();
-	
+    private static final long serialVersionUID = -5386014375930948784L;
+    
+    private SequenceDiagramDataProvider provider;
+    
+    /**
+     * Constructor.
+     * 
+     * @param provider
+     *            the DiagramDataProvider that delivered the wrong
+     *            specification
+     * @param msg
+     *            a message describing the DiagramError
+     */
+    protected SequenceDiagramError(SequenceDiagramDataProvider provider, String msg) {
+        super(msg);
+        this.provider = provider;
+    }
 
+    /**
+     * Returns the <tt>DiagramDataProvider</tt> that was used when the
+     * error occurred.
+     * 
+     * @return the <tt>DiagramDataProvider</tt> that was used when the
+     * error occurred
+     */
+    public SequenceDiagramDataProvider getProvider() {
+        return provider;
+    }
+    
+    public void setProvider (SequenceDiagramDataProvider provider) {
+    	this.provider = provider;
+    }
 }
+//{{core}}

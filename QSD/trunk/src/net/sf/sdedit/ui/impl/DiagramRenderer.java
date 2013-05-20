@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramFactory;
+import net.sf.sdedit.diagram.IPaintDevice;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.error.FatalError;
 import net.sf.sdedit.ui.PanelPaintDevice;
@@ -68,11 +69,8 @@ public class DiagramRenderer implements Runnable {
 	}
 
 	public void renderDiagram(DiagramTab tab) {
-        PanelPaintDevice ppd = new PanelPaintDevice(true);
-        if (tab.getInteraction() != null) {
-            ppd.setPartner(tab.getInteraction());
-        }	           
-	    DiagramFactory factory = new DiagramFactory(tab, ppd);
+        IPaintDevice ppd = tab.createPaintDevice();
+        DiagramFactory factory = tab.createFactory(ppd);
 	    enqueue(factory);
 	}
 

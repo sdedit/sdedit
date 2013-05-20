@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.drawable.Strokes.StrokeType;
 import net.sf.sdedit.message.ConstructorMessage;
 import net.sf.sdedit.message.Message;
@@ -62,7 +62,7 @@ public class Fragment extends Drawable
     /**
      * The diagram of which the fragment is a part.
      */
-    private Diagram diagram;
+    private SequenceDiagram diagram;
 
     /**
      * The sequence elements that are members of the fragment.
@@ -100,7 +100,7 @@ public class Fragment extends Drawable
      * @param diagram
      *            the diagram of which the fragment is a part
      */
-    public Fragment(String type, String condition, Diagram diagram) {
+    public Fragment(String type, String condition, SequenceDiagram diagram) {
         if (type.equals("")) {
             this.type = condition + "  ";
             this.condition = "";

@@ -35,14 +35,16 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 import javax.swing.event.MouseInputListener;
 
 import net.sf.sdedit.Constants;
+import net.sf.sdedit.diagram.AbstractGraphicDevice;
 import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Fragment;
 import net.sf.sdedit.drawable.Strokes;
@@ -58,8 +60,8 @@ import net.sf.sdedit.ui.components.Zoomable;
  * @author Markus Strauch
  * 
  */
-public class PanelPaintDevice extends PaintDevice implements
-		MouseInputListener, Constants {
+public class PanelPaintDevice extends
+		AbstractGraphicDevice implements MouseInputListener, Constants {
 	/**
 	 * FontMetrics of the normal font.
 	 */
@@ -101,6 +103,8 @@ public class PanelPaintDevice extends PaintDevice implements
 	protected Drawable highlighted;
 
 	private static MouseEvent lastMove;
+	
+	private boolean empty;
 
 	/**
 	 * Creates a new <tt>PanelPaintDevice</tt>.
@@ -117,18 +121,6 @@ public class PanelPaintDevice extends PaintDevice implements
 		antialias = true;
 	}
 	
-	public void setDiagram(Diagram diagram) {
-		super.setDiagram(diagram);
-		Graphics preGraphics = new BufferedImage(1, 1,
-				BufferedImage.TYPE_INT_RGB).getGraphics();
-		preGraphics.setFont(getFont(false));
-		fontMetrics = preGraphics.getFontMetrics();
-		Graphics boldGraphics = new BufferedImage(1, 1,
-				BufferedImage.TYPE_INT_RGB).getGraphics();
-		boldGraphics.setFont(getFont(true));
-		boldFontMetrics = boldGraphics.getFontMetrics();
-	}
-
 	/**
 	 * This method is called when the mouse moved over the panel. If it has
 	 * exited or entered a drawable object, {@linkplain PanelPaintDevicePartner}
@@ -152,7 +144,7 @@ public class PanelPaintDevice extends PaintDevice implements
 				}
 			}
 			lastDrawableMovedOver = null;
-			for (Drawable drawable : this) {
+			for (Drawable drawable : drawables()) {
 				if (!(drawable instanceof Fragment)) {
 					if (drawable.contains(point)) {
 						lastDrawableMovedOver = drawable;
@@ -181,24 +173,17 @@ public class PanelPaintDevice extends PaintDevice implements
 		this.partner = partner;
 	}
 
-	/**
-	 * @see net.sf.sdedit.diagram.IPaintDevice#close()
-	 */
-	public void close() {
-		super.close();
-		size = new Dimension(getWidth(), getHeight());
-	}
-
-	/**
-	 * @see net.sf.sdedit.diagram.IPaintDevice#getTextHeight(boolean)
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.sdedit.diagram.GraphicDevice#getTextHeight(boolean)
 	 */
 	public int getTextHeight(boolean bold) {
 		return (bold ? boldFontMetrics : fontMetrics).getHeight();
 	}
 
-	/**
-	 * @see net.sf.sdedit.diagram.IPaintDevice#getTextWidth(java.lang.String,
-	 *      boolean)
+	/*
+	 * (non-Javadoc)
+	 * @see net.sf.sdedit.diagram.GraphicDevice#getTextWidth(java.lang.String, boolean)
 	 */
 	public int getTextWidth(String text, boolean bold) {
 		return (bold ? boldFontMetrics : fontMetrics).stringWidth(text);
@@ -321,7 +306,7 @@ public class PanelPaintDevice extends PaintDevice implements
 			String text = null;
 			if (partner != null) {
 				Point mousePoint = e.getPoint();
-				for (Drawable drawable : PanelPaintDevice.this) {
+				for (Drawable drawable : drawables()) {
 					if (drawable.contains(mousePoint)) {
 						text = partner.getTooltip(drawable);
 						break;
@@ -340,7 +325,7 @@ public class PanelPaintDevice extends PaintDevice implements
 			Rectangle clipBounds = g2.getClipBounds();
 			g2.setColor(Color.WHITE);
 			g2.fill(clipBounds);
-			if (!isEmpty()) {
+			if (!empty) {
 				g2.setFont(PanelPaintDevice.this.getFont(false));
 				if (antialias) {
 					g2.setRenderingHints(new RenderingHints(
@@ -349,7 +334,7 @@ public class PanelPaintDevice extends PaintDevice implements
 				}
 		        g2.setColor(Color.BLACK);
 		        g2.setStroke(Strokes.defaultStroke());
-				for (Drawable drawable : PanelPaintDevice.this) {
+				for (Drawable drawable : drawables()) {
 					if (drawable.intersects(clipBounds)) {
 						if (drawable == highlighted) {
 							g2.setColor(Color.YELLOW);
@@ -365,4 +350,26 @@ public class PanelPaintDevice extends PaintDevice implements
 			}
 		}
 	}
+
+
+    public void close (int width, int height, boolean empty) {
+        this.empty = empty;
+        size = new Dimension(width, height);
+    }
+
+    public void initialize(Diagram diagram) {
+        super.initialize(diagram);
+        Graphics preGraphics = new BufferedImage(1, 1,
+                BufferedImage.TYPE_INT_RGB).getGraphics();
+        preGraphics.setFont(getFont(false));
+        fontMetrics = preGraphics.getFontMetrics();
+        Graphics boldGraphics = new BufferedImage(1, 1,
+                BufferedImage.TYPE_INT_RGB).getGraphics();
+        boldGraphics.setFont(getFont(true));
+        boldFontMetrics = boldGraphics.getFontMetrics();
+    }
+    
+    public void writeToStream(String type, OutputStream stream) throws IOException {
+        throw new UnsupportedOperationException("writeToStream not supported");
+    }
 }

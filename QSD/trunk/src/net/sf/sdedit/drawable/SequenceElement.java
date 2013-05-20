@@ -29,7 +29,7 @@ import java.awt.Graphics2D;
 
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.util.Direction;
 
@@ -44,7 +44,7 @@ public abstract class SequenceElement extends Drawable implements Constants {
 
 	private ExtensibleDrawable rightLimit;
 
-	protected final Diagram diagram;
+	protected final SequenceDiagram diagram;
 
 	private Direction align;
 
@@ -54,7 +54,7 @@ public abstract class SequenceElement extends Drawable implements Constants {
 
 	protected final Configuration configuration;
 
-	protected SequenceElement(Diagram diagram, Lifeline boundary0,
+	protected SequenceElement(SequenceDiagram diagram, Lifeline boundary0,
 			Lifeline boundary1, String[] label, Direction align, int y) {
 		setTop(y);
 		this.align = align;
@@ -65,7 +65,7 @@ public abstract class SequenceElement extends Drawable implements Constants {
 		computePadding();
 	}
 
-	protected final Diagram diagram() {
+	protected final SequenceDiagram diagram() {
 		return diagram;
 	}
 

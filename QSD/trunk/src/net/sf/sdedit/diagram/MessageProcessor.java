@@ -48,9 +48,9 @@ import net.sf.sdedit.message.Primitive;
  */
 final class MessageProcessor {
 
-	private final Diagram diagram;
+	private final SequenceDiagram diagram;
 
-	private final DiagramDataProvider provider;
+	private final SequenceDiagramDataProvider provider;
 
 	/*
 	 * The following attributes are valid during one single call of
@@ -106,7 +106,7 @@ final class MessageProcessor {
 		return rootCallee == null;
 	}
 
-	MessageProcessor(final Diagram diagram) {
+	MessageProcessor(final SequenceDiagram diagram) {
 		this.diagram = diagram;
 		this.provider = diagram.getDataProvider();
 		requireReturn = diagram.getConfiguration().isExplicitReturns();

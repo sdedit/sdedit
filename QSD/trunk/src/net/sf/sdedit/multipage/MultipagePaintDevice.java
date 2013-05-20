@@ -35,8 +35,9 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import net.sf.sdedit.config.PrintConfiguration;
+import net.sf.sdedit.diagram.AbstractGraphicDevice;
 import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Strokes;
 import net.sf.sdedit.ui.components.ZoomPane;
@@ -46,7 +47,7 @@ import net.sf.sdedit.ui.components.Zoomable;
  * 
  * @author Markus Strauch
  */
-public class MultipagePaintDevice extends PaintDevice {
+public class MultipagePaintDevice extends AbstractGraphicDevice {
 
 	private Dimension pageSize;
 
@@ -59,6 +60,8 @@ public class MultipagePaintDevice extends PaintDevice {
 	private double scale;
 
 	private PrintConfiguration properties;
+	
+	private Diagram diagram;
 
 	public MultipagePaintDevice(PrintConfiguration properties, Dimension pageSize) {
 		super();
@@ -68,8 +71,9 @@ public class MultipagePaintDevice extends PaintDevice {
 	}
 
 	@Override
-	public void setDiagram(Diagram diagram) {
-		super.setDiagram(diagram);
+	public void initialize(Diagram diagram) {
+		super.initialize(diagram);
+		this.diagram = diagram;
 		graphics = (Graphics2D) new BufferedImage(1, 1,
 				BufferedImage.TYPE_USHORT_GRAY).getGraphics();
 		graphics.setFont(getFont(false));
@@ -108,8 +112,8 @@ public class MultipagePaintDevice extends PaintDevice {
 		return scale;
 	}
 
-	public void close() {
-		super.close();
+	public void close(int width, int height, boolean empty) {
+		super.close(width, height, empty);
 		scale = computeScale();
 		int numberOfPages;
 		if (properties.isMultipage()) {
@@ -128,11 +132,12 @@ public class MultipagePaintDevice extends PaintDevice {
 
 	public void announce(int height) {
 		if (properties.isMultipage()) {
-			int v0 = getDiagram().getVerticalPosition();
+		    SequenceDiagram sd = (SequenceDiagram) diagram;
+			int v0 = sd.getVerticalPosition();
 			int v1 = v0 + height;
 			if (v1 / pageSize.height > v0 / pageSize.height) {
 				int diff = pageSize.height - v0 % pageSize.height;
-				getDiagram().extendLifelines(diff);
+				sd.extendLifelines(diff);
 			}
 		}
 	}
@@ -156,12 +161,10 @@ public class MultipagePaintDevice extends PaintDevice {
 	// super.addSequenceElement(elem);
 	// }
 
-	@Override
 	public int getTextHeight(boolean bold) {
 		return (bold ? boldGraphics : graphics).getFontMetrics().getHeight();
 	}
 
-	@Override
 	public int getTextWidth(String text, boolean bold) {
 		return (bold ? boldGraphics : graphics).getFontMetrics().stringWidth(
 				text);
@@ -169,7 +172,9 @@ public class MultipagePaintDevice extends PaintDevice {
 
 	public class MultipagePanel extends JPanel implements Zoomable<JPanel> {
 
-		private int index;
+        private static final long serialVersionUID = -112626883258199079L;
+
+        private int index;
 
 		private ZoomPane zoomPane;
 
@@ -237,7 +242,7 @@ public class MultipagePaintDevice extends PaintDevice {
 			}
 		    g2d.setColor(Color.BLACK);
 		    g2d.setStroke(Strokes.defaultStroke());
-			for (Drawable drawable : MultipagePaintDevice.this) {
+			for (Drawable drawable : drawables()) {
 				if (rect == null || drawable.intersects(rect)) {
 					drawable.draw(g2d);
 				}

@@ -107,5 +107,6 @@ public class ImagePaintDevice extends Graphics2DPaintDevice implements
 		g2d.fillRect(0, 0, getWidth(), getHeight());
 		return g2d;
 	}
+
 }
 // {{core}}

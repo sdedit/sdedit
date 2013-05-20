@@ -24,7 +24,7 @@
 
 package net.sf.sdedit.message;
 
-import net.sf.sdedit.diagram.Diagram;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.drawable.Arrow;
@@ -55,7 +55,7 @@ public class ConstructorMessage extends ForwardMessage
      *            encapsulates the data of the constructor message
      */
     public ConstructorMessage(Lifeline caller, Lifeline callee,
-            Diagram diagram, MessageData data) {
+            SequenceDiagram diagram, MessageData data) {
         super(caller, callee, diagram, data);
     }
 
@@ -87,7 +87,7 @@ public class ConstructorMessage extends ForwardMessage
         arrow.setSpace(s+getCallee().getHead().getWidth() / 2);
                 //- getConfiguration().getMainLifelineWidth() / 2);
 
-        getDiagram().getPaintDevice().addSequenceElement(arrow);
+        getDiagram().getPaintDevice().append(arrow);
 
 
         

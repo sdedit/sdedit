@@ -24,7 +24,7 @@
 
 package net.sf.sdedit.error;
 
-import net.sf.sdedit.diagram.DiagramDataProvider;
+import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 import net.sf.sdedit.diagram.MessageData;
 
 /**
@@ -34,7 +34,7 @@ import net.sf.sdedit.diagram.MessageData;
  * @author Markus Strauch
  * 
  */
-public class SyntaxError extends DiagramError {
+public class SyntaxError extends SequenceDiagramError {
 
 	/**
 	 * Creates a new SyntaxException.
@@ -42,7 +42,7 @@ public class SyntaxError extends DiagramError {
 	 * @param msg
 	 *            a message describing the SyntaxException
 	 */
-	public SyntaxError(DiagramDataProvider provider, String msg) {
+	public SyntaxError(SequenceDiagramDataProvider provider, String msg) {
 		super(provider, msg);
 	}
 }

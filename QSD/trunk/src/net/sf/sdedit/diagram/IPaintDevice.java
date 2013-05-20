@@ -25,8 +25,6 @@
 package net.sf.sdedit.diagram;
 
 import java.awt.Font;
-import java.io.IOException;
-import java.io.OutputStream;
 
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Line;
@@ -50,7 +48,7 @@ public interface IPaintDevice extends Iterable<Drawable> {
 
 	public void addOtherDrawable(Drawable drawable);
 
-	public void addSequenceElement(SequenceElement elem);
+	public void append(SequenceElement elem);
 
 	public boolean isEmpty();
 
@@ -85,7 +83,5 @@ public interface IPaintDevice extends Iterable<Drawable> {
 	public void announce (int height);
 
 	public Diagram getDiagram();
-
-	public void writeToStream(OutputStream stream) throws IOException;
 
 }

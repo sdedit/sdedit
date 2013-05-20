@@ -48,12 +48,12 @@ import net.sf.sdedit.message.Answer;
  * 
  */
 public final class FragmentManager {
-	private final Diagram diagram;
+	private final SequenceDiagram diagram;
 
 	/**
 	 * This list contains the fragments that have been opened and for which we
 	 * have not yet seen a close command (see {@linkplain
-	 * DiagramDataProvider#closeFragment()}). When a sequence element is added
+	 * SequenceDiagramDataProvider#closeFragment()}). When a sequence element is added
 	 * via {@linkplain #addSequenceElement(SequenceElement)} it will be added to
 	 * all fragments in this list.
 	 */
@@ -61,7 +61,7 @@ public final class FragmentManager {
 
 	/**
 	 * This list contains the fragments for which we have already seen a close
-	 * command (see {@linkplain DiagramDataProvider#closeFragment()}). Sequence
+	 * command (see {@linkplain SequenceDiagramDataProvider#closeFragment()}). Sequence
 	 * elements added via {@linkplain #addSequenceElement(SequenceElement)} will
 	 * not be added to the comments in this list. When an answer is processed,
 	 * {@linkplain #finishFragmentsNotIncluding(Answer)} is called and all
@@ -91,7 +91,7 @@ public final class FragmentManager {
 	 * @param diagram
 	 *            the given diagram
 	 */
-	public FragmentManager(Diagram diagram) {
+	public FragmentManager(SequenceDiagram diagram) {
 		this.diagram = diagram;
 		openFragments = new LinkedList<Fragment>();
 		closingFragments = new LinkedList<Fragment>();
@@ -100,7 +100,7 @@ public final class FragmentManager {
 
 	/**
 	 * Returns the labels for the fragments for which we have already seen an
-	 * open command (see {@linkplain DiagramDataProvider#openFragment()}) but
+	 * open command (see {@linkplain SequenceDiagramDataProvider#openFragment()}) but
 	 * for which we have not yet created a {@linkplain Fragment} representation.
 	 * 
 	 * @return the labels for the fragments for which we have already seen an
@@ -139,7 +139,7 @@ public final class FragmentManager {
 
 	/**
 	 * This method uses the provider of the diagram data (see
-	 * {@linkplain DiagramDataProvider}, {@linkplain Diagram#getDataProvider()}
+	 * {@linkplain SequenceDiagramDataProvider}, {@linkplain SequenceDiagram#getDataProvider()}
 	 * and takes some action if the provider says that a fragment is opened or
 	 * closed, or if the beginning of a new section is specified.
 	 * 
@@ -149,7 +149,7 @@ public final class FragmentManager {
 	 *             if the fragment specification is syntactically wrong
 	 */
 	public boolean readFragments() throws SyntaxError {
-		DiagramDataProvider provider = diagram.getDataProvider();
+		SequenceDiagramDataProvider provider = diagram.getDataProvider();
 		if (provider.closeFragment()) {
 			closeRecentFragment();
 			return true;
@@ -234,7 +234,7 @@ public final class FragmentManager {
 	/**
 	 * Returns a flag indicating if there are fragments for which we have not
 	 * seen a close command yet (see
-	 * {@linkplain DiagramDataProvider#closeFragment()}).
+	 * {@linkplain SequenceDiagramDataProvider#closeFragment()}).
 	 * 
 	 * @return a flag indicating if there are fragments for which we have not
 	 *         seen a close command

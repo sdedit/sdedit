@@ -24,7 +24,7 @@
 
 package net.sf.sdedit.error;
 
-import net.sf.sdedit.diagram.DiagramDataProvider;
+import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 
 /**
  * This exception is thrown when a message specification is semantically wrong.
@@ -33,9 +33,9 @@ import net.sf.sdedit.diagram.DiagramDataProvider;
  * 
  * @author Markus Strauch
  */
-public class SemanticError extends DiagramError
+public class SemanticError extends SequenceDiagramError
 {
-    public SemanticError(DiagramDataProvider provider, String msg) {
+    public SemanticError(SequenceDiagramDataProvider provider, String msg) {
         super(provider, msg);
     }
 }//{{core}}

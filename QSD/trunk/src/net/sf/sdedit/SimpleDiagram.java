@@ -37,7 +37,8 @@ import java.io.StringWriter;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.diagram.DiagramFactory;
-import net.sf.sdedit.diagram.IPaintDevice;
+import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.ui.ImagePaintDevice;
 import net.sf.sdedit.ui.components.configuration.Bean;
@@ -48,7 +49,7 @@ public class SimpleDiagram {
 
 	private Bean<Configuration> configuration;
 	
-	private IPaintDevice paintDevice;
+	private ImagePaintDevice graphicDevice;
 	
 	public SimpleDiagram(String text) {
 		this.text = text;
@@ -103,14 +104,15 @@ public class SimpleDiagram {
 	}
 	
     private ImagePaintDevice getImagePaintDevice() throws DiagramError {
-		if (paintDevice instanceof ImagePaintDevice) {
-			return (ImagePaintDevice) paintDevice;
+		if (graphicDevice instanceof ImagePaintDevice) {
+			return graphicDevice;
 		}
-		paintDevice = new ImagePaintDevice();
-		DiagramFactory factory = new DiagramFactory(text, paintDevice);
+		graphicDevice = new ImagePaintDevice();
+		PaintDevice paintDevice = new PaintDevice(graphicDevice);
+		DiagramFactory factory = new SequenceDiagramFactory(text, paintDevice);
 		factory.generateDiagram(configuration.getDataObject());
-		((ImagePaintDevice) paintDevice).drawAll();
-		return (ImagePaintDevice) paintDevice;
+		graphicDevice.drawAll();
+		return graphicDevice;
 	}
 }
 

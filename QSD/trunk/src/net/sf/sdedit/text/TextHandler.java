@@ -33,8 +33,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.diagram.DiagramDataProvider;
+import net.sf.sdedit.diagram.SequenceDiagram;
+import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.drawable.Note;
@@ -50,7 +50,7 @@ import net.sf.sdedit.util.Pair;
  * @author Markus Strauch
  * 
  */
-public class TextHandler implements DiagramDataProvider {
+public class TextHandler implements SequenceDiagramDataProvider {
 
 	private BufferedReader reader;
 
@@ -67,7 +67,7 @@ public class TextHandler implements DiagramDataProvider {
 	/* -1 = init, 0 = objects, 1 = messages */
 	private int section;
 
-	private Diagram diagram;
+	private SequenceDiagram diagram;
 
 	private int lineNumber;
 
@@ -102,13 +102,13 @@ public class TextHandler implements DiagramDataProvider {
 	/**
 	 * Sets the diagram instance that corresponds to the specification read by
 	 * this <tt>TextHandler</tt>. This method is called inside
-	 * {@linkplain Diagram#generate()}.
+	 * {@linkplain SequenceDiagram#generate()}.
 	 * 
 	 * @param diagram
 	 *            the diagram that corresponds to the specification read by this
 	 *            <tt>TextHandler</tt>
 	 */
-	public void setDiagram(Diagram diagram) {
+	public void setDiagram(SequenceDiagram diagram) {
 		this.diagram = diagram;
 		this.reuseSpace = diagram.getConfiguration().isReuseSpace();
 	}
@@ -197,7 +197,7 @@ public class TextHandler implements DiagramDataProvider {
 	}
 
 	/**
-	 * @see net.sf.sdedit.diagram.DiagramDataProvider#getTitle()
+	 * @see net.sf.sdedit.diagram.SequenceDiagramDataProvider#getTitle()
 	 */
 	public String getTitle() {
 		return title;
@@ -556,7 +556,7 @@ public class TextHandler implements DiagramDataProvider {
 	}
 
 
-	public Diagram getDiagram() {
+	public SequenceDiagram getDiagram() {
 		return diagram;
 	}
 }
