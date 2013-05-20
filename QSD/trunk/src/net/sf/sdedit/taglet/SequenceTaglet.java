@@ -35,7 +35,7 @@ import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.text.TextHandler;
-import net.sf.sdedit.ui.ImagePaintDevice;
+import net.sf.sdedit.ui.ImageGraphicsDevice;
 
 import com.sun.javadoc.Doc;
 import com.sun.javadoc.PackageDoc;
@@ -208,7 +208,7 @@ public class SequenceTaglet implements Taglet
         conf.setSubLifelineWidth(5);
         conf.setThreaded(true);
         conf.setGlue(3);
-        ImagePaintDevice device = new ImagePaintDevice();
+        ImageGraphicsDevice device = new ImageGraphicsDevice();
         PaintDevice paintDevice = new PaintDevice(device);
         DiagramFactory factory = new SequenceDiagramFactory(specification, paintDevice);
         try {

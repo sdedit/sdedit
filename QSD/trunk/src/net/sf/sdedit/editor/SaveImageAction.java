@@ -38,7 +38,7 @@ import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.error.DiagramError;
-import net.sf.sdedit.ui.ImagePaintDevice;
+import net.sf.sdedit.ui.ImageGraphicsDevice;
 import net.sf.sdedit.ui.UserInterface;
 import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.impl.DiagramTab;
@@ -76,7 +76,7 @@ public class SaveImageAction extends TabAction<DiagramTab> {
 	 *             if the image file cannot be written due to an i/o error
 	 */
 	void saveImage(DiagramTab tab) throws IOException {
-		ImagePaintDevice ipd = new ImagePaintDevice();
+		ImageGraphicsDevice ipd = new ImageGraphicsDevice();
 		PaintDevice paintDevice = new PaintDevice(ipd);
 		Configuration conf = tab.getConfiguration().getDataObject();
 		try {

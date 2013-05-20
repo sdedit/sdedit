@@ -43,7 +43,7 @@ import net.sf.sdedit.editor.DiagramFileHandler;
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.server.Exporter;
-import net.sf.sdedit.ui.ImagePaintDevice;
+import net.sf.sdedit.ui.ImageGraphicsDevice;
 import net.sf.sdedit.ui.components.configuration.Adjustable;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.util.DocUtil.XMLException;
@@ -240,7 +240,7 @@ public class Main implements Constants {
                 Bean<Configuration> conf = pair.getSecond();
                 configure(conf, cmd);
                 if (type.equals("png")) {
-                    ImagePaintDevice graphicDevice = new ImagePaintDevice();
+                    ImageGraphicsDevice graphicDevice = new ImageGraphicsDevice();
                     PaintDevice paintDevice = new PaintDevice(graphicDevice);
                     DiagramFactory factory = new SequenceDiagramFactory(text, paintDevice);
                     factory.generateDiagram(conf.getDataObject());

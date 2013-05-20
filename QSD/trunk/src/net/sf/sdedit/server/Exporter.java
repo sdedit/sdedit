@@ -28,7 +28,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 
 import net.sf.sdedit.Constants;
-import net.sf.sdedit.ui.Graphics2DPaintDevice;
+import net.sf.sdedit.ui.G2DGraphicsDevice;
 
 /**
  * An Exporter is a paint device that can redirect its output to an output
@@ -36,7 +36,7 @@ import net.sf.sdedit.ui.Graphics2DPaintDevice;
  * 
  * @author Markus Strauch
  */
-public abstract class Exporter extends Graphics2DPaintDevice {
+public abstract class Exporter extends G2DGraphicsDevice {
 	
 	private static final boolean exportAvailable;
 

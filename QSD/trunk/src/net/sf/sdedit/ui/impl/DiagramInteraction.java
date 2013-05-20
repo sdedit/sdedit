@@ -29,9 +29,9 @@ import java.util.List;
 import javax.swing.Action;
 
 import net.sf.sdedit.drawable.Drawable;
-import net.sf.sdedit.ui.PanelPaintDevicePartner;
+import net.sf.sdedit.ui.PanelGraphicDevicePartner;
 
-public abstract class DiagramInteraction implements PanelPaintDevicePartner {
+public abstract class DiagramInteraction implements PanelGraphicDevicePartner {
 
 	private Drawable drawable;
 

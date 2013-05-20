@@ -37,7 +37,7 @@ import javax.swing.Action;
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.PaintDevice;
-import net.sf.sdedit.ui.PanelPaintDevice;
+import net.sf.sdedit.ui.PanelGraphicDevice;
 import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.impl.DiagramTab;
 
@@ -65,7 +65,7 @@ public class ExportAction extends TabAction<DiagramTab> implements
     
     private PaintDevice exportDevice;
     
-    private PanelPaintDevice exportGraphic;
+    private PanelGraphicDevice exportGraphic;
     
     public ExportAction (Editor editor) {
     	super(DiagramTab.class, editor.getUI());
@@ -82,7 +82,7 @@ public class ExportAction extends TabAction<DiagramTab> implements
     		return;
     	}
         exportDevice = (PaintDevice) diagram.getPaintDevice();
-        exportGraphic = (PanelPaintDevice) exportDevice.getGraphicDevice();
+        exportGraphic = (PanelGraphicDevice) exportDevice.getGraphicDevice();
         if (exportDevice.isEmpty()) {
             return;
         }

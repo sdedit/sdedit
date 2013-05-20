@@ -60,8 +60,8 @@ import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.server.Exporter;
-import net.sf.sdedit.ui.ImagePaintDevice;
-import net.sf.sdedit.ui.PanelPaintDevice;
+import net.sf.sdedit.ui.ImageGraphicsDevice;
+import net.sf.sdedit.ui.PanelGraphicDevice;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.components.ZoomPane;
 import net.sf.sdedit.ui.components.Zoomable;
@@ -203,9 +203,9 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		renderer.renderDiagram(this);
 	}
 	
-	protected PanelPaintDevice graphic () {
+	protected PanelGraphicDevice graphic () {
         AbstractPaintDevice apd = (AbstractPaintDevice) diagram.getPaintDevice();
-        PanelPaintDevice pg = (PanelPaintDevice) apd.getGraphicDevice();
+        PanelGraphicDevice pg = (PanelGraphicDevice) apd.getGraphicDevice();
         return pg;
 	}
 
@@ -267,7 +267,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		if (diagram != null) {
 			AbstractPaintDevice ppd = (AbstractPaintDevice) diagram.getPaintDevice();
 			if (!ppd.isEmpty()) {
-			    return ((PanelPaintDevice) ppd.getGraphicDevice()).getPanel();
+			    return ((PanelGraphicDevice) ppd.getGraphicDevice()).getPanel();
 			}
 		}
 		return null;
@@ -307,7 +307,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 	}
 	
 	private Image getTransferDataBitmap () throws IOException {
-		ImagePaintDevice ipd = new ImagePaintDevice(false);
+		ImageGraphicsDevice ipd = new ImageGraphicsDevice(false);
 		PaintDevice paintDevice = new PaintDevice(ipd);
 		DiagramFactory factory = createFactory(paintDevice);
 		try {

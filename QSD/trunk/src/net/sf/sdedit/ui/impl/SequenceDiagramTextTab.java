@@ -25,7 +25,7 @@ import net.sf.sdedit.error.FatalError;
 import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.error.SequenceDiagramError;
 import net.sf.sdedit.text.TextHandler;
-import net.sf.sdedit.ui.PanelPaintDevice;
+import net.sf.sdedit.ui.PanelGraphicDevice;
 import net.sf.sdedit.ui.components.configuration.Bean;
 
 public class SequenceDiagramTextTab extends DiagramTextTab {
@@ -189,7 +189,7 @@ public class SequenceDiagramTextTab extends DiagramTextTab {
 
     @Override
     public AbstractPaintDevice createPaintDevice() {
-        PanelPaintDevice ppd = new PanelPaintDevice(true);
+        PanelGraphicDevice ppd = new PanelGraphicDevice(true);
         if (getInteraction() != null) {
             ppd.setPartner(getInteraction());
         }   
