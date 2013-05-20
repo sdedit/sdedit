@@ -23,11 +23,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.diagram;
 
-import java.io.File;
-
 import net.sf.sdedit.message.BroadcastMessage;
-import net.sf.sdedit.util.Utilities;
-import net.sf.sdedit.util.base64.Base64Coder;
 
 /**
  * A <tt>MessageData</tt> object encapsulates all data characterizing a
