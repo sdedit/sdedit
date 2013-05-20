@@ -34,202 +34,201 @@ import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.util.Direction;
 
 public abstract class SequenceElement extends Drawable implements Constants {
-	private String[] label;
+    private String[] label;
 
-	private ExtensibleDrawable leftEndpoint;
+    private ExtensibleDrawable leftEndpoint;
 
-	private ExtensibleDrawable leftLimit;
+    private ExtensibleDrawable leftLimit;
 
-	private ExtensibleDrawable rightEndpoint;
+    private ExtensibleDrawable rightEndpoint;
 
-	private ExtensibleDrawable rightLimit;
+    private ExtensibleDrawable rightLimit;
 
-	protected final SequenceDiagram diagram;
+    protected final SequenceDiagram diagram;
 
-	private Direction align;
+    private Direction align;
 
-	private int rightPadding;
+    private int rightPadding;
 
-	private int leftPadding;
+    private int leftPadding;
 
-	protected final Configuration configuration;
+    protected final Configuration configuration;
 
-	protected SequenceElement(SequenceDiagram diagram, Lifeline boundary0,
-			Lifeline boundary1, String[] label, Direction align, int y) {
-		setTop(y);
-		this.align = align;
-		this.diagram = diagram;
-		configuration = configuration();
-		this.label = label;
-		findEndpoints(boundary0, boundary1);
-		computePadding();
-	}
+    protected SequenceElement(SequenceDiagram diagram, Lifeline boundary0,
+            Lifeline boundary1, String[] label, Direction align, int y) {
+        setTop(y);
+        this.align = align;
+        this.diagram = diagram;
+        configuration = configuration();
+        this.label = label;
+        findEndpoints(boundary0, boundary1);
+        computePadding();
+    }
 
-	protected final SequenceDiagram diagram() {
-		return diagram;
-	}
+    protected final SequenceDiagram diagram() {
+        return diagram;
+    }
 
-	protected final int rightPadding() {
-		return rightPadding;
-	}
+    protected final int rightPadding() {
+        return rightPadding;
+    }
 
-	protected final int leftPadding() {
-		return leftPadding;
-	}
+    protected final int leftPadding() {
+        return leftPadding;
+    }
 
-	protected final Configuration configuration() {
-		return diagram.getConfiguration();
-	}
+    protected final Configuration configuration() {
+        return diagram.getConfiguration();
+    }
 
-	/**
-	 * Returns {@linkplain Direction#RIGHT}, if the sequence element is arranged
-	 * to the right of its anchor, otherwise {@linkplain Direction#LEFT}. For
-	 * arrows the anchor is the caller lifeline, for notes it is the lifeline to
-	 * which the note is attached.
-	 * 
-	 * @return {@linkplain Direction#RIGHT}, if the sequence element is arranged
-	 *         to the right of its anchor, otherwise {@linkplain Direction#LEFT}
-	 */
-	public final Direction getAlign() {
-		return align;
-	}
+    /**
+     * Returns {@linkplain Direction#RIGHT}, if the sequence element is arranged
+     * to the right of its anchor, otherwise {@linkplain Direction#LEFT}. For
+     * arrows the anchor is the caller lifeline, for notes it is the lifeline to
+     * which the note is attached.
+     * 
+     * @return {@linkplain Direction#RIGHT}, if the sequence element is arranged
+     *         to the right of its anchor, otherwise {@linkplain Direction#LEFT}
+     */
+    public final Direction getAlign() {
+        return align;
+    }
 
-	private void computePadding() {
-		int main = diagram.mainLifelineWidth;
-		int sub = diagram.subLifelineWidth;
+    private void computePadding() {
+        int main = diagram.mainLifelineWidth;
+        int sub = diagram.subLifelineWidth;
 
-		if (leftEndpoint != null) {
-			Lifeline left = leftEndpoint.getLifeline();
-			if (left != null) {
-				Lifeline rightMost = left.getRightmost();
-				if (left == rightMost) {
-					leftPadding = 0;
-				} else if (rightMost.getDirection() == Direction.CENTER) {
-					leftPadding = main + (left.getSideLevel() - 1) * sub;
-				} else if (left.getDirection() == Direction.LEFT) {
-					leftPadding = main + (left.getSideLevel() - 1) * sub
-							+ rightMost.getSideLevel() * sub;
-				} else {
-					leftPadding = (rightMost.getSideLevel() - left
-							.getSideLevel())
-							* sub;
-				}
-			} else {
-				leftPadding = 0;
-			}
-		} else {
-			leftPadding = 0;
-		}
+        if (leftEndpoint != null) {
+            Lifeline left = leftEndpoint.getLifeline();
+            if (left != null) {
+                Lifeline rightMost = left.getRightmost();
+                if (left == rightMost) {
+                    leftPadding = 0;
+                } else if (rightMost.getDirection() == Direction.CENTER) {
+                    leftPadding = main + (left.getSideLevel() - 1) * sub;
+                } else if (left.getDirection() == Direction.LEFT) {
+                    leftPadding = main + (left.getSideLevel() - 1) * sub
+                            + rightMost.getSideLevel() * sub;
+                } else {
+                    leftPadding = (rightMost.getSideLevel() - left
+                            .getSideLevel()) * sub;
+                }
+            } else {
+                leftPadding = 0;
+            }
+        } else {
+            leftPadding = 0;
+        }
 
-		if (rightEndpoint != null) {
+        if (rightEndpoint != null) {
 
-			Lifeline right = rightEndpoint.getLifeline();
-			if (right != null) {
-				Lifeline leftMost = right.getLeftmost();
-				if (right == leftMost) {
-					rightPadding = 0;
-				} else if (leftMost.getDirection() == Direction.CENTER) {
-					rightPadding = main + (right.getSideLevel() - 1) * sub;
-				} else if (right.getDirection() == Direction.RIGHT) {
-					rightPadding = main + (right.getSideLevel() - 1) * sub
-							+ leftMost.getSideLevel() * sub;
-				} else {
-					rightPadding = (leftMost.getSideLevel() - right
-							.getSideLevel())
-							* sub;
-				}
-			} else {
-				rightPadding = 0;
-			}
-		} else {
-			rightPadding = 0;
-		}
-	}
+            Lifeline right = rightEndpoint.getLifeline();
+            if (right != null) {
+                Lifeline leftMost = right.getLeftmost();
+                if (right == leftMost) {
+                    rightPadding = 0;
+                } else if (leftMost.getDirection() == Direction.CENTER) {
+                    rightPadding = main + (right.getSideLevel() - 1) * sub;
+                } else if (right.getDirection() == Direction.RIGHT) {
+                    rightPadding = main + (right.getSideLevel() - 1) * sub
+                            + leftMost.getSideLevel() * sub;
+                } else {
+                    rightPadding = (leftMost.getSideLevel() - right
+                            .getSideLevel()) * sub;
+                }
+            } else {
+                rightPadding = 0;
+            }
+        } else {
+            rightPadding = 0;
+        }
+    }
 
-	public int getSpace() {
-		return 0;
-	}
+    public int getSpace() {
+        return 0;
+    }
 
-	public ExtensibleDrawable getLeftEndpoint() {
-		return leftEndpoint;
-	}
+    public ExtensibleDrawable getLeftEndpoint() {
+        return leftEndpoint;
+    }
 
-	public ExtensibleDrawable getRightEndpoint() {
-		return rightEndpoint;
-	}
+    public ExtensibleDrawable getRightEndpoint() {
+        return rightEndpoint;
+    }
 
-	protected void setLeftEndpoint(ExtensibleDrawable leftEndpoint) {
-		this.leftEndpoint = leftEndpoint;
-	}
+    protected void setLeftEndpoint(ExtensibleDrawable leftEndpoint) {
+        this.leftEndpoint = leftEndpoint;
+    }
 
-	protected void setRightEndpoint(ExtensibleDrawable rightEndpoint) {
-		this.rightEndpoint = rightEndpoint;
-	}
+    protected void setRightEndpoint(ExtensibleDrawable rightEndpoint) {
+        this.rightEndpoint = rightEndpoint;
+    }
 
-	protected int textWidth() {
-		return textWidth(false);
-	}
-	
-	protected int textWidth(boolean bold) {
-		int width = 0;
-		for (int i = 0; i < label.length; i++) {
-			width = Math.max(width, diagram().getPaintDevice().getTextWidth(
-					label[i], bold));
-		}
-		return width;
-	}
+    protected int textWidth() {
+        return textWidth(false);
+    }
 
-	protected int textHeight() {
-		return diagram().getPaintDevice().getTextHeight() * label.length;
-	}
+    protected int textWidth(boolean bold) {
+        int width = 0;
+        for (int i = 0; i < label.length; i++) {
+            width = Math.max(width,
+                    diagram().getPaintDevice().getTextWidth(label[i], bold));
+        }
+        return width;
+    }
 
-	private void findEndpoints(final Lifeline boundary0,
-			final Lifeline boundary1) {
+    protected int textHeight() {
+        return diagram().getPaintDevice().getTextHeight() * label.length;
+    }
 
-		if (boundary1 == null) {
-			if (boundary0.getDirection() == Direction.LEFT) {
-				leftEndpoint = boundary0.getLeftNeighbour().getView();
-				rightEndpoint = boundary0.getView();
-			} else {
-				leftEndpoint = boundary0.getView();
-				if (boundary0.getPosition() < diagram.getNumberOfLifelines() - 1) {
-					rightEndpoint = boundary0.getRightNeighbour().getView();
+    private void findEndpoints(final Lifeline boundary0,
+            final Lifeline boundary1) {
 
-				} else {
-					rightEndpoint = diagram.getPaintDevice().getRightBound();
-				}
-			}
-		} else {
-			if (boundary0.getPosition() < boundary1.getPosition()) {
-				leftEndpoint = boundary0.getView();
-				rightEndpoint = boundary1.getView();
-			} else {
-				leftEndpoint = boundary1.getView();
-				rightEndpoint = boundary0.getView();
-			}
-		}
-	}
+        if (boundary1 == null) {
+            if (boundary0.getDirection() == Direction.LEFT) {
+                leftEndpoint = boundary0.getLeftNeighbour().getView();
+                rightEndpoint = boundary0.getView();
+            } else {
+                leftEndpoint = boundary0.getView();
+                if (boundary0.getPosition() < diagram.getNumberOfLifelines() - 1) {
+                    rightEndpoint = boundary0.getRightNeighbour().getView();
 
-	protected void drawMultilineString(Graphics2D g, int x, int y,
-			Color background) {
-		drawMultilineString(g, label, x, y, diagram().getPaintDevice()
-				.getTextHeight(), textWidth(), background);
-	}
+                } else {
+                    rightEndpoint = (Line) diagram.getPaintDevice()
+                            .callSpecial("getRightBound", null);
+                }
+            }
+        } else {
+            if (boundary0.getPosition() < boundary1.getPosition()) {
+                leftEndpoint = boundary0.getView();
+                rightEndpoint = boundary1.getView();
+            } else {
+                leftEndpoint = boundary1.getView();
+                rightEndpoint = boundary0.getView();
+            }
+        }
+    }
 
-	public final ExtensibleDrawable getLeftLimit() {
-		return leftLimit;
-	}
+    protected void drawMultilineString(Graphics2D g, int x, int y,
+            Color background) {
+        drawMultilineString(g, label, x, y, diagram().getPaintDevice()
+                .getTextHeight(), textWidth(), background);
+    }
 
-	public final void setLeftLimit(ExtensibleDrawable leftLimit) {
-		this.leftLimit = leftLimit;
-	}
+    public final ExtensibleDrawable getLeftLimit() {
+        return leftLimit;
+    }
 
-	public final ExtensibleDrawable getRightLimit() {
-		return rightLimit;
-	}
+    public final void setLeftLimit(ExtensibleDrawable leftLimit) {
+        this.leftLimit = leftLimit;
+    }
 
-	public final void setRightLimit(ExtensibleDrawable rightLimit) {
-		this.rightLimit = rightLimit;
-	}
+    public final ExtensibleDrawable getRightLimit() {
+        return rightLimit;
+    }
+
+    public final void setRightLimit(ExtensibleDrawable rightLimit) {
+        this.rightLimit = rightLimit;
+    }
 }
 // {{core}}

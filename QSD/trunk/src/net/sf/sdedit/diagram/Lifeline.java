@@ -638,7 +638,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 				diagram.extendLifelines(y - diagram.getVerticalPosition());
 			}
 			cross.setTop(_view.getTop() + lengthOfLastLine);
-			diagram.getPaintDevice().addOtherDrawable(cross);
+			diagram.getPaintDevice().addExtraordinary(cross);
 			_view.setHeight(lengthOfLastLine);
 		}
 		alive = false;
@@ -758,7 +758,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 	public void destroy() {
 		diagram.removeLifeline(getName());
 		cross = new Cross(this);
-		diagram.getPaintDevice().addOtherDrawable(cross);
+		diagram.getPaintDevice().addExtraordinary(cross);
 	}
 
 	public Cross getCross() {

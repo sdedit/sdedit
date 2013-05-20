@@ -6,16 +6,15 @@ import java.util.LinkedList;
 
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Line;
-import net.sf.sdedit.drawable.SequenceElement;
 
 public class NullPaintDevice implements IPaintDevice {
 
     private Diagram diagram;
 
-    public void addOtherDrawable(Drawable drawable) {
+    public void addExtraordinary(Drawable drawable) {
     }
 
-    public void append(SequenceElement elem) {
+    public void append(Drawable drawable) {
     }
 
     public void announce(int height) {
@@ -25,9 +24,6 @@ public class NullPaintDevice implements IPaintDevice {
     }
 
     public void close() {
-    }
-
-    public void computeAxes(int leftAxis) {
     }
 
     public void computeBounds() {
@@ -84,7 +80,8 @@ public class NullPaintDevice implements IPaintDevice {
         return new LinkedList<Drawable>().iterator();
     }
 
-    public void addLifelineSlot() {
+    public Object callSpecial(String method, Object argument) {
+        return null;
     }
 
 }

@@ -33,7 +33,6 @@ import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.IPaintDevice;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.error.FatalError;
-import net.sf.sdedit.ui.PanelPaintDevice;
 
 /**
  * A <tt>DiagramRenderer</tt> (typically a singleton instance) is responsible

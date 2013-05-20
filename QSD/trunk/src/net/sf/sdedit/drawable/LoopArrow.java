@@ -28,7 +28,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Polygon;
 
 import net.sf.sdedit.message.Message;
 import net.sf.sdedit.util.Direction;
@@ -84,8 +83,8 @@ public class LoopArrow extends Arrow
                 setRightEndpoint(message.getCallee().getRightNeighbour()
                         .getView());
             } else {
-                setRightEndpoint(message.getDiagram().getPaintDevice()
-                        .getRightBound());
+                setRightEndpoint((Line) message.getDiagram().getPaintDevice()
+                        .callSpecial("getRightBound", null));
             }
             if (message.getCaller().getSideLevel() < message.getCallee()
                     .getSideLevel()) {

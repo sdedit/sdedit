@@ -27,8 +27,6 @@ package net.sf.sdedit.diagram;
 import java.awt.Font;
 
 import net.sf.sdedit.drawable.Drawable;
-import net.sf.sdedit.drawable.Line;
-import net.sf.sdedit.drawable.SequenceElement;
 
 public interface IPaintDevice extends Iterable<Drawable> {
 	
@@ -39,22 +37,16 @@ public interface IPaintDevice extends Iterable<Drawable> {
 	 * known.
 	 */
 	public void reinitialize();
-	
-    public void addLifelineSlot();
 
 	public Font getFont(boolean bold);
 
-	public Line getRightBound();
+	public void addExtraordinary(Drawable drawable);
 
-	public void addOtherDrawable(Drawable drawable);
-
-	public void append(SequenceElement elem);
+	public void append(Drawable drawable);
 
 	public boolean isEmpty();
 
-	public void computeAxes(int leftAxis);
-
-	public abstract int getTextWidth(String text, boolean bold);
+	public int getTextWidth(String text, boolean bold);
 
 	public int getTextWidth(String text);
 
@@ -80,8 +72,10 @@ public interface IPaintDevice extends Iterable<Drawable> {
 	 */
 	public void close();
 
-	public void announce (int height);
+	public void announce (int amount);
 
 	public Diagram getDiagram();
+	
+	public Object callSpecial (String method, Object argument);
 
 }

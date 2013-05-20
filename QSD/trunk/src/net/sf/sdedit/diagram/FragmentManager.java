@@ -223,7 +223,7 @@ public final class FragmentManager {
 
 		diagram.extendLifelines(extension);
 		openFragments.addLast(fragment);
-		diagram.getPaintDevice().addOtherDrawable(fragment);
+		diagram.getPaintDevice().addExtraordinary(fragment);
 		int l = openFragments.size() - 1;
 		for (Fragment open : openFragments) {
 			open.setLevel(l);

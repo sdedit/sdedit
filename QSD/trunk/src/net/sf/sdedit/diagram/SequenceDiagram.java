@@ -33,10 +33,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Pattern;
 import java.util.Set;
+import java.util.regex.Pattern;
 
-import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.drawable.Arrow;
 import net.sf.sdedit.drawable.Drawable;
@@ -337,7 +336,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
         try {
 
             for (Lifeline lifeline : this) {
-                paintDevice.addOtherDrawable(lifeline.getHead());
+                paintDevice.addExtraordinary(lifeline.getHead());
                 verticalPosition = Math.max(verticalPosition, lifeline
                         .getHead().getTop() + lifeline.getHead().getHeight());
             }
@@ -360,7 +359,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 
             if (getNumberOfLifelines() > 0) {
 
-                paintDevice.computeAxes(conf.getLeftMargin() + 6
+                paintDevice.callSpecial("computeAxes", conf.getLeftMargin() + 6
                         + getLifelineAt(0).getHead().getWidth() / 2);
                 paintDevice.computeBounds();
 
@@ -377,10 +376,10 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
                     frame.setRight(paintDevice.getWidth()
                             - conf.getRightMargin() + 6);
                     frame.setBottom(verticalPosition + 4);
-                    paintDevice.addOtherDrawable(frame);
+                    paintDevice.addExtraordinary(frame);
                 }
                 if (text != null) {
-                    paintDevice.addOtherDrawable(text);
+                    paintDevice.addExtraordinary(text);
                 }
             }
             finished = true;
@@ -621,10 +620,10 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
         }
         if (position == -1) {
             position = add(lifeline);
-            paintDevice.addLifelineSlot();
+            paintDevice.callSpecial("addLifelineSlot", null);
         }
         positionMap.put(lifeline.getName(), position);
-        paintDevice.addOtherDrawable(lifeline.getHead());
+        paintDevice.addExtraordinary(lifeline.getHead());
     }
 
     public final void extendLifelines(final int amount) {

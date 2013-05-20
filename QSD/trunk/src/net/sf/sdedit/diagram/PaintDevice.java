@@ -71,10 +71,12 @@ public class PaintDevice extends AbstractPaintDevice {
         rightBound = new Line(1, null);
     }
     
+    /*
+     * @see net.sf.sdedit.diagram.IPaintDevice#setDiagram(net.sf.sdedit.diagram.Diagram)
+     */
     public void setDiagram(Diagram diagram) {
         this.diagram = (SequenceDiagram) diagram;
         getGraphicDevice().initialize(diagram);
-
     }
 
     /**
@@ -91,15 +93,15 @@ public class PaintDevice extends AbstractPaintDevice {
         }
     }
 
-    public void addLifelineSlot() {
+    private void addLifelineSlot() {
         leftOf.add(new HashSet<SequenceElement>());
     }
 
-    public Line getRightBound() {
+    private Line getRightBound() {
         return rightBound;
     }
 
-    public void addOtherDrawable(Drawable drawable) {
+    public void addExtraordinary(Drawable drawable) {
         other.add(drawable);
         if (drawable.getRight() > rightBound.getLeft()) {
             rightBound.setLeft(drawable.getRight());
@@ -109,7 +111,8 @@ public class PaintDevice extends AbstractPaintDevice {
         }
     }
 
-    public void append(SequenceElement elem) {
+    public void append(Drawable drawable) {
+        SequenceElement elem = (SequenceElement) drawable;
         int index;
         ExtensibleDrawable left, right;
         if (elem.getAlign() == Direction.RIGHT) {
@@ -149,7 +152,7 @@ public class PaintDevice extends AbstractPaintDevice {
         return maxHeadWidth;
     }
 
-    public void computeAxes(int leftAxis) {
+    private void computeAxes(int leftAxis) {
         int n = diagram.getNumberOfLifelines();
         int axis = leftAxis;
         int mainWidth = diagram.getConfiguration().getMainLifelineWidth();
@@ -392,6 +395,23 @@ public class PaintDevice extends AbstractPaintDevice {
         public void remove() {
             throw new UnsupportedOperationException();
         }
+    }
+
+    public Object callSpecial(String method, Object argument) {
+        if ("addLifelineSlot".equals(method)) {
+           addLifelineSlot();
+           return null;
+        } 
+        if ("computeAxes".equals(method)) {
+            int leftAxis = (Integer) argument;
+            this.computeAxes(leftAxis);
+            return null;
+        } 
+        if ("getRightBound".equals(method)) {
+            return getRightBound();
+        }
+        throw new IllegalArgumentException("special method not supported: " + method);
+ 
     }
 
 }
