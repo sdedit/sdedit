@@ -35,8 +35,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
