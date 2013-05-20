@@ -155,8 +155,4 @@ class ExporterImpl extends Exporter {
         vg.endExport();
     }
 
-    public void writeToStream(String type, OutputStream stream)
-            throws IOException {
-        
-    }
 }

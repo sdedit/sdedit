@@ -1,8 +1,6 @@
 package net.sf.sdedit.diagram;
 
 import java.awt.Font;
-import java.io.IOException;
-import java.io.OutputStream;
 
 public interface GraphicDevice {
 
@@ -15,7 +13,5 @@ public interface GraphicDevice {
     public void initialize (Diagram diagram);
     
     public Font getFont(boolean bold);
-    
-    public void writeToStream(String type, OutputStream stream) throws IOException;
     
 }

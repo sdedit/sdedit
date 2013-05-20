@@ -369,7 +369,4 @@ public class PanelGraphicDevice extends
         boldFontMetrics = boldGraphics.getFontMetrics();
     }
     
-    public void writeToStream(String type, OutputStream stream) throws IOException {
-        throw new UnsupportedOperationException("writeToStream not supported");
-    }
 }

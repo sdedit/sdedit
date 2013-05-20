@@ -1,8 +1,6 @@
 package net.sf.sdedit.diagram;
 
 import java.awt.Font;
-import java.io.IOException;
-import java.io.OutputStream;
 
 import net.sf.sdedit.drawable.Drawable;
 
@@ -33,11 +31,6 @@ public abstract class AbstractGraphicDevice implements GraphicDevice {
         return bold ? boldFont : plainFont;
     }
 
-    public void writeToStream(String type, OutputStream stream)
-            throws IOException {
-
-    }
-    
     public void close(int width, int height, boolean empty) {
         this.width = width;
         this.height = height;
