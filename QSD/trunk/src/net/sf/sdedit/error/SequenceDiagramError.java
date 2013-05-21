@@ -24,41 +24,43 @@
 
 package net.sf.sdedit.error;
 
-import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
+import net.sf.sdedit.diagram.DiagramDataProvider;
 
 public class SequenceDiagramError extends DiagramError {
 
-    private static final long serialVersionUID = -5386014375930948784L;
-    
-    private SequenceDiagramDataProvider provider;
-    
-    /**
-     * Constructor.
-     * 
-     * @param provider
-     *            the DiagramDataProvider that delivered the wrong
-     *            specification
-     * @param msg
-     *            a message describing the DiagramError
-     */
-    protected SequenceDiagramError(SequenceDiagramDataProvider provider, String msg) {
-        super(msg);
-        this.provider = provider;
-    }
+	private static final long serialVersionUID = -5386014375930948784L;
 
-    /**
-     * Returns the <tt>DiagramDataProvider</tt> that was used when the
-     * error occurred.
-     * 
-     * @return the <tt>DiagramDataProvider</tt> that was used when the
-     * error occurred
-     */
-    public SequenceDiagramDataProvider getProvider() {
-        return provider;
-    }
-    
-    public void setProvider (SequenceDiagramDataProvider provider) {
-    	this.provider = provider;
-    }
+	private DiagramDataProvider provider;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param provider
+	 *            the DiagramDataProvider that delivered the wrong specification
+	 * @param msg
+	 *            a message describing the DiagramError
+	 */
+	protected SequenceDiagramError(DiagramDataProvider provider, String msg) {
+		super(msg);
+		this.provider = provider;
+	}
+
+	/**
+	 * Returns the <tt>DiagramDataProvider</tt> that was used when the error
+	 * occurred.
+	 * 
+	 * @return the <tt>DiagramDataProvider</tt> that was used when the error
+	 *         occurred
+	 */
+	@Override
+	public void setProvider(DiagramDataProvider provider) {
+		this.provider = provider;
+	}
+
+	@Override
+	public DiagramDataProvider getProvider() {
+		return provider;
+	}
+
 }
-//{{core}}
+// {{core}}

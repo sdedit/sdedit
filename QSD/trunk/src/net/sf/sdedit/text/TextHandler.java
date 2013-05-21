@@ -23,8 +23,6 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.text;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -33,10 +31,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.sdedit.diagram.SequenceDiagram;
-import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
+import net.sf.sdedit.diagram.SequenceDiagram;
+import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 import net.sf.sdedit.drawable.Note;
 import net.sf.sdedit.error.SyntaxError;
 import net.sf.sdedit.util.Grep;
@@ -50,26 +48,10 @@ import net.sf.sdedit.util.Pair;
  * @author Markus Strauch
  * 
  */
-public class TextHandler implements SequenceDiagramDataProvider {
-
-	private BufferedReader reader;
-
-	private String text;
-
-	private String rawLine;
-
-	private String currentLine;
-
-	private int lineBegin;
-
-	private int lineEnd;
+public class TextHandler extends AbstractTextHandler implements SequenceDiagramDataProvider {
 
 	/* -1 = init, 0 = objects, 1 = messages */
 	private int section;
-
-	private SequenceDiagram diagram;
-
-	private int lineNumber;
 
 	private String title;
 
@@ -80,6 +62,8 @@ public class TextHandler implements SequenceDiagramDataProvider {
 	private int objectSectionEnd;
 	
 	private boolean reuseSpace;
+	
+	private SequenceDiagram diagram;
 
 	/**
 	 * Creates a new <tt>TextHandler</tt> for the given text.
@@ -89,16 +73,17 @@ public class TextHandler implements SequenceDiagramDataProvider {
 	 * 
 	 */
 	public TextHandler(String text) {
+		super(text);
 		section = -1;
-		lineBegin = 0;
-		lineEnd = -1;
-		lineNumber = 0;
-		this.text = text;
 		annotations = new HashMap<Lifeline, String>();
 		objectSectionEnd = 0;
 		reset();
 	}
-
+	
+	public SequenceDiagram getDiagram () {
+		return diagram;
+	}
+	
 	/**
 	 * Sets the diagram instance that corresponds to the specification read by
 	 * this <tt>TextHandler</tt>. This method is called inside
@@ -112,68 +97,30 @@ public class TextHandler implements SequenceDiagramDataProvider {
 		this.diagram = diagram;
 		this.reuseSpace = diagram.getConfiguration().isReuseSpace();
 	}
-
-	/**
-	 * Returns the index of the first position of the current line in the
-	 * specification.
-	 * 
-	 * @return the index of the first position of the current line in the
-	 *         specification
-	 */
-	public int getLineBegin() {
-		return lineBegin;
-	}
-
+	
 	public Object getState() {
-		return lineBegin;
+		return getLineBegin();
 	}
 
 	public int getObjectSectionEnd() {
 		if (section > 0) {
 			return objectSectionEnd;
 		}
-		return lineNumber;
-	}
-
-	public int getLineNumber() {
-		return lineNumber;
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	/**
-	 * Returns the index of the last position of the current line in the
-	 * specification string.
-	 * 
-	 * @return the index of the last position of the current line in the
-	 *         specification string
-	 */
-	public int getLineEnd() {
-		return lineEnd;
-	}
-
-	/**
-	 * Returns the line that is currently read.
-	 * 
-	 * @return the line that is currently read
-	 */
-	public String getCurrentLine() {
-		return currentLine;
+		return getLineNumber();
 	}
 
 	/**
 	 * Resets the text handler so objects and messages can be read once again.
 	 */
-	private void reset() {
-		String[] titleString = Grep.parse("(?s).*#!\\[([^\n\r]*?)\\].*", text);
+	protected void reset() {
+		super.reset();
+		String[] titleString = Grep.parse("(?s).*#!\\[([^\n\r]*?)\\].*", text());
 		if (titleString == null) {
 			title = null;
 		} else {
 			title = titleString[0];
 		}
-		String[] descString = Grep.parse("(?s).*#!>>(.*)#!<<.*", text);
+		String[] descString = Grep.parse("(?s).*#!>>(.*)#!<<.*", text());
 		if (descString == null) {
 			description = null;
 		} else {
@@ -187,12 +134,7 @@ public class TextHandler implements SequenceDiagramDataProvider {
 				description[i] = description[i].replaceFirst("#!", "");
 			}
 		}
-		reader = new BufferedReader(new StringReader(text));
 		section = -1;
-		lineBegin = 0;
-		lineEnd = -1;
-		currentLine = null;
-		rawLine = null;
 		annotations.clear();
 	}
 
@@ -221,24 +163,19 @@ public class TextHandler implements SequenceDiagramDataProvider {
 	}
 
 	private boolean advance(boolean ignoreEmptyLines) {
-		if (reader == null) {
-			throw new IllegalStateException("null reader");
-		}
 		try {
-			if (!reader.ready()) {
+			if (!ready()) {
 				section = 1;
 				return false;
 			}
 			String line;
 			do {
-				lineBegin = lineEnd + 2;
-				rawLine = line = reader.readLine();
-				lineNumber++;
+				line = readLine();
 				if (line == null) {
 					section = 1;
 					return false;
 				}
-				lineEnd = lineBegin + line.length() - 1;
+				
 				if (ignoreEmptyLines) {
 					line = line.trim();
 				}
@@ -254,13 +191,13 @@ public class TextHandler implements SequenceDiagramDataProvider {
 					}
 				}
 				if (section == 0 && line.equals("")) {
-					objectSectionEnd = lineNumber - 1;
+					objectSectionEnd = getLineNumber() - 1;
 					section = 1;
 					return false;
 				}
 			} while (ignoreEmptyLines
 					&& (line.equals("") || line.startsWith("#")));
-			currentLine = line;
+			setCurrentLine(line);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -272,16 +209,16 @@ public class TextHandler implements SequenceDiagramDataProvider {
 		if (section == 0) {
 			throw new IllegalStateException("not all objects have been read");
 		}
-		if (currentLine == null) {
+		if (currentLine() == null) {
 			throw new IllegalStateException("nothing to read");
 		}
-		if (currentLine.startsWith("//")) {
+		if (currentLine().startsWith("//")) {
 			System.err
 					.println("Warning: Comments starting with // are deprecated. Use [c:<type> <text>]...[/c].");
-			return currentLine.substring(2).trim();
+			return currentLine().substring(2).trim();
 		}
-		if (currentLine.endsWith("]") && currentLine.startsWith("[c")) {
-			return currentLine;
+		if (currentLine().endsWith("]") && currentLine().startsWith("[c")) {
+			return currentLine();
 		}
 		return null;
 	}
@@ -290,11 +227,11 @@ public class TextHandler implements SequenceDiagramDataProvider {
 		if (section == 0) {
 			throw new IllegalStateException("not all objects have been read");
 		}
-		if (currentLine == null) {
+		if (currentLine() == null) {
 			throw new IllegalStateException("nothing to read");
 		}
-		if (currentLine.startsWith("--")) {
-			return currentLine.substring(2);
+		if (currentLine().startsWith("--")) {
+			return currentLine().substring(2);
 		}
 		return null;
 	}
@@ -303,11 +240,11 @@ public class TextHandler implements SequenceDiagramDataProvider {
 		if (section == 0) {
 			throw new IllegalStateException("not all objects have been read");
 		}
-		if (currentLine == null) {
+		if (currentLine() == null) {
 			throw new IllegalStateException("nothing to read");
 		}
-		return currentLine.equals("\\\\") || currentLine.endsWith("]")
-				&& currentLine.startsWith("[/c");
+		return currentLine().equals("\\\\") || currentLine().endsWith("]")
+				&& currentLine().startsWith("[/c");
 	}
 
 	/**
@@ -321,17 +258,17 @@ public class TextHandler implements SequenceDiagramDataProvider {
 		if (section == 0) {
 			throw new IllegalStateException("not all objects have been read");
 		}
-		if (currentLine == null) {
+		if (currentLine() == null) {
 			throw new IllegalStateException("nothing to read");
 		}
 		MessageData data;
 		try {
-			data = new TextBasedMessageData(currentLine);
+			data = new TextBasedMessageData(currentLine());
 		} catch (SyntaxError e) {
 			e.setProvider(this);
 			throw e;
 		}
-		currentLine = null;
+		setCurrentLine(null);
 		return data;
 	}
 
@@ -348,20 +285,20 @@ public class TextHandler implements SequenceDiagramDataProvider {
 			throw new IllegalStateException(
 					"reading objects has already been finished");
 		}
-		if (currentLine == null) {
+		if (currentLine() == null) {
 			throw new IllegalStateException("nothing to read");
 		}
-		if (currentLine.indexOf(':') == -1) {
+		if (currentLine().indexOf(':') == -1) {
 			throw new SyntaxError(this,
 					"not a valid object declaration - ':' missing");
 		}
 		ArrayList<Region> regions = new ArrayList<Region>();
 		String[] parts = Grep.parse(
 				"(\\/?.+?):([^\\[\\]]+?)\\s*(\\[.*?\\]|)\\s*(\".*\"|)",
-				currentLine, regions);
+				currentLine(), regions);
 		if (parts == null || parts.length != 4) {
 			String msg;
-			if (currentLine.indexOf('.') >= 0) {
+			if (currentLine().indexOf('.') >= 0) {
 				msg = "not a valid object declaration, perhaps you forgot to "
 						+ "enter an empty line before the message section";
 			} else {
@@ -369,7 +306,7 @@ public class TextHandler implements SequenceDiagramDataProvider {
 			}
 			throw new SyntaxError(this, msg);
 		}
-		currentLine = null;
+		setCurrentLine(null);
 		String name = parts[0];
 		String type = parts[1];
 		String flags = parts[2];
@@ -429,9 +366,9 @@ public class TextHandler implements SequenceDiagramDataProvider {
 		
 		lifeline.setNameRegion(regions.get(0));
 
-		int cmt = rawLine.indexOf("#!");
-		if (cmt >= 0 && cmt + 2 < rawLine.length() - 1) {
-			String annotation = rawLine.substring(cmt + 2).trim();
+		int cmt = rawLine().indexOf("#!");
+		if (cmt >= 0 && cmt + 2 < rawLine().length() - 1) {
+			String annotation = rawLine().substring(cmt + 2).trim();
 			annotations.put(lifeline, annotation);
 		}
 
@@ -455,10 +392,10 @@ public class TextHandler implements SequenceDiagramDataProvider {
 		if (section == 0) {
 			throw new IllegalStateException("not all objects have been read");
 		}
-		if (currentLine == null) {
+		if (currentLine() == null) {
 			throw new IllegalStateException("nothing to read");
 		}
-		String[] parts = Grep.parse("\\s*(\\*|\\+)(\\d+)\\s*(.+)", currentLine);
+		String[] parts = Grep.parse("\\s*(\\*|\\+)(\\d+)\\s*(.+)", currentLine());
 		if (parts == null) {
 			return null;
 		}
@@ -477,22 +414,20 @@ public class TextHandler implements SequenceDiagramDataProvider {
 		if (line == null) {
 			throw new SyntaxError(this, obj + " does not exist");
 		}
-		int oldBegin = lineBegin;
-		int oldEnd = lineEnd;
+		int oldBegin = getLineBegin();
+		int oldEnd = getLineEnd();
 		line = line.getRightmost();
 		List<String> desc = new LinkedList<String>();
 		boolean more;
 		do {
 			if (!advance(false)) {
-				lineBegin = oldBegin;
-				lineEnd = oldEnd;
+				reset(oldBegin, oldEnd);
 				throw new SyntaxError(this, "The note is not closed.");
 			}
-			more = !currentLine.trim().equals(parts[0] + parts[1]);
-		} while (more && desc.add(currentLine));
+			more = !currentLine().trim().equals(parts[0] + parts[1]);
+		} while (more && desc.add(currentLine()));
 		if (desc.size() == 0) {
-			lineBegin = oldBegin;
-			lineEnd = oldEnd;
+			reset(oldBegin, oldEnd);
 			throw new SyntaxError(this, "The note is empty.");
 		}
 		String[] noteText = desc.toArray(new String[0]);
@@ -535,10 +470,10 @@ public class TextHandler implements SequenceDiagramDataProvider {
 		if (section == 0) {
 			throw new IllegalStateException("not all objects have been read");
 		}
-		if (currentLine == null) {
+		if (currentLine() == null) {
 			throw new IllegalStateException("nothing to read");
 		}
-		String[] parts = Grep.parse("\\((\\d+)\\)\\s*(\\w+)", currentLine);
+		String[] parts = Grep.parse("\\((\\d+)\\)\\s*(\\w+)", currentLine());
 		if (parts == null) {
 			return null;
 		}
@@ -555,9 +490,5 @@ public class TextHandler implements SequenceDiagramDataProvider {
 		return false;
 	}
 
-
-	public SequenceDiagram getDiagram() {
-		return diagram;
-	}
 }
 // {{core}}

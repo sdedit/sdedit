@@ -25,7 +25,6 @@
 package net.sf.sdedit.error;
 
 import net.sf.sdedit.diagram.DiagramDataProvider;
-import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 
 /**
  * A <tt>FatalError</tt> is created when a <tt>RuntimeException</tt> occurs
@@ -36,11 +35,12 @@ import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
  */
 public class FatalError extends SequenceDiagramError {
 
+	private static final long serialVersionUID = -6422401715307224806L;
+	
 	private RuntimeException cause;
 	
-	
 	public FatalError(DiagramDataProvider provider, RuntimeException re) {
-		super((SequenceDiagramDataProvider) provider, re.getMessage());
+		super(provider, re.getMessage());
 		this.cause = re;
 	}
 	

@@ -24,6 +24,7 @@ import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.error.FatalError;
 import net.sf.sdedit.error.SemanticError;
 import net.sf.sdedit.error.SequenceDiagramError;
+import net.sf.sdedit.text.AbstractTextHandler;
 import net.sf.sdedit.text.TextHandler;
 import net.sf.sdedit.ui.PanelGraphicDevice;
 import net.sf.sdedit.ui.components.configuration.Bean;
@@ -111,7 +112,7 @@ public class SequenceDiagramTextTab extends DiagramTextTab {
                     t.printStackTrace();
                 }
             } else {
-                TextHandler handler = (TextHandler) error.getProvider();
+                AbstractTextHandler handler = (TextHandler) error.getProvider();
                 String prefix = "";
 
                 if (error instanceof SemanticError) {
