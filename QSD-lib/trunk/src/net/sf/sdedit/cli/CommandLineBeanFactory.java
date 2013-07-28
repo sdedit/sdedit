@@ -14,25 +14,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.sdedit.cli.test.TestOptions;
 import net.sf.sdedit.util.PWriter;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
 import org.apache.commons.cli.PosixParser;
 
-public class CommandLineBeanFactory<T extends IOptions> implements InvocationHandler {
+public class CommandLineBeanFactory<T extends IOptions> implements
+        InvocationHandler {
 
     private final Class<T> iface;
 
     private CommandLine commandLine;
 
     private Map<String, OptionObject> options;
-    
+
     private Map<String, String> methodNames;
+
+    private Map<String, OptionGroup> optionGroups;
 
     private Options opt;
 
@@ -40,15 +45,16 @@ public class CommandLineBeanFactory<T extends IOptions> implements InvocationHan
         this.iface = iface;
         options = new HashMap<String, OptionObject>();
         opt = new Options();
-        methodNames = new HashMap<String,String>();
+        methodNames = new HashMap<String, String>();
+        optionGroups = new HashMap<String, OptionGroup>();
         try {
             initialize();
         } catch (IntrospectionException e) {
-            throw new IllegalArgumentException("instrospection of class " + iface.getName() + " failed", e);
+            throw new IllegalArgumentException("instrospection of class "
+                    + iface.getName() + " failed", e);
         }
-        
     }
-    
+
     private boolean check(T obj) {
         boolean success = true;
         for (OptionObject opt : options.values()) {
@@ -56,11 +62,12 @@ public class CommandLineBeanFactory<T extends IOptions> implements InvocationHan
             try {
                 method.invoke(obj);
             } catch (IllegalAccessException e) {
-                
+
             } catch (InvocationTargetException e) {
                 Throwable t = e.getCause();
                 String name = opt.getName();
-                System.out.println("Illegal argument for option \"" + name + "\": " + t.getMessage());
+                System.out.println("Illegal argument for option \"" + name
+                        + "\": " + t.getMessage());
                 success = false;
             }
         }
@@ -90,7 +97,7 @@ public class CommandLineBeanFactory<T extends IOptions> implements InvocationHan
         }
         return dataObject;
     }
-    
+
     public T parse(String[] args) {
         return parse(args, "posix");
     }
@@ -111,9 +118,26 @@ public class CommandLineBeanFactory<T extends IOptions> implements InvocationHan
                 OptionObject optionObject = new OptionObject(property);
                 options.put(optionObject.getName(), optionObject);
                 methodNames.put(method.getName(), optionObject.getName());
-                opt.addOption(optionObject.getOption());
+                org.apache.commons.cli.Option option = optionObject.getOption();
+                opt.addOption(option);
+                if (optionObject.getGroup() != null) {
+                    OptionGroup group = optionGroups.get(optionObject
+                            .getGroup());
+                    if (group == null) {
+                        group = new OptionGroup();
+                        optionGroups.put(optionObject.getGroup(), group);
+                    }
+                    group.addOption(option);
+                    if (optionObject.isRequired()) {
+                        group.setRequired(true);
+                    }
+                }
             }
         }
+        for (OptionGroup group : optionGroups.values()) {
+            opt.addOptionGroup(group);
+        }
+        
     }
 
     public Object invoke(Object proxy, Method method, Object[] args)
@@ -157,5 +181,5 @@ public class CommandLineBeanFactory<T extends IOptions> implements InvocationHan
         return value;
     }
 
-}
 
+}

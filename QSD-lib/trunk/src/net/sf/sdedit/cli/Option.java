@@ -58,6 +58,8 @@ public @interface Option {
     
     int numArgs() default 0;
     
+    String group() default "";
+    
 
 
 }

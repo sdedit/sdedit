@@ -39,12 +39,26 @@ public class OptionObject {
     private boolean isBoolean() {
         return Boolean.TYPE == getType();
     }
+    
+    
 
     private Class<?> getType() {
         if (isArray()) {
             return method().getReturnType().getComponentType();
         }
         return method().getReturnType();
+    }
+    
+    public String getGroup () {
+        String group = option().group();
+        if ("".equals(group)) {
+            return null;
+        }
+        return group;
+    }
+    
+    public boolean isRequired() {
+        return option().required();
     }
 
     public String getName() {
@@ -96,7 +110,7 @@ public class OptionObject {
         }
         Option option = new Option(opt, getDescription());
         option.setLongOpt(longOpt);
-        option.setRequired(option().required());
+        option.setRequired(option().required() && getGroup() == null);
         option.setArgName(getArgName());
         if (isBoolean()) {
             option.setArgs(0);
