@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.sdedit.cli.test.TestOptions;
 import net.sf.sdedit.util.PWriter;
 
 import org.apache.commons.cli.CommandLine;
@@ -106,7 +105,7 @@ public class CommandLineBeanFactory<T extends IOptions> implements
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(cmd, opt);
     }
-
+    
     private void initialize() throws IntrospectionException {
         BeanInfo beanInfo = Introspector.getBeanInfo(iface);
         PropertyDescriptor[] propertyDescriptors = beanInfo
