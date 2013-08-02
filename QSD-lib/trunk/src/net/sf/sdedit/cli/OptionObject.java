@@ -40,8 +40,6 @@ public class OptionObject {
         return Boolean.TYPE == getType();
     }
     
-    
-
     private Class<?> getType() {
         if (isArray()) {
             return method().getReturnType().getComponentType();
@@ -110,7 +108,7 @@ public class OptionObject {
         }
         Option option = new Option(opt, getDescription());
         option.setLongOpt(longOpt);
-        option.setRequired(option().required() && getGroup() == null);
+        option.setRequired(option().required() && getGroup() == null && dflt() == null && inherit() == null);
         option.setArgName(getArgName());
         if (isBoolean()) {
             option.setArgs(0);
@@ -131,7 +129,6 @@ public class OptionObject {
                 // since they cannot return null for indicating non-existence
                 option.setRequired(true);
             }
-            
         }
         return option;
     }
