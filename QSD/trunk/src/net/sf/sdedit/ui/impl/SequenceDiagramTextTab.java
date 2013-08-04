@@ -121,7 +121,7 @@ public class SequenceDiagramTextTab extends DiagramTextTab {
                             + diagram().getCallerThread() + ": " : "";
                 }
                 setError(false, prefix + error.getMessage(),
-                        handler.getLineBegin() - 1, handler.getLineEnd(),
+                        handler.getLineBegin(), handler.getLineEnd(),
                         EditorHintFactory.createHint(this, (SequenceDiagramError) error));
             }
         }
