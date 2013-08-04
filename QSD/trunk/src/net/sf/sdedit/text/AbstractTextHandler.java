@@ -92,11 +92,13 @@ public abstract class AbstractTextHandler {
 	
 	protected final String readLine () {
 		try {
-			lineBegin = lineBegin + 2;
+		    if (lineEnd >= 0) {
+		        lineBegin = lineEnd + 1;    
+		    }
 			rawLine = reader.readLine();
 			if (rawLine != null) {
 				lineNumber++;
-				lineEnd = lineBegin + rawLine.length() - 1;
+				lineEnd = lineBegin + rawLine.length();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
