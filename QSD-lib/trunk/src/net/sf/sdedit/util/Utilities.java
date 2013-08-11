@@ -1639,25 +1639,23 @@ public class Utilities {
     }
 
     // see http://ridiculousfish.com/blog/posts/colors.html
-    private static double getHue(int idx) {
-        int bitcount = 31;
-        int ridx = 0, i = 0;
-        for (i = 0; i < bitcount; i++) {
-            ridx = (ridx << 1) | (idx & 1);
-            idx >>>= 1;
-        }
-        double hue = (1F * ridx) / Math.pow(2, bitcount);
-        return (hue + 0.6) % 1;
+    private static double getHue(int idx, double initialAngle) {
+        int ridx = 0;
+        for (int i = 0; i < 31; i++, ridx = (ridx << 1) | (idx & 1), idx >>>= 1)
+            ;
+        return initialAngle + (1D * ridx) / (1 << 31);
     }
 
-    public static Color getColor(int i) {
-        double hue = getHue(i);
-        Color color = Color.getHSBColor((float) hue, 1, 1);
+    public static Color getColor(int i, float initialAngle, float saturation,
+            float brightness) {
+        double hue = getHue(i, initialAngle);
+        Color color = Color.getHSBColor((float) hue, saturation, brightness);
         return color;
     }
 
-    public static String getRGBString(int i) {
-        Color color = getColor(i);
+    public static String getRGBString(int i, float initialAngle,
+            float saturation, float brightness) {
+        Color color = getColor(i, initialAngle, saturation, brightness);
         return String.format("%02X%02X%02X", color.getRed(), color.getGreen(),
                 color.getBlue());
     }
