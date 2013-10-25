@@ -413,7 +413,7 @@ public class HelpFormatter
     public void printHelp(int width, String cmdLineSyntax, String header,
                           Options options, String footer, boolean autoUsage)
     {
-        PrintWriter pw = new PrintWriter(System.out);
+        PrintWriter pw = new PrintWriter(System.err);
 
         printHelp(pw, width, cmdLineSyntax, header, options, defaultLeftPad, defaultDescPad, footer, autoUsage);
         pw.flush();
