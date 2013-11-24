@@ -86,8 +86,27 @@ public class OptionObject {
         if ("".equals(dflt) && !"".equals(option().inherit())) {
             dflt = "<" + option().inherit() + ">";
         }
-        if (!"".equals(option().description()) || !"".equals(dflt)) {
+        if (getType().isEnum() || !"".equals(option().description()) || !"".equals(dflt)) {
             description = option().description();
+            if (getType().isEnum()) {
+            	@SuppressWarnings({ "unchecked", "rawtypes" })
+				Class<Enum> c = (Class<Enum>) getType();
+            	@SuppressWarnings("rawtypes")
+				Enum[] constants = c.getEnumConstants();
+            	if (!"".equals(description)) {
+            		description += ". ";
+            	}
+            	description += "One of ";
+            	boolean first = true;
+            	for (Enum<?> constant : constants) {
+            		if (first) {
+            			first = false;
+            		} else {
+            			description += ", ";
+            		}
+            		description += constant.name();
+            	}
+            }
             if (!"".equals(dflt)) {
                 if (!"".equals(description)) {
                     description += ". Default is " + dflt;
