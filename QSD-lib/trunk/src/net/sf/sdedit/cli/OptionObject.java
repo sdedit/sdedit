@@ -152,7 +152,12 @@ public class OptionObject {
         return option;
     }
 
-    private Object createFromString(Class<?> cls, String string) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	private Object createFromString(Class<?> cls, String string) {
+    	if (cls.isEnum()) {
+			Class<Enum> enumClass = (Class<Enum>) cls;
+    		return Enum.valueOf(enumClass, string);
+    	}
         try {
             return ObjectFactory.createFromString(cls, string);
         } catch (RuntimeException re) {
