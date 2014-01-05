@@ -65,6 +65,10 @@ public abstract class Drawable implements Constants {
 		return diagram;
 	}
 	
+	public boolean hasLabel() {
+		return label != null && label.length > 0;
+	}
+	
 	protected void setLabel(String[] label) {
 		this.label = label;
 	}
