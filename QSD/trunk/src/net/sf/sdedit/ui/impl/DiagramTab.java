@@ -54,6 +54,7 @@ import net.sf.sdedit.diagram.AbstractPaintDevice;
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramDataProviderFactory;
 import net.sf.sdedit.diagram.DiagramFactory;
+import net.sf.sdedit.diagram.GraphicDevice;
 import net.sf.sdedit.diagram.IPaintDevice;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.drawable.Drawable;
@@ -339,7 +340,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		return true;
 	}
 	
-	public abstract AbstractPaintDevice createPaintDevice ();
+	public abstract AbstractPaintDevice createPaintDevice (GraphicDevice graphicDevice);
 	
 
 	

@@ -68,7 +68,7 @@ public class DiagramRenderer implements Runnable {
 	}
 
 	public void renderDiagram(DiagramTab tab) {
-        IPaintDevice ppd = tab.createPaintDevice();
+        IPaintDevice ppd = tab.createPaintDevice(null);
         DiagramFactory factory = tab.createFactory(ppd);
 	    enqueue(factory);
 	}
