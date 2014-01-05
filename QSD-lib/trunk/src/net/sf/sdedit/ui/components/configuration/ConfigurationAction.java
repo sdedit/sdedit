@@ -59,12 +59,12 @@ public abstract class ConfigurationAction<T extends DataObject> extends
 	}
 
 	public void update() {
-		Bean<T> bean = getBean();
-		if (bean != null) {
-			Boolean state = (Boolean) bean.getValue(property);
-			if (button != null) {
+		if (button != null) {
+			Bean<T> bean = getBean();
+			if (bean != null) {
+				Boolean state = (Boolean) bean.getValue(property);
 				listen = false;
-				button.setSelected(state);
+				button.setSelected(state != null && state);
 				listen = true;
 			}
 		}
@@ -81,7 +81,9 @@ public abstract class ConfigurationAction<T extends DataObject> extends
 		Bean<T> bean = getBean();
 		if (bean != null) {
 			PropertyDescriptor pd = bean.getProperty(property);
-			bean.setValue(pd, state);
+			if (pd != null) {
+				bean.setValue(pd, state);			
+			}
 		}
 	}
 }
