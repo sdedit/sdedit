@@ -62,8 +62,8 @@ public class LoopArrow extends Arrow
 
     private void init() {
         Message message = getMessage();
-        xExtent = diagram.selfMessageXExtent;
-        setWidth(diagram.messagePadding + xExtent + diagram.subLifelineWidth + textWidth());
+        xExtent = diagram().selfMessageXExtent;
+        setWidth(diagram().messagePadding + xExtent + diagram().subLifelineWidth + textWidth());
         from = message.getCaller().getView();
         to = message.getCallee().getView();
         if (getAlign() == Direction.LEFT) {
@@ -98,7 +98,7 @@ public class LoopArrow extends Arrow
     @Override
     protected void drawObject(Graphics2D g) {
         int t = getMessage().getData().getThread();
-        Color back = !diagram.opaqueText ||
+        Color back = !diagram().opaqueText ||
             t == -1 ? null : getMessage().getDiagram().threadColors[t];
 		Font font = g.getFont();
 		g.setFont(getFont(font));
@@ -164,8 +164,8 @@ public class LoopArrow extends Arrow
         pts[2] = new Point(outer_x, y_to);
         pts[3] = new Point(x_to, y_to);
 
-        int textOffset = getAlign() == Direction.RIGHT ? diagram.messagePadding : -textWidth()
-                - diagram.messagePadding;
+        int textOffset = getAlign() == Direction.RIGHT ? diagram().messagePadding : -textWidth()
+                - diagram().messagePadding;
         int textY = isAnswer ? y_to : y_from + textHeight();
         textPoint = new Point(outer_x + textOffset, textY);
     }

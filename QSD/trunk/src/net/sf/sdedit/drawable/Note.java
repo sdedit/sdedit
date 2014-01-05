@@ -252,7 +252,7 @@ public class Note extends SequenceElement
         int cornery = getTop() + margin + padding;
         
         
-        g2d.setStroke(Strokes.getStroke(StrokeType.SOLID, diagram.getConfiguration().getNoteBorderThickness()));
+        g2d.setStroke(Strokes.getStroke(StrokeType.SOLID, diagram().getConfiguration().getNoteBorderThickness()));
         
         
         Polygon p1 = new Polygon();

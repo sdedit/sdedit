@@ -73,7 +73,7 @@ public class Arrow extends SequenceElement {
 		int headSize;
 		this.stroke = stroke;
 		if (stroke != ArrowStroke.NONE) {
-			headSize = diagram.arrowSize;
+			headSize = diagram().arrowSize;
 			headType = message instanceof BroadcastMessage ? ArrowHeadType.ROUNDED
 					: message.isSynchronous() ? ArrowHeadType.CLOSED
 							: ArrowHeadType.OPEN;
@@ -84,10 +84,10 @@ public class Arrow extends SequenceElement {
 		}
 		int totalTextHeight = textHeight();
 		setHeight(totalTextHeight + configuration().getMessageLabelSpace()
-				+ diagram.arrowSize / 2);
+				+ diagram().arrowSize / 2);
 
 		setWidth(headSize + leftPadding() + rightPadding()
-				+ diagram.messagePadding + textWidth());
+				+ diagram().messagePadding + textWidth());
 		
 		fontStyle = (message.getData().isStatic() && !isAnswer ? Font.ITALIC : 0)
 		| (message.getData().isBold() && !isAnswer ? Font.BOLD: 0);
@@ -153,7 +153,7 @@ public class Arrow extends SequenceElement {
 	 *         and the arrow
 	 */
 	public int getInnerHeight() {
-		return textHeight() + diagram.messageLabelSpace;
+		return textHeight() + diagram().messageLabelSpace;
 	}
 
 	public static int getInnerHeight(Message message) {
@@ -207,7 +207,7 @@ public class Arrow extends SequenceElement {
 			g2d.setStroke(solid());
 			drawArrowHead(g2d, pts[1].x, pts[1].y, sgn);
 			if (message.getCaller().isExternal()) {
-				int as = diagram.arrowSize;
+				int as = diagram().arrowSize;
 				int offset = sgn == -1 ? as : 0;
 				g2d.fillOval(pts[0].x - offset, pts[0].y - as / 2, as, as);
 			}
@@ -217,7 +217,7 @@ public class Arrow extends SequenceElement {
 	protected void drawText(Graphics2D g2d) {
 		int t = getMessage().getData().getThread();
 		Color back = getMessage().getData().getMessage().length() == 0
-				|| !diagram.opaqueText || t == -1 ? null
+				|| !diagram().opaqueText || t == -1 ? null
 				: getMessage().getDiagram().threadColors[t];
 		drawMultilineString(g2d, textPoint.x, textPoint.y, back);
 	}
@@ -255,17 +255,17 @@ public class Arrow extends SequenceElement {
 
 		int sgn = align == Direction.LEFT ? 1 : -1;
 
-		int text_x = sgn == 1 ? x_from - diagram.messagePadding - textWidth()
-				- rightPadding() : x_from + diagram.messagePadding
+		int text_x = sgn == 1 ? x_from - diagram().messagePadding - textWidth()
+				- rightPadding() : x_from + diagram().messagePadding
 				+ leftPadding();
-		int v = getTop() + textHeight() + diagram.messageLabelSpace;
+		int v = getTop() + textHeight() + diagram().messageLabelSpace;
 
 		pts = new Point[2];
 
 		pts[0] = new Point(x_from, v);
 		pts[1] = new Point(x_to, v);
 
-		textPoint = new Point(text_x, v - diagram.messageLabelSpace);
+		textPoint = new Point(text_x, v - diagram().messageLabelSpace);
 	}
 
 	/**
@@ -285,7 +285,7 @@ public class Arrow extends SequenceElement {
 	 */
 	protected final void drawArrowHead(Graphics2D g, int x, int y, int sgn) {
 		g.setStroke(Strokes.getStroke(StrokeType.SOLID, 1));
-		int size = diagram.arrowSize;
+		int size = diagram().arrowSize;
 		switch (headType) {
 		case CLOSED:
 			Polygon p = new Polygon(new int[] { x, x + sgn * size,
@@ -319,11 +319,11 @@ public class Arrow extends SequenceElement {
 	}
 	
 	protected final Stroke dashed () {
-	    return Strokes.getStroke(StrokeType.DASHED, diagram.arrowThickness);
+	    return Strokes.getStroke(StrokeType.DASHED, diagram().arrowThickness);
 	}
 	
 	protected final Stroke solid () {
-	    return Strokes.getStroke(StrokeType.SOLID, diagram.arrowThickness);
+	    return Strokes.getStroke(StrokeType.SOLID, diagram().arrowThickness);
 	}
 	
 	@Override

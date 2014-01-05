@@ -52,6 +52,7 @@ public abstract class ExtensibleDrawable extends Drawable {
      *            <tt>ExtensibleDrawable</tt>
      */
     protected ExtensibleDrawable(int width, Lifeline lifeline) {
+    	super(lifeline == null ? null : lifeline.getDiagram());
         setWidth(width);
         setHeight(0);
         this.lifeline = lifeline;

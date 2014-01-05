@@ -30,11 +30,11 @@ import java.net.URL;
 import javax.swing.Action;
 
 import net.sf.sdedit.config.Configuration;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.ui.components.buttons.Activator;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.components.configuration.ConfigurationAction;
 import net.sf.sdedit.ui.impl.DiagramTab;
-import net.sf.sdedit.ui.impl.DiagramTextTab;
 import net.sf.sdedit.ui.impl.TabContainer;
 
 /**
@@ -120,7 +120,7 @@ public interface UserInterface {
 	 *            preferences should be made
 	 * 
 	 */
-	public void configure(Bean<Configuration> conf);
+	public void configure(Bean<? extends Configuration> conf);
 
 	/**
 	 * Displays a message to the user.
@@ -165,7 +165,7 @@ public interface UserInterface {
 	 *         the original title)
 	 */
 	public Tab addSequenceDiagramTextTab(String title,
-			Bean<Configuration> configuration, boolean selectIt);
+			Bean<SequenceConfiguration> configuration, boolean selectIt);
 	
 	public Tab addFlowChartTextTab(String title,
 	            Bean<Configuration> configuration, boolean selectIt);

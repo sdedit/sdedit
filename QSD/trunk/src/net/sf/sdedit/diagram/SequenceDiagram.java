@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.sf.sdedit.config.Configuration;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.drawable.Arrow;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Fragment;
@@ -116,7 +117,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
     /**
      * The configuration object.
      */
-    private final Configuration conf;
+    private final SequenceConfiguration conf;
 
     /**
      * A list of stacks, one for each thread, consisting of the answers that are
@@ -228,7 +229,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
      * @param paintDevice
      *            for storing and drawing the boxes, arrows etc.
      */
-    public SequenceDiagram(Configuration configuration,
+    public SequenceDiagram(SequenceConfiguration configuration,
             SequenceDiagramDataProvider provider, IPaintDevice paintDevice) {
         arrowSize = configuration.getArrowSize();
         arrowColor = configuration.getArrowColor();
@@ -674,7 +675,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
      * 
      * @return the diagram configuration
      */
-    public Configuration getConfiguration() {
+    public SequenceConfiguration getConfiguration() {
         return conf;
     }
 

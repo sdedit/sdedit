@@ -89,7 +89,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 	
 	private ZoomPane zoomPane;
 
-	private Bean<Configuration> configuration;
+	private Bean<? extends Configuration> configuration;
 
 	private DiagramInteraction interaction;
 
@@ -166,7 +166,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		return interaction;
 	}
 
-	public void setConfiguration(Bean<Configuration> configuration) {
+	public void setConfiguration(Bean<? extends Configuration> configuration) {
 		if (this.configuration != null) {
 			this.configuration.removePropertyChangeListener(this);
 		}
@@ -174,7 +174,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		this.configuration.addPropertyChangeListener(this);
 	}
 
-	public Bean<Configuration> getConfiguration() {
+	public Bean<? extends Configuration> getConfiguration() {
 		return configuration;
 	}
 

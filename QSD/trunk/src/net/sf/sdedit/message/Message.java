@@ -25,10 +25,10 @@
 package net.sf.sdedit.message;
 
 import net.sf.sdedit.Constants;
-import net.sf.sdedit.config.Configuration;
-import net.sf.sdedit.diagram.SequenceDiagram;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.drawable.Arrow;
 
 /**
@@ -48,7 +48,7 @@ public abstract class Message implements Constants {
 
     private final MessageData data;
 
-    private final Configuration conf;
+    private final SequenceConfiguration conf;
 
     private Arrow arrow;
         
@@ -142,7 +142,7 @@ public abstract class Message implements Constants {
      * 
      * @return the diagram configuration
      */
-    public final Configuration getConfiguration() {
+    public final SequenceConfiguration getConfiguration() {
         return conf;
     }
 

@@ -34,6 +34,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 import net.sf.sdedit.config.ConfigurationManager;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
@@ -170,7 +171,7 @@ public class DiagramServer extends Thread {
 						PaintDevice paintDevice = new PaintDevice(exporter);
 						DiagramFactory factory = new SequenceDiagramFactory(buffer.toString(), paintDevice);
 						factory.generateDiagram(ConfigurationManager
-                                .createNewDefaultConfiguration().getDataObject());
+                                .createNewDefaultConfiguration(SequenceConfiguration.class).getDataObject());
 						exporter.export();
 					} catch (SyntaxError se) {
 						TextHandler th = (TextHandler) se.getProvider();

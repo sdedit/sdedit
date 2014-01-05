@@ -36,11 +36,14 @@ import javax.swing.SwingUtilities;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.editor.DiagramFileHandler;
 import net.sf.sdedit.editor.Editor;
+import net.sf.sdedit.editor.plugin.Plugin;
+import net.sf.sdedit.editor.plugin.PluginRegistry;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.server.Exporter;
 import net.sf.sdedit.ui.ImageGraphicsDevice;
@@ -71,217 +74,234 @@ import org.apache.commons.cli.PosixParser;
  */
 public class Main implements Constants {
 
-    static {
-        if (OS.TYPE == OS.Type.MAC) {
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty(
-                    "com.apple.mrj.application.apple.menu.about.name", "sdedit");
-            System.setProperty("com.apple.mrj.application.live-resize", "true");
-        }
-    }
+	static {
+		if (OS.TYPE == OS.Type.MAC) {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty(
+					"com.apple.mrj.application.apple.menu.about.name", "sdedit");
+			System.setProperty("com.apple.mrj.application.live-resize", "true");
+		}
+	}
 
-    public static void main(String[] argv) throws Exception {
+	public static void main(String[] argv) throws Exception {
 
-        Tooltips.addFile(Utilities.getResource("tooltips"));
-        CommandLineParser parser = new PosixParser();
-        CommandLine cmd = null;
-        Options options = createBasicOptions();
-        addPropertyOptions(options,
-                ConfigurationManager.getDefaultConfigurationBean());
+		Class<?> fcPlugin;
+		try {
+			fcPlugin = Class
+					.forName("net.sf.sdedit.flowchart.plugin.FlowChartPlugin");
+			PluginRegistry.getInstance().addPlugin(
+					(Plugin) fcPlugin.newInstance());
+		} catch (RuntimeException re) {
+			throw re;
+		} catch (Throwable ignored) {
 
-        try {
-            cmd = parser.parse(options, argv);
-        } catch (ParseException pe) {
-            printHelp(createBasicOptions());
-            return;
-        }
+		}
 
-        if (cmd.hasOption('h')) {
-            printHelp(options);
-            return;
-        }
+		Tooltips.addFile(Utilities.getResource("tooltips"));
+		CommandLineParser parser = new PosixParser();
+		CommandLine cmd = null;
+		Options options = createBasicOptions();
+		addPropertyOptions(
+				options,
+				ConfigurationManager
+						.getDefaultConfigurationBean(SequenceConfiguration.class));
 
-        if (cmd.getOptionValue('o') != null) {
-            createImage(cmd);
-            System.out
-                    .println("created image file: " + cmd.getOptionValue('o'));
+		try {
+			cmd = parser.parse(options, argv);
+		} catch (ParseException pe) {
+			printHelp(createBasicOptions());
+			return;
+		}
 
-        } else {
+		if (cmd.hasOption('h')) {
+			printHelp(options);
+			return;
+		}
 
-            final String[] files = getInputFiles(cmd);
-            if (files.length > 0) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        Editor editor = Editor.getEditor();
-                        editor.start();
-                        boolean loaded = false;
-                        for (String file : files) {
-                            File sdFile = new File(file);
-                            if (sdFile.exists() && sdFile.canRead()
-                                    && !sdFile.isDirectory()) {
-                                loaded = true;
-                                try {
-                                    editor.load(sdFile.toURI().toURL());
-                                } catch (RuntimeException re) {
-                                    throw re;
+		if (cmd.getOptionValue('o') != null) {
+			createImage(cmd);
+			System.out
+					.println("created image file: " + cmd.getOptionValue('o'));
 
-                                } catch (Throwable t) {
-                                    editor.getUI().errorMessage(t, null, null);
-                                }
-                            } else {
-                                System.err.println("Warning: ignoring file "
-                                        + file);
-                            }
-                        }
-                        if (!loaded) {
-                            editor.getUI().addDefaultTab();
-                        }
-                    }
-                });
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        Editor editor = Editor.getEditor();
-                        editor.start();
-                        editor.getUI().addDefaultTab();
-                    }
-                });
-            }
-        }
-    }
+		} else {
 
-    private static void printHelp(Options options) {
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("<sdedit-start-command> [options] [input-files]",
-                options);
-    }
+			final String[] files = getInputFiles(cmd);
+			if (files.length > 0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						Editor editor = Editor.getEditor();
+						editor.start();
+						boolean loaded = false;
+						for (String file : files) {
+							File sdFile = new File(file);
+							if (sdFile.exists() && sdFile.canRead()
+									&& !sdFile.isDirectory()) {
+								loaded = true;
+								try {
+									editor.load(sdFile.toURI().toURL());
+								} catch (RuntimeException re) {
+									throw re;
 
-    @SuppressWarnings("static-access")
-    private static Options createBasicOptions() {
+								} catch (Throwable t) {
+									editor.getUI().errorMessage(t, null, null);
+								}
+							} else {
+								System.err.println("Warning: ignoring file "
+										+ file);
+							}
+						}
+						if (!loaded) {
+							editor.getUI().addDefaultTab();
+						}
+					}
+				});
+			} else {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						Editor editor = Editor.getEditor();
+						editor.start();
+						editor.getUI().addDefaultTab();
+					}
+				});
+			}
+		}
+	}
 
-        Options options = new Options();
+	private static void printHelp(Options options) {
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("<sdedit-start-command> [options] [input-files]",
+				options);
+	}
 
-        Option output = OptionBuilder.hasArg().withArgName("output file")
-                .create('o');
-        options.addOption(output);
+	@SuppressWarnings("static-access")
+	private static Options createBasicOptions() {
 
-        Option type = OptionBuilder.hasArg().withArgName("output file type")
-                .withDescription("one of " + availableTypes()).hasArg()
-                .create('t');
-        options.addOption(type);
+		Options options = new Options();
 
-        Option orientation = OptionBuilder.withArgName("orientation").hasArg()
-                .withDescription("one of {Portrait, Landscape}").create('r');
-        options.addOption(orientation);
+		Option output = OptionBuilder.hasArg().withArgName("output file")
+				.create('o');
+		options.addOption(output);
 
-        Option format = OptionBuilder.withArgName("page format").hasArg()
-                .withDescription("one of {A0, ..., A6}").create('f');
-        options.addOption(format);
+		Option type = OptionBuilder.hasArg().withArgName("output file type")
+				.withDescription("one of " + availableTypes()).hasArg()
+				.create('t');
+		options.addOption(type);
 
-        Option help = OptionBuilder.withDescription(
-                "show long options (for diagram preferences)").create('h');
-        options.addOption(help);
+		Option orientation = OptionBuilder.withArgName("orientation").hasArg()
+				.withDescription("one of {Portrait, Landscape}").create('r');
+		options.addOption(orientation);
 
-        return options;
-    }
+		Option format = OptionBuilder.withArgName("page format").hasArg()
+				.withDescription("one of {A0, ..., A6}").create('f');
+		options.addOption(format);
 
-    @SuppressWarnings("static-access")
-    private static void addPropertyOptions(Options options,
-            Bean<Configuration> conf) {
-        for (PropertyDescriptor property : conf.getProperties()) {
-            if (property.getWriteMethod().getAnnotation(Adjustable.class)
-                    .editable()) {
-                String name = property.getName();
-                String type = property.getPropertyType().getSimpleName();
-                String info = property.getWriteMethod()
-                        .getAnnotation(Adjustable.class).info();
-                Option option = OptionBuilder.withArgName(type).hasArg()
-                        .withDescription(info).withValueSeparator('=')
-                        .withLongOpt(name).create();
-                options.addOption(option);
-            }
-        }
-    }
+		Option help = OptionBuilder.withDescription(
+				"show long options (for diagram preferences)").create('h');
+		options.addOption(help);
 
-    private static String[] getInputFiles(CommandLine cmd) {
-        return cmd.getArgs();
-    }
+		return options;
+	}
 
-    private static void createImage(CommandLine cmd) throws IOException,
-            XMLException, DiagramError {
-        File inFile = new File(getInputFiles(cmd)[0]);
-        File outFile = new File(cmd.getOptionValue('o'));
-        String type = "png";
-        if (cmd.getOptionValue('t') != null) {
-            type = cmd.getOptionValue('t').toLowerCase();
-        }
-        String format = "A4";
-        if (cmd.getOptionValue('f') != null) {
-            format = cmd.getOptionValue('f').toUpperCase();
-        }
-        String orientation = "Portrait";
-        if (cmd.getOptionValue('r') != null) {
-            orientation = cmd.getOptionValue('r').toLowerCase();
-            if (orientation.length() > 0) {
-                orientation = orientation.substring(0, 1).toUpperCase()
-                        + orientation.substring(1);
-            }
-        }
-        InputStream in = null;
-        OutputStream out = null;
-        in = new FileInputStream(inFile);
-        try {
-            out = new FileOutputStream(outFile);
-            try {
-                Pair<String, Bean<Configuration>> pair = DiagramFileHandler
-                        .load(in, ConfigurationManager.getGlobalConfiguration()
-                                .getFileEncoding());
-                String text = pair.getFirst();
-                Bean<Configuration> conf = pair.getSecond();
-                configure(conf, cmd);
-                if (type.equals("png")) {
-                    ImageGraphicsDevice graphicDevice = new ImageGraphicsDevice();
-                    PaintDevice paintDevice = new PaintDevice(graphicDevice);
-                    DiagramFactory factory = new SequenceDiagramFactory(text, paintDevice);
-                    factory.generateDiagram(conf.getDataObject());
-                    graphicDevice.writeToStream("png", out);
-                } else {
-                    Exporter graphicDevice = Exporter.getExporter(type,
-                            orientation, format, out);
-                    PaintDevice paintDevice = new PaintDevice(graphicDevice);
-                    DiagramFactory factory = new SequenceDiagramFactory(text, paintDevice);
-                    factory.generateDiagram(conf.getDataObject());
-                    graphicDevice.export();
-                }
-                out.flush();
-            } finally {
-                out.close();
-            }
-        } finally {
-            in.close();
-        }
+	@SuppressWarnings("static-access")
+	private static void addPropertyOptions(Options options,
+			Bean<? extends Configuration> conf) {
+		for (PropertyDescriptor property : conf.getProperties()) {
+			if (property.getWriteMethod().getAnnotation(Adjustable.class)
+					.editable()) {
+				String name = property.getName();
+				String type = property.getPropertyType().getSimpleName();
+				String info = property.getWriteMethod()
+						.getAnnotation(Adjustable.class).info();
+				Option option = OptionBuilder.withArgName(type).hasArg()
+						.withDescription(info).withValueSeparator('=')
+						.withLongOpt(name).create();
+				options.addOption(option);
+			}
+		}
+	}
 
-    }
+	private static String[] getInputFiles(CommandLine cmd) {
+		return cmd.getArgs();
+	}
 
-    private static void configure(Bean<Configuration> conf, CommandLine cmd) {
-        for (Option option : cmd.getOptions()) {
-            if (option.getLongOpt() != null) {
-                String name = option.getLongOpt();
-                String valueString = cmd.getOptionValue(option.getLongOpt());
-                if (valueString != null) {
-                    PropertyDescriptor property = conf.getProperty(name);
-                    Object value = ObjectFactory.createFromString(
-                            property.getPropertyType(), valueString);
-                    conf.setValue(property, value);
-                }
-            }
-        }
-    }
+	private static void createImage(CommandLine cmd) throws IOException,
+			XMLException, DiagramError {
+		File inFile = new File(getInputFiles(cmd)[0]);
+		File outFile = new File(cmd.getOptionValue('o'));
+		String type = "png";
+		if (cmd.getOptionValue('t') != null) {
+			type = cmd.getOptionValue('t').toLowerCase();
+		}
+		String format = "A4";
+		if (cmd.getOptionValue('f') != null) {
+			format = cmd.getOptionValue('f').toUpperCase();
+		}
+		String orientation = "Portrait";
+		if (cmd.getOptionValue('r') != null) {
+			orientation = cmd.getOptionValue('r').toLowerCase();
+			if (orientation.length() > 0) {
+				orientation = orientation.substring(0, 1).toUpperCase()
+						+ orientation.substring(1);
+			}
+		}
+		InputStream in = null;
+		OutputStream out = null;
+		in = new FileInputStream(inFile);
+		try {
+			out = new FileOutputStream(outFile);
+			try {
+				Pair<String, Bean<? extends Configuration>> pair = DiagramFileHandler
+						.load(in, ConfigurationManager.getGlobalConfiguration()
+								.getFileEncoding());
+				String text = pair.getFirst();
+				Bean<? extends Configuration> conf = pair.getSecond();
+				configure(conf, cmd);
+				if (type.equals("png")) {
+					ImageGraphicsDevice graphicDevice = new ImageGraphicsDevice();
+					PaintDevice paintDevice = new PaintDevice(graphicDevice);
+					DiagramFactory factory = new SequenceDiagramFactory(text,
+							paintDevice);
+					factory.generateDiagram(conf.getDataObject());
+					graphicDevice.writeToStream("png", out);
+				} else {
+					Exporter graphicDevice = Exporter.getExporter(type,
+							orientation, format, out);
+					PaintDevice paintDevice = new PaintDevice(graphicDevice);
+					DiagramFactory factory = new SequenceDiagramFactory(text,
+							paintDevice);
+					factory.generateDiagram(conf.getDataObject());
+					graphicDevice.export();
+				}
+				out.flush();
+			} finally {
+				out.close();
+			}
+		} finally {
+			in.close();
+		}
 
-    private static String availableTypes() {
-        if (Exporter.isAvailable()) {
-            return "{ps, pdf, swf, emf, svg, png, gif, jpg, bmp}";
-        }
-        return "{png}";
-    }
+	}
+
+	private static void configure(Bean<? extends Configuration> conf,
+			CommandLine cmd) {
+		for (Option option : cmd.getOptions()) {
+			if (option.getLongOpt() != null) {
+				String name = option.getLongOpt();
+				String valueString = cmd.getOptionValue(option.getLongOpt());
+				if (valueString != null) {
+					PropertyDescriptor property = conf.getProperty(name);
+					Object value = ObjectFactory.createFromString(
+							property.getPropertyType(), valueString);
+					conf.setValue(property, value);
+				}
+			}
+		}
+	}
+
+	private static String availableTypes() {
+		if (Exporter.isAvailable()) {
+			return "{ps, pdf, swf, emf, svg, png, gif, jpg, bmp}";
+		}
+		return "{png}";
+	}
 }

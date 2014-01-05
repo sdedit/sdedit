@@ -37,6 +37,7 @@ import javax.swing.SwingUtilities;
 
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.ConfigurationManager;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.ui.impl.DiagramTextTab;
 import net.sf.sdedit.util.Grep;
@@ -106,7 +107,7 @@ public class RealtimeServer extends Thread implements Constants {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						DiagramTextTab tab = (DiagramTextTab) editor.getUI().addSequenceDiagramTextTab(title,
-								ConfigurationManager.createNewDefaultConfiguration(), true);
+								ConfigurationManager.createNewDefaultConfiguration(SequenceConfiguration.class), true);
 						Receiver receiver = new Receiver(tab,
 								decodingReader, socket);
 						receivers.add(receiver);

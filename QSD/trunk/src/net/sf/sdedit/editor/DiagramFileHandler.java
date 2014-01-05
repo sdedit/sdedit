@@ -39,6 +39,7 @@ import java.net.URL;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.editor.plugin.AbstractFileHandler;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.components.configuration.Bean;
@@ -107,7 +108,7 @@ public class DiagramFileHandler extends AbstractFileHandler {
 					.getFileEncoding();
 			Font editorFont = ConfigurationManager.getGlobalConfiguration()
 					.getEditorFont();
-			Pair<String, Bean<Configuration>> result = load(stream, encoding);
+			Pair<String, Bean<? extends Configuration>> result = load(stream, encoding);
 			DiagramTextTab tab = new SequenceDiagramTextTab(getUI(), editorFont, result
 					.getSecond());
 			tab.setCode(result.getFirst());
@@ -126,7 +127,7 @@ public class DiagramFileHandler extends AbstractFileHandler {
 		DiagramTextTab dtab = (DiagramTextTab) tab;
 
 		// // plain text
-		Bean<Configuration> configuration;
+		Bean<? extends Configuration> configuration;
 		if (file.getName().toLowerCase().endsWith("sdx")) {
 			configuration = dtab.getConfiguration();
 		} else {
@@ -178,7 +179,7 @@ public class DiagramFileHandler extends AbstractFileHandler {
 	 * @throws IOException
 	 * @throws DocUtil.XMLException
 	 */
-	public static Pair<String, Bean<Configuration>> load(InputStream stream,
+	public static Pair<String, Bean<? extends Configuration>> load(InputStream stream,
 			String encoding) throws IOException, DocUtil.XMLException {
 		InputStreamReader reader = new InputStreamReader(stream, encoding);
 		BufferedReader buffered = new BufferedReader(reader);
@@ -193,8 +194,8 @@ public class DiagramFileHandler extends AbstractFileHandler {
 		}
 		writer.close();
 		String source;
-		Bean<Configuration> configuration = ConfigurationManager
-				.createNewDefaultConfiguration();
+		Bean<SequenceConfiguration> configuration = ConfigurationManager
+				.createNewDefaultConfiguration(SequenceConfiguration.class);
 		if (xml) {
 			InputStream inputStream = new ByteArrayInputStream(stringWriter
 					.toString().getBytes(encoding));
@@ -212,7 +213,7 @@ public class DiagramFileHandler extends AbstractFileHandler {
 		} else {
 			source = stringWriter.toString();
 		}
-		return new Pair<String, Bean<Configuration>>(source, configuration);
+		return new Pair<String, Bean<? extends Configuration>>(source, configuration);
 	}
 
 	/**
@@ -233,7 +234,7 @@ public class DiagramFileHandler extends AbstractFileHandler {
 	 * @throws XMLException
 	 */
 	private static void saveDiagram(String source,
-			Bean<Configuration> configuration, OutputStream stream,
+			Bean<? extends Configuration> configuration, OutputStream stream,
 			String encoding) throws IOException, XMLException {
 		if (configuration != null) {
 			Document document = DocUtil.newDocument();

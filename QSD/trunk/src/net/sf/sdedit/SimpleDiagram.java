@@ -36,6 +36,7 @@ import java.io.StringWriter;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
@@ -47,13 +48,14 @@ public class SimpleDiagram {
 
 	private String text;
 
-	private Bean<Configuration> configuration;
-	
+	private Bean<SequenceConfiguration> configuration;
+
 	private ImageGraphicsDevice graphicDevice;
-	
+
 	public SimpleDiagram(String text) {
 		this.text = text;
-		configuration = ConfigurationManager.createNewDefaultConfiguration();
+		configuration = ConfigurationManager
+				.createNewDefaultConfiguration(SequenceConfiguration.class);
 	}
 
 	public Configuration getConfiguration() {
@@ -61,31 +63,33 @@ public class SimpleDiagram {
 	}
 
 	public void storeConfiguration() throws IOException {
-		ConfigurationManager.LOCAL_DEFAULT.takeValuesFrom(configuration);
+		ConfigurationManager.getInitialDefaultConfigurationBean(
+				SequenceConfiguration.class).takeValuesFrom(configuration);
 		ConfigurationManager.storeConfigurations();
 	}
-	
-	public void saveToFile (String name, String format) throws DiagramError, IOException {
+
+	public void saveToFile(String name, String format) throws DiagramError,
+			IOException {
 		getImagePaintDevice().saveImage(format, name);
 	}
-	
-	public Image toImage () throws DiagramError {
+
+	public Image toImage() throws DiagramError {
 		return getImagePaintDevice().getImage();
 	}
-	
-	public static void main (String argv []) throws Throwable {
+
+	public static void main(String argv[]) throws Throwable {
 		InputStream in;
 		OutputStream out;
 		if (argv.length > 2) {
-			throw new IllegalArgumentException ("Too many arguments.");
+			throw new IllegalArgumentException("Too many arguments.");
 		}
 		if (argv.length > 0) {
-			in = new FileInputStream (argv [0]);
+			in = new FileInputStream(argv[0]);
 		} else {
 			in = System.in;
 		}
 		if (argv.length == 2) {
-			out = new FileOutputStream (argv [1]);
+			out = new FileOutputStream(argv[1]);
 		} else {
 			out = System.out;
 		}
@@ -102,8 +106,8 @@ public class SimpleDiagram {
 		in.close();
 		out.close();
 	}
-	
-    private ImageGraphicsDevice getImagePaintDevice() throws DiagramError {
+
+	private ImageGraphicsDevice getImagePaintDevice() throws DiagramError {
 		if (graphicDevice instanceof ImageGraphicsDevice) {
 			return graphicDevice;
 		}
@@ -116,4 +120,4 @@ public class SimpleDiagram {
 	}
 }
 
-//{{core}}
+// {{core}}

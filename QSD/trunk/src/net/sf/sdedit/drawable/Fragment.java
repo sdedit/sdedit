@@ -101,6 +101,7 @@ public class Fragment extends Drawable
      *            the diagram of which the fragment is a part
      */
     public Fragment(String type, String condition, SequenceDiagram diagram) {
+    	super(diagram);
         if (type.equals("")) {
             this.type = condition + "  ";
             this.condition = "";

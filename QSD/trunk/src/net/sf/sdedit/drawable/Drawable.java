@@ -28,6 +28,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 
 import net.sf.sdedit.Constants;
+import net.sf.sdedit.diagram.Diagram;
 
 /**
  * A <tt>Drawable</tt> object is a representation of a visible component that
@@ -47,13 +48,43 @@ public abstract class Drawable implements Constants {
 	private int top, left, height, width;
 
 	private boolean visible;
+	
+	private String [] label;
+	
+	private Diagram diagram;
 
 	/**
 	 * Creates a new <tt>Drawable</tt> with the visibility set to <tt>true</tt>
 	 */
-	protected Drawable() {
+	protected Drawable(Diagram diagram) {
 		visible = true;
+		this.diagram = diagram;
 	}
+	
+	protected Diagram getDiagram() {
+		return diagram;
+	}
+	
+	protected void setLabel(String[] label) {
+		this.label = label;
+	}
+	
+    protected int textWidth() {
+        return textWidth(false);
+    }
+
+    protected int textWidth(boolean bold) {
+        int width = 0;
+        for (int i = 0; i < label.length; i++) {
+            width = Math.max(width,
+                    diagram.getPaintDevice().getTextWidth(label[i], bold));
+        }
+        return width;
+    }
+
+    protected int textHeight() {
+        return diagram.getPaintDevice().getTextHeight() * label.length;
+    }
 	
 	public void draw (Graphics2D g2d) {
 	    Graphics2D g2 = (Graphics2D) g2d.create();
@@ -188,6 +219,12 @@ public abstract class Drawable implements Constants {
 			g.drawString(string[string.length - 1 - i], x, yy);
 		}
 	}
+	
+    protected void drawMultilineString(Graphics2D g, int x, int y,
+            Color background) {
+        drawMultilineString(g, label, x, y, diagram.getPaintDevice()
+                .getTextHeight(), textWidth(), background);
+    }
 
 }
 // {{core}}

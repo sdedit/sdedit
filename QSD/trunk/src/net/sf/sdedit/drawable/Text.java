@@ -37,6 +37,7 @@ public class Text extends Drawable
     private IPaintDevice device;
     
     public Text (String [] text, IPaintDevice device) {
+    	super(device.getDiagram());
         this.text = text;
         this.device = device;
         simpleHeight = device.getTextHeight(true);

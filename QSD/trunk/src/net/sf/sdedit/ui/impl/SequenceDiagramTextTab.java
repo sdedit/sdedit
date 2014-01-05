@@ -34,7 +34,7 @@ public class SequenceDiagramTextTab extends DiagramTextTab {
     private static final long serialVersionUID = 5278509849011224397L;
 
     public SequenceDiagramTextTab(UserInterfaceImpl ui, Font codeFont,
-            Bean<Configuration> configuration) {
+            Bean<? extends Configuration> configuration) {
         super(ui, codeFont, configuration);
     }
 

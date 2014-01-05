@@ -142,7 +142,7 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 
     private boolean filterMode;
 
-    private Bean<Configuration> oldConfiguration;
+    private Bean<? extends Configuration> oldConfiguration;
 
     private GlobalConfiguration globalConf;
 
@@ -159,7 +159,7 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
     private Map<String, ClassTab> classTabs;
     
     public DiagramTextTab(UserInterfaceImpl ui, Font codeFont,
-            Bean<Configuration> configuration
+            Bean<? extends Configuration> configuration
 
     ) {
         super(ui);
@@ -578,7 +578,7 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
         return new LinkedList<String>();
     }
 
-    public void setConfiguration(Bean<Configuration> configuration) {
+    public void setConfiguration(Bean<? extends Configuration> configuration) {
         super.setConfiguration(configuration);
         oldConfiguration = configuration.copy();
         layout(configuration.getDataObject().isVerticallySplit() ? 1 : 0);

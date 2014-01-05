@@ -54,8 +54,8 @@ public class BroadcastArrow extends Arrow {
         if (getMessage().getData().getBroadcastType() == 1) {
         	int w = getMessage().getCaller().getRoot() ==
         		getMessage().getCaller() ?
-        			 diagram.mainLifelineWidth:
-        				 diagram.subLifelineWidth;
+        			 diagram().mainLifelineWidth:
+        				 diagram().subLifelineWidth;
         	int cx = pts [0].x + sgn * w / 2;
         	int cy = pts [0].y;
         	g2d.drawArc(cx-6, cy - 4, 12, 6, 0, 180);

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sf.sdedit.config.Configuration;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.text.TextHandler;
 
@@ -32,7 +33,7 @@ public class SequenceDiagramFactory implements DiagramFactory,
         this.text = text;
     }
 
-    protected SequenceDiagram newDiagram(Configuration configuration,
+    protected SequenceDiagram newDiagram(SequenceConfiguration configuration,
             DiagramDataProvider provider, IPaintDevice paintDevice) {
         return new SequenceDiagram(configuration,
                 (SequenceDiagramDataProvider) provider, paintDevice);
@@ -42,8 +43,9 @@ public class SequenceDiagramFactory implements DiagramFactory,
         return new TextHandler(text);
     }
 
-    public void generateDiagram(Configuration configuration)
+    public void generateDiagram(Configuration conf)
             throws DiagramError {
+    	SequenceConfiguration configuration = conf.cast(SequenceConfiguration.class);
         Map<Integer, List<String>> map = null;
         if (configuration.isReuseSpace()) {
             provider = providerFactory.createProvider();

@@ -27,7 +27,7 @@ package net.sf.sdedit.drawable;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import net.sf.sdedit.config.Configuration;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.drawable.Strokes.StrokeType;
 
@@ -37,7 +37,7 @@ public class Rectangle extends ExtensibleDrawable
 
     private final String thread;
 
-    private final Configuration configuration;
+    private final SequenceConfiguration configuration;
 
     public Rectangle(int width, Lifeline lifeline) {
         super(width, lifeline);

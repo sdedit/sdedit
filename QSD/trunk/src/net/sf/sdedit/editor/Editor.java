@@ -26,10 +26,8 @@ package net.sf.sdedit.editor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -42,11 +40,13 @@ import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.GlobalConfiguration;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.eclipse.Eclipse;
 import net.sf.sdedit.editor.apple.AppInstaller;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.editor.plugin.FileHandler;
 import net.sf.sdedit.editor.plugin.Plugin;
+import net.sf.sdedit.editor.plugin.PluginRegistry;
 import net.sf.sdedit.server.RealtimeServer;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
@@ -59,7 +59,6 @@ import net.sf.sdedit.ui.impl.UserInterfaceImpl;
 import net.sf.sdedit.util.OS;
 import net.sf.sdedit.util.Ref;
 import net.sf.sdedit.util.UIUtilities;
-import net.sf.sdedit.util.Utilities;
 
 /**
  * The control class of the Quick Sequence Diagram Editor.
@@ -97,8 +96,6 @@ public final class Editor implements Constants, UserInterfaceListener
 
     private static Editor instance;
 
-    private List<Plugin> plugins;
-
     public static Editor getEditor() {
         if (instance == null) {
             instance = new Editor();
@@ -115,7 +112,6 @@ public final class Editor implements Constants, UserInterfaceListener
         globals = new HashMap<String, Object>();
 
         fileHandlers = new LinkedList<FileHandler>();
-        plugins = new LinkedList<Plugin>();
 
         defaultFileHandler = new DiagramFileHandler();
 
@@ -233,15 +229,6 @@ public final class Editor implements Constants, UserInterfaceListener
         }
     }
 
-    public <T extends Plugin> T getPlugin(Class<T> pluginClass) {
-        for (Plugin plugin : plugins) {
-            if (pluginClass.isInstance(plugin)) {
-                return pluginClass.cast(plugin);
-            }
-        }
-        return null;
-    }
-
     private void readRecentFiles() {
         String sep = System.getProperty("path.separator");
         String recent = globalConfiguration.getRecentFiles();
@@ -331,32 +318,6 @@ public final class Editor implements Constants, UserInterfaceListener
         ui.showUI();
         ui.addToolbarSeparator();
         ui.addToToolbar(actions.helpAction, null);
-        try {
-            installPlugins();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void installPlugins() throws IOException {
-        URL url = Utilities.getResource("plugins.txt");
-        InputStream stream = url.openStream();
-        try {
-            for (String line : Utilities.readLines(stream, Charset.defaultCharset())) {
-                line = line.trim();
-                if (line.length() > 0 && line.charAt(0) != '#') {
-                    installPlugin(line);
-                }
-            }
-        } finally {
-            stream.close();
-        }
-    }
-
-    private void installPlugin(String pluginClass) {
-        Plugin plugin = Utilities.newInstance(pluginClass, Plugin.class);
-        ((Plugin) plugin).install();
-        plugins.add((Plugin) plugin);
     }
 
     @SuppressWarnings("serial")
@@ -366,8 +327,13 @@ public final class Editor implements Constants, UserInterfaceListener
 
         ui.addAction("&File", actions.newSequenceDiagramAction, null);
         
-        ui.addAction("&File", actions.newFlowChartAction, null);
-
+        for (Plugin plugin : PluginRegistry.getInstance()) {
+        	if (plugin.getNewTabAction() != null) {
+        		 ui.addAction("&File", plugin.getNewTabAction(), null);
+	 		}
+        }
+        
+       
         ui.addCategory("&File.Open", "open");
 
         ui.addAction("&File.Open",
@@ -481,7 +447,12 @@ public final class Editor implements Constants, UserInterfaceListener
         }
 
         ui.addToToolbar(actions.newSequenceDiagramAction, null);
-        ui.addToToolbar(actions.newFlowChartAction, null);
+        
+        for (Plugin plugin : PluginRegistry.getInstance()) {
+        	if (plugin.getNewTabAction() != null) {
+        		 ui.addToToolbar(plugin.getNewTabAction(), null);
+	 		}
+        }
         
         ui.addToToolbar(
                 fileActionProvider.getOpenAction(defaultFileHandler, ui),

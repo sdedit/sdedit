@@ -39,7 +39,7 @@ public class Line extends ExtensibleDrawable {
 	public Line(int width, Lifeline lifeline) {
 		super(width, lifeline);
 	}
-
+	
 	/*
 	public void draw(Graphics2D g2d) {
 		drawPartially(g2d, -1, -1);

@@ -29,13 +29,13 @@ import java.awt.Graphics2D;
 
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
-import net.sf.sdedit.diagram.SequenceDiagram;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.util.Direction;
 
 public abstract class SequenceElement extends Drawable implements Constants {
-    private String[] label;
-
+	
     private ExtensibleDrawable leftEndpoint;
 
     private ExtensibleDrawable leftLimit;
@@ -43,8 +43,6 @@ public abstract class SequenceElement extends Drawable implements Constants {
     private ExtensibleDrawable rightEndpoint;
 
     private ExtensibleDrawable rightLimit;
-
-    protected final SequenceDiagram diagram;
 
     private Direction align;
 
@@ -56,17 +54,17 @@ public abstract class SequenceElement extends Drawable implements Constants {
 
     protected SequenceElement(SequenceDiagram diagram, Lifeline boundary0,
             Lifeline boundary1, String[] label, Direction align, int y) {
+    	super(diagram);
         setTop(y);
+        setLabel(label);
         this.align = align;
-        this.diagram = diagram;
         configuration = configuration();
-        this.label = label;
         findEndpoints(boundary0, boundary1);
         computePadding();
     }
 
     protected final SequenceDiagram diagram() {
-        return diagram;
+        return (SequenceDiagram) getDiagram();
     }
 
     protected final int rightPadding() {
@@ -77,8 +75,8 @@ public abstract class SequenceElement extends Drawable implements Constants {
         return leftPadding;
     }
 
-    protected final Configuration configuration() {
-        return diagram.getConfiguration();
+    protected final SequenceConfiguration configuration() {
+        return diagram().getConfiguration();
     }
 
     /**
@@ -95,8 +93,8 @@ public abstract class SequenceElement extends Drawable implements Constants {
     }
 
     private void computePadding() {
-        int main = diagram.mainLifelineWidth;
-        int sub = diagram.subLifelineWidth;
+        int main = diagram().mainLifelineWidth;
+        int sub = diagram().subLifelineWidth;
 
         if (leftEndpoint != null) {
             Lifeline left = leftEndpoint.getLifeline();
@@ -164,23 +162,6 @@ public abstract class SequenceElement extends Drawable implements Constants {
         this.rightEndpoint = rightEndpoint;
     }
 
-    protected int textWidth() {
-        return textWidth(false);
-    }
-
-    protected int textWidth(boolean bold) {
-        int width = 0;
-        for (int i = 0; i < label.length; i++) {
-            width = Math.max(width,
-                    diagram().getPaintDevice().getTextWidth(label[i], bold));
-        }
-        return width;
-    }
-
-    protected int textHeight() {
-        return diagram().getPaintDevice().getTextHeight() * label.length;
-    }
-
     private void findEndpoints(final Lifeline boundary0,
             final Lifeline boundary1) {
 
@@ -190,11 +171,11 @@ public abstract class SequenceElement extends Drawable implements Constants {
                 rightEndpoint = boundary0.getView();
             } else {
                 leftEndpoint = boundary0.getView();
-                if (boundary0.getPosition() < diagram.getNumberOfLifelines() - 1) {
+                if (boundary0.getPosition() < diagram().getNumberOfLifelines() - 1) {
                     rightEndpoint = boundary0.getRightNeighbour().getView();
 
                 } else {
-                    rightEndpoint = (Line) diagram.getPaintDevice()
+                    rightEndpoint = (Line) diagram().getPaintDevice()
                             .callSpecial("getRightBound", null);
                 }
             }
@@ -207,12 +188,6 @@ public abstract class SequenceElement extends Drawable implements Constants {
                 rightEndpoint = boundary0.getView();
             }
         }
-    }
-
-    protected void drawMultilineString(Graphics2D g, int x, int y,
-            Color background) {
-        drawMultilineString(g, label, x, y, diagram().getPaintDevice()
-                .getTextHeight(), textWidth(), background);
     }
 
     public final ExtensibleDrawable getLeftLimit() {

@@ -24,308 +24,65 @@
 
 package net.sf.sdedit.config;
 
-import java.awt.Color;
 import java.awt.Font;
 
 import net.sf.sdedit.ui.components.configuration.Adjustable;
 import net.sf.sdedit.ui.components.configuration.DataObject;
 
-public interface Configuration extends DataObject
-{
-    public int getActorWidth();
+public interface Configuration extends DataObject {
 
-    public int getArrowSize();
+	public int getArrowSize();
 
-    public int getDestructorWidth();
+	public Font getFont();
 
-    public Font getFont();
+	public int getInitialSpace();
 
-    public int getFragmentMargin();
+	public int getLeftMargin();
 
-    public int getFragmentPadding();
+	public boolean isLineWrap();
 
-    public int getFragmentTextPadding();
+	public int getLowerMargin();
 
-    public int getGlue();
+	public int getRightMargin();
 
-    public int getHeadHeight();
+	public int getUpperMargin();
 
-    public int getHeadLabelPadding();
-    
-    public int getHeadWidth();
+	public boolean isVerticallySplit();
 
-    public int getInitialSpace();
+	public int getArrowThickness();
 
-    public int getLeftMargin();
-    
-    public boolean isLineWrap();
+	@Adjustable(dflt = 6, min = 2, max = 100, info = "Arrowhead size", category = "Misc")
+	public void setArrowSize(int arrowSize);
 
-    public int getLowerMargin();
+	@Adjustable(category = "Misc", info = "Diagram font")
+	public void setFont(Font font);
 
-    public int getMainLifelineWidth();
+	@Adjustable(dflt = 10, min = 8, max = 100, editable = true, info = "Space below lifeline head", category = "Vertical spaces")
+	public void setInitialSpace(int initialSpace);
 
-    public int getMessageLabelSpace();
+	@Adjustable(dflt = 5, min = 1, max = 999, info = "Left margin", category = "Margins")
+	public void setLeftMargin(int leftMargin);
 
-    public int getMessagePadding();
+	@Adjustable(info = "Wrap lines", category = "Misc")
+	public void setLineWrap(boolean lineWrap);
 
-    public int getNoteMargin();
+	@Adjustable(dflt = 5, min = 1, max = 100, info = "Bottom margin", category = "Margins")
+	public void setLowerMargin(int lowerMargin);
 
-    public int getNotePadding();
+	@Adjustable(dflt = 5, min = 5, max = 999, editable = true, info = "Right margin", category = "Margins")
+	public void setRightMargin(int rightMargin);
 
-    public int getRightMargin();
+	@Adjustable(dflt = 5, min = 1, max = 100, info = "Top margin", category = "Margins")
+	public void setUpperMargin(int upperMargin);
 
-    public int getSelfMessageHorizontalSpace();
+	@Adjustable(editable = false, info = "Vertical split", category = "Misc")
+	public void setVerticallySplit(boolean verticallySplit);
 
-    public int getSeparatorBottomMargin();
+	@Adjustable(editable = true, info = "Arrow thickness", category = "Line thickness", min = 1)
+	public void setArrowThickness(int arrowThickness);
 
-    public int getSeparatorTopMargin();
-
-    public int getSpaceBeforeActivation();
-
-    public int getSpaceBeforeAnswerToSelf();
-
-    public int getSpaceBeforeConstruction();
-    
-    public int getSpaceBeforeSelfMessage();
-
-    public int getSubLifelineWidth();
-
-    public int getUpperMargin();
-    
-    public Color getArrowColor ();
-    
-    public Color getLabeledBoxBgColor ();
-    
-    public Color getFragmentEdgeColor ();
-    
-    public Color getFragmentLabelBgColor();
-    
-    public Color getNoteBgColor();
-    
-    public Color getTc0 ();
-    
-    public Color getTc1 ();
-    
-    public Color getTc2 ();
-    
-    public Color getTc3 ();
-    
-    public Color getTc4 ();
-    
-    public Color getTc5 ();
-    
-    public Color getTc6 ();
-    
-    public Color getTc7 ();
-    
-    public Color getTc8 ();
-    
-    public Color getTc9 ();
-    
-    public boolean isColorizeThreads();
-
-    public boolean isOpaqueMessageText();
-
-    public boolean isThreaded();
-
-    public boolean isThreadNumbersVisible();
-    
-    public boolean isReturnArrowVisible();
-
-    public boolean isVerticallySplit();
-    
-    public boolean isExplicitReturns();
-    
-    public int getArrowThickness ();
-    
-    public int getActivationBarBorderThickness();
-    
-    public int getLifelineThickness ();
-    
-    public int getNoteBorderThickness ();
-    
-    public int getFragmentBorderThickness ();
-    
-    public boolean isShouldShadowParticipants();
-    
-    public boolean isReuseSpace();
-
-    @Adjustable(dflt=25,min=20,max=100,info="Actor width",category="Lifelines")
-    public void setActorWidth(int actorWidth);
-
-    @Adjustable(dflt=6,min=2,max=100,info="Arrowhead size",category="Misc")
-    public void setArrowSize(int arrowSize);
-
-    @Adjustable(depends="threaded=true",info="Colourize threads",category="Threads")
-    public void setColorizeThreads(boolean colorizeThreads);
-
-    @Adjustable(dflt=30,min=5,max=100,info="Destructor cross width",category="Misc")
-    public void setDestructorWidth(int destructorWidth);
-
-    @Adjustable(category = "Misc", info = "Diagram font")
-    public void setFont(Font font);
-
-    @Adjustable(dflt=8,min=0,max=100,editable=true,info="Fragment margin",category="Fragments")
-    public void setFragmentMargin(int fragmentMargin);
-
-    @Adjustable(dflt=10,min=1,max=100,editable=true,info="Fragment padding",category="Fragments")
-    public void setFragmentPadding(int commentPadding);
-
-    @Adjustable(dflt=3,min=1,max=100,editable=true,info="Fragment label padding",category="Fragments")
-    public void setFragmentTextPadding(int commentTextPadding);
-
-    @Adjustable(dflt=10,min=0,max=999,info="Glue",category="Misc")
-    public void setGlue(int glue);
-
-    @Adjustable(dflt=35,min=20,max=100,info="Head height",category="Lifelines")
-    public void setHeadHeight(int headHeight);
-
-    @Adjustable(dflt=5,min=1,max=100,editable=true,info="Head label padding",category="Lifelines")
-    public void setHeadLabelPadding(int headLabelPadding);
-
-    @Adjustable(dflt=100,min=50,max=300,step=1,info="Head width",category="Lifelines")
-    public void setHeadWidth(int headWidth);
-
-    @Adjustable(dflt=10,min=8,max=100,editable=true,info="Space below lifeline head",category="Vertical spaces")
-    public void setInitialSpace(int initialSpace);
-
-    @Adjustable(dflt=5,min=1,max=999,info="Left margin",category="Margins")
-    public void setLeftMargin(int leftMargin);
-    
-    @Adjustable(info="Wrap lines",category="Misc")
-    public void setLineWrap(boolean lineWrap);
-
-    @Adjustable(dflt=5,min=1,max=100,info="Bottom margin",category="Margins")
-    public void setLowerMargin(int lowerMargin);
-
-    @Adjustable(dflt=8,min=2,max=50,info="Activation bar width (1st level)",category="Lifelines")
-    public void setMainLifelineWidth(int width);
-
-    @Adjustable(dflt=3,min=1,max=100,editable=true,info="Space below message label",category="Vertical spaces")
-    public void setMessageLabelSpace(int messageLabelSpace);
-
-    @Adjustable(dflt=6,min=1,max=100,info="Message padding",category="Messages")
-    public void setMessagePadding(int messagePadding);
-    
-    @Adjustable(info="Show dashed lines for return messages with no text",category="Messages")
-    public void setReturnArrowVisible(boolean visible);
-
-    @Adjustable(dflt=6,min=1,max=20,info="Note box margin",category="Notes")
-    public void setNoteMargin(int noteMargin);
-
-    @Adjustable(dflt=6,min=1,max=20,info="Note box padding",category="Notes")
-    public void setNotePadding(int notePadding);
-
-    @Adjustable(depends="threaded=true,colorizeThreads=true",info="Colourize message text background", category="Threads")
-    public void setOpaqueMessageText(boolean opaqueMessageText);
-
-    @Adjustable(dflt=5,min=5,max=999,editable=true,info="Right margin",category="Margins")
-    public void setRightMargin(int rightMargin);
-
-    @Adjustable(dflt=15,min=10,max=100,info="Self-messages width",category="Messages")
-    public void setSelfMessageHorizontalSpace(int selfMessageHorizontalSpace);
-
-    @Adjustable(dflt=8,min=1,max=100,info="Separator bottom margin",category="Fragments")
-    public void setSeparatorBottomMargin(int beforeFragmentText);
-
-    @Adjustable(dflt=15,min=1,max=100,info="Separator top margin",category="Fragments")
-    public void setSeparatorTopMargin(int beforeSeparator);
-
-    @Adjustable(dflt=2,min=0,max=100,info="Space before activation",category="Vertical spaces")
-    public void setSpaceBeforeActivation(int spaceBeforeActivation);
-
-    @Adjustable(dflt=10,min=10,max=100,editable=true,info="Space before answer to self",category="Vertical spaces")
-    public void setSpaceBeforeAnswerToSelf(int spaceBeforeAnswerToSelf);
-
-    @Adjustable(dflt=6,min=1,max=100,info="Space before constructor",category="Vertical spaces")
-    public void setSpaceBeforeConstruction(int spaceBeforeConstruction);
-
-    @Adjustable(dflt=7,min=3,max=100,info="Space before message to self",category="Vertical spaces")
-    public void setSpaceBeforeSelfMessage(int spaceBeforeSelfMessage);
-
-    @Adjustable(dflt=6,min=2,max=100,info="Activation bar width (level>1)",category="Lifelines")
-    public void setSubLifelineWidth(int subLifelineWidth);
-    
-    @Adjustable(info="Arrow colour",category="Colours")
-    public void setArrowColor (Color c);
-    
-    @Adjustable(info="Head background colour",category="Colours")
-    public void setLabeledBoxBgColor (Color c);
-    
-    @Adjustable(info="Fragment edge colour",category="Colours")
-    public void setFragmentEdgeColor (Color c);
-    
-    @Adjustable(info="Fragment label background colour",category="Colours")
-    public void setFragmentLabelBgColor(Color c);
-    
-    @Adjustable(info="Note background colour",category="Colours")
-    public void setNoteBgColor(Color c);
-    
-    @Adjustable(info="Thread 0",category="Thread colours")
-    public void setTc0 (Color tc0);
-    
-    @Adjustable(info="Thread 1",depends="threaded=true",category="Thread colours")
-    public void setTc1 (Color tc1);
-    
-    @Adjustable(info="Thread 2",depends="threaded=true",category="Thread colours")
-    public void setTc2 (Color tc2);
-    
-    @Adjustable(info="Thread 3",depends="threaded=true",category="Thread colours")
-    public void setTc3 (Color tc3);
-    
-    @Adjustable(info="Thread 4",depends="threaded=true",category="Thread colours")
-    public void setTc4 (Color tc4);
-    
-    @Adjustable(info="Thread 5",depends="threaded=true",category="Thread colours")
-    public void setTc5 (Color tc5);
-    
-    @Adjustable(info="Thread 6",depends="threaded=true",category="Thread colours")
-    public void setTc6 (Color tc6);
-    
-    @Adjustable(info="Thread 7",depends="threaded=true",category="Thread colours")
-    public void setTc7 (Color tc7);
-    
-    @Adjustable(info="Thread 8",depends="threaded=true",category="Thread colours")
-    public void setTc8 (Color tc8);
-    
-    @Adjustable(info="Thread 9",depends="threaded=true",category="Thread colours")
-    public void setTc9 (Color tc9);
-    
-    @Adjustable(dflt=0,min=0,max=1,editable=true,info="Enable multithreading",category="Threads")
-    public void setThreaded(boolean threaded);
-
-    @Adjustable(depends="threaded=true",dflt=0,min=0,max=1,editable=true,info="Show thread numbers", category="Threads")
-    public void setThreadNumbersVisible(boolean threadNumbersVisible);
-	
-    @Adjustable(dflt=5,min=1,max=100,info="Top margin",category="Margins")
-    public void setUpperMargin(int upperMargin);
-
-    @Adjustable(editable=false,info="Vertical split",category="Misc")
-    public void setVerticallySplit(boolean verticallySplit);
-    
-    @Adjustable(editable=false,info="Require explicit returns",category="Misc")
-    public void setExplicitReturns(boolean explicitReturns);
-    
-    @Adjustable(editable=true,info="Arrow thickness", category="Line thickness", min=1)
-    public void setArrowThickness (int arrowThickness);
-    
-    @Adjustable(editable=true,info="Activation bar border thickness", category="Line thickness",min=1)
-    public void setActivationBarBorderThickness(int activationBarBorderThickness);
-    
-    @Adjustable(editable=true,info="(Inactive) Lifeline thickness", category="Line thickness",min=1)
-    public void setLifelineThickness (int lifelineThickness);
-    
-    @Adjustable(editable=true,info="Note border thickness", category="Line thickness",min=1)
-    public void setNoteBorderThickness(int noteBorderThickness);
-    
-    @Adjustable(editable=true,info="Fragment border thickness", category="Line thickness",min=1)
-    public void setFragmentBorderThickness (int fragmentBorderThickness);
-    
-    @Adjustable(info="Put shadows on participants", category="Lifelines")
-    public void setShouldShadowParticipants(boolean shouldShadowParticipants);
-    
-    @Adjustable(editable=true, category="Misc", info="Reuse space of destroyed objects")
-    public void setReuseSpace(boolean reuseSpace);
+	@Adjustable(editable = true, category = "Misc", info = "Reuse space of destroyed objects")
+	public void setReuseSpace(boolean reuseSpace);
 
 }
-//{{core}}
+// {{core}}

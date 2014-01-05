@@ -37,7 +37,7 @@ public class Cross extends Drawable
     private Point[] pts;
 
     public Cross(Lifeline lifeline) {
-        super();
+        super(lifeline.getDiagram());
         setWidth(lifeline.getDiagram().getConfiguration().getDestructorWidth());
         setHeight(getWidth());
     }

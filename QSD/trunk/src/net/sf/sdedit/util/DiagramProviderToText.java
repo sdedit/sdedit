@@ -27,8 +27,8 @@ package net.sf.sdedit.util;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.DiagramDataProviderFactory;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.IPaintDevice;
@@ -66,8 +66,8 @@ public class DiagramProviderToText implements SequenceDiagramDataProvider {
 
 	public static String getText(final DiagramDataProviderFactory providerFactory) {
 		IPaintDevice ipd = new NullPaintDevice();
-		Configuration conf = ConfigurationManager
-				.createNewDefaultConfiguration().getDataObject();
+		SequenceConfiguration conf = ConfigurationManager
+				.createNewDefaultConfiguration(SequenceConfiguration.class).getDataObject();
 		conf.setThreaded(true);
 		conf.setReuseSpace(false);
 		DiagramDataProviderFactory myFactory = new 

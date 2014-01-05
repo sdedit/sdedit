@@ -23,8 +23,16 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.editor.plugin;
 
+import javax.swing.Action;
+
+import net.sf.sdedit.config.Configuration;
+
 public interface Plugin {
 	
-	public void install ();
+	//public void install ();
+	
+	public Class<? extends Configuration> getConfigurationClass ();
+	
+	public Action getNewTabAction();
 	
 }

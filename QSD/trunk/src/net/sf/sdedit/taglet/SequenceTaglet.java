@@ -29,8 +29,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
@@ -202,7 +202,7 @@ public class SequenceTaglet implements Taglet
         if (specification.length() == 0) {
             return "";
         }
-        Configuration conf = ConfigurationManager.createNewDefaultConfiguration().getDataObject();
+        SequenceConfiguration conf = ConfigurationManager.createNewDefaultConfiguration(SequenceConfiguration.class).getDataObject();
         conf.setHeadWidth(25);
         conf.setMainLifelineWidth(5);
         conf.setSubLifelineWidth(5);

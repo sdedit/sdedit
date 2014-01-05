@@ -65,6 +65,7 @@ public class Figure extends Drawable {
      *            flag denoting if the figure label is to be underline
      */
     public Figure(Lifeline actor, String _label, int y, boolean underline) {
+    	super(actor.getDiagram());
         setTop(y);
         if (!_label.equals("")) {
             this.label = _label;

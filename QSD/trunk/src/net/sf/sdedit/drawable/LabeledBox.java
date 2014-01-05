@@ -28,7 +28,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 
-import net.sf.sdedit.config.Configuration;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.drawable.Strokes.StrokeType;
 
@@ -52,6 +52,7 @@ public class LabeledBox extends Drawable {
 
     public LabeledBox(Lifeline lifeline, String _label, int y,
             boolean anonymous, boolean underlined) {
+    	super(lifeline.getDiagram());
         setTop(y);
         this.underlined = underlined;
         this.lifeline = lifeline;
@@ -64,7 +65,7 @@ public class LabeledBox extends Drawable {
         } else {
             label = lifeline.getName() + ":" + lifeline.getType();
         }
-        Configuration conf = lifeline.getDiagram().getConfiguration();
+        SequenceConfiguration conf = lifeline.getDiagram().getConfiguration();
         headWidth = conf.getHeadWidth();
         headHeight = conf.getHeadHeight();
         padding = conf.getHeadLabelPadding();
