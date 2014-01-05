@@ -15,6 +15,7 @@ import net.sf.sdedit.diagram.AbstractPaintDevice;
 import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramDataProvider;
 import net.sf.sdedit.diagram.DiagramFactory;
+import net.sf.sdedit.diagram.GraphicDevice;
 import net.sf.sdedit.diagram.IPaintDevice;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagram;
@@ -189,12 +190,15 @@ public class SequenceDiagramTextTab extends DiagramTextTab {
     }
 
     @Override
-    public AbstractPaintDevice createPaintDevice() {
-        PanelGraphicDevice ppd = new PanelGraphicDevice(true);
-        if (getInteraction() != null) {
-            ppd.setPartner(getInteraction());
-        }   
-        return new PaintDevice(ppd);
+    public AbstractPaintDevice createPaintDevice(GraphicDevice graphicDevice) {
+    	if (graphicDevice == null) {
+            PanelGraphicDevice ppd = new PanelGraphicDevice(true);
+            if (getInteraction() != null) {
+                ppd.setPartner(getInteraction());
+            } 
+            graphicDevice = ppd;
+    	}
+        return new PaintDevice(graphicDevice);
     }
 
 }
