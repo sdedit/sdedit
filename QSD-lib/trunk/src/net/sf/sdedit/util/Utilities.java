@@ -1693,4 +1693,30 @@ public class Utilities {
 		}
 		return key;
 	}
+	
+	public static int max (int... nums) {
+		if (nums.length == 0) {
+			throw new IllegalArgumentException("no numbers provided to compute maximum of");
+		}
+		int max = Integer.MIN_VALUE;
+		for (int n : nums) {
+			if (n > max) {
+				max = n;
+			}
+		}
+		return max;
+	}
+	
+	public static int min (int... nums) {
+		if (nums.length == 0) {
+			throw new IllegalArgumentException("no numbers provided to compute minimum of");
+		}
+		int min = Integer.MIN_VALUE;
+		for (int n : nums) {
+			if (n < min) {
+				min = n;
+			}
+		}
+		return min;
+	}
 }
