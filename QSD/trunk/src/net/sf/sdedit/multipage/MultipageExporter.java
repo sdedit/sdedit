@@ -36,12 +36,11 @@ import javax.swing.JPanel;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.PrintConfiguration;
-import net.sf.sdedit.diagram.DiagramDataProviderFactory;
 import net.sf.sdedit.diagram.DiagramFactory;
-import net.sf.sdedit.diagram.PaintDevice;
-import net.sf.sdedit.diagram.SequenceDiagramFactory;
+import net.sf.sdedit.diagram.IPaintDevice;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.ui.components.ZoomPane;
+import net.sf.sdedit.ui.impl.DiagramTab;
 
 import org.freehep.graphicsio.PageConstants;
 
@@ -72,8 +71,6 @@ public class MultipageExporter extends JPanel {
 		return pdf != null;
 	}
 
-	private DiagramDataProviderFactory provider;
-
 	private Configuration configuration;
 
 	private Dimension size;
@@ -86,11 +83,13 @@ public class MultipageExporter extends JPanel {
 
 	private PrintConfiguration properties;
 
-	public MultipageExporter(PrintConfiguration properties, DiagramDataProviderFactory provider,
+	private DiagramTab tab;
+
+	public MultipageExporter(PrintConfiguration properties, DiagramTab tab,
 			Configuration configuration) {
 		super();
 		this.properties = properties;
-		this.provider = provider;
+		this.tab = tab;
 		this.configuration = configuration;
 		size = PageConstants.getSize(properties.getFormat(), properties
 				.getOrientation());
@@ -112,8 +111,11 @@ public class MultipageExporter extends JPanel {
 
 	public void init() throws DiagramError {
 		graphicDevice = new MultipagePaintDevice(properties, size);
-		PaintDevice pd = new PaintDevice(graphicDevice);
-		DiagramFactory factory = new SequenceDiagramFactory(provider, pd);
+
+		IPaintDevice pd = tab.createPaintDevice(graphicDevice);
+		//PaintDevice pd = new PaintDevice(graphicDevice);
+		
+		DiagramFactory factory = tab.createFactory(pd);
 		factory.generateDiagram(configuration);
 		int n = graphicDevice.getPanels().size();
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
