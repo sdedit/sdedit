@@ -34,5 +34,7 @@ public interface Plugin {
 	public Class<? extends Configuration> getConfigurationClass ();
 	
 	public Action getNewTabAction();
+
+	public Iterable<FileHandler> getFileHandlers();
 	
 }

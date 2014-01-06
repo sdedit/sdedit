@@ -24,19 +24,41 @@
 package net.sf.sdedit.editor.plugin;
 
 import java.awt.Component;
+import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
+import net.sf.sdedit.config.Configuration;
+import net.sf.sdedit.config.ConfigurationManager;
+import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
+import net.sf.sdedit.ui.components.configuration.Bean;
+import net.sf.sdedit.ui.components.configuration.BeanConverter;
+import net.sf.sdedit.ui.impl.DiagramTextTab;
 import net.sf.sdedit.ui.impl.UserInterfaceImpl;
+import net.sf.sdedit.util.DocUtil;
+import net.sf.sdedit.util.DocUtil.XMLException;
+import net.sf.sdedit.util.Pair;
 import net.sf.sdedit.util.Utilities;
+
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public abstract class AbstractFileHandler implements FileHandler {
 
@@ -60,10 +82,56 @@ public abstract class AbstractFileHandler implements FileHandler {
 	protected UserInterfaceImpl getUI() {
 		return (UserInterfaceImpl) Editor.getEditor().getUI();
 	}
+	
+	protected abstract DiagramTextTab createTab (Font editorFont, Bean<? extends Configuration> configuration);
 
-	protected abstract boolean _saveFile(Tab tab, File file) throws IOException;
+	protected Tab _loadFile(URL file) throws IOException {
+		InputStream stream = file.openStream();
+		try {
+			String encoding = ConfigurationManager.getGlobalConfiguration()
+					.getFileEncoding();
+			Font editorFont = ConfigurationManager.getGlobalConfiguration()
+					.getEditorFont();
+			Pair<String, Bean<? extends Configuration>> result = load(stream, encoding);
+			DiagramTextTab tab = createTab(editorFont, result.getSecond());
+			tab.setCode(result.getFirst());
+			return tab;
+		} catch (XMLException e) {
+			throw new IOException(
+					"The file could not be loaded because of an XMLException: "
+							+ e.getMessage());
+		} finally {
+			stream.close();
+		}
+	}
+	
+	protected abstract boolean isXML (File file);
 
-	protected abstract Tab _loadFile(URL file) throws IOException;
+	protected boolean _saveFile(Tab tab, File file) throws IOException {
+		DiagramTextTab dtab = (DiagramTextTab) tab;
+
+		// // plain text
+		Bean<? extends Configuration> configuration;
+		if (isXML(file)) {
+			configuration = dtab.getConfiguration();
+		} else {
+			configuration = null;
+		}
+		OutputStream stream = new FileOutputStream(file);
+		String code = dtab.getCode();
+		String encoding = ConfigurationManager.getGlobalConfiguration()
+				.getFileEncoding();
+		try {
+			saveDiagram(code, configuration, stream, encoding);
+			return true;
+		} catch (XMLException e) {
+			throw new IOException(
+					"The diagram could not be saved because of an XMLException: "
+							+ e.getMessage());
+		} finally {
+			stream.close();
+		}
+	}
 
 	protected String[] getFileTypesWithDescriptions() {
 		String[] types = getFileTypes();
@@ -97,6 +165,103 @@ public abstract class AbstractFileHandler implements FileHandler {
 		Tab tab = Editor.getEditor().getUI().currentTab();
 		return tab;
 	}
+	
+	protected abstract Bean<? extends Configuration> createNewConfiguration();
+	
+	/**
+	 * Loads a diagram from the text transmitted through the given
+	 * <tt>stream</tt>. If the text contains a line that starts with
+	 * <tt>&lt;?xml</tt>, it is interpreted as an XML file, containing the
+	 * diagram source as a CDATA section along with a configuration. Otherwise
+	 * the whole of the text is interpreted as a diagram source, and a default
+	 * configuration is used.
+	 * 
+	 * @param stream
+	 *            the stream from where the diagram specification is read
+	 * @param encoding
+	 *            the encoding of the diagram specification
+	 * @return a pair of the diagram source and the configuration to be used for
+	 *         generating the diagram
+	 * 
+	 * @throws IOException
+	 * @throws DocUtil.XMLException
+	 */
+	public Pair<String, Bean<? extends Configuration>> load(InputStream stream,
+			String encoding) throws IOException, DocUtil.XMLException {
+		InputStreamReader reader = new InputStreamReader(stream, encoding);
+		BufferedReader buffered = new BufferedReader(reader);
+		StringWriter stringWriter = new StringWriter();
+		PrintWriter writer = new PrintWriter(stringWriter);
+		boolean xml = false;
+		String line = buffered.readLine();
+		while (line != null) {
+			xml |= line.trim().startsWith("<?xml");
+			writer.println(line);
+			line = buffered.readLine();
+		}
+		writer.close();
+		String source;
+		Bean<? extends Configuration> configuration = createNewConfiguration();
+		if (xml) {
+			InputStream inputStream = new ByteArrayInputStream(stringWriter
+					.toString().getBytes(encoding));
+			try {
+				Document document = DocUtil.readDocument(inputStream, encoding);
+				source = DocUtil.evaluateCDATA(document, "/diagram/source");
+				Element confElement = (Element) DocUtil.evalXPathAsNode(
+						document, "/diagram/configuration");
+				BeanConverter converter = new BeanConverter(configuration,
+						document);
+				converter.setValues(confElement);
+			} finally {
+				inputStream.close();
+			}
+		} else {
+			source = stringWriter.toString();
+		}
+		return new Pair<String, Bean<? extends Configuration>>(source, configuration);
+	}
+
+	/**
+	 * Saves a diagram specification (and a configuration), using a stream.
+	 * 
+	 * @param source
+	 *            the source text of the diagram
+	 * @param configuration
+	 *            a configuration of the diagram, or null if it is to be saved
+	 *            without a configuration (as plain text)
+	 * @param stream
+	 *            the stream to use for saving the diagram source and
+	 *            configuration
+	 * @param encoding
+	 *            the encoding to be used
+	 * 
+	 * @throws IOException
+	 * @throws XMLException
+	 */
+	private static void saveDiagram(String source,
+			Bean<? extends Configuration> configuration, OutputStream stream,
+			String encoding) throws IOException, XMLException {
+		if (configuration != null) {
+			Document document = DocUtil.newDocument();
+			Element root = document.createElement("diagram");
+			document.appendChild(root);
+			BeanConverter converter = new BeanConverter(configuration, document);
+			Element sourceElem = document.createElement("source");
+			CDATASection sourceNode = document.createCDATASection(source);
+			sourceElem.appendChild(sourceNode);
+			root.appendChild(sourceElem);
+			Element configurationNode = converter
+					.createElement("configuration");
+			root.appendChild(configurationNode);
+			DocUtil.writeDocument(document, encoding, stream);
+		} else {
+			OutputStreamWriter osw = new OutputStreamWriter(stream, encoding);
+			PrintWriter pw = new PrintWriter(osw);
+			pw.print(source);
+			pw.flush();
+		}
+	}
 
 	/**
 	 * @see net.sf.sdedit.editor.plugin.FileHandler#loadFile(java.net.URL)
@@ -115,9 +280,7 @@ public abstract class AbstractFileHandler implements FileHandler {
 				tab.setFile(Utilities.toFile(url));
 			}
 			
-
 			tab.setClean(true);
-
 			addTabToUI(tab, ui);
 			
 			SwingUtilities.invokeLater(new Runnable() {

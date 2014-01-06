@@ -24,41 +24,21 @@
 package net.sf.sdedit.editor;
 
 import java.awt.Font;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.editor.plugin.AbstractFileHandler;
-import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.components.configuration.Bean;
-import net.sf.sdedit.ui.components.configuration.BeanConverter;
 import net.sf.sdedit.ui.impl.DiagramTextTab;
 import net.sf.sdedit.ui.impl.SequenceDiagramTextTab;
-import net.sf.sdedit.util.DocUtil;
-import net.sf.sdedit.util.DocUtil.XMLException;
-import net.sf.sdedit.util.Pair;
-
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class DiagramFileHandler extends AbstractFileHandler {
 
 	public String[] getFileDescriptions() {
-		return new String[] { "Plain diagram files (.sd)",
-				"Diagram files with preferences (.sdx)" };
+		return new String[] { "Plain sequence diagram files (.sd)",
+				"Sequence diagram files with preferences (.sdx)" };
 	}
 
 	public String[] getFileTypes() {
@@ -70,7 +50,7 @@ public class DiagramFileHandler extends AbstractFileHandler {
 	}
 
 	public String getOpenDescription() {
-		return "Load diagram file(s)";
+		return "Load sequence diagram file(s)";
 	}
 
 	public String getOpenShortCut() {
@@ -78,15 +58,15 @@ public class DiagramFileHandler extends AbstractFileHandler {
 	}
 
 	public String getSaveActionName() {
-		return "&Save diagram";
+		return "&Save sequence diagram";
 	}
 
 	public String getSaveAsActionName() {
-		return "S&ave diagram as";
+		return "S&ave sequence diagram as";
 	}
 
 	public String getSaveAsDescription() {
-		return "Save diagram as...";
+		return "Save sequence diagram as...";
 	}
 
 	public String getSaveAsShortCut() {
@@ -101,54 +81,6 @@ public class DiagramFileHandler extends AbstractFileHandler {
 		return Shortcuts.getShortcut(Shortcuts.SAVE);
 	}
 
-	public Tab _loadFile(URL file) throws IOException {
-		InputStream stream = file.openStream();
-		try {
-			String encoding = ConfigurationManager.getGlobalConfiguration()
-					.getFileEncoding();
-			Font editorFont = ConfigurationManager.getGlobalConfiguration()
-					.getEditorFont();
-			Pair<String, Bean<? extends Configuration>> result = load(stream, encoding);
-			DiagramTextTab tab = new SequenceDiagramTextTab(getUI(), editorFont, result
-					.getSecond());
-			tab.setCode(result.getFirst());
-			return tab;
-		} catch (XMLException e) {
-			throw new IOException(
-					"The file could not be loaded because of an XMLException: "
-							+ e.getMessage());
-		} finally {
-			stream.close();
-		}
-	}
-
-	@Override
-	public boolean _saveFile(Tab tab, File file) throws IOException {
-		DiagramTextTab dtab = (DiagramTextTab) tab;
-
-		// // plain text
-		Bean<? extends Configuration> configuration;
-		if (file.getName().toLowerCase().endsWith("sdx")) {
-			configuration = dtab.getConfiguration();
-		} else {
-			configuration = null;
-		}
-		OutputStream stream = new FileOutputStream(file);
-		String code = dtab.getCode();
-		String encoding = ConfigurationManager.getGlobalConfiguration()
-				.getFileEncoding();
-		try {
-			saveDiagram(code, configuration, stream, encoding);
-			return true;
-		} catch (XMLException e) {
-			throw new IOException(
-					"The diagram could not be saved because of an XMLException: "
-							+ e.getMessage());
-		} finally {
-			stream.close();
-		}
-	}
-
 	public boolean canLoad() {
 		return true;
 	}
@@ -161,100 +93,21 @@ public class DiagramFileHandler extends AbstractFileHandler {
 		return "OPEN";
 	}
 
-	/**
-	 * Loads a diagram from the text transmitted through the given
-	 * <tt>stream</tt>. If the text contains a line that starts with
-	 * <tt>&lt;?xml</tt>, it is interpreted as an XML file, containing the
-	 * diagram source as a CDATA section along with a configuration. Otherwise
-	 * the whole of the text is interpreted as a diagram source, and a default
-	 * configuration is used.
-	 * 
-	 * @param stream
-	 *            the stream from where the diagram specification is read
-	 * @param encoding
-	 *            the encoding of the diagram specification
-	 * @return a pair of the diagram source and the configuration to be used for
-	 *         generating the diagram
-	 * 
-	 * @throws IOException
-	 * @throws DocUtil.XMLException
-	 */
-	public static Pair<String, Bean<? extends Configuration>> load(InputStream stream,
-			String encoding) throws IOException, DocUtil.XMLException {
-		InputStreamReader reader = new InputStreamReader(stream, encoding);
-		BufferedReader buffered = new BufferedReader(reader);
-		StringWriter stringWriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(stringWriter);
-		boolean xml = false;
-		String line = buffered.readLine();
-		while (line != null) {
-			xml |= line.trim().startsWith("<?xml");
-			writer.println(line);
-			line = buffered.readLine();
-		}
-		writer.close();
-		String source;
-		Bean<SequenceConfiguration> configuration = ConfigurationManager
-				.createNewDefaultConfiguration(SequenceConfiguration.class);
-		if (xml) {
-			InputStream inputStream = new ByteArrayInputStream(stringWriter
-					.toString().getBytes(encoding));
-			try {
-				Document document = DocUtil.readDocument(inputStream, encoding);
-				source = DocUtil.evaluateCDATA(document, "/diagram/source");
-				Element confElement = (Element) DocUtil.evalXPathAsNode(
-						document, "/diagram/configuration");
-				BeanConverter converter = new BeanConverter(configuration,
-						document);
-				converter.setValues(confElement);
-			} finally {
-				inputStream.close();
-			}
-		} else {
-			source = stringWriter.toString();
-		}
-		return new Pair<String, Bean<? extends Configuration>>(source, configuration);
+	@Override
+	protected DiagramTextTab createTab(Font editorFont,
+			Bean<? extends Configuration> configuration) {
+		return new SequenceDiagramTextTab(getUI(), editorFont, configuration);
+	}
+	
+	@Override
+	protected boolean isXML(File file) {
+		return file.getName().toLowerCase().endsWith("sdx");
 	}
 
-	/**
-	 * Saves a diagram specification (and a configuration), using a stream.
-	 * 
-	 * @param source
-	 *            the source text of the diagram
-	 * @param configuration
-	 *            a configuration of the diagram, or null if it is to be saved
-	 *            without a configuration (as plain text)
-	 * @param stream
-	 *            the stream to use for saving the diagram source and
-	 *            configuration
-	 * @param encoding
-	 *            the encoding to be used
-	 * 
-	 * @throws IOException
-	 * @throws XMLException
-	 */
-	private static void saveDiagram(String source,
-			Bean<? extends Configuration> configuration, OutputStream stream,
-			String encoding) throws IOException, XMLException {
-		if (configuration != null) {
-			Document document = DocUtil.newDocument();
-			Element root = document.createElement("diagram");
-			document.appendChild(root);
-			BeanConverter converter = new BeanConverter(configuration, document);
-			Element sourceElem = document.createElement("source");
-			CDATASection sourceNode = document.createCDATASection(source);
-			sourceElem.appendChild(sourceNode);
-			root.appendChild(sourceElem);
-			Element configurationNode = converter
-					.createElement("configuration");
-			root.appendChild(configurationNode);
-			DocUtil.writeDocument(document, encoding, stream);
-		} else {
-			OutputStreamWriter osw = new OutputStreamWriter(stream, encoding);
-			PrintWriter pw = new PrintWriter(osw);
-			pw.print(source);
-			pw.flush();
-		}
+	@Override
+	protected Bean<? extends Configuration> createNewConfiguration() {
+		return ConfigurationManager
+				.createNewDefaultConfiguration(SequenceConfiguration.class);
 	}
 
 }

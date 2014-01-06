@@ -137,6 +137,11 @@ public final class Editor implements Constants, UserInterfaceListener
 
     public void start() {
         setupUI();
+        for (Plugin plugin : PluginRegistry.getInstance()) {
+        	for (FileHandler handler : plugin.getFileHandlers()) {
+        		addFileHandler(handler);
+        	}
+        }
         readRecentFiles();
         if (globalConfiguration.isAutostartServer()) {
             try {
@@ -153,8 +158,7 @@ public final class Editor implements Constants, UserInterfaceListener
             File fileToLoad = AppInstaller.getFileToLoad();
             if (fileToLoad != null) {
                 try {
-
-                    load(fileToLoad.toURI().toURL());
+                	load(fileToLoad.toURI().toURL());
                 } catch (RuntimeException e) {
                     throw e;
                 } catch (Exception e) {
@@ -165,13 +169,11 @@ public final class Editor implements Constants, UserInterfaceListener
         }
     }
 
-    public void addFileHandler(FileHandler fileHandler) {
-
-        fileHandlers.add(fileHandler);
+    private void addFileHandler(FileHandler fileHandler) {
+    	fileHandlers.add(fileHandler);
         ui.addAction("&File.Open",
                 fileActionProvider.getOpenAction(fileHandler, ui),
                 fileActionProvider.getOpenActivator);
-
     }
 
     public ActionManager getActionManager() {

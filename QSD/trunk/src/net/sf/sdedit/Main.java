@@ -250,7 +250,7 @@ public class Main implements Constants {
 		try {
 			out = new FileOutputStream(outFile);
 			try {
-				Pair<String, Bean<? extends Configuration>> pair = DiagramFileHandler
+				Pair<String, Bean<? extends Configuration>> pair = new DiagramFileHandler()
 						.load(in, ConfigurationManager.getGlobalConfiguration()
 								.getFileEncoding());
 				String text = pair.getFirst();
