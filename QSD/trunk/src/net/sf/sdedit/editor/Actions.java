@@ -57,13 +57,10 @@ import javax.swing.Action;
 import javax.swing.text.BadLocationException;
 
 import net.sf.sdedit.Constants;
-import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.SequenceConfiguration;
-import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.drawable.Arrow;
 import net.sf.sdedit.drawable.Drawable;
-import net.sf.sdedit.drawable.Rectangle;
 import net.sf.sdedit.message.ForwardMessage;
 import net.sf.sdedit.multipage.MultipageExporter;
 import net.sf.sdedit.server.Exporter;
