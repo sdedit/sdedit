@@ -403,34 +403,6 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		return tab;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Tab addFlowChartTextTab(String title,
-			Bean<Configuration> configuration, boolean selectIt) {
-		Class<? extends Tab> fc;
-		try {
-			fc = (Class<? extends Tab>) Class
-					.forName("net.sf.sdedit.flowchart.FlowChartTextTab");
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
-		Constructor<? extends Tab> cons = (Constructor<? extends Tab>) fc
-				.getConstructors()[0];
-		Tab tab;
-		try {
-			tab = cons.newInstance(this, ConfigurationManager
-					.getGlobalConfiguration().getEditorFont(), configuration);
-		} catch (RuntimeException e) {
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		tab.setTitle(title);
-		addTab(tab, selectIt);
-		enableComponents();
-		return tab;
-	}
-
 	public Tab currentTab() {
 		return tabContainer.getSelectedTab();
 	}

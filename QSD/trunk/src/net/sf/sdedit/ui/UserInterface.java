@@ -167,9 +167,6 @@ public interface UserInterface {
 	public Tab addSequenceDiagramTextTab(String title,
 			Bean<SequenceConfiguration> configuration, boolean selectIt);
 	
-	public Tab addFlowChartTextTab(String title,
-	            Bean<Configuration> configuration, boolean selectIt);
-
 	public String addTab(Tab tab, boolean selectIt);
 
 	/**
