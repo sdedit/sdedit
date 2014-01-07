@@ -26,7 +26,10 @@ package net.sf.sdedit.editor.plugin;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -34,11 +37,11 @@ import javax.swing.Action;
 
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.editor.TabAction;
-
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
 import net.sf.sdedit.ui.components.buttons.Activator;
 import net.sf.sdedit.ui.components.buttons.ManagedAction;
+import net.sf.sdedit.util.Utilities;
 
 @SuppressWarnings("serial")
 public class FileActionProvider {
@@ -48,17 +51,22 @@ public class FileActionProvider {
 	public FileActionProvider() {
 		actionMap = new HashMap<FileHandler, Map<String, Action>>();
 	}
+	
+	private Action openAction;
 
 	public final Activator getOpenActivator =
 
 	new Activator() {
 
 		public boolean isEnabled() {
+			return true;
+			/*
 			Tab tab = Editor.getEditor().getUI().currentTab();
 			if (tab == null) {
 				return false;
 			}
 			return tab.getFileHandler() != null && tab.getFileHandler().canLoad();
+			*/
 		}
 	};
 
@@ -76,13 +84,11 @@ public class FileActionProvider {
 
 	};
 
-	public Action getOpenAction(FileHandler handler, UserInterface ui) {
-		Action action = getAction(handler, "OPEN");
-		if (action == null) {
-			action = makeOpenAction(handler, ui);
-			setAction(handler, "OPEN", action);
+	public Action getOpenAction(UserInterface ui) {
+		if (this.openAction == null) {
+			openAction = makeOpenAction(ui);
 		}
-		return action;
+		return openAction;
 	}
 
 	public Action getSaveAction(FileHandler handler, UserInterface ui) {
@@ -117,35 +123,47 @@ public class FileActionProvider {
 		types.put(type, action);
 	}
 
-	private Action makeOpenAction(final FileHandler handler, final UserInterface ui) {
+	private Action makeOpenAction(final UserInterface ui) {
 
 		return new AbstractAction() {
 			{
 				putValue(ManagedAction.ICON_NAME, "open");
-				putValue(ManagedAction.ID, handler.getOpenID());
-				putValue(ManagedAction.NEW_TEXT, handler.getOpenActionName());
-				putValue(Action.SHORT_DESCRIPTION, handler.getOpenDescription());
+				putValue(ManagedAction.ID, "OPEN_FILE");
+				putValue(ManagedAction.NEW_TEXT, "Open File");
+				putValue(Action.SHORT_DESCRIPTION, "Open File");
+				
+				/*
 				String actionName = handler.getOpenActionName();
 
 				if (handler.getOpenShortCut() != null) {
 					actionName = handler.getOpenShortCut() + actionName;
 				}
+				*/
 
-				putValue(Action.NAME, actionName);
+				putValue(Action.NAME, "Open File");
 			}
 
 			public void actionPerformed(ActionEvent e) {
+				
+				List<String> filters = new ArrayList<String>();
+				for (FileHandler h : Editor.getEditor().getFileHandlers()) {
+					for (int j = 0; j < h.getFileDescriptions().length; j++) {
+						filters.add(h.getFileDescriptions()[j]);
+						filters.add(h.getFileTypes()[j]);
+					}
+				}
 
-				File[] files = handler.selectFilesToOpen();
+				File[] files = Utilities.chooseFiles(AbstractFileHandler.FILE_CHOOSER, ui.currentTab(), true,
+						true, "Open file", null, filters.toArray(new String[filters.size()]));
 				if (files != null) {
 					for (File file : files) {
-
 						try {
-							handler.loadFile(file.toURI().toURL(), ui);
-						} catch (IOException ex) {
-							ex.printStackTrace();
-							ui.errorMessage(ex, null, null);
-						}
+							Editor.getEditor().load(file.toURI().toURL());
+						} catch (IOException e1) {
+							ui.errorMessage(e1, null, null);
+						} catch (URISyntaxException e1) {
+							ui.errorMessage(e1, null, null);
+						}						
 					}
 				}
 
