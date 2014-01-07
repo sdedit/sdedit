@@ -28,8 +28,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +42,6 @@ import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.GlobalConfiguration;
-import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.eclipse.Eclipse;
 import net.sf.sdedit.editor.apple.AppInstaller;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
@@ -171,9 +172,6 @@ public final class Editor implements Constants, UserInterfaceListener
 
     private void addFileHandler(FileHandler fileHandler) {
     	fileHandlers.add(fileHandler);
-        ui.addAction("&File.Open",
-                fileActionProvider.getOpenAction(fileHandler, ui),
-                fileActionProvider.getOpenActivator);
     }
 
     public ActionManager getActionManager() {
@@ -186,6 +184,21 @@ public final class Editor implements Constants, UserInterfaceListener
 
     public Object getGlobalObject(String name) {
         return globals.get(name);
+    }
+    
+    public Iterable<FileHandler> getFileHandlers() {
+    	final List<FileHandler> handlers = new ArrayList<FileHandler>();
+    	handlers.add(defaultFileHandler);
+    	for (Plugin plugin : PluginRegistry.getInstance()) {
+    		for (FileHandler handler : plugin.getFileHandlers()) {
+    			handlers.add(handler);
+    		}
+    	}
+    	return new Iterable<FileHandler>() {
+    		public Iterator<FileHandler> iterator() {
+				return handlers.iterator();
+			}
+    	};
     }
 
     private FileHandler findFileHandler(String type) {
@@ -336,10 +349,10 @@ public final class Editor implements Constants, UserInterfaceListener
         }
         
        
-        ui.addCategory("&File.Open", "open");
+        //ui.addCategory("&File.Open", "open");
 
-        ui.addAction("&File.Open",
-                fileActionProvider.getOpenAction(defaultFileHandler, ui),
+        ui.addAction("&File",
+                fileActionProvider.getOpenAction(ui),
                 fileActionProvider.getOpenActivator);
 
         ui.addCategory("&File.Open &recent file", "open");
@@ -457,7 +470,7 @@ public final class Editor implements Constants, UserInterfaceListener
         }
         
         ui.addToToolbar(
-                fileActionProvider.getOpenAction(defaultFileHandler, ui),
+                fileActionProvider.getOpenAction(ui),
                 fileActionProvider.getOpenActivator);
         ui.addToToolbar(
                 fileActionProvider.getSaveAction(defaultFileHandler, ui),
