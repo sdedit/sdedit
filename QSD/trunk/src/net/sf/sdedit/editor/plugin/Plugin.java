@@ -28,13 +28,31 @@ import javax.swing.Action;
 import net.sf.sdedit.config.Configuration;
 
 public interface Plugin {
-	
-	//public void install ();
-	
-	public Class<? extends Configuration> getConfigurationClass ();
-	
+
+	// public void install ();
+
+	public static final String DEFAULT_CONF_TITLE = "DEFAULT_CONF_TITLE";
+
+	public static final String DEFAULT_CONF_RESTORE = "DEFAULT_CONF_RESTORE";
+
+	public static final String DEFAULT_CONF_SAVE = "DEFAULT_CONF_SAVE";
+
+	public static final String DEFAULT_CONF_DESCRIPTION = "DEFAULT_CONF_DESCRIPTION";
+
+	public static final String LOCAL_CONF_TITLE = "LOCAL_CONF_TITLE";
+
+	public static final String LOCAL_CONF_RESTORE = "LOCAL_CONF_RESTORE";
+
+	public static final String LOCAL_CONF_SAVE = "LOCAL_CONF_SAVE";
+
+	public static final String LOCAL_CONF_DESCRIPTION = "LOCAL_CONF_DESCRIPTION";
+
+	public Class<? extends Configuration> getConfigurationClass();
+
 	public Action getNewTabAction();
 
 	public Iterable<FileHandler> getFileHandlers();
-	
+
+	public String getText(String textId);
+
 }

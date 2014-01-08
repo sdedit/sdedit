@@ -34,7 +34,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.LinkedList;
@@ -47,14 +46,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
@@ -66,7 +63,6 @@ import net.iharder.dnd.FileDrop.Listener;
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
-import net.sf.sdedit.config.GlobalConfiguration;
 import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.editor.Decisions;
 import net.sf.sdedit.editor.Editor;
@@ -87,7 +83,6 @@ import net.sf.sdedit.ui.components.buttons.Activator;
 import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.components.configuration.ConfigurationAction;
-import net.sf.sdedit.ui.components.configuration.ConfigurationUI;
 import net.sf.sdedit.ui.components.configuration.ConfigurationUIListener;
 import net.sf.sdedit.util.OS;
 import net.sf.sdedit.util.Predicate;
@@ -114,17 +109,8 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	private PrintDialog printDialog;
 
 	private ToolBar toolbar;
-
-	private JTabbedPane configurationPane;
-
-	private JDialog preferencesDialog;
-
-	private ConfigurationUI<GlobalConfiguration> globalConfigurationUI;
-
-	private ConfigurationUI<SequenceConfiguration> defaultCUI;
-
-	private ConfigurationUI<SequenceConfiguration> localConfigurationUI;
-
+	
+	private PreferencesUI prefUI;
 
 	static {
 		if (OS.TYPE != OS.Type.WINDOWS) {
@@ -158,59 +144,8 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-		preferencesDialog = new JDialog(this);
-		preferencesDialog.setTitle("Preferences");
-		preferencesDialog.getContentPane().setLayout(new BorderLayout());
-		preferencesDialog.setModal(true);
-		preferencesDialog.setSize(new Dimension(675, 475));
-
-		configurationPane = new JTabbedPane();
-		preferencesDialog.getContentPane().add(configurationPane,
-				BorderLayout.CENTER);
-		globalConfigurationUI = new ConfigurationUI<GlobalConfiguration>(
-				this,
-				ConfigurationManager.getGlobalConfigurationBean(),
-				ConfigurationManager.GLOBAL_DEFAULT,
-				null,
-				"Restore defaults|Changes the current global preferences so that they are equal to the default preferences",
-				"<html>In this tab you can change global preferences. On exit, they are stored in the"
-						+ " file <tt>"
-						+ Constants.GLOBAL_CONF_FILE.getAbsolutePath()
-						+ "</tt>.", false);
-		globalConfigurationUI.setBorder(BorderFactory.createEmptyBorder(15, 15,
-				0, 15));
-		defaultCUI = new ConfigurationUI<SequenceConfiguration>(
-				this,
-				ConfigurationManager
-						.getDefaultConfigurationBean(SequenceConfiguration.class),
-				ConfigurationManager.getInitialDefaultConfigurationBean(SequenceConfiguration.class),
-				null,
-				"Restore defaults|Changes the initial preferences (to be used for newly created diagrams) such that they are equal to the default settings",
-				"<html>This tab is for adjusting the (initial) preferences that are used for"
-						+ " newly created diagrams. They are stored along with the global preferences.",
-				false);
-		defaultCUI.setBorder(BorderFactory.createEmptyBorder(15, 15, 0, 15));
-
-		localConfigurationUI = new ConfigurationUI<SequenceConfiguration>(
-				this,
-				ConfigurationManager
-						.createNewDefaultConfiguration(SequenceConfiguration.class),
-				ConfigurationManager
-						.getDefaultConfigurationBean(SequenceConfiguration.class),
-				"Save as initial|Saves the current diagram's preferences as the initial preferences (to be used for all newly created diagrams)",
-				"Restore initial|Changes the current diagram's preferences such that they are equal to the initial preferences",
-				"<html>This tab is for changing the preferences for the diagram"
-						+ " currently being displayed.<br>They will be stored "
-						+ " when the diagram is saved as an <tt>.sdx</tt>-file.",
-				false);
-		localConfigurationUI.setBorder(BorderFactory.createEmptyBorder(15, 15,
-				0, 15));
+		prefUI = new PreferencesUI(this);
 		
-		configurationPane.add("Global preferences", globalConfigurationUI);
-		configurationPane.add("Initial diagram preferences", defaultCUI);
-		configurationPane.addTab("Current diagram preferences",
-				localConfigurationUI);
-
 		listeners = new LinkedList<UserInterfaceListener>();
 		menuBar = new MenuBar();
 		toolbar = new ToolBar();
@@ -218,7 +153,6 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		toolbar.setFloatable(false);
 
 		new FileDrop(this, this);
-
 	}
 
 	public void addListener(UserInterfaceListener listener) {
@@ -455,20 +389,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	// }
 
 	public void configure(Bean<? extends Configuration> conf) {
-
-		if (conf != null) {
-			localConfigurationUI.setBean(conf.getDataObject()
-					.cast(SequenceConfiguration.class)
-					.getBean(SequenceConfiguration.class));
-			localConfigurationUI.setEnabled(true);
-		} else {
-			localConfigurationUI.setEnabled(false);
-		}
-
-		configurationPane.setSelectedIndex(conf != null ? 2 : 0);
-
-		UIUtilities.centerWindow(preferencesDialog, this);
-		preferencesDialog.setVisible(true);
+		prefUI.configure(conf);
 	}
 
 	public void setQuitAction(final Action action) {
@@ -618,17 +539,11 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	}
 
 	public void applyConfiguration() {
-		preferencesDialog.setVisible(false);
-		defaultCUI.apply();
-		localConfigurationUI.apply();
-		globalConfigurationUI.apply();
+		prefUI.applyConfiguration();
 	}
 
 	public void cancelConfiguration() {
-		preferencesDialog.setVisible(false);
-		defaultCUI.cancel();
-		localConfigurationUI.cancel();
-		globalConfigurationUI.cancel();
+		prefUI.cancelConfiguration();
 	}
 
 	public void errorMessage(Throwable throwable, String caption, String header) {

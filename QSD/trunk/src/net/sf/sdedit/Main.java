@@ -84,7 +84,6 @@ public class Main implements Constants {
 	}
 
 	public static void main(String[] argv) throws Exception {
-
 		Class<?> fcPlugin;
 		try {
 			fcPlugin = Class
