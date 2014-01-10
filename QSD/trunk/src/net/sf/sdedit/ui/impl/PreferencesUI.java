@@ -135,7 +135,6 @@ public class PreferencesUI {
 				false);
 				put(cc, _ui, "current", plugin.getText(Plugin.LOCAL_CONF_TITLE));
 			}
-			
 		}
 
 		for (PrefData pd : prefData) {
@@ -167,6 +166,7 @@ public class PreferencesUI {
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void configure(Bean<? extends Configuration> conf) {
 		int sel = 0;
 		int i = 0;
@@ -175,6 +175,7 @@ public class PreferencesUI {
 					&& pd.cls.equals(conf.getDataClass()));
 			if ("current".equals(pd.type) && conf != null
 					&& pd.cls.equals(conf.getDataClass())) {
+				pd.ui.setBean((Bean) conf);
 				sel = i;
 			}
 			i++;
