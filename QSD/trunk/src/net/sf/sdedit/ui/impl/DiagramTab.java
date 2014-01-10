@@ -292,7 +292,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 	private InputStream getTransferDataVector (String format) throws IOException {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		Exporter exporter = Exporter.getExporter(format, "Landscape", "A0", stream);
-		PaintDevice paintDevice = new PaintDevice(exporter);
+		IPaintDevice paintDevice = createPaintDevice(exporter);
 		DiagramFactory factory = createFactory(paintDevice);
 		try {
 			factory.generateDiagram(getConfiguration().getDataObject());
@@ -309,7 +309,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 	
 	private Image getTransferDataBitmap () throws IOException {
 		ImageGraphicsDevice ipd = new ImageGraphicsDevice(false);
-		PaintDevice paintDevice = new PaintDevice(ipd);
+		IPaintDevice paintDevice = createPaintDevice(ipd);
 		DiagramFactory factory = createFactory(paintDevice);
 		try {
 		    factory.generateDiagram(getConfiguration().getDataObject());
