@@ -32,173 +32,77 @@ import net.sf.sdedit.ui.components.configuration.Bean;
 
 public class SequenceDiagramTextTab extends DiagramTextTab {
 
-    private static final long serialVersionUID = 5278509849011224397L;
+	private static final long serialVersionUID = 5278509849011224397L;
 
-    public SequenceDiagramTextTab(UserInterfaceImpl ui, Font codeFont,
-            Bean<? extends Configuration> configuration) {
-        super(ui, codeFont, configuration);
-    }
+	public SequenceDiagramTextTab(UserInterfaceImpl ui, Font codeFont,
+			Bean<? extends Configuration> configuration) {
+		super(ui, codeFont, configuration);
+	}
 
-    public DiagramDataProvider createProvider() {
-        return new TextHandler(getCode());
-    }
-    
-    private SequenceDiagram diagram () {
-        return (SequenceDiagram) getDiagram();
-    }
-    
-    protected void handleBug(Diagram diagram, RuntimeException ex) {
+	public DiagramDataProvider createProvider() {
+		return new TextHandler(getCode());
+	}
 
-        String name = "sdedit-errorlog-" + System.currentTimeMillis();
+	private SequenceDiagram diagram() {
+		return (SequenceDiagram) getDiagram();
+	}
 
-        File errorLogFile = new File(name);
-        try {
-            errorLogFile.createNewFile();
-        } catch (IOException e0) {
-            try {
-                errorLogFile = new File(System.getProperty("user.home"), name);
-                errorLogFile.createNewFile();
-            } catch (IOException e1) {
-                errorLogFile = new File(System.getProperty("java.io.tmpdir",
-                        name));
-            }
-        }
+	@Override
+	protected boolean _handleDiagramError(DiagramError error) {
+		if (error == null) {
+			setError(false, "", -1, -1, null);
+			if (diagram().getFragmentManager().openFragmentsExist()) {
+				setError(
+						true,
+						"Warning: There are open comments. Use [c:<type> <text>]...[/c]",
+						-1, -1, null);
+			}
 
-        try {
-            saveLog(errorLogFile, ex, (TextHandler) diagram.getDataProvider());
-        } catch (IOException e) {
-           get_UI().errorMessage(e, null,
-                    "An error log file could not be saved.");
-        }
+			int noteNumber = diagram().getNextFreeNoteNumber();
+			if (noteNumber == 0) {
+				setStatus("");
+			} else {
+				setStatus("Next note number: "
+						+ diagram().getNextFreeNoteNumber());
+			}
+		} else if (!(error instanceof FatalError)) {
+			AbstractTextHandler handler = (TextHandler) error.getProvider();
+			String prefix = "";
+			if (error instanceof SemanticError) {
+				prefix = diagram().isThreaded()
+						&& diagram().getCallerThread() != -1 ? "Thread "
+						+ diagram().getCallerThread() + ": " : "";
+			}
+			setError(false, prefix + error.getMessage(),
+					handler.getLineBegin(), handler.getLineEnd(),
+					EditorHintFactory.createHint(this,
+							(SequenceDiagramError) error));
+		} else {
+			return false;
+		}
+		return true;
+	}
 
-    }
+	@Override
+	public DiagramFactory createFactory(IPaintDevice paintDevice) {
+		return new SequenceDiagramFactory(this, paintDevice);
+	}
 
-    @Override
-    public void handleDiagramError(DiagramError error) {
-        if (error == null) {
-            setError(false, "", -1, -1, null);
-            if (diagram().getFragmentManager().openFragmentsExist()) {
-                setError(
-                        true,
-                        "Warning: There are open comments. Use [c:<type> <text>]...[/c]",
-                        -1, -1, null);
-            }
+	@Override
+	public String getCategory() {
+		return "Sequence diagrams";
+	}
 
-            int noteNumber = diagram().getNextFreeNoteNumber();
-            if (noteNumber == 0) {
-                setStatus("");
-            } else {
-                setStatus("Next note number: "
-                        + diagram().getNextFreeNoteNumber());
-            }
-        } else {
-            setStatus("");
-            if (error instanceof FatalError) {
-                FatalError fatal = (FatalError) error;
-                System.err
-                        .println("********************************************************");
-                System.err
-                        .println("*                                                      *");
-                System.err
-                        .println("*            A FATAL ERROR HAS OCCURED.                *");
-                System.err
-                        .println("*                                                      *");
-                System.err
-                        .println("********************************************************");
-                error.getCause().printStackTrace();
-                // cautiously embedding this call into a try/catch-block
-                try {
-                    handleBug(diagram(), fatal.getCause());
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            } else {
-                AbstractTextHandler handler = (TextHandler) error.getProvider();
-                String prefix = "";
-
-                if (error instanceof SemanticError) {
-                    prefix = diagram().isThreaded()
-                            && diagram().getCallerThread() != -1 ? "Thread "
-                            + diagram().getCallerThread() + ": " : "";
-                }
-                setError(false, prefix + error.getMessage(),
-                        handler.getLineBegin(), handler.getLineEnd(),
-                        EditorHintFactory.createHint(this, (SequenceDiagramError) error));
-            }
-        }
-
-    }
-    
-    private static final String getFatalErrorDescription(Throwable ex) {
-        return "A FATAL ERROR has occurred: " + ex.getClass().getSimpleName();
-    }
-    
-    private void saveLog(File logFile, Throwable exception,
-            TextHandler textHandler) throws IOException {
-
-        FileOutputStream stream = new FileOutputStream(logFile);
-        try {
-            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(
-                    stream, ConfigurationManager.getGlobalConfiguration()
-                            .getFileEncoding()));
-            BufferedReader bufferedReader = new BufferedReader(
-                    new StringReader(textHandler.getText()));
-            int error = textHandler.getLineNumber();
-            printWriter.println(exception.getClass().getSimpleName()
-                    + " has occurred in line " + error + "\n");
-            int i = 0;
-            for (;;) {
-                String line = bufferedReader.readLine();
-                if (line == null) {
-                    bufferedReader.close();
-                    break;
-                }
-                line = line.trim();
-                if (i == error - 1) {
-                    line = ">>>>>>>>>>>>>> " + line;
-                }
-                printWriter.println(line);
-                i++;
-            }
-            printWriter.println("\n\n:::::::::::::::::::::::::::::\n\n");
-            exception.printStackTrace(printWriter);
-            printWriter.flush();
-            printWriter.close();
-            get_UI()
-                    .errorMessage(
-                            null,
-                            "FATAL ERROR",
-                            getFatalErrorDescription(exception)
-                                    + "\n\nAn error log file has been saved under \n"
-                                    + logFile.getAbsolutePath()
-                                    + "\n\n"
-                                    + "Please send an e-mail with this file as an attachment to:\n"
-                                    + "sdedit@users.sourceforge.net");
-        } finally {
-            stream.close();
-        }
-    }
-
-    @Override
-    public DiagramFactory createFactory(IPaintDevice paintDevice) {
-        return new SequenceDiagramFactory(this, paintDevice);
-    }
-    
-    @Override
-    public String getCategory() {
-        return "Sequence diagrams";
-    }
-
-    @Override
-    public AbstractPaintDevice createPaintDevice(GraphicDevice graphicDevice) {
-    	if (graphicDevice == null) {
-            PanelGraphicDevice ppd = new PanelGraphicDevice(true);
-            if (getInteraction() != null) {
-                ppd.setPartner(getInteraction());
-            } 
-            graphicDevice = ppd;
-    	}
-        return new PaintDevice(graphicDevice);
-    }
+	@Override
+	public AbstractPaintDevice createPaintDevice(GraphicDevice graphicDevice) {
+		if (graphicDevice == null) {
+			PanelGraphicDevice ppd = new PanelGraphicDevice(true);
+			if (getInteraction() != null) {
+				ppd.setPartner(getInteraction());
+			}
+			graphicDevice = ppd;
+		}
+		return new PaintDevice(graphicDevice);
+	}
 
 }
