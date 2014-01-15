@@ -119,15 +119,6 @@ public interface SequenceDiagramDataProvider extends DiagramDataProvider {
     public MessageData nextMessage() throws SyntaxError;
 
     /**
-     * Gets the current state of the provider. The state depends on how far it
-     * has advanced when reading the data.
-     * 
-     * @return the current state of the provider or <tt>null</tt> if the
-     *         provider does not provide information about its state
-     */
-    public Object getState();
-
-    /**
      * If at the current position in the data the beginning of a fragment is
      * specified, the title of the fragment is returned, otherwise
      * <tt>null</tt>.
