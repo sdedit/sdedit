@@ -86,7 +86,7 @@ import net.sf.sdedit.editor.plugin.FileHandler;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.error.FatalError;
 import net.sf.sdedit.icons.Icons;
-import net.sf.sdedit.text.TextHandler;
+import net.sf.sdedit.text.AbstractTextHandler;
 import net.sf.sdedit.ui.components.AutoCompletion;
 import net.sf.sdedit.ui.components.AutoCompletion.SuggestionProvider;
 import net.sf.sdedit.ui.components.TextArea;
@@ -688,7 +688,7 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
         }
 
         try {
-            saveLog(errorLogFile, ex, (TextHandler) diagram.getDataProvider());
+            saveLog(errorLogFile, ex, (AbstractTextHandler) diagram.getDataProvider());
         } catch (IOException e) {
            get_UI().errorMessage(e, null,
                     "An error log file could not be saved.");
@@ -701,7 +701,7 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
     }
     
     private void saveLog(File logFile, Throwable exception,
-            TextHandler textHandler) throws IOException {
+            AbstractTextHandler textHandler) throws IOException {
 
         FileOutputStream stream = new FileOutputStream(logFile);
         try {
