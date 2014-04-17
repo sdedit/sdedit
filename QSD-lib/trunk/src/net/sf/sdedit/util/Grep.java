@@ -98,7 +98,7 @@ public final class Grep {
     
     
     public static String[] parse(final String regexp, final String string,
-            List<Region> regions) {
+            List<Region> regions, boolean unescape) {
         // final String escaped = Escaper.escape(string);
         Pattern pattern = patternCache.get(regexp);
         if (pattern == null) {
@@ -112,13 +112,22 @@ public final class Grep {
 
         final String[] groups = new String[matcher.groupCount()];
         for (int i = 0; i < groups.length; i++) {
-            groups[i] = unescape(matcher.group(i + 1));
+        	if (unescape) {
+        	    groups[i] = unescape(matcher.group(i + 1));		
+        	} else {
+        		groups[i] = matcher.group(i+1);
+        	}
             if (regions != null) {
                 regions.add(new Region(matcher.group(i+1), matcher.start(i + 1),
                         matcher.end(i + 1)));
             }
         }
         return groups;
+    }
+    
+    public static String[] parse(final String regexp, final String string,
+            List<Region> regions) {
+    	return parse(regexp, string, regions, true);
     }
 
     private static final String unescape(String string) {
