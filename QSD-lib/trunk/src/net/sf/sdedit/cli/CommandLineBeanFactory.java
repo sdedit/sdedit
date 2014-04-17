@@ -118,6 +118,7 @@ public class CommandLineBeanFactory<T extends IOptions> implements
                 options.put(optionObject.getName(), optionObject);
                 methodNames.put(method.getName(), optionObject.getName());
                 org.apache.commons.cli.Option option = optionObject.getOption();
+                option.setRequired(optionObject.isRequired());
                 opt.addOption(option);
                 if (optionObject.getGroup() != null) {
                     OptionGroup group = optionGroups.get(optionObject

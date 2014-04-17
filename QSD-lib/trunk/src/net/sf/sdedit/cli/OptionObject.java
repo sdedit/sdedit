@@ -56,7 +56,7 @@ public class OptionObject {
     }
     
     public boolean isRequired() {
-        return option().required();
+        return option().required() && option().dflt().length() == 0 && !isBoolean();
     }
 
     public String getName() {
@@ -180,7 +180,7 @@ public class OptionObject {
     private Object makeArray(CommandLine line) {
         String[] values = line.getOptionValues(getName());
         if (values == null && dflt() != null) {
-            values = new String[] { dflt() };
+            values = dflt().split(String.valueOf(option().separator()));
         }
         if (values == null) {
             values = new String[0];
