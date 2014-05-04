@@ -798,18 +798,12 @@ public class Utilities {
 	 */
 	public static void pipe(InputStream from, OutputStream to)
 			throws IOException {
+        int n = 0;
+        final int EOF = -1;
 		byte[] buffer = new byte[1024];
-		BufferedInputStream bis = new BufferedInputStream(from);
-		BufferedOutputStream bos = new BufferedOutputStream(to);
-		int avail;
-		while ((avail = bis.available()) > 0) {
-			for (int off = 0; off < avail; off += 1024) {
-				int length = Math.min(avail - off, 1024);
-				bis.read(buffer, 0, length);
-				bos.write(buffer, 0, length);
-			}
-		}
-		bos.flush();
+        while (EOF != (n = from.read(buffer))) {
+            to.write(buffer, 0, n);
+        }
 	}
 
 	public static Iterable<String> readLines(String command,
@@ -1711,7 +1705,7 @@ public class Utilities {
 		if (nums.length == 0) {
 			throw new IllegalArgumentException("no numbers provided to compute minimum of");
 		}
-		int min = Integer.MIN_VALUE;
+		int min = Integer.MAX_VALUE;
 		for (int n : nums) {
 			if (n < min) {
 				min = n;
