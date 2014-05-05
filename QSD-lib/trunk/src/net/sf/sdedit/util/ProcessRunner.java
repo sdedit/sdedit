@@ -113,6 +113,8 @@ public class ProcessRunner implements Runnable {
 
 	private File workingDirectory;
 
+	private Integer exitValue;
+
 	/**
 	 * Creates a new <tt>ProcessRunner</tt>
 	 */
@@ -179,6 +181,10 @@ public class ProcessRunner implements Runnable {
 	public ProcessRunner set(String name, String value) {
 		env.put(name, value);
 		return this;
+	}
+	
+	public Integer getExitValue() {
+		return exitValue;
 	}
 
 	public void start(long maxDurationMillis) {
@@ -292,7 +298,7 @@ public class ProcessRunner implements Runnable {
 			}
 		}
 		try {
-			process.exitValue();
+			this.exitValue = process.exitValue();
 			return true;
 		} catch (IllegalThreadStateException e) {
 			return false;
