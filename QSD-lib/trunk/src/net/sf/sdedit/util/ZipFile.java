@@ -54,6 +54,20 @@ public class ZipFile {
 			openExisting();
 		}
 	}
+	
+	public static void createFromFiles(File file, File... files) throws IOException {
+		if (files != null) {
+			ZipFile zipFile = new ZipFile(file, true);
+			for (File f : files) {
+				zipFile.addFile(f);
+			}
+			zipFile.close();			
+		}
+	}
+	
+	public static void createFromFlatDirectory(File file, File dir) throws IOException {
+		createFromFiles(file, dir.listFiles());
+	}	
 
 	protected void openNew() throws IOException {
 		OutputStream os = new FileOutputStream(file);
