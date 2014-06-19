@@ -38,20 +38,16 @@ public class ZipFile {
 
 	private File file;
 
-	private boolean createNew;
-
 	private ZipOutputStream zos;
 
 	private ZipInputStream zis;
 
 	public ZipFile(File file, boolean createNew) throws IOException {
 		this.file = file;
-		this.createNew = createNew;
 		if (createNew) {
-			openNew();
-
+			zos = openNew();
 		} else {
-			openExisting();
+			zis = openExisting();
 		}
 	}
 	
@@ -69,18 +65,18 @@ public class ZipFile {
 		createFromFiles(file, dir.listFiles());
 	}	
 
-	protected void openNew() throws IOException {
+	protected ZipOutputStream openNew() throws IOException {
 		OutputStream os = new FileOutputStream(file);
-		zos = new ZipOutputStream(os);
+		return new ZipOutputStream(os);
 	}
 
-	protected void openExisting() throws IOException {
+	protected ZipInputStream openExisting() throws IOException {
 		InputStream is = new FileInputStream(file);
-		zis = new ZipInputStream(is);
+		return new ZipInputStream(is);
 	}
 
 	public void addFile(File file) throws IOException {
-		if (!createNew) {
+		if (zos == null) {
 			throw new IllegalStateException("ZipFile in is read-file mode");
 		}
 		InputStream fis = new FileInputStream(file);
@@ -96,7 +92,7 @@ public class ZipFile {
 	}
 
 	public void close() throws IOException {
-		if (!createNew) {
+		if (zos == null) {
 			throw new IllegalStateException("ZipFile is in read-file mode");
 		}
 		zos.flush();
@@ -104,6 +100,9 @@ public class ZipFile {
 	}
 
 	public String getNextEntry() throws IOException {
+		if (zis == null) {
+			throw new IllegalStateException("ZipFile is in create-new-file mode");
+		}
 		for (;;) {
 			ZipEntry zipEntry = zis.getNextEntry();
 			if (zipEntry == null) {
@@ -116,11 +115,14 @@ public class ZipFile {
 	}
 
 	public void storeNextEntry(OutputStream out) throws IOException {
+		if (zis == null) {
+			throw new IllegalStateException("ZipFile is in create-new-file mode");
+		}
 		Utilities.pipe(zis, out);
 	}
 
 	public void storeFiles(File directory) throws IOException {
-		if (createNew) {
+		if (zis == null) {
 			throw new IllegalStateException(
 					"ZipFile is in create-new-file mode");
 		}
@@ -139,19 +141,4 @@ public class ZipFile {
 			zis.close();
 		}
 	}
-
-	public static void main(String[] argv) throws Exception {
-
-		ZipFile f = new ZipFile(new File("C:/Temp/ZipFile.Zip"), false);
-
-		f.storeFiles(new File("C:/Temp"));
-
-		// f.addFile(new File("C:/Temp/log.txt"));
-		// f.addFile(new File("C:/Temp/og.txt"));
-
-		// f.close();
-		// f.storeFiles(new File("C:/Temp"));
-
-	}
-
 }
