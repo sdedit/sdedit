@@ -36,7 +36,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.drawable.Arrow;
 import net.sf.sdedit.drawable.Drawable;
@@ -190,6 +189,8 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
     public final int activationBarBorderThickness;
 
     public final int lifelineThickness;
+    
+    public final int messageLineLength;
 
     public final boolean returnArrowVisible;
 
@@ -244,6 +245,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
                 .getActivationBarBorderThickness();
         lifelineThickness = configuration.getLifelineThickness();
         opaqueText = configuration.isOpaqueMessageText();
+        messageLineLength = configuration.getMessageLineLength();
         this.paintDevice = paintDevice;
         lifelineMap = new HashMap<String, Lifeline>();
         lifelineList = new ArrayList<List<Lifeline>>();

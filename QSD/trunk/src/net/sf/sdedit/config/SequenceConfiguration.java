@@ -41,6 +41,8 @@ public interface SequenceConfiguration extends Configuration {
 	public int getMainLifelineWidth();
 
 	public int getMessageLabelSpace();
+	
+	public int getMessageLineLength();
 
 	public int getMessagePadding();
 
@@ -166,6 +168,9 @@ public interface SequenceConfiguration extends Configuration {
 
 	@Adjustable(dflt = 6, min = 1, max = 100, info = "Message padding", category = "Messages")
 	public void setMessagePadding(int messagePadding);
+	
+	@Adjustable(dflt = 0, min = 0, max = 100, info = "Message line length", category = "Messages")
+	public void setMessageLineLength(int messageLineLength);
 
 	@Adjustable(info = "Note background colour", category = "Colours")
 	public void setNoteBgColor(Color c);
