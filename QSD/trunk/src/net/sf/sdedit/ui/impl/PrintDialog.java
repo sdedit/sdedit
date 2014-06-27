@@ -129,7 +129,7 @@ public class PrintDialog extends JDialog implements ConfigurationUIListener,
 							null);
 			if (acrd != null) {
 				acrd = acrd.replace('\\', '/');
-				String [] str = Grep.parse("\"(.*?)\".*",acrd);
+				String [] str = new Grep(Grep.NO_UNESCAPE).parse("\"(.*?)\".*",acrd);
 				if (str != null && str.length == 1) {
 					printerProperties.getDataObject().setCommand(str[0].replace('/', '\\'));
 					printerProperties.getDataObject().setAction(PrintConfiguration.EXPORT_AND_PRINT);

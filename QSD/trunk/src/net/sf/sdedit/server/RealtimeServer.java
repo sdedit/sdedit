@@ -86,7 +86,7 @@ public class RealtimeServer extends Thread implements Constants {
 			final BufferedReader decodingReader;
 			final String title;
 			line = line.trim();
-			String[] parts = Grep.parse("^(.*)\\[(.*)\\]$", line);
+			String[] parts = new Grep(Grep.NO_UNESCAPE).parse("^(.*)\\[(.*)\\]$", line);
 			if (parts != null) {
 				String enc = parts[1];
 				title = parts[0];

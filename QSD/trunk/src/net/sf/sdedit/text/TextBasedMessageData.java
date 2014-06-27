@@ -88,11 +88,11 @@ public class TextBasedMessageData extends MessageData {
 	 * @throws SyntaxError
 	 *             if the string is not a valid message
 	 */
-	public TextBasedMessageData(String string) throws SyntaxError {
+	public TextBasedMessageData(String string, Grep grep) throws SyntaxError {
 		super();
 		this.string = string;
 		this.regions = new HashMap<String, Grep.Region>();
-		parse();
+		parse(grep);
 	}
 
 	/**
@@ -101,44 +101,44 @@ public class TextBasedMessageData extends MessageData {
 	 * the <tt>get</tt> methods.
 	 * 
 	 */
-	private void parse() throws SyntaxError {
+	private void parse(Grep grep) throws SyntaxError {
 		boolean success = false;
 		if (string.indexOf(':') == -1) {
 			throw new SyntaxError(null, "not a valid message - ':' missing");
 		}
 		success = /* Level, thread, and answer */
-		Grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON + "(.*)" + EQ
+		grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON + "(.*)" + EQ
 				+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy", "caller",
 				"dummy", "levelString", "threadString", "levelString",
 				"answer", "callee", "message")
 				/* Level, thread, no answer */
-				|| Grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON
+				|| grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON
 						+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy",
 						"caller", "dummy", "levelString", "threadString",
 						"levelString", "callee", "message")
 				/* No level/thread, but answer */
-				|| Grep.parseAndSetProperties(this, PREFIX + COLON + "(.*)"
+				|| grep.parseAndSetProperties(this, PREFIX + COLON + "(.*)"
 						+ EQ + "(.+?)" + DOT + "(.*)", string, regions, "noteId",
 						"dummy", "caller", "answer", "callee", "message")
 				/* No level/thread, no answer */
-				|| Grep.parseAndSetProperties(this, PREFIX + COLON + "(.*?)"
+				|| grep.parseAndSetProperties(this, PREFIX + COLON + "(.*?)"
 						+ DOT + "(.*)", string, regions, "noteId", "dummy", "caller",
 						"callee", "message")
 				/* primitive with level */
-				|| Grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON
+				|| grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON
 						+ "(.*)", string, regions, "noteId", "dummy", "caller", "dummy",
 						"levelString", "threadString", "levelString",
 						"message")
 				/* primitive without level */
-				|| Grep.parseAndSetProperties(this, PREFIX + COLON + "(.*)",
+				|| grep.parseAndSetProperties(this, PREFIX + COLON + "(.*)",
 						string, regions, "noteId", "dummy", "caller", "message")
 				/* spawn with level */
-				|| Grep.parseAndSetProperties(this, PREFIX + LEVELS + SPAWN
+				|| grep.parseAndSetProperties(this, PREFIX + LEVELS + SPAWN
 						+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy",
 						"spawner", "dummy", "levelString", "threadString",
 						"levelString", "callee", "message")
 				/* spawn without level */
-				|| Grep.parseAndSetProperties(this, PREFIX + SPAWN + "(.+?)"
+				|| grep.parseAndSetProperties(this, PREFIX + SPAWN + "(.+?)"
 						+ DOT + "(.*)", string, regions, "noteId", "dummy", "spawner",
 						"callee", "message");
 

@@ -64,6 +64,8 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 	private boolean reuseSpace;
 	
 	private SequenceDiagram diagram;
+	
+	private final Grep grep;
 
 	/**
 	 * Creates a new <tt>TextHandler</tt> for the given text.
@@ -74,6 +76,7 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 	 */
 	public TextHandler(String text) {
 		super(text);
+		grep = new Grep(Grep.DEFAULT_UNESCAPE);
 		section = -1;
 		annotations = new HashMap<Lifeline, String>();
 		objectSectionEnd = 0;
@@ -114,13 +117,13 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 	 */
 	protected void reset() {
 		super.reset();
-		String[] titleString = Grep.parse("(?s).*#!\\[([^\n\r]*?)\\].*", text());
+		String[] titleString = grep.parse("(?s).*#!\\[([^\n\r]*?)\\].*", text());
 		if (titleString == null) {
 			title = null;
 		} else {
 			title = titleString[0];
 		}
-		String[] descString = Grep.parse("(?s).*#!>>(.*)#!<<.*", text());
+		String[] descString = grep.parse("(?s).*#!>>(.*)#!<<.*", text());
 		if (descString == null) {
 			description = null;
 		} else {
@@ -263,7 +266,7 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 		}
 		MessageData data;
 		try {
-			data = new TextBasedMessageData(currentLine());
+			data = new TextBasedMessageData(currentLine(), grep);
 		} catch (SyntaxError e) {
 			e.setProvider(this);
 			throw e;
@@ -293,7 +296,7 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 					"not a valid object declaration - ':' missing");
 		}
 		ArrayList<Region> regions = new ArrayList<Region>();
-		String[] parts = Grep.parse(
+		String[] parts = grep.parse(
 				"(\\/?.+?):([^\\[\\]]+?)\\s*(\\[.*?\\]|)\\s*(\".*\"|)",
 				currentLine(), regions);
 		if (parts == null || parts.length != 4) {
@@ -395,7 +398,7 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 		if (currentLine() == null) {
 			throw new IllegalStateException("nothing to read");
 		}
-		String[] parts = Grep.parse("\\s*(\\*|\\+)(\\d+)\\s*(.+)", currentLine());
+		String[] parts = grep.parse("\\s*(\\*|\\+)(\\d+)\\s*(.+)", currentLine());
 		if (parts == null) {
 			return null;
 		}
@@ -473,7 +476,7 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 		if (currentLine() == null) {
 			throw new IllegalStateException("nothing to read");
 		}
-		String[] parts = Grep.parse("\\((\\d+)\\)\\s*(\\w+)", currentLine());
+		String[] parts = grep.parse("\\((\\d+)\\)\\s*(\\w+)", currentLine());
 		if (parts == null) {
 			return null;
 		}
