@@ -37,6 +37,7 @@ import net.sf.sdedit.message.BroadcastMessage;
 import net.sf.sdedit.message.Message;
 import net.sf.sdedit.message.Primitive;
 import net.sf.sdedit.util.Direction;
+import net.sf.sdedit.util.Utilities;
 
 /**
  * An arrow is the graphical representation of a message.
@@ -44,7 +45,7 @@ import net.sf.sdedit.util.Direction;
  * @author Markus Strauch
  */
 public class Arrow extends SequenceElement {
-	
+
 	private final ArrowStroke stroke;
 
 	private final ArrowHeadType headType;
@@ -56,17 +57,25 @@ public class Arrow extends SequenceElement {
 	protected Point[] pts;
 
 	protected Point textPoint;
-	
+
 	protected final boolean isAnswer;
-	
+
 	private int fontStyle;
-	
+
 	protected final Color color;
-	
+
+	private static String[] splitMessage(String text, int length) {
+		if (length > 0) {
+			text = Utilities.wrap(text, length, "\\n", false);
+		}
+		return text.split("\\\\n");
+	}
+
 	protected Arrow(Message message, Lifeline boundary0, Lifeline boundary1,
 			ArrowStroke stroke, Direction align, int y) {
-		super(message.getDiagram(), boundary0, boundary1, message.getText()
-				.split("\\\\n"), align, y);
+		super(message.getDiagram(), boundary0, boundary1, splitMessage(
+				message.getText(), message.getDiagram().messageLineLength),
+				align, y);
 		this.message = message;
 		this.color = message.getDiagram().arrowColor;
 		isAnswer = message instanceof Answer;
@@ -88,18 +97,19 @@ public class Arrow extends SequenceElement {
 
 		setWidth(headSize + leftPadding() + rightPadding()
 				+ diagram().messagePadding + textWidth());
-		
-		fontStyle = (message.getData().isStatic() && !isAnswer ? Font.ITALIC : 0)
-		| (message.getData().isBold() && !isAnswer ? Font.BOLD: 0);
-		
+
+		fontStyle = (message.getData().isStatic() && !isAnswer ? Font.ITALIC
+				: 0)
+				| (message.getData().isBold() && !isAnswer ? Font.BOLD : 0);
+
 	}
-	
+
 	protected int textWidth() {
 		boolean bold = (fontStyle & Font.BOLD) > 0;
 		return textWidth(bold);
 	}
-	
-	protected Font getFont (Font originalFont) {
+
+	protected Font getFont(Font originalFont) {
 		if (fontStyle == 0) {
 			return originalFont;
 		}
@@ -157,7 +167,9 @@ public class Arrow extends SequenceElement {
 	}
 
 	public static int getInnerHeight(Message message) {
-		int l = message.getText().split("\\\\n").length;
+		//int l = message.getText().split("\\\\n").length;
+		int l = splitMessage(
+				message.getText(), message.getDiagram().messageLineLength).length;
 		return message.getDiagram().getPaintDevice().getTextHeight()
 				* l
 				+ message.getDiagram().getConfiguration()
@@ -192,13 +204,13 @@ public class Arrow extends SequenceElement {
 	/**
 	 * @see net.sf.sdedit.drawable.Drawable#drawObject(java.awt.Graphics2D)
 	 */
-    @Override
+	@Override
 	protected void drawObject(Graphics2D g2d) {
 		Font font = g2d.getFont();
 		g2d.setFont(getFont(font));
 		drawText(g2d);
 		g2d.setFont(font);
-        g2d.setColor(color);
+		g2d.setColor(color);
 		int sgn = getAlign() == Direction.LEFT ? 1 : -1;
 
 		if (stroke != ArrowStroke.NONE) {
@@ -212,13 +224,13 @@ public class Arrow extends SequenceElement {
 				g2d.fillOval(pts[0].x - offset, pts[0].y - as / 2, as, as);
 			}
 		}
-    }
+	}
 
 	protected void drawText(Graphics2D g2d) {
 		int t = getMessage().getData().getThread();
 		Color back = getMessage().getData().getMessage().length() == 0
-				|| !diagram().opaqueText || t == -1 ? null
-				: getMessage().getDiagram().threadColors[t];
+				|| !diagram().opaqueText || t == -1 ? null : getMessage()
+				.getDiagram().threadColors[t];
 		drawMultilineString(g2d, textPoint.x, textPoint.y, back);
 	}
 
@@ -317,18 +329,18 @@ public class Arrow extends SequenceElement {
 	protected final ArrowStroke getStroke() {
 		return stroke;
 	}
-	
-	protected final Stroke dashed () {
-	    return Strokes.getStroke(StrokeType.DASHED, diagram().arrowThickness);
+
+	protected final Stroke dashed() {
+		return Strokes.getStroke(StrokeType.DASHED, diagram().arrowThickness);
 	}
-	
-	protected final Stroke solid () {
-	    return Strokes.getStroke(StrokeType.SOLID, diagram().arrowThickness);
+
+	protected final Stroke solid() {
+		return Strokes.getStroke(StrokeType.SOLID, diagram().arrowThickness);
 	}
-	
+
 	@Override
-	public java.awt.Rectangle getRectangle () {
-		java.awt.Rectangle r; 
+	public java.awt.Rectangle getRectangle() {
+		java.awt.Rectangle r;
 		if (textPoint != null) {
 			r = new java.awt.Rectangle();
 			r.x = textPoint.x;
@@ -341,4 +353,4 @@ public class Arrow extends SequenceElement {
 		return r;
 	}
 }
-//{{core}}
+// {{core}}
