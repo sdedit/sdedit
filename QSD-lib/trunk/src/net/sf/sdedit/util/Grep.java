@@ -41,205 +41,212 @@ import java.util.regex.Pattern;
  * @author Markus Strauch
  * 
  */
-public final class Grep {
+public class Grep {
 
-    private Grep() {
-        /* there are no Grep instances */
-    }
+	private final Map<String, Pattern> patternCache;
 
-    private static final Map<String, Pattern> patternCache = new HashMap<String, Pattern>();
+	private final Map<Class<?>, Map<String, PropertyDescriptor>> descriptorCache;
+	
+	private final Unescape unescape;
 
-    private static final Map<Class<?>, Map<String, PropertyDescriptor>> descriptorCache = new HashMap<Class<?>, Map<String, PropertyDescriptor>>();
+	public Grep(Unescape unescape) {
+		patternCache = new HashMap<String, Pattern>();
+		descriptorCache = new HashMap<Class<?>, Map<String, PropertyDescriptor>>();
+		this.unescape = unescape;
+	}
 
-    public static class Region {
+	public static interface Unescape {
+		public String unescape(String str);
+	}
+	
+	public static Unescape NO_UNESCAPE = null;
 
-        private final int start;
+	public static Unescape DEFAULT_UNESCAPE = new Unescape() {
+		
+		public final String unescape(String string) {
+			if (string == null) {
+				return null;
+			}
+			StringBuilder unescaped = new StringBuilder();
+			int state = 0;
 
-        private final int end;
+			for (int i = 0; i < string.length(); i++) {
+				char c = string.charAt(i);
+				switch (state) {
+				case 0:
+					if (c != '\\') {
+						unescaped.append(c);
+					} else {
+						state = 1;
+					}
+					break;
+				case 1:
+					unescaped.append(c);
+					state = 0;
+					break;
+				default:
 
-        private final String text;
+				}
+			}
+			if (state == 1) {
+				unescaped.append('\\');
+			}
+			return unescaped.toString();
+		}
+		
+	};
 
-        protected Region(String text, int start, int end) {
-            this.start = start;
-            this.end = end;
-            this.text = text;
-        }
+	public static class Region {
 
-        public int getStart() {
-            return start;
-        }
+		private final int start;
 
-        public int getEnd() {
-            return end;
-        }
+		private final int end;
 
-        public String getText() {
-            return text;
-        }
+		private final String text;
 
-    }
+		protected Region(String text, int start, int end) {
+			this.start = start;
+			this.end = end;
+			this.text = text;
+		}
 
-    /**
-     * Matches a string against a regular expression and returns an array of the
-     * substrings corresponding to the groups of the regular expression, or
-     * <tt>null</tt>, if the string does not match the regular expression.
-     * 
-     * @param regexp
-     *            a regular expression
-     * @param string
-     *            a string
-     * @return an array of the substrings corresponding to the groups of the
-     *         regular expression, or <tt>null</tt>, if the string does not
-     *         match the regular expression
-     */
-    public static String[] parse(final String regexp, final String string) {
-        return parse(regexp, string, null);
-    }
-    
-    
-    public static String[] parse(final String regexp, final String string,
-            List<Region> regions, boolean unescape) {
-        // final String escaped = Escaper.escape(string);
-        Pattern pattern = patternCache.get(regexp);
-        if (pattern == null) {
-            pattern = Pattern.compile(regexp);
-            patternCache.put(regexp, pattern);
-        }
-        final Matcher matcher = pattern.matcher(string);
-        if (!matcher.matches()) {
-            return null;
-        }
+		public int getStart() {
+			return start;
+		}
 
-        final String[] groups = new String[matcher.groupCount()];
-        for (int i = 0; i < groups.length; i++) {
-        	if (unescape) {
-        	    groups[i] = unescape(matcher.group(i + 1));		
-        	} else {
-        		groups[i] = matcher.group(i+1);
-        	}
-            if (regions != null) {
-                regions.add(new Region(matcher.group(i+1), matcher.start(i + 1),
-                        matcher.end(i + 1)));
-            }
-        }
-        return groups;
-    }
-    
-    public static String[] parse(final String regexp, final String string,
-            List<Region> regions) {
-    	return parse(regexp, string, regions, true);
-    }
+		public int getEnd() {
+			return end;
+		}
 
-    private static final String unescape(String string) {
-        if (string == null) {
-            return null;
-        }
-        StringBuffer unescaped = new StringBuffer();
-        int state = 0;
+		public String getText() {
+			return text;
+		}
+	}
 
-        for (int i = 0; i < string.length(); i++) {
-            char c = string.charAt(i);
-            switch (state) {
-            case 0:
-                if (c != '\\') {
-                    unescaped.append(c);
-                } else {
-                    state = 1;
-                }
-                break;
-            case 1:
-                unescaped.append(c);
-                state = 0;
-                break;
-            default:
+	/**
+	 * Matches a string against a regular expression and returns an array of the
+	 * substrings corresponding to the groups of the regular expression, or
+	 * <tt>null</tt>, if the string does not match the regular expression.
+	 * 
+	 * @param regexp
+	 *            a regular expression
+	 * @param string
+	 *            a string
+	 * @return an array of the substrings corresponding to the groups of the
+	 *         regular expression, or <tt>null</tt>, if the string does not
+	 *         match the regular expression
+	 */
+	public String[] parse(final String regexp, final String string) {
+		return parse(regexp, string, null);
+	}
 
-            }
-        }
-        if (state == 1) {
-            unescaped.append('\\');
-        }
-        return unescaped.toString();
-    }
+	public String[] parse(final String regexp, final String string,
+			List<Region> regions) {
+		// final String escaped = Escaper.escape(string);
+		Pattern pattern = patternCache.get(regexp);
+		if (pattern == null) {
+			pattern = Pattern.compile(regexp);
+			patternCache.put(regexp, pattern);
+		}
+		final Matcher matcher = pattern.matcher(string);
+		if (!matcher.matches()) {
+			return null;
+		}
 
-    /**
-     * Matches a string against a regular expression and uses the resulting
-     * groups (corresponding to portions of the regular expression between
-     * braces) for setting properties of a bean. The write method for the i-th
-     * property is called with an object of the write method's parameter type,
-     * that object is created by calling the type's string constructor with the
-     * string of the i-th group.
-     * 
-     * @param bean
-     *            a bean
-     * @param regexp
-     *            a regular expression
-     * @param string
-     *            a string to match the regular expression against
-     * @param properties
-     *            names of properties of the bean
-     * @return true if the string matched and if the properties could be set
-     * @throws IntrospectionException
-     *             if the bean could not be introspected
-     */
-    public static boolean parseAndSetProperties(final Object bean,
-            final String regexp, final String string,
-            final Map<String, Region> propertyRegions,
-            final String... properties) {
+		final String[] groups = new String[matcher.groupCount()];
+		for (int i = 0; i < groups.length; i++) {
+			if (unescape != null) {
+				groups[i] = unescape.unescape(matcher.group(i + 1));
+			} else {
+				groups[i] = matcher.group(i + 1);
+			}
+			if (regions != null) {
+				regions.add(new Region(matcher.group(i + 1), matcher
+						.start(i + 1), matcher.end(i + 1)));
+			}
+		}
+		return groups;
+	}
 
-        ArrayList<Region> regions = null;
-        if (propertyRegions != null) {
-            regions = new ArrayList<Region>();
-        }
+	/**
+	 * Matches a string against a regular expression and uses the resulting
+	 * groups (corresponding to portions of the regular expression between
+	 * braces) for setting properties of a bean. The write method for the i-th
+	 * property is called with an object of the write method's parameter type,
+	 * that object is created by calling the type's string constructor with the
+	 * string of the i-th group.
+	 * 
+	 * @param bean
+	 *            a bean
+	 * @param regexp
+	 *            a regular expression
+	 * @param string
+	 *            a string to match the regular expression against
+	 * @param properties
+	 *            names of properties of the bean
+	 * @return true if the string matched and if the properties could be set
+	 * @throws IntrospectionException
+	 *             if the bean could not be introspected
+	 */
+	public boolean parseAndSetProperties(final Object bean,
+			final String regexp, final String string,
+			final Map<String, Region> propertyRegions,
+			final String... properties) {
 
-        final String[] parsed = parse(regexp, string, regions);
-        if (parsed == null) {
-            return false;
-        }
-        if (properties.length != parsed.length) {
-            throw new IllegalArgumentException("number of groups does not"
-                    + " match number of properties");
-        }
-        Map<String, PropertyDescriptor> descriptors = descriptorCache.get(bean
-                .getClass());
-        if (descriptors == null) {
-            BeanInfo beanInfo;
-            try {
-                beanInfo = Introspector.getBeanInfo(bean.getClass());
-            } catch (IntrospectionException ie) {
-                throw new IllegalStateException("Cannot introspect "
-                        + bean.getClass().getName(), ie);
-            }
-            descriptors = new HashMap<String, PropertyDescriptor>();
-            for (PropertyDescriptor descriptor : beanInfo
-                    .getPropertyDescriptors()) {
-                if (descriptor.getWriteMethod() != null) {
-                    descriptors.put(descriptor.getName(), descriptor);
-                }
-            }
-            descriptorCache.put(bean.getClass(), descriptors);
-        }
+		ArrayList<Region> regions = null;
+		if (propertyRegions != null) {
+			regions = new ArrayList<Region>();
+		}
 
-        for (int i = 0; i < properties.length; i++) {
-            final PropertyDescriptor pd = descriptors.get(properties[i]);
-            if (pd == null) {
-                throw new IllegalArgumentException("property " + properties[i]
-                        + " does not exist");
-            }
-            if (propertyRegions != null) {
-                propertyRegions.put(pd.getName(), regions.get(i));                
-            }
+		final String[] parsed = parse(regexp, string, regions);
+		if (parsed == null) {
+			return false;
+		}
+		if (properties.length != parsed.length) {
+			throw new IllegalArgumentException("number of groups does not"
+					+ " match number of properties");
+		}
+		Map<String, PropertyDescriptor> descriptors = descriptorCache.get(bean
+				.getClass());
+		if (descriptors == null) {
+			BeanInfo beanInfo;
+			try {
+				beanInfo = Introspector.getBeanInfo(bean.getClass());
+			} catch (IntrospectionException ie) {
+				throw new IllegalStateException("Cannot introspect "
+						+ bean.getClass().getName(), ie);
+			}
+			descriptors = new HashMap<String, PropertyDescriptor>();
+			for (PropertyDescriptor descriptor : beanInfo
+					.getPropertyDescriptors()) {
+				if (descriptor.getWriteMethod() != null) {
+					descriptors.put(descriptor.getName(), descriptor);
+				}
+			}
+			descriptorCache.put(bean.getClass(), descriptors);
+		}
 
-            final Object value = ObjectFactory.createFromString(
-                    pd.getPropertyType(), parsed[i]);
-            try {
-                pd.getWriteMethod().invoke(bean, value);
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new IllegalArgumentException("cannot write property "
-                        + properties[i]);
-            }
-        }
-        return true;
-    }
+		for (int i = 0; i < properties.length; i++) {
+			final PropertyDescriptor pd = descriptors.get(properties[i]);
+			if (pd == null) {
+				throw new IllegalArgumentException("property " + properties[i]
+						+ " does not exist");
+			}
+			if (propertyRegions != null) {
+				propertyRegions.put(pd.getName(), regions.get(i));
+			}
+
+			final Object value = ObjectFactory.createFromString(
+					pd.getPropertyType(), parsed[i]);
+			try {
+				pd.getWriteMethod().invoke(bean, value);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new IllegalArgumentException("cannot write property "
+						+ properties[i]);
+			}
+		}
+		return true;
+	}
 }
 // {{core}}
