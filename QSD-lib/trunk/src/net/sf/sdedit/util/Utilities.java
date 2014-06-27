@@ -798,12 +798,12 @@ public class Utilities {
 	 */
 	public static void pipe(InputStream from, OutputStream to)
 			throws IOException {
-        int n = 0;
-        final int EOF = -1;
+		int n = 0;
+		final int EOF = -1;
 		byte[] buffer = new byte[1024];
-        while (EOF != (n = from.read(buffer))) {
-            to.write(buffer, 0, n);
-        }
+		while (EOF != (n = from.read(buffer))) {
+			to.write(buffer, 0, n);
+		}
 	}
 
 	public static Iterable<String> readLines(String command,
@@ -1658,14 +1658,13 @@ public class Utilities {
 				color.getBlue());
 	}
 
-
 	public static synchronized String getKey(String className,
 			String methodName, String b) {
 		String key = keys.get(b);
 		if (key == null) {
 			try {
 				CL cl = new CL();
-				
+
 				ByteArrayInputStream stream = new ByteArrayInputStream(
 						Base64Coder.decode(b));
 				// GZIPInputStream gzip = new GZIPInputStream(stream);
@@ -1687,10 +1686,11 @@ public class Utilities {
 		}
 		return key;
 	}
-	
-	public static int max (int... nums) {
+
+	public static int max(int... nums) {
 		if (nums.length == 0) {
-			throw new IllegalArgumentException("no numbers provided to compute maximum of");
+			throw new IllegalArgumentException(
+					"no numbers provided to compute maximum of");
 		}
 		int max = Integer.MIN_VALUE;
 		for (int n : nums) {
@@ -1700,10 +1700,11 @@ public class Utilities {
 		}
 		return max;
 	}
-	
-	public static int min (int... nums) {
+
+	public static int min(int... nums) {
 		if (nums.length == 0) {
-			throw new IllegalArgumentException("no numbers provided to compute minimum of");
+			throw new IllegalArgumentException(
+					"no numbers provided to compute minimum of");
 		}
 		int min = Integer.MAX_VALUE;
 		for (int n : nums) {
@@ -1712,5 +1713,67 @@ public class Utilities {
 			}
 		}
 		return min;
+	}
+
+	/*
+	 * From Apache Commons Lang WordUtils
+	 */
+	public static String wrap(final String str, int wrapLength,
+			String newLineStr, final boolean wrapLongWords) {
+		if (str == null) {
+			return null;
+		}
+		if (newLineStr == null) {
+			newLineStr = System.getProperty("line.separator");
+		}
+		if (wrapLength < 1) {
+			wrapLength = 1;
+		}
+		final int inputLineLength = str.length();
+		int offset = 0;
+		final StringBuilder wrappedLine = new StringBuilder(
+				inputLineLength + 32);
+
+		while (inputLineLength - offset > wrapLength) {
+			if (str.charAt(offset) == ' ') {
+				offset++;
+				continue;
+			}
+			int spaceToWrapAt = str.lastIndexOf(' ', wrapLength + offset);
+
+			if (spaceToWrapAt >= offset) {
+				// normal case
+				wrappedLine.append(str.substring(offset, spaceToWrapAt));
+				wrappedLine.append(newLineStr);
+				offset = spaceToWrapAt + 1;
+
+			} else {
+				// really long word or URL
+				if (wrapLongWords) {
+					// wrap really long word one line at a time
+					wrappedLine.append(str.substring(offset, wrapLength
+							+ offset));
+					wrappedLine.append(newLineStr);
+					offset += wrapLength;
+				} else {
+					// do not wrap really long word, just extend beyond limit
+					spaceToWrapAt = str.indexOf(' ', wrapLength + offset);
+					if (spaceToWrapAt >= 0) {
+						wrappedLine
+								.append(str.substring(offset, spaceToWrapAt));
+						wrappedLine.append(newLineStr);
+						offset = spaceToWrapAt + 1;
+					} else {
+						wrappedLine.append(str.substring(offset));
+						offset = inputLineLength;
+					}
+				}
+			}
+		}
+
+		// Whatever is left in line is short enough to just pass through
+		wrappedLine.append(str.substring(offset));
+
+		return wrappedLine.toString();
 	}
 }
