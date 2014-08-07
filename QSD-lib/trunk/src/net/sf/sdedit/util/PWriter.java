@@ -9,6 +9,8 @@ public class PWriter extends PrintWriter {
 
 	private String lineSeparator = System.getProperty("line.separator");
 	
+	private String fieldSeparator;
+	
 	private StringWriter stringWriter;
 	
 	public static PWriter create() {
@@ -127,6 +129,26 @@ public class PWriter extends PrintWriter {
 	 */
 	public void println(String arg0) {
 		super.print(arg0);
+		println();
+	}
+
+	public String getFieldSeparator() {
+		return fieldSeparator;
+	}
+
+	public void setFieldSeparator(String fieldSeparator) {
+		this.fieldSeparator = fieldSeparator;
+	}
+	
+	public void printFields(Object... fields) {
+		boolean first = true;
+		for (Object field : fields) {
+			if (!first) {
+				print(fieldSeparator);
+			}
+			first = false;
+			print(field);
+		}
 		println();
 	}
 
