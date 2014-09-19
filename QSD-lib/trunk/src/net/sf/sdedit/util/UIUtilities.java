@@ -63,6 +63,7 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.ui.components.OptionDialog;
@@ -389,6 +390,24 @@ public class UIUtilities {
                 add(west, BorderLayout.WEST);
             }
         }
+    }
+    
+    public static void autoAdjustTableColumns (JTable jtable) {
+		TableCellRenderer rend = jtable.getTableHeader()
+				.getDefaultRenderer();
+		TableColumnModel tcm = jtable.getColumnModel();
+		for (int j = 0; j < tcm.getColumnCount(); j++) {
+			TableColumn tc = tcm.getColumn(j);
+			TableCellRenderer rendCol = tc.getHeaderRenderer();
+			if (rendCol == null) {
+				rendCol = rend;
+			}
+			Component c = rendCol
+					.getTableCellRendererComponent(jtable,
+							tc.getHeaderValue(), false, false,
+							0, j);
+			tc.setPreferredWidth(c.getPreferredSize().width);
+		}
     }
     
     public static class Grid extends JPanel {
