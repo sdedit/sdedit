@@ -33,6 +33,7 @@ import java.util.Date;
 import javax.swing.KeyStroke;
 
 import net.sf.sdedit.ui.components.configuration.configurators.BooleanConfigurator;
+import net.sf.sdedit.ui.components.configuration.configurators.ButtonConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.ColorConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.DateConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.FileConfigurator;
@@ -41,8 +42,8 @@ import net.sf.sdedit.ui.components.configuration.configurators.FontConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.FreeStringConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.KeyStrokeConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.NumberConfigurator;
-import net.sf.sdedit.ui.components.configuration.configurators.SmallStringSelectionConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.SingleStringSelectionConfigurator;
+import net.sf.sdedit.ui.components.configuration.configurators.SmallStringSelectionConfigurator;
 import net.sf.sdedit.ui.components.configuration.configurators.StringSetConfigurator;
 
 /**
@@ -72,8 +73,8 @@ public class ConfiguratorFactory<C extends DataObject> {
 	 */
 	public Configurator<?, C> createConfigurator(Bean<C> bean,
 			PropertyDescriptor property) {
+		Adjustable adj = property.getWriteMethod().getAnnotation(Adjustable.class);
 		if (property.getPropertyType().equals(String.class)) {
-			Adjustable adj = property.getWriteMethod().getAnnotation(Adjustable.class);
 			String[] choices = adj.choices();
 			if (choices.length > 0) {
 				if (!adj.forceComboBox() && choices.length <= 3) {
@@ -82,8 +83,7 @@ public class ConfiguratorFactory<C extends DataObject> {
 				} 
 				return new SingleStringSelectionConfigurator<C>(bean, property);
 			}
-			if ( !property.getWriteMethod().getAnnotation(
-					Adjustable.class).stringSelectionProvided()) {
+			if ( adj.stringSelectionProvided()) {
 				return new FreeStringConfigurator<C>(bean, property);
 			}
 			return new SingleStringSelectionConfigurator<C>(bean, property);
@@ -95,6 +95,9 @@ public class ConfiguratorFactory<C extends DataObject> {
 			return new NumberConfigurator<C>(bean, property);
 		}
 		if (property.getPropertyType().equals(Boolean.TYPE)) {
+			if (adj.button()) {
+				return new ButtonConfigurator<C>(bean, property);
+			}
 			return new BooleanConfigurator<C>(bean, property);
 		}
 		if (property.getPropertyType().equals(Font.class)) {
