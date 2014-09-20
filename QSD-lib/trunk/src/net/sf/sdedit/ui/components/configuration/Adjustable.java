@@ -153,7 +153,8 @@ public @interface Adjustable {
 	boolean primary() default false;
 	
 	String datePattern() default "";
+	
+	boolean button() default false;
 
 }
-//{{core}}
 //{{core}}
