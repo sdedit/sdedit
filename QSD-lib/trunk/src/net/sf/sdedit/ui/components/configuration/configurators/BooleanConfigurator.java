@@ -26,7 +26,6 @@ package net.sf.sdedit.ui.components.configuration.configurators;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyDescriptor;
 
 import javax.swing.JCheckBox;
@@ -37,8 +36,10 @@ import net.sf.sdedit.ui.components.configuration.Configurator;
 import net.sf.sdedit.ui.components.configuration.DataObject;
 
 public class BooleanConfigurator<C extends DataObject> extends
-		Configurator<Boolean, C> implements ActionListener {
+		Configurator<Boolean, C>  {
 
+	private static final long serialVersionUID = 3814474308252622374L;
+	
 	private JCheckBox checkBox;
 
 	public BooleanConfigurator(Bean<C> bean, PropertyDescriptor property) {
