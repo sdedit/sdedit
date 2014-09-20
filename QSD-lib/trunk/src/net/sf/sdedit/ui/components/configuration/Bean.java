@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
@@ -169,8 +170,8 @@ public class Bean<T extends DataObject> implements Serializable,
 					if (property.getWriteMethod() != null
 							&& property.getWriteMethod().isAnnotationPresent(
 									Adjustable.class)) {
-						String key = property.getWriteMethod().getAnnotation(
-								Adjustable.class).key();
+						String key = property.getWriteMethod()
+								.getAnnotation(Adjustable.class).key();
 						if (key.equals("")) {
 							key = norm(property.getName());
 						}
@@ -181,8 +182,9 @@ public class Bean<T extends DataObject> implements Serializable,
 							// may not be null when called in the process of
 							// deserialization
 							// (see readObject)
-							setValue(property, NullValueProvider
-									.getNullValue(property.getPropertyType()));
+							setValue(property,
+									NullValueProvider.getNullValue(property
+											.getPropertyType()));
 
 						}
 					}
@@ -320,7 +322,8 @@ public class Bean<T extends DataObject> implements Serializable,
 	 * @param listener
 	 *            the listener to be removed
 	 */
-	public synchronized void removePropertyChangeListener(PropertyChangeListener listener) {
+	public synchronized void removePropertyChangeListener(
+			PropertyChangeListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -492,13 +495,39 @@ public class Bean<T extends DataObject> implements Serializable,
 		}
 		if (notify) {
 			List<PropertyChangeListener> _listeners;
-			PropertyChangeEvent event = new PropertyChangeEvent(this, property
-					.getName(), oldValue, newValue);
+			PropertyChangeEvent event = new PropertyChangeEvent(this,
+					property.getName(), oldValue, newValue);
 			synchronized (this) {
 				_listeners = new LinkedList<PropertyChangeListener>(listeners);
 			}
-			for (PropertyChangeListener listener : _listeners) {
-				listener.propertyChange(event);
+			Adjustable adj = property.getWriteMethod().getAnnotation(
+					Adjustable.class);
+			try {
+				for (PropertyChangeListener listener : _listeners) {
+					Method actionMethod = null;
+					if (adj.button() && (Boolean) newValue) {
+						try {
+							actionMethod = listener.getClass().getMethod(
+									property.getName());
+						} catch (Exception e) {
+
+						}
+					}
+					if (actionMethod == null) {
+						listener.propertyChange(event);
+					} else {
+						try {
+							actionMethod.invoke(listener);
+						} catch (Exception e) {
+							throw new IllegalStateException(e);
+						}
+					}
+
+				}
+			} finally {
+				if (adj.button()) {
+					values.put(norm(property.getName()), false);
+				}
 			}
 		}
 	}
