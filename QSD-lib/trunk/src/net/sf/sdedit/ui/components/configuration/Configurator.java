@@ -41,7 +41,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
-import net.sf.sdedit.ui.components.configuration.configurators.ButtonConfigurator;
 import net.sf.sdedit.util.UIUtilities;
 import net.sf.sdedit.util.Utilities;
 
@@ -331,7 +330,7 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 
 	@Override
 	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
+		//super.setEnabled(enabled);
 		_setEnabled(enabled);
 		for (Component comp : getComponents()) {
 			comp.setEnabled(enabled);
