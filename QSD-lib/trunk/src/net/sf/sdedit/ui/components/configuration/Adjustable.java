@@ -114,14 +114,20 @@ public @interface Adjustable {
 	boolean stringSelectionProvided() default false;
 
 	/**
-	 * A comma-separated list of name-value-pairs, separated by '=' or '!=',
-	 * representing that this adjustable property is enabled if and only if all
-	 * of the equations are satisfied. The name in an (in-)equation stands for a
-	 * property, and the value is a boolean (true or false) denoting if the
-	 * property's configurator is enabled.
+	 * A comma-separated list of conditions.
+	 * <p>
+	 * A condition can be an equation (lw=rw) or an inequation(lw!=rw), where
+	 * lw is the name of a boolean property name and rw is &quot;true&quot; or &quot;false&quot;.
+	 * The condition is satisfied if and only if the current value of the property
+	 * is (in)equal to the right hand value.
+	 * <p>
+	 * A condition can also consist of solely a property name, optionally prefixed
+	 * by '!'. It is satisified if and only if the current value of the property
+	 * is (not) not null and (if the property is an array) at least one value is
+	 * (not) contained.
 	 * 
 	 * @return a comma-separated string consisting of assignments to properties
-	 *         that must hold, otherwise this property is not editable
+	 *         that must hold, otherwise this property is not editable/activatable
 	 * 
 	 */
 	String depends() default "";
