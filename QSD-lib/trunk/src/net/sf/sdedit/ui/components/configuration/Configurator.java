@@ -31,6 +31,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -40,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
+import net.sf.sdedit.ui.components.configuration.configurators.ButtonConfigurator;
 import net.sf.sdedit.util.UIUtilities;
 import net.sf.sdedit.util.Utilities;
 
@@ -57,6 +59,8 @@ import net.sf.sdedit.util.Utilities;
  */
 public abstract class Configurator<T, C extends DataObject> extends JPanel
 		implements PropertyChangeListener, ActionListener {
+
+	private static final long serialVersionUID = 5822209294034960581L;
 
 	protected static JFileChooser _fileChooser;
 
@@ -151,16 +155,18 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 
 			for (int i = 0; i < n; i++) {
 				String dependency = dependencies[i];
-				String[] split;
-				if (dependency.indexOf('!') == -1) {
-					isDependencyEquality[i] = true;
-					split = dependency.split("=");
+				int eq = dependency.indexOf('=');
+				if (eq == -1) {
+					isDependencyEquality[i] = dependency.charAt(0) != '!';
+					dependentProperty[i] = isDependencyEquality[i] ? dependency
+							: dependency.substring(1);
+					dependentValue[i] = null;
 				} else {
-					isDependencyEquality[i] = false;
-					split = dependency.split("!=");
+					isDependencyEquality[i] = dependency.charAt(eq - 1) != '!';
+					dependentProperty[i] = isDependencyEquality[i] ? dependency
+							.substring(0, eq) : dependency.substring(0, eq - 1);
+					dependentValue[i] = dependency.substring(eq + 1);
 				}
-				dependentProperty[i] = split[0].trim();
-				dependentValue[i] = split[1].trim();
 			}
 		}
 		bean.addPropertyChangeListener(this);
@@ -212,8 +218,22 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 			return true;
 		}
 		for (int i = 0; i < dependentProperty.length; i++) {
-			String value = bean.getValue(dependentProperty[i]).toString();
-			boolean sat = dependentValue[i].equals(value);
+			Object val = bean.getValue(dependentProperty[i]);
+			boolean sat;
+			if (dependentValue[i] == null) {
+				if (val == null) {
+					sat = false;
+				} else {
+					if (val.getClass().isArray()) {
+						sat = Array.getLength(val)>0;
+					} else {
+						sat = true;
+					}
+				}
+			} else {
+				// typically testing equality to "true"
+				sat = dependentValue[i].equals(String.valueOf(val));
+			}
 			if (!isDependencyEquality[i]) {
 				sat = !sat;
 			}
@@ -258,7 +278,6 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 	 * Changes the component(s) used for configuration such that the current
 	 * value of the property is reflected
 	 */
-	@SuppressWarnings("unchecked")
 	public void refresh() {
 		refresh(getValue());
 		setEnabled(isDependencySatisfied());
@@ -277,6 +296,7 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 	 * @param evt
 	 *            encapsulates the property change
 	 */
+	@SuppressWarnings("unchecked")
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals(property.getName())) {
 			refresh((T) evt.getNewValue());
