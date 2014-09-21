@@ -56,6 +56,7 @@ import net.sf.sdedit.ui.components.ATabbedPane;
 import net.sf.sdedit.ui.components.ButtonPanel;
 import net.sf.sdedit.ui.components.configuration.configurators.StringSelectionReceiver;
 import net.sf.sdedit.util.Tooltips;
+import net.sf.sdedit.util.Utilities;
 
 /**
  * A component for configuring the properties of a {@linkplain Bean}.
@@ -271,12 +272,14 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 		return list;
 	}
 
-	public void updateStringSelections() {
+	public void updateStringSelections(String... properties) {
 		for (Configurator<?, C> configurator : getConfigurators()) {
 			if (configurator instanceof StringSelectionReceiver) {
-				bean.clearStringSelection(configurator.getPropertyDescriptor()
-						.getName());
-				((StringSelectionReceiver) configurator).reinitialize();
+				String name = configurator.getPropertyDescriptor().getName();
+				if (properties.length == 0 || Utilities.in(name, properties)) {
+					bean.clearStringSelection(name);
+					((StringSelectionReceiver) configurator).reinitialize();					
+				}
 			}
 		}
 	}
