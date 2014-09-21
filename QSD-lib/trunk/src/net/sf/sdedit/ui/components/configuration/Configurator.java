@@ -224,7 +224,9 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 					sat = false;
 				} else {
 					if (val.getClass().isArray()) {
-						sat = Array.getLength(val)>0;
+						sat = Array.getLength(val) > 0;
+					} else if (val instanceof String) {
+						sat = ((String) val).trim().length() > 0;
 					} else {
 						sat = true;
 					}
@@ -330,7 +332,7 @@ public abstract class Configurator<T, C extends DataObject> extends JPanel
 
 	@Override
 	public void setEnabled(boolean enabled) {
-		//super.setEnabled(enabled);
+		// super.setEnabled(enabled);
 		_setEnabled(enabled);
 		for (Component comp : getComponents()) {
 			comp.setEnabled(enabled);
