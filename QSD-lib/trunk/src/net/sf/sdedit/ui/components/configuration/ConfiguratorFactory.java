@@ -83,7 +83,7 @@ public class ConfiguratorFactory<C extends DataObject> {
 				} 
 				return new SingleStringSelectionConfigurator<C>(bean, property);
 			}
-			if ( adj.stringSelectionProvided()) {
+			if (!adj.stringSelectionProvided()) {
 				return new FreeStringConfigurator<C>(bean, property);
 			}
 			return new SingleStringSelectionConfigurator<C>(bean, property);
