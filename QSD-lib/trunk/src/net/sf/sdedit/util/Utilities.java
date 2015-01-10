@@ -53,7 +53,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
@@ -220,6 +224,25 @@ public class Utilities {
 			sb.append(h);
 		}
 		return sb.toString();
+	}
+	
+	public static String cutToSize(String string, Charset charset, int length) {
+		if (string == null) {
+			return null;
+		}
+		CharsetDecoder decoder = charset.newDecoder();
+		CharsetEncoder encoder = charset.newEncoder();
+		CharBuffer cb = CharBuffer.wrap(string.toCharArray());
+		ByteBuffer bb = ByteBuffer.allocate(length);
+		encoder.encode(cb, bb, false);
+		bb.position(0);
+		cb.clear();
+		decoder.decode(bb, cb, false);
+		int p = cb.position();
+		char[] chars = new char[p];
+		cb.position(0);
+		cb.get(chars, 0, p);
+		return new String(chars);
 	}
 
 	public static String toString(Date date) {
@@ -1776,4 +1799,5 @@ public class Utilities {
 
 		return wrappedLine.toString();
 	}
+	
 }
