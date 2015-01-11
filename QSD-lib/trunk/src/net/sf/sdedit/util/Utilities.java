@@ -225,10 +225,13 @@ public class Utilities {
 		}
 		return sb.toString();
 	}
-	
+
 	public static String cutToSize(String string, Charset charset, int length) {
 		if (string == null) {
 			return null;
+		}
+		if (length < 1) {
+			return "";
 		}
 		CharsetDecoder decoder = charset.newDecoder();
 		CharsetEncoder encoder = charset.newEncoder();
@@ -242,6 +245,9 @@ public class Utilities {
 		char[] chars = new char[p];
 		cb.position(0);
 		cb.get(chars, 0, p);
+		if (p == 1 && chars[0] == 0 && string.length() > 1) {
+			return "";
+		}
 		return new String(chars);
 	}
 
@@ -1799,5 +1805,5 @@ public class Utilities {
 
 		return wrappedLine.toString();
 	}
-	
+
 }
