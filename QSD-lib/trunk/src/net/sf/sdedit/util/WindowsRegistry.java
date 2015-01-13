@@ -103,6 +103,9 @@ public final class WindowsRegistry extends Thread {
 						value = value + " " + parts[i];
 					}
 				}
+				if (value == null) {
+					return "";
+				}
 				return value.trim();
 			}
 		}
