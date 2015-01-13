@@ -505,7 +505,7 @@ public class Bean<T extends DataObject> implements Serializable,
 			try {
 				for (PropertyChangeListener listener : _listeners) {
 					Method actionMethod = null;
-					if (adj.button() && (Boolean) newValue) {
+					if (adj.button() && newValue != null && (Boolean) newValue) {
 						try {
 							actionMethod = listener.getClass().getMethod(
 									property.getName());
