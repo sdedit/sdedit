@@ -586,7 +586,7 @@ public class Utilities {
 			if (r == -1) {
 				break;
 			}
-			if (size == -1) {
+			if (bufferList != null) {
 				if (r < 1024) {
 					byte[] smallerBuffer = new byte[r];
 					System.arraycopy(buffer, 0, smallerBuffer, 0, r);
@@ -602,7 +602,7 @@ public class Utilities {
 				break;
 			}
 		}
-		if (size == -1) {
+		if (bufferList != null) {
 			result = new byte[totalSize];
 			int offset = 0;
 			for (byte[] buffer : bufferList) {
