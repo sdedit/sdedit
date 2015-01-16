@@ -17,6 +17,7 @@
 package org.apache.commons.cli;
 
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1003,8 +1004,10 @@ public class HelpFormatter {
 						.toString();
 				key2 = Utilities.invoke("getKey", opt2, new Object[0])
 						.toString();
-			} catch (Throwable ignored) {
-
+			} catch (RuntimeException re) {
+				throw re;
+			} catch (Throwable e) {
+				throw new IllegalStateException(e);
 			}
 			return key1.compareToIgnoreCase(key2);
 		}

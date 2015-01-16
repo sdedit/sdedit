@@ -324,7 +324,7 @@ public abstract class Tab extends JPanel implements Stainable,
 		if (option.equals("No")) {
 			return true;
 		}
-		if (option.equals("No to all")) {
+		if (noToAll != null && option.equals("No to all")) {
 			noToAll.t = true;
 			return true;
 		}
