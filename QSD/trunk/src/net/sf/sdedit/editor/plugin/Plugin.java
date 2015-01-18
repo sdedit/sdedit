@@ -24,6 +24,7 @@
 package net.sf.sdedit.editor.plugin;
 
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 
 import net.sf.sdedit.config.Configuration;
 
@@ -54,5 +55,9 @@ public interface Plugin {
 	public Iterable<FileHandler> getFileHandlers();
 
 	public String getText(String textId);
+	
+	public String getCategory();
+	
+	public ImageIcon getIcon();
 
 }
