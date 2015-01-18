@@ -55,8 +55,6 @@ public class TabNavigatorContainer implements TabContainer,
 		navigator.setContextActionsProvider(this);
 		navigator.addListener(this);
 		listeners = new LinkedList<TabContainerListener>();
-		addCategory("Sequence diagrams", Icons.getIcon("text"));
-		addCategory("Flow charts", Icons.getIcon("text"));
 		id = 0;
 	}
 

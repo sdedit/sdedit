@@ -67,6 +67,8 @@ import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.editor.Decisions;
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.editor.TabActivator;
+import net.sf.sdedit.editor.plugin.Plugin;
+import net.sf.sdedit.editor.plugin.PluginRegistry;
 import net.sf.sdedit.help.HelpTab;
 import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.ui.Tab;
@@ -109,7 +111,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	private PrintDialog printDialog;
 
 	private ToolBar toolbar;
-	
+
 	private PreferencesUI prefUI;
 
 	static {
@@ -145,7 +147,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		prefUI = new PreferencesUI(this);
-		
+
 		listeners = new LinkedList<UserInterfaceListener>();
 		menuBar = new MenuBar();
 		toolbar = new ToolBar();
@@ -246,6 +248,16 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		pane.setLayout(new BorderLayout());
 
 		tabContainer = new TabNavigatorContainer(0.2);
+
+		tabContainer.addCategory("Sequence diagrams", Icons.getIcon("text"));
+
+		for (Plugin plugin : PluginRegistry.getInstance()) {
+			if (plugin.getCategory() != null) {
+				tabContainer
+						.addCategory(plugin.getCategory(), plugin.getIcon());
+			}
+		}
+
 		tabContainer.addListener(this);
 
 		pane.add(tabContainer.getComponent(), BorderLayout.CENTER);
