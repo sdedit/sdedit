@@ -175,6 +175,8 @@ public final class Lifeline implements Comparable<Lifeline>{
 	private Region nameRegion;
 	
 	private final boolean saveSpace;
+
+	private boolean destroyed;
 	
 	public String toString () {
 		String string = name + ":" + type;
@@ -784,5 +786,13 @@ public final class Lifeline implements Comparable<Lifeline>{
     public boolean isAutodestroy () {
         return autodestroy;
     }
+
+	public void setDestroyed(boolean destroyed) {
+		this.destroyed = destroyed;
+	}
+	
+	public boolean isDestroyed () {
+		return destroyed;
+	}
 }
 // {{core}}
