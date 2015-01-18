@@ -516,16 +516,18 @@ final class MessageProcessor {
 						"messages from caller $ must have a callee");
 			}
 			return new NullMessage(callee, diagram, data);
-
 		}
-		
+
+		if (rootCallee != null && rootCallee.isDestroyed()) {
+			throw new SemanticError(provider, rootCallee.getName()
+					+ " has already been destroyed");
+		}
+
 		if (data.isDestroyMessage()) {
 			if (rootCallee != null) {
 				if (rootCallee.isActive()) {
-					throw new SemanticError(provider, "cannot destroy active object");
-				}	
-				if (rootCallee.isDestroyed()) {
-					throw new SemanticError(provider, "an object can be destroyed only once");
+					throw new SemanticError(provider,
+							"cannot destroy active object");
 				}
 				rootCallee.setDestroyed(true);
 			}
