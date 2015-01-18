@@ -84,22 +84,38 @@ public class Main implements Constants {
 	}
 
 	public static void main(String[] argv) throws Exception {
-		Class<?> fcPlugin;
-		try {
-			fcPlugin = Class
-					.forName("net.sf.sdedit.flowchart.plugin.FlowChartPlugin");
-			PluginRegistry.getInstance().addPlugin(
-					(Plugin) fcPlugin.newInstance());
-		} catch (RuntimeException re) {
-			throw re;
-		} catch (Throwable ignored) {
-
-		}
 
 		Tooltips.addFile(Utilities.getResource("tooltips"));
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmd = null;
 		Options options = createBasicOptions();
+		
+		try {
+			cmd = parser.parse(options, argv);
+			if (cmd != null && cmd.hasOption('p')) {
+				String[] plugins = cmd.getOptionValues('p');
+				for (String plugin : plugins) {
+					Class<?> pluginClass;
+					try {
+						pluginClass = Class
+								.forName(plugin.trim());
+						PluginRegistry.getInstance().addPlugin(
+								(Plugin) pluginClass.newInstance());
+					} catch (RuntimeException re) {
+						throw re;
+					} catch (Throwable t) {
+						System.err.println("Warning: cannot load plugin class "
+								+ plugin + " (" + t.getMessage() + ")");
+					}
+				}
+			}
+		} catch (ParseException ignored) {
+
+		}
+		
+
+		options = createBasicOptions();
+
 		addPropertyOptions(
 				options,
 				ConfigurationManager
@@ -197,6 +213,11 @@ public class Main implements Constants {
 		Option help = OptionBuilder.withDescription(
 				"show long options (for diagram preferences)").create('h');
 		options.addOption(help);
+
+		Option plugins = OptionBuilder
+				.withDescription("plugin classes to be loaded").hasArgs()
+				.create('p');
+		options.addOption(plugins);
 
 		return options;
 	}
