@@ -80,7 +80,7 @@ public class HelpPanel
         		super.paintComponent(g);
         	}
         };
-        pane.setContentType("text/html; charset=ISO-8859-1");
+        pane.setContentType("text/html; charset=UTF-8");
         pane.setEditable(false);
         pane.addHyperlinkListener(Browser.getBrowser());
     }
