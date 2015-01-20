@@ -1596,12 +1596,11 @@ public class Utilities {
 						return Class.forName(name, false, classloader);
 					} catch (ClassNotFoundException ex) {
 						@SuppressWarnings("rawtypes")
-						Class cl = (Class) primClasses.get(name);
+						Class cl = primClasses.get(name);
 						if (cl != null) {
 							return cl;
-						} else {
-							throw ex;
 						}
+						throw ex;
 					}
 				}
 			};
@@ -1742,6 +1741,22 @@ public class Utilities {
 			}
 		}
 		return min;
+	}
+
+	public static Map<String, Object> toMap(Object bean) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		for (PropertyDescriptor prop : getProperties(bean.getClass())) {
+			if (prop.getReadMethod() != null) {
+				Object value;
+				try {
+					value = prop.getReadMethod().invoke(bean);
+					map.put(prop.getName(), value);
+				} catch (Throwable t) {
+					throw new IllegalStateException(t);
+				}
+			}
+		}
+		return map;
 	}
 
 	/*
