@@ -529,7 +529,7 @@ public final class Editor implements Constants, UserInterfaceListener
                 actions.getExampleAction("Breadth first search", "bfs.sdx"),
                 null);
         ui.addAction("&Help.&Examples",
-                actions.getExampleAction("Levels and mnemonics", "levels.sdx"),
+                actions.getExampleAction("Levels", "levels.sdx"),
                 null);
         ui.addAction("&Help.&Examples", actions.getExampleAction(
                 "SSH 2 (by courtesy of Carlos Duarte)", "ssh.sdx"), null);

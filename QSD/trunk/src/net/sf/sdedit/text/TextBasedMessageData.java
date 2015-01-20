@@ -164,15 +164,6 @@ public class TextBasedMessageData extends MessageData {
 
 		} else {
 			super.setCallee(callee);
-			/*
-			String[] parts = Grep.parse("(.*)\\[(\\D.*)\\]$", callee);
-			if (parts == null) {
-				super.setCallee(callee);
-			} else {
-				super.setCallee(parts[0]);
-				super.setCalleeMnemonic(parts[1]);
-			}
-			*/
 		}
 	}
 

@@ -81,7 +81,7 @@ public class MessageData {
 	
 	/**
 	 * Returns a string representation of the message data.
-	 * TODO: Broadcasts, mnemonics, (answer) note number,
+	 * TODO: Broadcasts, (answer) note number,
 	 * escaping
 	 */
 	public String toString () {
