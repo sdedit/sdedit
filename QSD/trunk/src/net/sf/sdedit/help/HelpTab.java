@@ -72,9 +72,9 @@ public class HelpTab extends Tab {
 			if (helpURL != null) {
 				if (advanced) {
 					return new AdvancedHelpPanel(helpURL, ui);
-				} else {
-					return new JScrollPane(new HelpPanel(helpURL, ui).getPane());
 				}
+				return new JScrollPane(new HelpPanel(helpURL, ui).getPane());
+
 			}
 			return null;
 		}
@@ -100,7 +100,7 @@ public class HelpTab extends Tab {
 					String title = resource;
 					int slash = resource.lastIndexOf('/');
 					if (slash > 0) {
-						title = resource.substring(slash+1);
+						title = resource.substring(slash + 1);
 					}
 					tab = new HelpTab(ui, title, comp);
 					tabs.put(resource, tab);
@@ -163,9 +163,9 @@ public class HelpTab extends Tab {
 		return false;
 	}
 
-    @Override
-    public String getCategory() {
-        return "Help pages";
-    }
+	@Override
+	public String getCategory() {
+		return "Help pages";
+	}
 
 }
