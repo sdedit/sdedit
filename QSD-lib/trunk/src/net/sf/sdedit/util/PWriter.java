@@ -44,6 +44,15 @@ public class PWriter extends PrintWriter {
 		PWriter pwriter = new PWriter(writer);
 		return pwriter;
 	}
+	
+	@Override
+	public void close () {
+		try {
+			flush();
+		} finally {
+			super.close();
+		}
+	}
 
 	public static PWriter forFile(File file) throws IOException {
 		return forFile(file, Charset.defaultCharset());
