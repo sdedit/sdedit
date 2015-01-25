@@ -26,8 +26,6 @@ package net.sf.sdedit.editor;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -37,29 +35,14 @@ import javax.swing.Action;
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.diagram.AbstractPaintDevice;
 import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.ui.PanelGraphicDevice;
 import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.impl.DiagramTab;
 
 import org.freehep.graphicsbase.util.export.ExportDialog;
-import org.freehep.util.export.ExportDialogListener;
 
-public class ExportAction extends TabAction<DiagramTab> implements
-        ExportDialogListener, Constants {
+public class ExportAction extends TabAction<DiagramTab> implements Constants {
     
-    private static final Set<String> vectorFormats;
-
-    static {
-        vectorFormats = new HashSet<String>();
-        vectorFormats.add("pdf");
-        vectorFormats.add("ps");
-        vectorFormats.add("eps");
-        vectorFormats.add("svg");
-        vectorFormats.add("emf");
-        vectorFormats.add("swf");
-    }
-
     private ExportDialog exportDialog;
 
     private Properties properties;
@@ -128,10 +111,4 @@ public class ExportAction extends TabAction<DiagramTab> implements
         }
     }
 
-    public void writeFile(String type) {
-        if (vectorFormats.contains(type)) {
-            exportGraphic.setAntialiasing(false);
-        }
-    }
-    
 }
