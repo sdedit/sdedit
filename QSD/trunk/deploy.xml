@@ -198,9 +198,10 @@
     	</fileset>
     </unjar>
     <delete dir="${dist}/tmp/libclasses/META-INF"/>
+  	
     <jar destfile="${dist}/sdedit-jar/${jarfile}">
-    	<fileset dir="${build}"/>
     	<fileset dir="${dist}/tmp/libclasses"/>
+    	<fileset dir="${build}"/>
     	<fileset dir="." includes="META-INF/**/*"/>
       <manifest>
          <attribute name="Main-Class" value="${mainclass}"/>

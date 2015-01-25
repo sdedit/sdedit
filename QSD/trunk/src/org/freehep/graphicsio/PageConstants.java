@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This class defines a set of constants which describe a page. Convenience
@@ -74,8 +75,7 @@ public class PageConstants {
 	public static final String LEDGER = "Ledger";
 
 	public static final String[] getSizeList() {
-		return new String[] { INTERNATIONAL, A4, LETTER, A3, LEGAL, A0, A1, A2,
-				A5, A6, EXECUTIVE, LEDGER };
+		return (String[]) sizeTable.keySet().toArray(new String[0]);
 	}
 
 	public static final Dimension getSize(String size) {
@@ -91,7 +91,7 @@ public class PageConstants {
 		}
 	}
 
-	private static final Map sizeTable = new HashMap();
+	private static final Map sizeTable = new TreeMap();
 	static {
 		sizeTable.put(INTERNATIONAL, new Dimension(595, 791));
 		sizeTable.put(A0, new Dimension(2384, 3370));
