@@ -46,7 +46,7 @@ import org.freehep.swing.layout.TableLayout;
  * @author tonyj
  * @version $Id$
  */
-public class ExportDialog extends JOptionPane
+public class ExportDialog2 extends JOptionPane
 {
     private static final String rootKey = ExportDialog.class.getName();
 
@@ -93,7 +93,7 @@ public class ExportDialog extends JOptionPane
      * Creates a new instance of ExportDialog with all the standard export
      * filetypes.
      */
-    public ExportDialog() {
+    public ExportDialog2() {
         this(null);
     }
 
@@ -105,7 +105,7 @@ public class ExportDialog extends JOptionPane
      *            The "creator" to be written into the header of the file (may
      *            be null)
      */
-    public ExportDialog(String creator) {
+    public ExportDialog2(String creator) {
         this(creator, true);
     }
 
@@ -118,7 +118,7 @@ public class ExportDialog extends JOptionPane
      * @param addAllExportFileTypes
      *            If true registers all the standard export filetypes
      */
-    public ExportDialog(String creator, boolean addAllExportFileTypes) {
+    public ExportDialog2(String creator, boolean addAllExportFileTypes) {
         super(null, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
         this.creator = creator;
         listeners = new LinkedList<ExportDialogListener>();

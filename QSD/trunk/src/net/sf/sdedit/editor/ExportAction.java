@@ -42,7 +42,7 @@ import net.sf.sdedit.ui.PanelGraphicDevice;
 import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.impl.DiagramTab;
 
-import org.freehep.util.export.ExportDialog;
+import org.freehep.graphicsbase.util.export.ExportDialog;
 import org.freehep.util.export.ExportDialogListener;
 
 public class ExportAction extends TabAction<DiagramTab> implements
@@ -92,7 +92,7 @@ public class ExportAction extends TabAction<DiagramTab> implements
             if (exportDialog == null) {
                 exportDialog = new ExportDialog("Quick Sequence Diagram Editor");
                 exportDialog.setUserProperties(properties);
-                exportDialog.addExportDialogListener(this);
+                //exportDialog.addExportDialogListener(this);
                 if (file != null) {
                     properties.setProperty(SAVE_AS_FILE_PROPERTY, file
                             .getAbsolutePath());

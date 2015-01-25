@@ -71,11 +71,11 @@ public interface Constants
      * Actions)
      */
     
-    public static final String TEST_FREEHEP_CLASSNAME = "org.freehep.util.export.ExportFileType";
+    public static final String TEST_FREEHEP_CLASSNAME = "org.freehep.graphicsbase.util.export.ExportFileType";
     
-    public static final String SAVE_AS_FILE_PROPERTY = "org.freehep.util.export.ExportDialog.SaveAsFile";
+    public static final String SAVE_AS_FILE_PROPERTY = "org.freehep.graphicsbase.util.export.ExportDialog.SaveAsFile";
     
-    public static final String SAVE_AS_TYPE_PROPERTY = "org.freehep.util.export.ExportDialog.SaveAsType";
+    public static final String SAVE_AS_TYPE_PROPERTY = "org.freehep.graphicsbase.util.export.ExportDialog.SaveAsType";
     
     /*
      * Miscellaneous
