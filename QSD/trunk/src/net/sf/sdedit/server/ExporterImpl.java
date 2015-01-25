@@ -41,7 +41,6 @@ import org.freehep.graphicsio.gif.GIFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.ps.PSGraphics2D;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
-import org.freehep.graphicsio.swf.SWFGraphics2D;
 
 class ExporterImpl extends Exporter {
     private OutputStream stream;
@@ -95,8 +94,6 @@ class ExporterImpl extends Exporter {
             vectorGraphics = new EMFGraphics2D(stream, dim);
         } else if (type.equals("svg")) {
             vectorGraphics = new SVGGraphics2D(stream, dim);
-        } else if (type.equals("swf")) {
-            vectorGraphics = new SWFGraphics2D(stream, dim);
         } else {
             throw new IllegalArgumentException("Unknown type: " + type);
         }
