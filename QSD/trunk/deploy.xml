@@ -197,9 +197,8 @@
     		<include name="*.jar"/>
     	</fileset>
     </unjar>
-    <delete dir="${dist}/tmp/META-INF"/>
-    <jar destfile="${dist}/sdedit-jar/${jarfile}" 
-    	   excludes="**/ExportFileType">
+    <delete dir="${dist}/tmp/libclasses/META-INF"/>
+    <jar destfile="${dist}/sdedit-jar/${jarfile}">
     	<fileset dir="${build}"/>
     	<fileset dir="${dist}/tmp/libclasses"/>
     	<fileset dir="." includes="META-INF/**/*"/>
