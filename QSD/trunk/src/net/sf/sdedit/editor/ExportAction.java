@@ -134,15 +134,4 @@ public class ExportAction extends TabAction<DiagramTab> implements
         }
     }
     
-    public static void main (String [] argv) throws Exception {
-        Class c = Class.forName("sun.font.FontManager"); 
-        Field field = c.getDeclaredField("compFonts");
-        field.setAccessible(true);
-        Object array = field.get(null);
-        System.out.println(Array.getLength(array));
-        Class ct = array.getClass().getComponentType();
-        Object narray = Array.newInstance(ct, 40);
-        System.arraycopy(array, 0, narray, 0, 20);
-        field.set(null, narray);
-    }
 }
