@@ -320,7 +320,7 @@ public class Main implements Constants {
 
 	private static String availableTypes() {
 		if (Exporter.isAvailable()) {
-			return "{ps, pdf, swf, emf, svg, png, gif, jpg, bmp}";
+			return "{ps, pdf, emf, svg, png, gif, jpg, bmp}";
 		}
 		return "{png}";
 	}
