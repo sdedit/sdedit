@@ -23,10 +23,8 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit;
 
-import java.awt.BasicStroke;
 import java.awt.Cursor;
 import java.awt.RenderingHints;
-import java.awt.Stroke;
 import java.io.File;
 
 import net.sf.sdedit.util.OS;
