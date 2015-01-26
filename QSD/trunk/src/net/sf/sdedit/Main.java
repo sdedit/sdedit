@@ -89,7 +89,7 @@ public class Main implements Constants {
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmd = null;
 		Options options = createBasicOptions();
-		
+
 		try {
 			cmd = parser.parse(options, argv);
 			if (cmd != null && cmd.hasOption('p')) {
@@ -97,8 +97,7 @@ public class Main implements Constants {
 				for (String plugin : plugins) {
 					Class<?> pluginClass;
 					try {
-						pluginClass = Class
-								.forName(plugin.trim());
+						pluginClass = Class.forName(plugin.trim());
 						PluginRegistry.getInstance().addPlugin(
 								(Plugin) pluginClass.newInstance());
 					} catch (RuntimeException re) {
@@ -112,7 +111,6 @@ public class Main implements Constants {
 		} catch (ParseException ignored) {
 
 		}
-		
 
 		options = createBasicOptions();
 
@@ -139,21 +137,20 @@ public class Main implements Constants {
 					.println("created image file: " + cmd.getOptionValue('o'));
 
 		} else {
-
 			final String[] files = getInputFiles(cmd);
-			if (files.length > 0) {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						Editor editor = Editor.getEditor();
-						editor.start();
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					Editor editor = Editor.getEditor();
+					editor.start();
+					if (files.length > 0) {
 						boolean loaded = false;
 						for (String file : files) {
 							File sdFile = new File(file);
 							if (sdFile.exists() && sdFile.canRead()
 									&& !sdFile.isDirectory()) {
-								loaded = true;
 								try {
-									editor.load(sdFile.toURI().toURL());
+									loaded = editor
+											.load(sdFile.toURI().toURL()) != null;
 								} catch (RuntimeException re) {
 									throw re;
 
@@ -168,17 +165,11 @@ public class Main implements Constants {
 						if (!loaded) {
 							editor.getUI().addDefaultTab();
 						}
-					}
-				});
-			} else {
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						Editor editor = Editor.getEditor();
-						editor.start();
+					} else {
 						editor.getUI().addDefaultTab();
 					}
-				});
-			}
+				}
+			});
 		}
 	}
 
