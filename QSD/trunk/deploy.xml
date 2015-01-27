@@ -108,6 +108,7 @@
     	   encoding="ISO-8859-1"
     	   failonerror="false"
     	   source="1.5"
+    	   target="1.5"
     	   destdir="${build}">
 	  <src path="${src}"/>
 	  <src path="${sdedit.lib.src}"/>
