@@ -51,8 +51,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -165,8 +163,6 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 
     private boolean ignoreChanges;
 
-    private Map<String, ClassTab> classTabs;
-    
     public DiagramTextTab(UserInterfaceImpl ui, Font codeFont,
             Bean<? extends Configuration> configuration
 
@@ -313,7 +309,6 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
         setConfiguration(configuration);
         setInteraction(new DiagramTextInteraction(this));
         textArea.getPopupActions(this).addAction(scrollToAction);
-        classTabs = new TreeMap<String, ClassTab>();
     }
 
     public Icon getIcon() {
@@ -384,9 +379,6 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
     @Override
     public boolean isReadyToBeClosed (Ref<Boolean> noToAll) {
         boolean ready = super.isReadyToBeClosed(noToAll);
-        if (ready) {
-            removeClassTabs();
-        }
         return ready;
     }
 
@@ -842,58 +834,6 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
         }
 
     };
-
-    private void removeClassTabs() {
-        for (ClassTab tab : classTabs.values()) {
-            tab.forceClose();
-        }
-    }
-
-    /*
-    private void addClassTabs() {
-        MultiMap<String, Lifeline, TreeSet<?>, TreeMap<?, ?>> classNames = new MultiMap<String, Lifeline, TreeSet<?>, TreeMap<?, ?>>(
-                TreeSet.class, TreeMap.class);
-        MultiMap<String, ForwardMessage, LinkedList<?>, TreeMap<?, ?>> messages = new MultiMap<String, ForwardMessage, LinkedList<?>, TreeMap<?, ?>>(
-                LinkedList.class, TreeMap.class);
-
-        for (Lifeline lifeline : getDiagram()) {
-            String className;
-            className = lifeline.getType();
-            classNames.add(className, lifeline);
-        }
-
-        for (ForwardMessage msg : getDiagram().getMessages()) {
-            Lifeline lifeline = msg.getCallee();
-            if (lifeline == null) {
-                lifeline = msg.getCaller();
-            }
-            String className = lifeline.getType();
-            messages.add(className, msg);
-        }
-
-        if (!classNames.keySet().equals(classTabs.keySet())) {
-            removeClassTabs();
-            classTabs.clear();
-            for (Entry<String, TreeSet<?>> entry : classNames.entrySet()) {
-                ClassTab classTab = new ClassTab(this, entry.getKey());
-                // entry.getValue(), messages.getValues(entry.getKey()));
-                classTab.setTitle(entry.getKey());
-                get_UI().getTabContainer().addChildTab(classTab, this, false,
-                        null);
-                classTabs.put(entry.getKey(), classTab);
-            }
-        }
-
-        for (Entry<String, TreeSet<?>> entry : classNames.entrySet()) {
-            @SuppressWarnings("unchecked")
-            TreeSet<Lifeline> lifelinesOfClass = (TreeSet<Lifeline>) entry.getValue();
-            classTabs.get(entry.getKey()).updateData(
-                    lifelinesOfClass,
-                    (LinkedList<ForwardMessage>) messages.getValues(entry
-                            .getKey()));
-        }
-    }
-    */
 
     public void setIgnoreChanges(boolean ignoreChanges) {
         this.ignoreChanges = ignoreChanges;
