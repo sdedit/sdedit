@@ -25,40 +25,22 @@ public class ProcessRunner implements Runnable {
 
 		private IOException e;
 
-		private boolean block;
-
 		private Thread thread;
 
 		Redirect(InputStream in, OutputStream out) {
 			this.in = in;
 			this.out = out;
-			this.block = true;
-		}
-
-		/**
-		 * Sets a flag denoting whether the redirection thread should wait even
-		 * if there is no input available (yet).
-		 * 
-		 * @param a
-		 *            flag denoting whether the redirection thread should wait
-		 *            even if there is no input available
-		 */
-		void setBlocking(boolean block) {
-			this.block = block;
 		}
 
 		public void run() {
 			try {
-				byte[] buffer = new byte[1024];
 				BufferedInputStream bis = new BufferedInputStream(in);
 				BufferedOutputStream bos = new BufferedOutputStream(out);
-				int avail;
-				while (block | (avail = bis.available()) > 0) {
-					for (int off = 0; off < avail; off += 1024) {
-						int length = Math.min(avail - off, 1024);
-						bis.read(buffer, 0, length);
-						bos.write(buffer, 0, length);
-					}
+				int n = 0;
+				final int EOF = -1;
+				byte[] buffer = new byte[1024];
+				while (EOF != (n = bis.read(buffer))) {
+					bos.write(buffer, 0, n);
 				}
 				bos.flush();
 				bos.close();
@@ -78,7 +60,6 @@ public class ProcessRunner implements Runnable {
 		}
 
 		void join() {
-			block = false;
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -225,7 +206,6 @@ public class ProcessRunner implements Runnable {
 
 			if (in != null) {
 				inRedir = new Redirect(in, process.getOutputStream());
-				inRedir.setBlocking(false);
 				inRedir.start();
 			}
 
@@ -317,41 +297,6 @@ public class ProcessRunner implements Runnable {
 			return null;
 		}
 		return errRedir.getException();
-	}
-
-	public static void main(String[] argv) throws Exception {
-		if (argv.length == 0) {
-			ProcessRunner runner = new ProcessRunner().errToString()
-					.outToString().in("foo");
-
-			runner.command("java", "-cp", "C:/devel/QSD-lib/bin",
-					"net.sf.sdedit.util.ProcessRunner", "-");
-
-			/*
-			 * runner.in("this is my input"); runner.command("perl", "-e",
-			 * "\"foreach (<>) {print 'out'.$_;}\""
-			 * ).outToString().errToString();
-			 */
-			runner.start(750);
-			System.out.println("terminated: " + runner.isTerminated());
-			System.out.println("exception: " + runner.getException());
-			System.out.println("out: " + runner.getOut());
-			System.out.println("err: " + runner.getErr());
-		} else {
-			for (String line : Utilities.readLines(System.in,
-					Charset.defaultCharset())) {
-				System.out.println(line);
-				System.err.println(">>" + line);
-			}
-			int i = 2;
-			while (i > Math.sqrt(i)) {
-				System.out.println(i + " " + Math.sqrt(i));
-				i++;
-			}
-
-			System.err.println("Standard error");
-			System.out.println("Standard out");
-		}
 	}
 
 }
