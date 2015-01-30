@@ -23,7 +23,6 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.text;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,16 +68,6 @@ public class TextBasedMessageData extends MessageData {
 	private String string;
 	
 	private final Map<String,Grep.Region> regions;
-
-	static {
-		for (Method method : TextBasedMessageData.class.getMethods()) {
-			try {
-				method.setAccessible(true);
-			} catch (Throwable t) {
-				System.out.println(t.getClass().getSimpleName());
-			}
-		}
-	}
 
 	/**
 	 * Creates a new <tt>MessageParser</tt> for parsing a string.

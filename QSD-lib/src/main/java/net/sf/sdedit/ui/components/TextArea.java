@@ -32,8 +32,6 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyListener;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JTextPane;
@@ -50,7 +48,6 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
 import net.sf.sdedit.util.PopupActions;
-import net.sf.sdedit.util.Utilities;
 import net.sf.sdedit.util.PopupActions.ContextHandler;
 
 /**
@@ -75,20 +72,6 @@ public class TextArea extends JTextPane implements UndoableEditListener,
 	private String EOL;
 
 	private PopupActions popupActions;
-
-	private static class LineInfo {
-
-		int lineBegin;
-
-		int spacesOld;
-
-		int spacesNew;
-
-		public String toString () {
-			return "lineBegin=" + lineBegin + ", spacesOld=" + spacesOld + ", spacesNew=" + spacesNew;
-		}
-		
-	}
 
 	//
 	// UndoableEditListener method
@@ -194,48 +177,6 @@ public class TextArea extends JTextPane implements UndoableEditListener,
 				highlight = highlighter.addHighlight(from, to, this);
 			} catch (BadLocationException ble) {
 				ble.printStackTrace();
-			}
-		}
-	}
-
-	public void prettyPrint(PrettyPrinter prettyPrinter) throws BadLocationException {
-		List<LineInfo> lineInfos = new LinkedList<LineInfo>();
-		String text = getText();
-		int l = text.length();
-		int spaces = 0;
-		int lineBegin = 0;
-		boolean begin = true;
-		for (int i = 0; i <= l; i++) {
-			char c = i == l ? (char) 0 : text.charAt(i);
-			if (i == l || c == (char) 10) {
-				begin = true;
-				LineInfo info = new LineInfo();
-				info.lineBegin = lineBegin;
-				info.spacesOld = spaces;
-				info.spacesNew = prettyPrinter.getAlign(lineBegin+1); // TODO
-				lineInfos.add(info);
-				System.out.println(info);
-				lineBegin = i + 1;
-				spaces = 0;
-			} else if (begin) {
-				if (' ' == c) {
-					spaces++;
-				} else {
-					begin = false;
-				}
-			}
-		}
-		int spacesAdded = 0;
-		for (LineInfo info : lineInfos) {
-			if (info.spacesNew >= 0) {
-				int diff = Math.abs(info.spacesOld - info.spacesNew);
-				if (info.spacesOld < info.spacesNew) {
-					getDocument().insertString(info.lineBegin + spacesAdded, Utilities.pad(' ', diff), null);
-					spacesAdded += diff;
-				} else if (info.spacesOld > info.spacesNew) {
-					getDocument().remove(info.lineBegin + spacesAdded, diff);
-					spacesAdded -= diff;
-				}
 			}
 		}
 	}

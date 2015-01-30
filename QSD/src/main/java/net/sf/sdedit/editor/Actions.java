@@ -49,24 +49,17 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.text.BadLocationException;
 
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.SequenceConfiguration;
-import net.sf.sdedit.drawable.Arrow;
-import net.sf.sdedit.drawable.Drawable;
-import net.sf.sdedit.message.ForwardMessage;
 import net.sf.sdedit.multipage.MultipageExporter;
 import net.sf.sdedit.server.Exporter;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
-import net.sf.sdedit.ui.components.PrettyPrinter;
 import net.sf.sdedit.ui.components.buttons.Activator;
 import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.components.configuration.Bean;
@@ -158,8 +151,6 @@ public final class Actions implements Constants {
 	final Action nextAction;
 
 	final Action homeAction;
-
-	final Action prettyPrintAction;
 
 	Actions(Editor _editor) {
 		this.editor = _editor;
@@ -676,54 +667,7 @@ public final class Actions implements Constants {
 
 		};
 
-		prettyPrintAction = new TabAction<DiagramTextTab>(DiagramTextTab.class,
-				ui) {
-
-			{
-				putValue(Action.NAME, "Pretty print");
-				putValue(ManagedAction.ID, "PRETTY_PRINT");
-				putValue(ICON_NAME, "prettyprint");
-				putValue(Action.SHORT_DESCRIPTION, "Pretty print");
-			}
-
-			@Override
-			protected void _actionPerformed(DiagramTextTab tab, ActionEvent e) {
-				final Map<Integer, Integer> levelMap = new HashMap<Integer, Integer>();
-				for (Drawable drawable : tab.getDiagram().getPaintDevice()) {
-					if (drawable instanceof Arrow) {
-						Arrow arrow = (Arrow) drawable;
-						if (arrow.getMessage() instanceof ForwardMessage) {
-							levelMap.put((Integer) tab.getDiagram()
-									.getStateForDrawable(arrow),
-									((ForwardMessage) arrow.getMessage())
-											.getLevel());
-						}
-					}
-				}
-
-				PrettyPrinter prettyPrinter = new PrettyPrinter() {
-
-					public int getAlign(int caretPosition) {
-						Integer callLevel = (Integer) levelMap
-								.get(caretPosition);
-						if (callLevel != null) {
-							return 2 * callLevel;
-						}
-						return -1;
-					}
-
-				};
-
-				try {
-					tab.getTextArea().prettyPrint(prettyPrinter);
-				} catch (BadLocationException e1) {
-					e1.printStackTrace();
-				}
-
-			}
-
-		};
-
+		
 	}
 
 	final Action getExampleAction(final String name, final String file) {
