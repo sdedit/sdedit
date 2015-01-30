@@ -13,7 +13,7 @@
 	
   <!-- internal properties -->
   <property value="__dist" name="dist"/>
-  <property value="src" name="src"/>
+  <property value="src/main/java" name="src"/>
   <property value="${dist}/tmp/classes" name="build"/>
   <property value="apidoc" name="doc"/>
   <property name="mainclass" value="net.sf.sdedit.Main"/>
