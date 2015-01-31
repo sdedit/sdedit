@@ -1821,4 +1821,12 @@ public class Utilities {
 		return wrappedLine.toString();
 	}
 
+	public static long hash64(String string) {
+		long h = 0;
+		for (int i = 0; i < string.length(); i++) {
+			h = 63 * h + string.charAt(i);
+		}
+		return h;
+	}
+
 }
