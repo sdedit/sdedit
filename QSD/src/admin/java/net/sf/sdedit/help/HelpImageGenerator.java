@@ -21,7 +21,6 @@ import net.sf.sdedit.util.DocUtil.XMLException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class HelpImageGenerator {
 
@@ -38,20 +37,10 @@ public class HelpImageGenerator {
 		Document doc = null;
 		try {
 			doc = DocUtil.readDocument(in, "utf-8");
-			NodeList list = DocUtil.evalXPathAsNodeList(doc,
-					"//div[@class='sd']");
-			for (Node node : DocUtil.iterate(list)) {
-				Element div = (Element) node;
-				Element img = null;
-				Element preText = null;
-				for (Node child : DocUtil.iterate(div.getChildNodes())) {
-					if ("img".equals(child.getNodeName())) {
-						img = (Element) child;
-					}
-					if ("pre".equals(child.getNodeName())) {
-						preText = (Element) child;
-					}
-				}
+			for (Element div : DocUtil.select(doc, "//div[@class='sd']",
+					Element.class)) {
+				Element img = DocUtil.selectFirst(div, "img", Element.class);
+				Element preText = DocUtil.selectFirst(div, "pre", Element.class);
 				if (img != null && preText != null) {
 					String seq = preText.getTextContent();
 					Bean<SequenceConfiguration> conf = ConfigurationManager
@@ -91,9 +80,10 @@ public class HelpImageGenerator {
 		}
 
 	}
-	
-	public static void main (String [] argv) throws Exception {
-		HelpImageGenerator hig = new HelpImageGenerator(new File("/home/strauch/git/sdedit/QSD/src/main/java/resource"));
+
+	public static void main(String[] argv) throws Exception {
+		HelpImageGenerator hig = new HelpImageGenerator(new File(
+				"/home/strauch/git/sdedit/QSD/src/main/java/resource"));
 		hig.prepare("tutorial.html");
 	}
 
