@@ -1,0 +1,237 @@
+<html>
+<head>
+<META content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+<style type="text/css">
+<!--
+div.section {
+	margin-bottom: 15px;
+}
+
+div.para {
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+
+div.sd {
+	margin-top: 3px;
+	margin-bottom: 3px;
+	font-size: 10px;
+}
+
+div.sd img {
+	float: left;
+}
+
+pre {
+	margin-left: 15px;
+	margin-bottom: 0px;
+	margin-top: 5px;
+	border-style: solid;
+	border-width: 1px;
+	padding: 5px;
+}
+
+h1 {
+	margin-bottom: 2px;
+}
+
+h2 {
+	margin-bottom: 2px;
+}
+
+h3 {
+	margin-bottom: 1px;
+}
+
+h4 {
+	margin-bottom: 1px;
+}
+
+body {
+	background-color: white;
+	font-family: Arial, Helvetica, SansSerif;
+	font-size: 11px;
+	margin-left: 30px;
+	margin-right: 30px;
+}
+-->
+</style>
+<title>Quick Sequence Diagram Editor tutorial</title>
+</head>
+<body>
+	<h2>
+		<a name="basic_example">A basic example</a>
+	</h2>
+	
+	<div class="sd">
+		<img name="basic1" src="sd/basic1.png"/>
+		<pre>map:HashMap
+string:String
+			
+map:3939340=string.hashCode()</pre>
+	</div>
+	
+	<h2>
+		<a name="stacking">Stacking</a>
+	</h2>
+	
+	<div class="sd">
+	<img name="stacking" src="sd/stacking.png"/>
+	<pre>m:Master
+s:Servant
+d:Database
+
+m:done=s.executeTask()
+s:information=m.getSomeInformation()
+m:result=d.query()</pre>
+	</div>
+	
+	
+		<h2>
+		<a name="levels">Message levels</a>
+	</h2>
+	
+	<div class="sd">
+	<img name="levels" src="sd/levels.png"/>
+	<pre>m:Master
+s:Servant
+d:Database
+
+m:done=s.executeTask()
+s:information=m.getSomeInformation()
+m[1]:result=d.query()
+</pre>
+	</div>
+	
+	
+	<h2>
+		<a name="constructor">Constructor</a>
+	</h2>
+	
+	<div class="sd">
+	<img name="constructor" src="sd/constructor.png"/>
+	<pre>m:Master
+s:Servant
+/f:File
+
+m:done=s.executeTask()
+s:f.new()
+</pre>
+	</div>
+	
+
+	<h2>
+		<a name="destructor">Destructor</a>
+	</h2>
+	
+	<div class="sd">
+	<img name="destructor" src="sd/destructor.png"/>
+	<pre>m:Master
+s:Servant
+/f:File
+
+m:done=s.executeTask()
+s:f.new()
+s:f.save()
+s:f.destroy()
+</pre>
+	</div>
+	
+	<h2>
+		<a name="automatic">Automatic object</a>
+	</h2>
+	
+	<div class="sd">
+	<img name="automatic" src="sd/automatic.png"/>
+	<pre>m:Master
+s:Servant
+/f:File[x]
+
+m:done=s.executeTask()
+s:f.new()
+s:f.save()
+m:s.destroy()
+</pre>
+	</div>
+	
+	<h2>
+		<a name="thread">Threads</a>
+	</h2>
+	
+	<div class="sd">
+	<img name="thread" src="sd/thread.png"/>
+	<pre>m:Master
+s:Servant
+/f:File[x]
+d:Database
+
+m:&gt;s.executeTask()
+s:f.new()
+m:d.query()
+s:f.save()
+s:m.done()
+</pre>
+	</div>
+	
+	<h2>
+		<a name="return">Returning instantly</a>
+	</h2>
+	
+	<div class="sd">
+	<img name="return" src="sd/return.png"/>
+	<pre>m:Master
+s:Servant
+/f:File[x]
+d:Database
+
+m:&gt;s.executeTask()
+s:f.new()&amp;
+m:d.query()&amp;
+s:f.save()
+s:m.done()
+</pre>
+	</div>
+	
+	<h2>
+		<a name="signal">Signals</a>
+	</h2>
+	
+	<div class="sd">
+	<img name="signal" src="sd/signal.png"/>
+	<pre>m:Master
+s:Servant
+/f:File[x]
+d:Database
+
+m:&gt;s.executeTask()
+s:f.new()&amp;
+m:d.query()&amp;
+s:f.save()
+s:&gt;m.done()&amp;
+</pre>
+	</div>
+	
+<h2>
+		<a name="comment">Comments</a>
+</h2>
+	
+	<div class="sd">
+	<img name="comment" src="sd/comment.png"/>
+	<pre>m:Master
+s:Servant
+/f:File[x]
+d:Database
+
+m:&gt;s.executeTask()
+s:f.new()&amp;
+m:d.query()&amp;
+*1 s
+Saving the result
+of the task to a file.
+*1
+s:f.save()
+s:&gt;m.done()&amp;</pre>
+	</div>
+	
+</body>
+</html>
