@@ -208,22 +208,11 @@ public class DocUtil {
 	
 	public static <T extends Node> T selectFirst(Node context,
 			String xpath, Class<T> nodeClass) {
-		XPath path = xPathFactory.newXPath();
-		NodeList nodeList;
-		try {
-			nodeList = (NodeList) path.evaluate(xpath, context,
-					XPathConstants.NODESET);
-		} catch (XPathExpressionException xee) {
-			throw new IllegalArgumentException("Could not evaluate XPath: " + xpath,
-					xee);
+		for (T t : select(context, xpath, nodeClass)) {
+			return t;
 		}
-		if (nodeList == null || nodeList.getLength() == 0) {
-			return null;
-		}
-		return nodeClass.cast(nodeList.item(0));
+		return null;
 	}
-	
-	
 	
 	public static <T extends Node> Iterable<T> iterate(final NodeList nodeList,
 			final Class<T> nodeClass) {
