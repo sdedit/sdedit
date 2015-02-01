@@ -191,7 +191,7 @@ public class DocUtil {
 		}
 		return null;
 	}
-	
+
 	public static <T extends Node> Iterable<T> select(Node context,
 			String xpath, Class<T> nodeClass) {
 		XPath path = xPathFactory.newXPath();
@@ -200,20 +200,20 @@ public class DocUtil {
 			nodeList = (NodeList) path.evaluate(xpath, context,
 					XPathConstants.NODESET);
 		} catch (XPathExpressionException xee) {
-			throw new IllegalArgumentException("Could not evaluate XPath: " + xpath,
-					xee);
+			throw new IllegalArgumentException("Could not evaluate XPath: "
+					+ xpath, xee);
 		}
 		return iterate(nodeList, nodeClass);
 	}
-	
-	public static <T extends Node> T selectFirst(Node context,
-			String xpath, Class<T> nodeClass) {
+
+	public static <T extends Node> T selectFirst(Node context, String xpath,
+			Class<T> nodeClass) {
 		for (T t : select(context, xpath, nodeClass)) {
 			return t;
 		}
 		return null;
 	}
-	
+
 	public static <T extends Node> Iterable<T> iterate(final NodeList nodeList,
 			final Class<T> nodeClass) {
 		final Iterator<T> iter = new Iterator<T>() {
@@ -253,11 +253,10 @@ public class DocUtil {
 
 		};
 	}
-	
+
 	public static Iterable<Node> iterate(final NodeList nodeList) {
 		return iterate(nodeList, Node.class);
 	}
-	
 
 	private static void toString(PrintWriter printWriter, Node node,
 			boolean deep) {
@@ -354,15 +353,19 @@ public class DocUtil {
 	 */
 	public static Document readDocument(InputStream in, String encoding)
 			throws IOException, XMLException {
-		InputStreamReader reader = new InputStreamReader(in, encoding);
-		InputSource source = new InputSource(new BufferedReader(reader));
-		Document document;
 		try {
-			document = documentBuilder.parse(source);
-		} catch (SAXException e) {
-			throw new XMLException("readDocument failed", e);
+			InputStreamReader reader = new InputStreamReader(in, encoding);
+			InputSource source = new InputSource(new BufferedReader(reader));
+			Document document;
+			try {
+				document = documentBuilder.parse(source);
+			} catch (SAXException e) {
+				throw new XMLException("readDocument failed", e);
+			}
+			return document;
+		} finally {
+			in.close();
 		}
-		return document;
 	}
 
 	public static DOMNode toDOMNode(Document document) {
@@ -372,7 +375,7 @@ public class DocUtil {
 
 	public static DOMNode getDocumentFromURL(URL url, String encoding) {
 		try {
-			Document doc = readDocument(url.openStream(), "UTF-8");
+			Document doc = readDocument(url.openStream(), encoding);
 			return toDOMNode(doc);
 		} catch (RuntimeException re) {
 			throw re;
