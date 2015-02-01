@@ -94,7 +94,7 @@ public class HelpImageGenerator {
 	
 	public static void main (String [] argv) throws Exception {
 		HelpImageGenerator hig = new HelpImageGenerator(new File("/home/strauch/git/sdedit/QSD/src/main/java/resource"));
-		hig.prepare("help.html");
+		hig.prepare("tutorial.html");
 	}
 
 }
