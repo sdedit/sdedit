@@ -107,6 +107,8 @@ public final class Actions implements Constants {
 	final Action configureDiagramAction;
 
 	final Action helpAction;
+	
+	final Action tutorialAction;
 
 	final Action helpOnMultithreadingAction;
 
@@ -315,6 +317,20 @@ public final class Actions implements Constants {
 
 			public void actionPerformed(ActionEvent e) {
 				editor.getUI().help("Help", "help", true);
+			}
+		};
+		
+		tutorialAction = new AbstractAction() {
+			{
+				putValue(ICON_NAME, "help");
+				//putValue(ManagedAction.ID, "HELP");
+				putValue(Action.SHORT_DESCRIPTION,
+						"Display a tutorial");
+				putValue(Action.NAME, "&Tutorial");
+			}
+
+			public void actionPerformed(ActionEvent e) {
+				editor.getUI().help("Tutorial", "tutorial", true);
 			}
 		};
 

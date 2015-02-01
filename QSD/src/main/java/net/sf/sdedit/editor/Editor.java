@@ -527,6 +527,7 @@ public final class Editor implements Constants, UserInterfaceListener
 				actions.nonEmptyDiagramActivator);
 
 		ui.addAction("&Help", actions.helpAction, null);
+		ui.addAction("&Help", actions.tutorialAction, null);
 		ui.addAction("&Help", actions.helpOnMultithreadingAction, null);
 		ui.addAction("&Help", actions.asyncNotesAction, null);
 		if (OS.TYPE != OS.Type.MAC) {
