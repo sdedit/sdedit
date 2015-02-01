@@ -1,7 +1,100 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>sf.net.sdedit</groupId>
-  <artifactId>QSD</artifactId>
-  <version>4.2</version>
-  <name>Quick Sequence Diagram Editor</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>sf.net.sdedit</groupId>
+	<artifactId>QSD</artifactId>
+	<version>4.2</version>
+	<name>Quick Sequence Diagram Editor</name>
+	
+	<dependencies>
+	
+		<dependency>
+			<groupId>net.sf.sdedit</groupId>
+			<artifactId>QSD-lib</artifactId>
+			<version>4.2</version>
+			<scope>compile</scope>
+		</dependency>
+	
+	
+		<dependency>
+			<groupId>com.sun</groupId>
+			<artifactId>tools</artifactId>
+			<version>1.4.2</version>
+			<scope>system</scope>
+			<systemPath>${java.home}/../lib/tools.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>net.iharder</groupId>
+			<artifactId>filedrop</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/filedrop.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>com.apple</groupId>
+			<artifactId>ui</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/ui.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.freehep</groupId>
+			<artifactId>freehep-io</artifactId>
+			<version>2.2.2</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/freehep-io-2.2.2.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.freehep</groupId>
+			<artifactId>freehep-graphics2d</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/freehep-graphics2d-2.4.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.freehep</groupId>
+			<artifactId>freehep-graphicsbase</artifactId>
+			<version>2.4</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/freehep-graphicsbase-2.4.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.freehep</groupId>
+			<artifactId>freehep-graphicsio</artifactId>
+			<version>2.4</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/freehep-graphicsio-2.4.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.freehep</groupId>
+			<artifactId>freehep-graphicsio-emf</artifactId>
+			<version>2.4</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/freehep-graphicsio-emf-2.4.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.freehep</groupId>
+			<artifactId>freehep-graphicsio-pdf</artifactId>
+			<version>2.4</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/freehep-graphicsio-pdf-2.4.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.freehep</groupId>
+			<artifactId>freehep-graphicsio-ps</artifactId>
+			<version>2.4</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/freehep-graphicsio-ps-2.4.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.freehep</groupId>
+			<artifactId>freehep-graphicsio-svg</artifactId>
+			<version>2.4</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/freehep-graphicsio-svg-2.4.jar</systemPath>
+		</dependency>
+
+	</dependencies>
+
 </project>
