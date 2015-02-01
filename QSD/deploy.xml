@@ -109,7 +109,9 @@
     	   failonerror="false"
     	   source="1.5"
     	   target="1.5"
-    	   destdir="${build}">
+    	   destdir="${build}"
+    	   includeantruntime="true"
+    	>
 	  <src path="${src}"/>
 	  <src path="${sdedit.lib.src}"/>
       <classpath>
