@@ -223,7 +223,7 @@ public class DocUtil {
 			private int findNext() {
 				int j = i;
 				while (j < nodeList.getLength()
-						&& !nodeClass.isInstance(nodeList.item(i))) {
+						&& !nodeClass.isInstance(nodeList.item(j))) {
 					j++;
 				}
 				return j;
