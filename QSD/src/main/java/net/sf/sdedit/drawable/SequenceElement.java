@@ -24,9 +24,6 @@
 
 package net.sf.sdedit.drawable;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.SequenceConfiguration;
