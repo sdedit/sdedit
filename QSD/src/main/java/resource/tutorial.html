@@ -18,10 +18,6 @@ div.sd {
 	font-size: 10px;
 }
 
-div.sd img {
-	float: left;
-}
-
 pre {
 	margin-left: 15px;
 	margin-bottom: 0px;
@@ -62,22 +58,59 @@ body {
 	<h2>
 		<a name="basic_example">A basic example</a>
 	</h2>
+  
+    <p>
+      We are starting with a simple example, involving only two
+      objects and a single message. A master object asks a servant object to execute
+      a task. The servant finishes the task and answers "done".
+    </p>
+    <p>
+      The text starts with two lines declaring the objects (name:Class). The
+      object declaration is terminated by an empty line. After that we have the
+      description of the single message in the form: caller:answer=callee.message.
+    </p>
 	
 	<div class="sd">
-		<img name="basic1" src="sd/basic1.png"/>
+		<img name="basic" src="sd/basic.png"/>
 		<pre>m:Master
 s:Servant
 			
 m:done=s.executeTask()</pre>
 	</div>
+  
+    <h2>
+    <a name="anonymous">Anonymous objects</a>
+  </h2>
+  
+    <p>
+      Every object has to have its own name. They can however be declared
+      anonymous [a], so their name will not appear on the diagram.
+    </p>
+  
+  <div class="sd">
+    <img name="anonymous" src="sd/anonymous.png"/>
+    <pre>m:Master[a]
+s:Servant
+      
+m:done=s.executeTask()</pre>
+  </div>
 	
 	<h2>
 		<a name="stacking">Stacking</a>
 	</h2>
-	
+  
+    <p>
+      Now we assume that the servant object needs some information from
+      the master in order to complete its task, so it makes a call back to
+      the master, who is reached by the program
+      flow for the second time then. In other words there are two active
+      calls to the master on the execution stack. This is represented by
+      a lifeline stacked onto the master's first lifeline.
+    </p>
+    	
 	<div class="sd">
 	<img name="stacking" src="sd/stacking.png"/>
-	<pre>m:Master
+	<pre>m:Master[a]
 s:Servant
 d:Database
 
@@ -91,9 +124,22 @@ m:result=d.query()</pre>
 		<a name="levels">Message levels</a>
 	</h2>
 	
+    <p>
+    In the prior example, right after the servant asked the master for
+    an information, the latter made a query to a database, presumably for
+    finding the required information.
+    </p>
+    <p>
+    But the master could as well give the information on its own and make
+    the query to the database later. In this case the getSomeInformation()
+    call must be terminated before the query is made. This can be achieved
+    by a "[1]" behind the caller name, which means: terminate 1
+    level of execution in which I am involved, and then send the message.
+    </p>
+  
 	<div class="sd">
 	<img name="levels" src="sd/levels.png"/>
-	<pre>m:Master
+	<pre>m:Master[a]
 s:Servant
 d:Database
 
@@ -103,8 +149,7 @@ m[1]:result=d.query()
 </pre>
 	</div>
 	
-	
-	<h2>
+    <h2>
 		<a name="constructor">Constructor</a>
 	</h2>
 	
@@ -126,7 +171,7 @@ s:f.new()
 	
 	<div class="sd">
 	<img name="destructor" src="sd/destructor.png"/>
-	<pre>m:Master
+	<pre>m:Master[a]
 s:Servant
 /f:File
 
@@ -143,7 +188,7 @@ s:f.destroy()
 	
 	<div class="sd">
 	<img name="automatic" src="sd/automatic.png"/>
-	<pre>m:Master
+	<pre>m:Master[a]
 s:Servant
 /f:File[x]
 
