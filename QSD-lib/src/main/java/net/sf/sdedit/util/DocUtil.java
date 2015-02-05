@@ -271,9 +271,9 @@ public class DocUtil {
 						+ attr.getNodeValue() + "\"");
 			}
 			if (!deep || element.getChildNodes().getLength() == 0) {
-				printWriter.println("/>");
+				printWriter.print("/>");
 			} else {
-				printWriter.println(">");
+				printWriter.print(">");
 			}
 
 			if (deep) {
@@ -283,12 +283,12 @@ public class DocUtil {
 				}
 			}
 			if (deep && element.getChildNodes().getLength() > 0) {
-				printWriter.println("</" + element.getNodeName() + ">");
+				printWriter.print("</" + element.getNodeName() + ">");
 			}
 		}
 		if (node instanceof Text) {
 			Text text = (Text) node;
-			printWriter.println(text.getWholeText());
+			printWriter.print(text.getWholeText() == null ? "" : text.getWholeText().trim());
 		}
 	}
 
