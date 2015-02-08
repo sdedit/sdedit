@@ -103,9 +103,8 @@ m:done=s.executeTask()</pre>
       Now we assume that the servant object needs some information from
       the master in order to complete its task, so it makes a call back to
       the master, who is reached by the program
-      flow for the second time then. In other words there are two active
-      calls to the master on the execution stack. This is represented by
-      a lifeline stacked onto the master's first lifeline.
+      flow for the second time then. This is represented by
+      another lifeline stacked upon the master's first lifeline.
     </p>
     	
 	<div class="sd">
@@ -125,16 +124,17 @@ m:result=d.query()</pre>
 	</h2>
 	
     <p>
-    In the prior example, right after the servant asked the master for
-    an information, the latter made a query to a database, presumably for
+    In the prior example, right after the servant asks the master for
+    an information, the latter queries a database, presumably for
     finding the required information.
     </p>
     <p>
-    But the master could as well give the information on its own and make
-    the query to the database later. In this case the getSomeInformation()
+    But the master could as well give the information instantly and query
+    the database thereafter, for finding out something else.
+    In this case the getSomeInformation()
     call must be terminated before the query is made. This can be achieved
     by a "[1]" behind the caller name, which means: terminate 1
-    level of execution in which I am involved, and then send the message.
+    level of execution into which I am involved, and then send the message.
     </p>
   
 	<div class="sd">
