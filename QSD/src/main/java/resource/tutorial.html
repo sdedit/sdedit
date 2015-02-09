@@ -65,8 +65,9 @@ body {
       a task. The servant finishes the task and answers "done".
     </p>
     <p>
-      The text starts with two lines declaring the objects (name:Class). The
-      object declaration is terminated by an empty line. After that we have the
+      The text starts with two lines declaring the objects (name of the object
+      followed by : and the class name). The
+      object declaration is terminated by an empty line. What follows is the
       description of the single message in the form: caller:answer=callee.message.
     </p>
 	
@@ -104,7 +105,7 @@ m:done=s.executeTask()</pre>
       the master in order to complete its task, so it makes a call back to
       the master, who is reached by the program
       flow for the second time then. This is represented by
-      another lifeline stacked upon the master's first lifeline.
+      a second lifeline stacked upon the master's first lifeline.
     </p>
     	
 	<div class="sd">
