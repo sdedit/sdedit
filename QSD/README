@@ -1,0 +1,33 @@
+QSD (Quick Sequence Diagram Editor) looks like a Maven project, but it should
+still be built and compiled with Ant.
+
+Some of the required jar files (of which most belong to Freehep) are available
+at mvnrepository.com, other artifacts seem to be just placeholders without a
+jar file, for example 
+
+http://mvnrepository.com/artifact/org.freehep/freehep-vectorgraphics/2.4
+
+So I had to build the jar files from the sources and put them into the github
+repository.
+
+Any help of anybody who knows how to solve this issue and make QSD a proper
+Maven project will be appreciated: markus-strauch@arcor.de
+
+-------------------------------------------------------------------------------
+
+So the solution - for now - remains ant:
+
+cd to the directory of this README file and type:
+
+ant clean
+
+ant compile
+
+ant run
+
+-------------------------------------------------------------------------------
+
+Note that to compile one class (net.sf.sdedit.taglet.SequenceTaglet) the
+tools.jar from the JDK lib directory is required, which I have not put
+inside the repository.
+
