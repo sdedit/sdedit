@@ -223,14 +223,6 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		}
 	}
 
-	private final TabActivator<DiagramTab> nonEmptyDiagramActivator = new TabActivator<DiagramTab>(
-			DiagramTab.class, this) {
-		@Override
-		protected boolean _isEnabled(DiagramTab tab) {
-			return !tab.isEmpty();
-		}
-	};
-
 	private final TabActivator<Tab> zoomActivator = new TabActivator<Tab>(
 			Tab.class, this) {
 		@Override
@@ -376,29 +368,6 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	public void addToolbarSeparator() {
 		toolbar.addSeparator();
 	}
-
-	// public static Action makeToolbarAction(final Action action) {
-	//
-	// return new AbstractAction() {
-	// {
-	// putValue(Action.NAME, action.getValue(Action.NAME));
-	// putValue(Action.SHORT_DESCRIPTION, action
-	// .getValue(Action.SHORT_DESCRIPTION));
-	// String iconName = (String) action.getValue(Actions.ICON_NAME);
-	// if (iconName != null) {
-	// Icon icon = Icons.getIcon("large/" + iconName);
-	// putValue(Action.SMALL_ICON, icon);
-	// } else {
-	// putValue(Action.SMALL_ICON, action
-	// .getValue(Action.SMALL_ICON));
-	// }
-	// }
-	//
-	// public void actionPerformed(ActionEvent e) {
-	// action.actionPerformed(e);
-	// }
-	// };
-	// }
 
 	public void configure(Bean<? extends Configuration> conf) {
 		prefUI.configure(conf);

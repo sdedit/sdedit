@@ -52,15 +52,6 @@ public class PreferencesUI {
 		prefData.add(p);
 	}
 
-	private PrefData get(Class<?> cls, String type) {
-		for (PrefData pd : prefData) {
-			if (cls == pd.cls && type.equals(pd.type)) {
-				return pd;
-			}
-		}
-		return null;
-	}
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public PreferencesUI(UserInterfaceImpl ui) {
 		this.ui = ui;

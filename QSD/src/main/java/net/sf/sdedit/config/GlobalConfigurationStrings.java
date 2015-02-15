@@ -34,7 +34,9 @@ import net.sf.sdedit.ui.components.configuration.StringSelectionProvider;
 public class GlobalConfigurationStrings implements
 		StringSelectionProvider {
 
-	public GlobalConfigurationStrings() {
+    private static final long serialVersionUID = -3566528406527681801L;
+
+    public GlobalConfigurationStrings() {
 		super();
 	}
 

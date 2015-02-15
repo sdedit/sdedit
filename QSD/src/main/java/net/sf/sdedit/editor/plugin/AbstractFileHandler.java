@@ -43,7 +43,6 @@ import javax.swing.SwingUtilities;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
-import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;

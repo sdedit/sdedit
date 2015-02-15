@@ -26,9 +26,7 @@ package net.sf.sdedit.editor;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.swing.Action;
 
@@ -43,6 +41,8 @@ import org.freehep.graphicsbase.util.export.ExportDialog;
 
 public class ExportAction extends TabAction<DiagramTab> implements Constants {
     
+    private static final long serialVersionUID = -8534175701798362565L;
+
     private ExportDialog exportDialog;
 
     private Properties properties;

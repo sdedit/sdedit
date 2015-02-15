@@ -45,6 +45,8 @@ import net.sf.sdedit.ui.components.TextArea;
 public class FilterCommandField extends JTextField implements ActionListener,
         KeyListener, Runnable
 {
+    private static final long serialVersionUID = 6277977346048865956L;
+
     private ArrayList<String> history;
 
     private int historyPointer;

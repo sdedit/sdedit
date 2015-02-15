@@ -36,7 +36,9 @@ import net.sf.sdedit.diagram.MessageData;
  */
 public class SyntaxError extends SequenceDiagramError {
 
-	/**
+    private static final long serialVersionUID = -6556140749252815287L;
+
+    /**
 	 * Creates a new SyntaxException.
 	 * 
 	 * @param msg

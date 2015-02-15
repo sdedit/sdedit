@@ -43,7 +43,9 @@ import net.sf.sdedit.ui.UserInterface;
  */
 public abstract class TabAction<T extends Tab> extends AbstractAction {
 	
-	protected final Class<T> tabClass;
+    private static final long serialVersionUID = -6457471623029191677L;
+
+    protected final Class<T> tabClass;
 	
 	protected final UserInterface ui;
 	

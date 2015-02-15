@@ -33,7 +33,9 @@ import net.sf.sdedit.ui.impl.DiagramTab;
 
 public class TabConfigurationAction extends ConfigurationAction<Configuration> {
 
-	private UserInterface ui;
+    private static final long serialVersionUID = -1401708461145850379L;
+    
+    private UserInterface ui;
 
 	public TabConfigurationAction(String property, String name, String tooltip,
 			String icon, UserInterface ui) {
@@ -41,11 +43,12 @@ public class TabConfigurationAction extends ConfigurationAction<Configuration> {
 		this.ui = ui;
 	}
 
-	@Override
-	protected Bean getBean() {
+	@SuppressWarnings("unchecked")
+    @Override
+	protected Bean<Configuration> getBean() {
 		Tab tab = ui.currentTab();
 		if (tab instanceof DiagramTab) {
-			return ((DiagramTab) tab).getConfiguration();
+			return (Bean<Configuration>) ((DiagramTab) tab).getConfiguration();
 		}
 		return null;
 	}

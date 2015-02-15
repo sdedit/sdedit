@@ -1,18 +1,9 @@
 package net.sf.sdedit.ui.impl;
 
 import java.awt.Font;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringReader;
 
 import net.sf.sdedit.config.Configuration;
-import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.diagram.AbstractPaintDevice;
-import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramDataProvider;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.GraphicDevice;

@@ -101,7 +101,8 @@ public class ExportDocument {
 	
 	private <T> void invoke (String methodName, Class<? extends T> argClass, T arg) {
 		try {
-			Class [] argTypes = argClass == null ? new Class [0] :
+			@SuppressWarnings("rawtypes")
+            Class [] argTypes = argClass == null ? new Class [0] :
 				new Class [] {argClass};
 			Method method = graphicsClass.getMethod(methodName, argTypes);
 			Object [] args = arg == null ? new Object [0] :

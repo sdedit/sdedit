@@ -30,7 +30,6 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
-import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.TabListener;
 import net.sf.sdedit.ui.components.navigator.ContextActionsProvider;

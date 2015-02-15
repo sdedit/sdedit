@@ -56,7 +56,6 @@ import net.sf.sdedit.diagram.DiagramDataProviderFactory;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.GraphicDevice;
 import net.sf.sdedit.diagram.IPaintDevice;
-import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.error.DiagramError;

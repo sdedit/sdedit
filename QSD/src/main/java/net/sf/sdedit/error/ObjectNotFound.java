@@ -28,7 +28,9 @@ import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 
 public class ObjectNotFound extends SemanticError {
 	
-	private String objectName;
+    private static final long serialVersionUID = 447353282041111668L;
+    
+    private String objectName;
 
 	public ObjectNotFound(SequenceDiagramDataProvider provider, String objectName) {
 		super(provider, objectName + " does not exist");

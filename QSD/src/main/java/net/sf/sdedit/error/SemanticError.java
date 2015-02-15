@@ -35,6 +35,8 @@ import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
  */
 public class SemanticError extends SequenceDiagramError
 {
+    private static final long serialVersionUID = -1099296453603830068L;
+
     public SemanticError(SequenceDiagramDataProvider provider, String msg) {
         super(provider, msg);
     }
