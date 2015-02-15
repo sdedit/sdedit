@@ -8,8 +8,6 @@ run it:
 5. type: mvn package
 6. type: java -jar target/QSD-4.2.one-jar.jar 
 
-cd to the directory of this README file
-
 -------------------------------------------------------------------------------
 
 Not all jar files required by QSD (Quick Sequence Diagram Editor)
