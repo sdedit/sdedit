@@ -17,5 +17,4 @@ is included (the repo/ directory).
 * org/freehep/freehep-graphics2d/2.4 (only present as an empty artifact)
 * org/freehep/freehep-graphicsio/2.4-patched (patched by me so there are
   more page sizes available)
-* com/apple/ui/1.0 (kind of proprietary, not available at Maven Central all)
 * net/iharder/filedrop/1.0 (not available at Maven Central at all)
