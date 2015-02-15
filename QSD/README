@@ -19,11 +19,3 @@ is included (the repo/ directory).
   more page sizes available)
 * com/apple/ui/1.0 (kind of proprietary, not available at Maven Central all)
 * net/iharder/filedrop/1.0 (not available at Maven Central at all)
-
--------------------------------------------------------------------------------
-
-Note that to compile one class (net.sf.sdedit.taglet.SequenceTaglet) the
-tools.jar from the JDK lib directory is required, which I have not put
-inside the repository.
-
--------------------------------------------------------------------------------
