@@ -938,8 +938,7 @@ public class Utilities {
 		return new Pair<S, T>(arg1, arg2);
 	}
 
-	public static Object invoke(String methodName, Object object, Object[] args)
-			throws Throwable {
+	public static Object invoke(String methodName, Object object, Object... args) {
 		Method method;
 		if (object instanceof Class<?>) {
 			method = resolveMethod((Class<?>) object, methodName, args);
@@ -954,7 +953,10 @@ public class Utilities {
 			throw new IllegalArgumentException("cannot access method "
 					+ methodName + " of " + object.getClass().getName());
 		} catch (InvocationTargetException e) {
-			throw e.getCause();
+			if (e.getCause() instanceof RuntimeException) {
+				throw (RuntimeException) e.getCause();
+			}
+			throw new IllegalStateException(e.getCause());
 		}
 		return result;
 
