@@ -1,29 +1,26 @@
-QSD (Quick Sequence Diagram Editor) looks like a Maven project, but it should
-still be built and compiled with Ant.
+How to build QSD (Quick Sequence Diagram Editor) with Maven 3 and
+run it:
 
-Some of the required jar files (of which most belong to Freehep) are available
-at mvnrepository.com, other artifacts seem to be just placeholders without a
-jar file, for example 
+1. Get QSD-lib and QSD from github.
+2. cd to the QSD-lib directory
+3. type mvn install
+4. cd to the QSD directory
+5. type: mvn package
+6. type: java -jar target/QSD-4.2.one-jar.jar 
 
-http://mvnrepository.com/artifact/org.freehep/freehep-vectorgraphics/2.4
-
-So I had to build the jar files from the sources and put them into the github
-repository.
-
-Any help of anybody who knows how to solve this issue and make QSD a proper
-Maven project will be appreciated: markus-strauch@arcor.de
+cd to the directory of this README file
 
 -------------------------------------------------------------------------------
 
-So the solution - for now - remains ant:
+Not all jar files required by QSD (Quick Sequence Diagram Editor)
+are present at the Maven Central Repository, so a project repository
+is included (the repo/ directory).
 
-cd to the directory of this README file and type:
-
-ant clean
-
-ant compile
-
-ant run
+* org/freehep/freehep-graphics2d/2.4 (only present as an empty artifact)
+* org/freehep/freehep-graphicsio/2.4-patched (patched by me so there are
+  more page sizes available)
+* com/apple/ui/1.0 (kind of proprietary, not available at Maven Central all)
+* net/iharder/filedrop/1.0 (not available at Maven Central at all)
 
 -------------------------------------------------------------------------------
 
@@ -31,3 +28,4 @@ Note that to compile one class (net.sf.sdedit.taglet.SequenceTaglet) the
 tools.jar from the JDK lib directory is required, which I have not put
 inside the repository.
 
+-------------------------------------------------------------------------------
