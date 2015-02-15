@@ -24,9 +24,9 @@
 
 package net.sf.sdedit.message;
 
-import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
+import net.sf.sdedit.diagram.SequenceDiagram;
 
 /**
  * Represents the answer given to a call to an object's destructor. Is in

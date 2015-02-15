@@ -24,8 +24,8 @@
 
 package net.sf.sdedit.error;
 
-import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 import net.sf.sdedit.diagram.MessageData;
+import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
 
 /**
  * This exception is thrown when an object declaration is not well formed or

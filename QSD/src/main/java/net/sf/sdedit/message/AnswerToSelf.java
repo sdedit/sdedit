@@ -24,9 +24,9 @@
 
 package net.sf.sdedit.message;
 
-import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.drawable.Arrow;
 import net.sf.sdedit.drawable.ArrowStroke;
 import net.sf.sdedit.drawable.LoopArrow;
