@@ -565,52 +565,10 @@ public class Utilities {
 	 */
 	public static byte[] toByteArray(InputStream inputStream, final int size)
 			throws IOException {
-		int totalSize = 0;
-		List<byte[]> bufferList = null;
-		byte[] result = null;
-		if (size == -1) {
-			bufferList = new LinkedList<byte[]>();
-		} else {
-			result = new byte[size];
-		}
-		int avail = inputStream.available();
-		while (avail > 0) {
-			byte[] buffer = new byte[1024];
-			int len;
-			if (size == -1) {
-				len = 1024;
-			} else {
-				len = Math.min(1024, size - totalSize);
-			}
-			int r = inputStream.read(buffer, 0, len);
-			if (r == -1) {
-				break;
-			}
-			if (bufferList != null) {
-				if (r < 1024) {
-					byte[] smallerBuffer = new byte[r];
-					System.arraycopy(buffer, 0, smallerBuffer, 0, r);
-					bufferList.add(smallerBuffer);
-				} else {
-					bufferList.add(buffer);
-				}
-			} else {
-				System.arraycopy(buffer, 0, result, totalSize, r);
-			}
-			totalSize += r;
-			if (size != -1 && totalSize == size) {
-				break;
-			}
-		}
-		if (bufferList != null) {
-			result = new byte[totalSize];
-			int offset = 0;
-			for (byte[] buffer : bufferList) {
-				System.arraycopy(buffer, 0, result, offset, buffer.length);
-				offset += buffer.length;
-			}
-		}
-		return result;
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		long length = size == -1 ? Long.MAX_VALUE : size;
+		pipe(inputStream, out, length);
+		return out.toByteArray();
 	}
 
 	public static byte[] load(File file) throws IOException {
@@ -827,13 +785,36 @@ public class Utilities {
 	 */
 	public static void pipe(InputStream from, OutputStream to)
 			throws IOException {
-		int n = 0;
+		pipe(from, to, Long.MAX_VALUE);
+	}
+	
+	public static void pipe(InputStream from, OutputStream to, long size)
+			throws IOException {
 		final int EOF = -1;
-		byte[] buffer = new byte[1024];
-		while (EOF != (n = from.read(buffer))) {
+		final int BUFFER_SIZE=1024;
+		byte[] buffer = new byte[BUFFER_SIZE];
+		long total = 0;
+		for (;;) {
+			long diff = size - total;
+			int length;
+			if (diff >= BUFFER_SIZE) {
+				length = BUFFER_SIZE;
+			} else {
+				length = (int) diff;
+			}
+			if (length <= 0) {
+				return;
+			}
+			int n = from.read(buffer, 0, length);
+			if (n == EOF) {
+				return;
+			}
 			to.write(buffer, 0, n);
+			total+=n;
 		}
 	}
+	
+	
 
 	public static Iterable<String> readLines(String command,
 			Ref<InputStream> streamRef, Charset charset) throws IOException {
