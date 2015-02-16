@@ -7,14 +7,3 @@ run it:
 4. cd to the QSD directory
 5. type: mvn package
 6. type: java -jar target/QSD-4.2.one-jar.jar 
-
--------------------------------------------------------------------------------
-
-Not all jar files required by QSD (Quick Sequence Diagram Editor)
-are present at the Maven Central Repository, so a project repository
-is included (the repo/ directory).
-
-* org/freehep/freehep-graphics2d/2.4 (only present as an empty artifact)
-* org/freehep/freehep-graphicsio/2.4-patched (patched by me so there are
-  more page sizes available)
-* net/iharder/filedrop/1.0 (not available at Maven Central at all)
