@@ -33,11 +33,7 @@
 		<include name="**/*.jar"/>
 	</fileset>
 
-	<property location="lib" name="lib" />
 	<path id="libs">
-		<fileset dir="${lib}">
-			<include name="**/*.jar" />
-		</fileset>
 		<fileset refid="jarfiles"/>
 	</path>
 
@@ -125,7 +121,7 @@
 			<arg value="-s" />
 			<arg value="62015" />
 			<classpath>
-				<path refid="libs" />
+				<path refid="jarfiles" />
 				<pathelement path="${build}" />
 			</classpath>
 		</java>
@@ -134,7 +130,6 @@
 	<target depends="compile" description="starts the application" name="run">
 		<java classname="${mainclass}" fork="true">
 			<classpath>
-				<path refid="libs" />
 				<pathelement path="${build}" />
 			</classpath>
 		</java>
@@ -146,44 +141,6 @@
 			<fileset dir="${src}" />
 			<fileset dir="${sdedit.lib.src}" />
 		</javadoc>
-	</target>
-
-	<target depends="compile" description="creates source distro" name="src">
-		<mkdir dir="${dist}/sdedit-src/lib" />
-		<mkdir dir="${dist}/sdedit-src/src" />
-		<copy todir="${dist}/sdedit-src" flatten="true">
-			<fileset dir="targets/common" />
-			<fileset file="targets/bin/sdedit.bat" />
-			<fileset file="targets/bin/sdedit.sh" />
-			<fileset dir="targets/src" />
-		</copy>
-		<chmod file="${dist}/sdedit-src/sdedit.sh" perm="a+x" />
-		<copy todir="${dist}/sdedit-src/lib">
-			<fileset dir="lib" />
-		</copy>
-		<copy todir="${dist}/sdedit-src/src">
-			<fileset dir="apple" />
-			<fileset dir="src" />
-			<fileset dir="${sdedit.lib.src}" />
-		</copy>
-		<tar destfile="${dist}/${appname}-src.tar.gz" basedir="${dist}/sdedit-src" compression="gzip" />
-	</target>
-
-	<target depends="compile" description="creates binary generic java distro" name="bin">
-		<mkdir dir="${dist}/sdedit-bin/lib" />
-		<mkdir dir="${dist}/sdedit-bin/bin" />
-		<copy todir="${dist}/sdedit-bin" flatten="true">
-			<fileset dir="targets/common" />
-			<fileset dir="targets/bin" />
-		</copy>
-		<chmod file="${dist}/sdedit-bin/sdedit.sh" perm="a+x" />
-		<copy todir="${dist}/sdedit-bin/lib">
-			<fileset dir="lib" />
-		</copy>
-		<copy todir="${dist}/sdedit-bin/bin">
-			<fileset dir="${build}" />
-		</copy>
-		<tar destfile="${dist}/${appname}-bin.tar.gz" basedir="${dist}/sdedit-bin" compression="gzip" />
 	</target>
 
 	<target depends="compile" description="creates executable java archive" name="jar">
@@ -248,7 +205,7 @@
 		</exec>
 	</target>
 
-	<target name="all" description="builds all deployment targets" depends="src,bin,jar,windows,macosx" />
+	<target name="all" description="builds all deployment targets" depends="jar,windows,macosx" />
 
 	<target name="clean" description="deletes the distribution working folder and contents">
 		<delete dir="${dist}" />
