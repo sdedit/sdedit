@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2011, Markus Strauch.
+// Copyright (c) 2006 - 2015, Markus Strauch.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -153,7 +153,7 @@ public class DistinctObjectsMap<K, V> implements Map<K, V>, Serializable {
 	}
 
 	/* 
-	 * TODO falsch: liefert nicht alle Schlüssel, nur paarweise verschiedene
+	 * TODO falsch: liefert nicht alle Schlï¿½ssel, nur paarweise verschiedene
 	 * bzgl. equals
 	 */
 	public Set<K> keySet() {

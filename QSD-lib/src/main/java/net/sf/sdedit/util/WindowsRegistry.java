@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2011, Markus Strauch.
+// Copyright (c) 2006 - 2015, Markus Strauch.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -20,7 +20,7 @@
 // INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
-// THE POSSIBILITY OF SUCH DAMAGE.// Copyright (c) 2006 - 2011, Markus Strauch.
+// THE POSSIBILITY OF SUCH DAMAGE.// Copyright (c) 2006 - 2015, Markus Strauch.
 
 package net.sf.sdedit.util;
 
