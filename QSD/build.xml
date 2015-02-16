@@ -38,7 +38,6 @@
     <fileset dir="${lib}">
       <include name="**/*.jar"/>
     </fileset>
-	<fileset dir="repo/net/iharder/filedrop/1.0"><include name="*.jar"/></fileset>
 	<fileset dir="repo/org/freehep/freehep-graphicsio/2.4-patched"><include name="*.jar"/></fileset>
 	<fileset dir="repo/org/freehep/freehep-graphics2d/2.4"><include name="*.jar"/></fileset>
   </path>
@@ -205,7 +204,6 @@
     		<include name="*.jar"/>
     	</fileset>
     	
-    	<fileset dir="repo/net/iharder/filedrop/1.0"><include name="*.jar"/></fileset>
     	<fileset dir="repo/org/freehep/freehep-graphicsio/2.4-patched"><include name="*.jar"/></fileset>
     	<fileset dir="repo/org/freehep/freehep-graphics2d/2.4"><include name="*.jar"/></fileset>
     </unjar>
