@@ -26,11 +26,12 @@ package net.sf.sdedit.util.tree;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.sdedit.util.Pair;
-import net.sf.sdedit.util.collection.DistinctObjectsMap;
 import net.sf.sdedit.util.collection.IStack;
 import net.sf.sdedit.util.collection.StackImpl;
 
@@ -45,7 +46,7 @@ public class Traversal<T> {
 	/**
 	 * Mapping X's last child Y onto X.
 	 */
-	private DistinctObjectsMap<T, T> lastChildren;
+	private Map<T, T> lastChildren;
 
 	private TraversalControl<T> control;
 
@@ -56,7 +57,7 @@ public class Traversal<T> {
 	public Traversal(TraversalControl<T> control) {
 		this.control = control;
 		stack = new StackImpl<Pair<T, Integer>>();
-		lastChildren = new DistinctObjectsMap<T, T>();
+		lastChildren = new IdentityHashMap<T, T>();
 	}
 	
 	public void DESTROY () {

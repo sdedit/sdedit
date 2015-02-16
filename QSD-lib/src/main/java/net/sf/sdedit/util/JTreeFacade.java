@@ -27,8 +27,10 @@ package net.sf.sdedit.util;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.Enumeration;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -40,8 +42,6 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
 import net.sf.sdedit.util.PopupActions.ContextHandler;
-import net.sf.sdedit.util.collection.DistinctObjectsMap;
-import net.sf.sdedit.util.collection.DistinctObjectsSet;
 import net.sf.sdedit.util.tree.BreadthFirstSearch;
 
 public class JTreeFacade implements PopupActions.Provider,
@@ -60,7 +60,7 @@ public class JTreeFacade implements PopupActions.Provider,
 		public TreePath getPath(String ident);
 
 	}
-	
+
 	@SuppressWarnings("serial")
 	public static abstract class JTreeAction extends AbstractAction {
 
@@ -77,12 +77,12 @@ public class JTreeFacade implements PopupActions.Provider,
 	private Icon nodeIcon;
 
 	private Icon leafIcon;
-	
+
 	public JTreeFacade(JTree tree) {
 		this.tree = tree;
 	}
-	
-	public JTree getTree () {
+
+	public JTree getTree() {
 		return tree;
 	}
 
@@ -101,7 +101,7 @@ public class JTreeFacade implements PopupActions.Provider,
 	public PopupActions getPopupActions() {
 		return getPopupActions(this);
 	}
-	
+
 	public void deselectAll() {
 		if (tree.getSelectionPaths() != null) {
 			for (TreePath path : tree.getSelectionPaths()) {
@@ -127,17 +127,16 @@ public class JTreeFacade implements PopupActions.Provider,
 			}
 		}
 	}
-	
-	public void expandAll (TreePath path) {
+
+	public void expandAll(TreePath path) {
 		BreadthFirstSearch bfs = new BreadthFirstSearch(tree.getModel(),
 				path.getLastPathComponent());
-		
-		while ((path = bfs.next()) != null
-				 ) {
-			tree.expandPath(path);			
+
+		while ((path = bfs.next()) != null) {
+			tree.expandPath(path);
 		}
 	}
-	
+
 	public void restoreSelections(PathIdenter identer, List<String> selections) {
 		tree.removeSelectionPaths(tree.getSelectionPaths());
 		for (String selection : selections) {
@@ -148,8 +147,8 @@ public class JTreeFacade implements PopupActions.Provider,
 		}
 	}
 
-	private DistinctObjectsMap<Object, Integer> computeIndices() {
-		DistinctObjectsMap<Object, Integer> map = new DistinctObjectsMap<Object, Integer>();
+	private Map<Object, Integer> computeIndices() {
+		Map<Object, Integer> map = new IdentityHashMap<Object, Integer>();
 		BreadthFirstSearch bfs = new BreadthFirstSearch(tree.getModel());
 		int i = 0;
 		TreePath path = bfs.next();
@@ -164,7 +163,8 @@ public class JTreeFacade implements PopupActions.Provider,
 
 	public List<TreePath> getVisibleNodes() {
 		List<TreePath> result = new LinkedList<TreePath>();
-		Enumeration<TreePath> paths = tree.getExpandedDescendants(new TreePath(tree.getModel().getRoot()));
+		Enumeration<TreePath> paths = tree.getExpandedDescendants(new TreePath(
+				tree.getModel().getRoot()));
 		if (paths != null) {
 			while (paths.hasMoreElements()) {
 				result.add(paths.nextElement());
@@ -172,28 +172,26 @@ public class JTreeFacade implements PopupActions.Provider,
 		}
 		return result;
 	}
-	
-	public Object [] getSelectedObjects () {
-		TreePath [] paths = tree.getSelectionPaths();
-		Object [] objects = new Object[paths.length];
+
+	public Object[] getSelectedObjects() {
+		TreePath[] paths = tree.getSelectionPaths();
+		Object[] objects = new Object[paths.length];
 		for (int i = 0; i < paths.length; i++) {
-			objects [i] = paths[i].getLastPathComponent();
+			objects[i] = paths[i].getLastPathComponent();
 		}
 		return objects;
 	}
-	
-
 
 	public int deselectAncestors(TreePath selectedNode) {
-		DistinctObjectsSet<Object> ancestors = new DistinctObjectsSet<Object>();
+		IdentityHashMap<Object, Object> ancestors = new IdentityHashMap<Object, Object>();
 		Object[] path = selectedNode.getPath();
 		int n = 0;
 		if (tree.getSelectionPaths() != null) {
 			for (int i = 0; i < path.length - 1; i++) {
-				ancestors.add(path[i]);
+				ancestors.put(path[i], path[i]);
 			}
 			for (TreePath selection : tree.getSelectionPaths()) {
-				if (ancestors.contains(selection.getLastPathComponent())) {
+				if (ancestors.containsKey(selection.getLastPathComponent())) {
 					tree.removeSelectionPath(selection);
 					n++;
 				}
@@ -209,9 +207,11 @@ public class JTreeFacade implements PopupActions.Provider,
 			for (TreePath selection : tree.getSelectionPaths()) {
 				Object current = selection.getLastPathComponent();
 				if (current != node) {
-					DistinctObjectsSet<Object> ancestors = DistinctObjectsSet
-							.createFromArray(selection.getPath());
-					if (ancestors.contains(node)) {
+					IdentityHashMap<Object, Object> ancestors = new IdentityHashMap<Object, Object>();
+					for (Object obj : selection.getPath()) {
+						ancestors.put(obj, obj);
+					}
+					if (ancestors.containsKey(node)) {
 						tree.removeSelectionPath(selectedNode);
 						n++;
 					}
@@ -240,12 +240,12 @@ public class JTreeFacade implements PopupActions.Provider,
 		TreePath path = new TreePath(tree.getModel().getRoot());
 		tree.scrollPathToVisible(path);
 	}
-	
-	public void selectAndGoTo (TreePath path) {
-	    tree.setSelectionPath(path);
-	    tree.scrollPathToVisible(path);
+
+	public void selectAndGoTo(TreePath path) {
+		tree.setSelectionPath(path);
+		tree.scrollPathToVisible(path);
 	}
-	
+
 	/**
 	 * @see net.sf.sdedit.util.PopupActions.ContextHandler#getObjectForCurrentContext()
 	 */
@@ -290,29 +290,27 @@ public class JTreeFacade implements PopupActions.Provider,
 		}
 		return label;
 	}
-	
+
 	@SuppressWarnings("serial")
-	public PopupActions.Action getExpandAllAction () {
+	public PopupActions.Action getExpandAllAction() {
 		return new PopupActions.Action() {
-	
 
-		{
-			putValue(Action.NAME, "Expand all");
-		}
+			{
+				putValue(Action.NAME, "Expand all");
+			}
 
-		private TreePath treePath;
+			private TreePath treePath;
 
-		
-		protected boolean beforePopup(Object context) {
-			treePath = (TreePath) context;
+			protected boolean beforePopup(Object context) {
+				treePath = (TreePath) context;
 
-			return true;
-		}
+				return true;
+			}
 
-		
-		public void actionPerformed(ActionEvent e) {
-			expandAll(treePath);
-		}
+			public void actionPerformed(ActionEvent e) {
+				expandAll(treePath);
+			}
 
-	};}
+		};
+	}
 }

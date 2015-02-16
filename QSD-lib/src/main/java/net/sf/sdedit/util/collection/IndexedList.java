@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -263,7 +264,7 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 	private transient OntoMap<Annotation, Entry> annotations;
 
 	public IndexedList() {
-		entryMap = new DistinctObjectsMap<T, Entry>();
+		entryMap = new IdentityHashMap<T, Entry>();
 		first = null;
 		last = null;
 	}
@@ -593,7 +594,7 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 	private void readObject(java.io.ObjectInputStream in) throws IOException,
 			ClassNotFoundException {
 		in.defaultReadObject();
-		entryMap = new DistinctObjectsMap<T, Entry>();
+		entryMap = new IdentityHashMap<T, Entry>();
 		LinkedList<T> ll = (LinkedList<T>) in.readObject();
 		addAll(ll);
 		Collection<Annotation> annots = (Collection<Annotation>) in

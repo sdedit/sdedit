@@ -27,16 +27,16 @@ package net.sf.sdedit.util.tree;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-
-import net.sf.sdedit.util.collection.DistinctObjectsMap;
 
 public class TreeAdapter<T> implements TreeModel {
 	
@@ -50,7 +50,7 @@ public class TreeAdapter<T> implements TreeModel {
 
 	private Tree<T> tree;
 
-	private DistinctObjectsMap<T, Node> nodes;
+	private Map<T, Node> nodes;
 
 	private Node root;
 
@@ -124,7 +124,7 @@ public class TreeAdapter<T> implements TreeModel {
 
 	public TreeAdapter(Tree<T> tree) {
 		this.tree = tree;
-		nodes = new DistinctObjectsMap<T, Node>();
+		nodes = new IdentityHashMap<T, Node>();
 		root = new Node(null);
 		listeners = new LinkedList<TreeModelListener>();
 		children = new WeakHashMap<Node, T[]>();
