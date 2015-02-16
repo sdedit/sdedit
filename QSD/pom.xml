@@ -33,13 +33,6 @@
 			<version>4.2</version>
 			<scope>compile</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>net.iharder</groupId>
-			<artifactId>filedrop</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.freehep</groupId>
 			<artifactId>freehep-io</artifactId>

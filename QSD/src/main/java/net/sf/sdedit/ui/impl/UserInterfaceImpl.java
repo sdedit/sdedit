@@ -58,8 +58,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import net.iharder.dnd.FileDrop;
-import net.iharder.dnd.FileDrop.Listener;
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
@@ -86,6 +84,8 @@ import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.components.configuration.ConfigurationAction;
 import net.sf.sdedit.ui.components.configuration.ConfigurationUIListener;
+import net.sf.sdedit.util.FileDrop;
+import net.sf.sdedit.util.FileDrop.Listener;
 import net.sf.sdedit.util.OS;
 import net.sf.sdedit.util.Predicate;
 import net.sf.sdedit.util.Ref;
