@@ -29,7 +29,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,15 +38,11 @@ public class Base64 {
 
 	private static int BUFFER_SIZE = 8192;
 
-	private static String encode(byte[] in) {
-		return new String(Base64Coder.encode(in));
-	}
-
 	public static String encode(InputStream stream) throws IOException {
 		List<byte[]> buffers = new LinkedList<byte[]>();
 		int mark = 0;
+		stream = new BufferedInputStream(stream);
 		try {
-			stream = new BufferedInputStream(stream);
 			byte[] buffer = new byte[BUFFER_SIZE];
 			buffers.add(buffer);
 			int avail = -1;
@@ -105,13 +100,6 @@ public class Base64 {
 					"Cannot create image from string", e);
 		}
 		return img;
-	}
-
-	public static void main(String[] argv) throws Exception {
-		URL url = new URL(argv[0]);
-		InputStream in = url.openStream();
-		String code = createAssignment(in, 55);
-		System.out.println(code);
 	}
 
 }
