@@ -57,6 +57,5 @@ public interface Constants
     
     public final static String DEFAULT_CODE_FONT = "Monospace";
     
-    public final static String DEFAULT_ENCODING_SCHEME = System.getProperty("file.encoding");
 }
 //{{core}}
