@@ -38,27 +38,6 @@ import net.sf.sdedit.ui.G2DGraphicsDevice;
  */
 public abstract class Exporter extends G2DGraphicsDevice {
 	
-	private static final boolean exportAvailable;
-
-	static {
-		boolean avail;
-		try {
-			Class.forName(Constants.TEST_FREEHEP_CLASSNAME);
-			avail = true;
-		} catch (RuntimeException re) {
-			throw re;
-		} catch (ClassNotFoundException e) {
-			avail = false;
-		} catch (Throwable t) {
-			t.printStackTrace();
-			avail = false;
-		}
-		exportAvailable = avail;
-	}
-	
-	public static boolean isAvailable () {
-		return exportAvailable;
-	}
 	
     /**
      * Returns an Exporter object if the exporting library is available,

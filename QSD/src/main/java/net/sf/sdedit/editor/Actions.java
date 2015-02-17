@@ -57,7 +57,6 @@ import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.multipage.MultipageExporter;
-import net.sf.sdedit.server.Exporter;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
 import net.sf.sdedit.ui.components.buttons.Activator;
@@ -738,7 +737,7 @@ public final class Actions implements Constants {
 	}
 
 	final Action getExportAction() {
-		return Exporter.isAvailable() ? new ExportAction(editor) : null;
+		return new ExportAction(editor);
 	}
 
 	final Action getPrintAction(final String filetype) {

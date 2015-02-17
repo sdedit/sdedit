@@ -36,48 +36,11 @@ import net.sf.sdedit.util.OS;
  */
 public interface Constants
 {
-    /*
-     * Strokes
-     */
-    
-    /*
-    public static final Stroke dashed = new BasicStroke(1,
-            BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1f, new float[] { 5,
-                    5 }, 0f);
-
-    public static final Stroke dotted = new BasicStroke(1,
-            BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1f, new float[] { 1,
-                    2 }, 0f);
-
-    public static final Stroke emptyStroke = new BasicStroke(1,
-            BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1f, new float[] { 0,
-                    1 }, 0f);
-
-    public static final Stroke solid = new BasicStroke(1, BasicStroke.CAP_BUTT,
-            BasicStroke.JOIN_ROUND, 1f, null, 0);
-
-    public static final Stroke thick = new BasicStroke(2, BasicStroke.CAP_BUTT,
-            BasicStroke.JOIN_ROUND, 1f, null, 0);
-    
-    public static final Stroke thick_dashed = new BasicStroke(2,
-            BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1f, new float[] { 5,
-                    5 }, 0f);
-    */
-
-    /*
-     * Method names for using FreeHEP ExportDialog class via reflection (in
-     * Actions)
-     */
-    
-    public static final String TEST_FREEHEP_CLASSNAME = "org.freehep.graphicsbase.util.export.ExportFileType";
     
     public static final String SAVE_AS_FILE_PROPERTY = "org.freehep.graphicsbase.util.export.ExportDialog.SaveAsFile";
     
     public static final String SAVE_AS_TYPE_PROPERTY = "org.freehep.graphicsbase.util.export.ExportDialog.SaveAsType";
     
-    /*
-     * Miscellaneous
-     */
     
     public static final Cursor HAND_CURSOR = new Cursor (Cursor.HAND_CURSOR);
     
