@@ -787,11 +787,11 @@ public class Utilities {
 			throws IOException {
 		pipe(from, to, Long.MAX_VALUE);
 	}
-	
+
 	public static void pipe(InputStream from, OutputStream to, long size)
 			throws IOException {
 		final int EOF = -1;
-		final int BUFFER_SIZE=1024;
+		final int BUFFER_SIZE = 1024;
 		byte[] buffer = new byte[BUFFER_SIZE];
 		long total = 0;
 		for (;;) {
@@ -810,11 +810,9 @@ public class Utilities {
 				return;
 			}
 			to.write(buffer, 0, n);
-			total+=n;
+			total += n;
 		}
 	}
-	
-	
 
 	public static Iterable<String> readLines(String command,
 			Ref<InputStream> streamRef, Charset charset) throws IOException {
@@ -938,17 +936,53 @@ public class Utilities {
 		return new Pair<S, T>(arg1, arg2);
 	}
 
-	public static Object invoke(String methodName, Object object, Object... args) {
+	/**
+	 * Invokes an instance method of the given object, or a class method, if the
+	 * object is a String (containing the class name) resp. an instance of
+	 * java.lang.Class.
+	 * <p>
+	 * The method must have the given name and its formal parameters must
+	 * match the given arguments. If there is more than one matching method,
+	 * it is undefined which one of them will be chosen.
+	 * 
+	 * 
+	 * @param methodName
+	 *            a method name
+	 * @param object
+	 *            one of the following
+	 *            <ul>
+	 *            <li>a String, representing a class name</li>
+	 *            <li>a Class object</li>
+	 *            <li>any other object</li>
+	 *            </ul>
+	 * @param args
+	 *            the arguments to be passed to the method
+	 * @return
+	 */
+	public static Object invoke(String methodName, Object object,
+			Object... args) {
 		Method method;
-		if (object instanceof Class<?>) {
-			method = resolveMethod((Class<?>) object, methodName, args);
+		Class<?> theClass;
+		Object target = null;
+		if (object instanceof String) {
+			try {
+				theClass = Class.forName((String) object);
+			} catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException(e);
+			}
+		} else if (object instanceof Class<?>) {
+			theClass = (Class<?>) object;
 		} else {
-			method = resolveMethod(object.getClass(), methodName, args);
+			theClass = object.getClass();
+			target = object;
 		}
-		method.setAccessible(true);
+		method = resolveMethod(theClass, methodName, args);
+		if (!method.isAccessible()) {
+			method.setAccessible(true);
+		}
 		Object result;
 		try {
-			result = method.invoke(object, args);
+			result = method.invoke(target, args);
 		} catch (IllegalAccessException e) {
 			throw new IllegalArgumentException("cannot access method "
 					+ methodName + " of " + object.getClass().getName());
