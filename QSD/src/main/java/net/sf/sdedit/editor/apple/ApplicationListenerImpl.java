@@ -25,7 +25,6 @@
 package net.sf.sdedit.editor.apple;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
@@ -52,34 +51,8 @@ public class ApplicationListenerImpl extends AppInstaller {
 		this.editor = editor;
 		this.ui = (UserInterfaceImpl) editor.getUI();
 
-		Class<?> applicationClass;
-
-		try {
-			applicationClass = Class.forName("com.apple.eawt.Application");
-		} catch (ClassNotFoundException e) {
-			System.err
-					.println("Warning: class not found: com.apple.eawt.Application");
-			return;
-		}
-
-		Method getApplication;
-
-		try {
-			getApplication = applicationClass.getMethod("getApplication");
-		} catch (Exception e1) {
-			System.out
-					.println("Warning: method not accessible: com.apple.eawt.Application.getApplication()");
-			return;
-		}
-
-		Object app;
-
-		try {
-			app = getApplication.invoke(null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
+		Object app = Utilities.invoke("getApplication",
+				"com.apple.eawt.Application");
 
 		// Application app = Application.getApplication();
 		if (app != null) {
