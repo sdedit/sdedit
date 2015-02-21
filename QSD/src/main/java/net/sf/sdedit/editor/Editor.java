@@ -524,7 +524,7 @@ public final class Editor implements Constants, UserInterfaceListener
 		ui.addAction("E&xtras", actions.serverAction, null);
 		ui.addAction("E&xtras", actions.filterAction, actions.textTabActivator);
 		ui.addAction("E&xtras", new ExportMapAction(this),
-				actions.nonEmptyDiagramActivator);
+				actions.exportMapFileActivator);
 
 		ui.addAction("&Help", actions.helpAction, null);
 		ui.addAction("&Help", actions.tutorialAction, null);

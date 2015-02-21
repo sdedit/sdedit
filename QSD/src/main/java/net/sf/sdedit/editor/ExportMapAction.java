@@ -40,6 +40,7 @@ import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.text.TextHandler;
+import net.sf.sdedit.ui.impl.SequenceDiagramTextTab;
 import net.sf.sdedit.util.Grep;
 
 /**
@@ -61,8 +62,6 @@ class ExportMapAction extends AbstractAction {
 
 	private Editor editor;
 
-	private File directory;
-
 	/**
 	 * Constructor.
 	 * 
@@ -82,42 +81,39 @@ class ExportMapAction extends AbstractAction {
 	 * @param e
 	 */
 	public void actionPerformed(ActionEvent e) {
-		// Diagram diagram = editor.getUI().getDiagram();
-		// if (diagram == null || diagram.getLifelines().isEmpty()) {
-		// return;
-		// }
-		// TextHandler textHandler = (TextHandler) diagram.getDataProvider();
-		// File currentFile = editor.getUI().getCurrentFile();
-		// if (currentFile == null) {
-		// editor.getUI().message("Please save the diagram as a file first.");
-		// return;
-		// }
-		// String name = currentFile.getName();
-		// int dot = Math.min(name.length(), name.lastIndexOf('.'));
-		// name = currentFile.getName().substring(0, dot);
-		// if (directory == null) {
-		// directory = currentFile.getParentFile();
-		// }
-		//
-		// File[] target = editor.getUI().getFiles(false, false,
-		// "Export HTML map file", name + ".html", directory, "HTML files",
-		// "html");
-		// if (target != null && target.length > 0) {
-		// directory = target[0].getParentFile();
-		// if (!target[0].exists()
-		// || 1 == editor.getUI().confirmOrCancel(
-		// "Overwrite existing file:\n"
-		// + target[0].getAbsolutePath() + "?")) {
-		// try {
-		// generateMapFile(diagram, textHandler, name, target[0]);
-		// } catch (IOException ex) {
-		// editor.getUI().errorMessage(
-		// "The map file could not be saved due to an exception of type\n"
-		// + ex.getClass().getSimpleName()
-		// + " with the message: " + ex.getMessage());
-		// }
-		// }
-		// }
+		SequenceDiagramTextTab tab = (SequenceDiagramTextTab) editor.getUI()
+				.currentTab();
+		SequenceDiagram diagram = (SequenceDiagram) tab.getDiagram();
+		if (diagram == null || diagram.getLifelines().isEmpty()) {
+			return;
+		}
+		TextHandler textHandler = (TextHandler) diagram.getDataProvider();
+		File currentFile = editor.getUI().getCurrentFile();
+		if (currentFile == null) {
+			editor.getUI().message("Please save the diagram as a file first.");
+			return;
+		}
+		String name = currentFile.getName();
+		int dot = Math.min(name.length(), name.lastIndexOf('.'));
+		name = currentFile.getName().substring(0, dot);
+		File target = new File(currentFile.getParent(), name + ".html");
+
+		if (!target.exists()
+				|| 1 == editor.getUI().confirmOrCancel(
+						"Overwrite existing file:\n" + target.getAbsolutePath()
+								+ "?")) {
+			try {
+				generateMapFile(diagram, textHandler, name, target);
+			} catch (IOException ex) {
+				editor.getUI().errorMessage(
+						ex,
+						"The map file could not be saved due to an exception of type\n"
+								+ ex.getClass().getSimpleName()
+								+ " with the message: " + ex.getMessage(),
+						"I/O error");
+			}
+		}
+
 	}
 
 	private void generateMapFile(SequenceDiagram diagram,
