@@ -24,11 +24,25 @@
 
 package net.sf.sdedit.server;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Constructor;
+import java.util.Properties;
 
-import net.sf.sdedit.Constants;
 import net.sf.sdedit.ui.G2DGraphicsDevice;
+import net.sf.sdedit.util.Utilities;
+
+import org.freehep.graphics2d.VectorGraphics;
+import org.freehep.graphicsio.ImageGraphics2D;
+import org.freehep.graphicsio.emf.EMFGraphics2D;
+import org.freehep.graphicsio.gif.GIFGraphics2D;
+import org.freehep.graphicsio.pdf.PDFGraphics2D;
+import org.freehep.graphicsio.ps.PSGraphics2D;
+import org.freehep.graphicsio.svg.SVGGraphics2D;
+
 
 /**
  * An Exporter is a paint device that can redirect its output to an output
@@ -36,9 +50,26 @@ import net.sf.sdedit.ui.G2DGraphicsDevice;
  * 
  * @author Markus Strauch
  */
-public abstract class Exporter extends G2DGraphicsDevice {
+public class Exporter extends G2DGraphicsDevice {
 	
-	
+    private OutputStream stream;
+
+    private String type;
+
+    private VectorGraphics vg;
+
+    private String orientation;
+
+    private String format;
+
+    private Dimension dim;
+
+    public Exporter(String orientation, String format) {
+        super();
+        this.orientation = orientation;
+        this.format = format;
+    }
+    
     /**
      * Returns an Exporter object if the exporting library is available,
      * otherwise <tt>null</tt>. The following output types are supported:
@@ -54,40 +85,95 @@ public abstract class Exporter extends G2DGraphicsDevice {
      * @return an instance of an Exporter
      */
     public static Exporter getExporter(String type, String orientation, String format, OutputStream stream) {
-        Exporter exporter;
-
-        try {
-            // This fails if the export library is not on the class path
-            // because ExporterImpl contains symbols that cannot be resolved
-            // then
-            String exporterClassName = Exporter.class.getName() + "Impl";
-            Class<?> exporterClass = Class.forName(exporterClassName);
-            Constructor<?> constructor = exporterClass.getConstructor(
-                    String.class, String.class);
-            exporter = (Exporter) constructor.newInstance(
-                    orientation, format);
-
-        } catch (Throwable e) {
-            return null;
-        }
+        Exporter exporter = new Exporter(orientation, format);
         exporter.setType(type);
         exporter.setOutputStream(stream);
         return exporter;
     }
 
-    protected Exporter() {
-        super();
+    private VectorGraphics getGraphics() {
+        VectorGraphics vectorGraphics;
+        if (orientation == null) {
+            orientation = dim.getWidth() <= dim.getHeight() ? "Portrait"
+                    : "Landscape";
+        }
+        if (type.equals("gif")) {
+            vectorGraphics = new GIFGraphics2D(stream, dim);
+        } else if (type.equals("png")) {
+            vectorGraphics = new ImageGraphics2D(stream, dim, "png");
+        } else if (type.equals("bmp")) {
+            vectorGraphics = new ImageGraphics2D(stream, dim, "bmp");
+        } else if (type.equals("jpg")) {
+            vectorGraphics = new ImageGraphics2D(stream, dim, "jpg");
+        } else if (type.equals("pdf")) {
+            PDFGraphics2D pdf = new PDFGraphics2D(stream, dim);
+            Properties properties = new Properties();
+            properties.setProperty(PDFGraphics2D.ORIENTATION, orientation);
+            properties.setProperty(PDFGraphics2D.PAGE_SIZE, format);
+            pdf.setProperties(properties);
+            vectorGraphics = pdf;
+        } else if (Utilities.in(type, "ps", "eps")) {
+            PSGraphics2D ps = new PSGraphics2D(stream, dim);
+            Properties properties = new Properties();
+            properties.setProperty(PSGraphics2D.ORIENTATION, orientation);
+            properties.setProperty(PSGraphics2D.PAGE_SIZE, format);
+            ps.setProperties(properties);
+            ps.setMultiPage("ps".equals(type));
+            vectorGraphics = ps;
+        } else if (type.equals("emf")) {
+            vectorGraphics = new EMFGraphics2D(stream, dim);
+        } else if (type.equals("svg")) {
+            vectorGraphics = new SVGGraphics2D(stream, dim);
+        } else {
+            throw new IllegalArgumentException("Unknown type: " + type);
+        }
+        return vectorGraphics;
     }
 
-    protected abstract void setType(String type);
+    @Override
+    protected Graphics2D createDummyGraphics(boolean bold) {
+        dim = new Dimension(1, 1);
+        vg = getGraphics();
 
-    protected abstract void setOutputStream(OutputStream stream);
+        Font font = getFont(bold);
+        vg.setFont(font);
 
-    /**
-     * This method should be called when the generation of the diagram has
-     * finished and {@linkplain #computeBounds()} has been called. It redirects
-     * the output to the stream set via
-     * {@linkplain #setOutputStream(OutputStream)}.
-     */
-    public abstract void export();
+        return vg;
+    }
+
+    @Override
+    protected Graphics2D createGraphics() {
+        dim = new Dimension(getWidth(), getHeight());
+        vg = getGraphics();
+        if (vg instanceof ImageGraphics2D) {
+            vg.setColor(Color.WHITE);
+            vg.fillRect(0, 0, getWidth(), getHeight());
+        }
+        return vg;
+    }
+
+    protected void setOutputStream(OutputStream stream) {
+        this.stream = stream;
+    }
+
+    protected void setType(String type) {
+        this.type = type.toLowerCase();
+    }
+
+    public void export() {
+        vg.startExport();
+        if (vg instanceof PSGraphics2D && "ps".equals(type)) {
+            try {
+                ((PSGraphics2D) vg).openPage(dim, "");
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+        drawAll();
+        if (vg instanceof PSGraphics2D && "ps".equals(type)) {
+            ((PSGraphics2D) vg).closePage();
+        }
+        vg.endExport();
+    }
+
 }
