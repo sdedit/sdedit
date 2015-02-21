@@ -64,6 +64,7 @@ import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.impl.DiagramTab;
 import net.sf.sdedit.ui.impl.DiagramTextTab;
+import net.sf.sdedit.ui.impl.SequenceDiagramTextTab;
 import net.sf.sdedit.util.Utilities;
 
 @SuppressWarnings("serial")
@@ -153,6 +154,8 @@ public final class Actions implements Constants {
 
 	final Action homeAction;
 
+	public final Activator exportMapFileActivator;
+
 	Actions(Editor _editor) {
 		this.editor = _editor;
 		ui = editor.getUI();
@@ -173,6 +176,16 @@ public final class Actions implements Constants {
 			protected boolean _isEnabled(Tab tab) {
 				return tab.canClose();
 			}
+		};
+		
+		exportMapFileActivator = new TabActivator<SequenceDiagramTextTab>(
+				SequenceDiagramTextTab.class, ui) {
+
+					@Override
+					protected boolean _isEnabled(SequenceDiagramTextTab tab) {
+						return !tab.isEmpty() && tab.getFile() != null;
+					}
+			
 		};
 
 		nonEmptyDiagramActivator = new TabActivator<DiagramTab>(
