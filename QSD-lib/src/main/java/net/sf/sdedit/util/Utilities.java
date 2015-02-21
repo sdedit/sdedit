@@ -49,6 +49,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
@@ -936,14 +937,43 @@ public class Utilities {
 		return new Pair<S, T>(arg1, arg2);
 	}
 
+	public static Object getField(Object obj, String name) {
+		Field field;
+		Class<?> klass;
+		if (obj instanceof String) {
+			try {
+				klass = Class.forName((String) obj);
+			} catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException("class not found: " + obj);
+			}
+			obj = null;
+		} else {
+			klass = obj.getClass();
+		}
+		try {
+			field = klass.getField(name);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Field not available: "
+					+ klass.getName() + "." + name);
+		}
+		Object value;
+		try {
+			value = field.get(obj);
+		} catch (IllegalAccessException e) {
+			throw new IllegalArgumentException("Field cannot be accessed: "
+					+ klass.getName() + "." + name);
+		}
+		return value;
+	}
+
 	/**
 	 * Invokes an instance method of the given object, or a class method, if the
 	 * object is a String (containing the class name) resp. an instance of
 	 * java.lang.Class.
 	 * <p>
-	 * The method must have the given name and its formal parameters must
-	 * match the given arguments. If there is more than one matching method,
-	 * it is undefined which one of them will be chosen.
+	 * The method must have the given name and its formal parameters must match
+	 * the given arguments. If there is more than one matching method, it is
+	 * undefined which one of them will be chosen.
 	 * 
 	 * 
 	 * @param methodName
@@ -951,9 +981,8 @@ public class Utilities {
 	 * @param object
 	 *            one of the following
 	 *            <ul>
-	 *            <li>a String, representing a class name</li>
-	 *            <li>a Class object</li>
-	 *            <li>any other object</li>
+	 *            <li>a String, representing a class name</li> <li>a Class
+	 *            object</li> <li>any other object</li>
 	 *            </ul>
 	 * @param args
 	 *            the arguments to be passed to the method
