@@ -47,7 +47,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -95,8 +94,6 @@ import net.sf.sdedit.util.UIUtilities;
 public final class UserInterfaceImpl extends JFrame implements Constants,
 		UserInterface, TabContainerListener, HyperlinkListener,
 		ConfigurationUIListener, TabListener, Listener {
-
-	private JFileChooser fileChooser;
 
 	private TabContainer tabContainer;
 
@@ -233,9 +230,6 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 
 	public void showUI() {
 		setIconImage(Icons.getIcon("icon").getImage());
-		fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(new File(System
-				.getProperty("user.home")));
 		Container pane = getContentPane();
 		pane.setLayout(new BorderLayout());
 
