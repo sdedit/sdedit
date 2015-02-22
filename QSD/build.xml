@@ -102,7 +102,7 @@
 				<exclude name="**/*.java" />
 			</fileset>
 		</copy>
-		<javac debug="off" nowarn="on" encoding="ISO-8859-1" failonerror="false" source="1.5" target="1.5" destdir="${build}" includeantruntime="true">
+		<javac debug="on" nowarn="on" encoding="ISO-8859-1" failonerror="false" source="1.5" target="1.5" destdir="${build}" includeantruntime="true">
 			<src path="${src}" />
 			<src path="${sdedit.lib.src}" />
 			<classpath>
@@ -111,6 +111,8 @@
 				</pathelement>
 			</classpath>
 		</javac>
+		
+		<delete dir="${build}/com"/>
 
 		<replace file="${build}/resource/about.html" token="_VERSION_" value="${sdedit.version}" />
 		<replace file="${build}/resource/about.html" token="_DATE_" value="${TODAY}" />
