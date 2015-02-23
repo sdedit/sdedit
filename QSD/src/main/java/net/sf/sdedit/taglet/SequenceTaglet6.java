@@ -34,7 +34,7 @@ import com.sun.tools.doclets.internal.toolkit.taglets.TagletWriter;
 
 /**
  * 
- * 
+ * Taglet implementation conforming to tools.jar api as of JDK &lt;=6.
  * 
  */
 public class SequenceTaglet6 extends SequenceTaglet implements Taglet {
