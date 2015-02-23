@@ -133,12 +133,10 @@ public class Exporter extends G2DGraphicsDevice {
     @Override
     protected Graphics2D createDummyGraphics(boolean bold) {
         dim = new Dimension(1, 1);
-        vg = getGraphics();
-
+        VectorGraphics dummy = getGraphics();
         Font font = getFont(bold);
-        vg.setFont(font);
-
-        return vg;
+        dummy.setFont(font);
+        return dummy;
     }
 
     @Override
