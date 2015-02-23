@@ -191,12 +191,7 @@ public abstract class SequenceTaglet {
 							+ "</font></B>" + code.toString() + "</DD>");
 		}
 
-		try {
-			exporter.export();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return "";
-		}
+		exporter.export();
 		ByteArrayInputStream in = new ByteArrayInputStream(stream.toByteArray());
 		Document svg;
 
