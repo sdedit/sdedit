@@ -77,14 +77,14 @@ public class ApplicationListenerImpl extends AppInstaller {
 		}
 	}
 
-	/**
+	/*
 	 * @see net.sf.sdedit.editor.apple.AppInstaller#fileToLoad()
 	 */
 	public File fileToLoad() {
 		return fileToLoad;
 	}
 
-	/**
+	/*
 	 * @see com.apple.eawt.ApplicationListener#handleAbout(com.apple.eawt.ApplicationEvent)
 	 */
 	public void handleAbout(Object event) {
@@ -92,7 +92,7 @@ public class ApplicationListenerImpl extends AppInstaller {
 		Utilities.invoke("setHandled", event, true);
 	}
 
-	/**
+	/*
 	 * @see com.apple.eawt.ApplicationListener#handlePreferences(com.apple.eawt.ApplicationEvent)
 	 */
 	public void handlePreferences(Object event) {
@@ -101,7 +101,7 @@ public class ApplicationListenerImpl extends AppInstaller {
 		Utilities.invoke("setHandled", event, true);
 	}
 
-	/**
+	/*
 	 * @see com.apple.eawt.ApplicationListener#handleQuit(com.apple.eawt.ApplicationEvent)
 	 */
 	public void handleQuit(Object event) {
@@ -110,14 +110,14 @@ public class ApplicationListenerImpl extends AppInstaller {
 		Utilities.invoke("setHandled", event, false);
 	}
 
-	/**
+	/*
 	 * @see com.apple.eawt.ApplicationListener#handlePrintFile(com.apple.eawt.ApplicationEvent)
 	 */
 	public void handlePrintFile(Object event) {
 		Utilities.invoke("setHandled", event, true);
 	}
 
-	/**
+	/*
 	 * @see com.apple.eawt.ApplicationListener#handleReOpenApplication(com.apple.eawt.ApplicationEvent)
 	 */
 	public void handleReOpenApplication(Object event) {
@@ -125,7 +125,7 @@ public class ApplicationListenerImpl extends AppInstaller {
 		Utilities.invoke("setHandled", event, true);
 	}
 
-	/**
+	/*
 	 * @see com.apple.eawt.ApplicationListener#handleOpenFile(com.apple.eawt.ApplicationEvent)
 	 */
 	public void handleOpenFile(Object event) {
@@ -145,7 +145,7 @@ public class ApplicationListenerImpl extends AppInstaller {
 		Utilities.invoke("setHandled", event, true);
 	}
 
-	/**
+	/*
 	 * @see com.apple.eawt.ApplicationListener#handleOpenApplication(com.apple.eawt.ApplicationEvent)
 	 */
 	public void handleOpenApplication(Object event) {
