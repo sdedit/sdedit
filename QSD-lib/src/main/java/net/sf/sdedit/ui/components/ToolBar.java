@@ -34,7 +34,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
@@ -62,7 +61,6 @@ public class ToolBar extends JToolBar {
 		return id;
 	}
 
-	@SuppressWarnings("serial")
 	private static Action makeToolbarAction(final Action action) {
 
 		return new AbstractAction() {
