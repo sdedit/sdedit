@@ -29,8 +29,6 @@ import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-import java.util.TreeSet;
 
 public class BeanComparator<T> implements Comparator<T> {
 
@@ -90,7 +88,7 @@ public class BeanComparator<T> implements Comparator<T> {
     }
 
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public int compare(T t1, T t2) {
         Object o1;
         Object o2;
@@ -136,49 +134,4 @@ public class BeanComparator<T> implements Comparator<T> {
         return result;
     }
     
-    public static class TestBean {
-        
-        private int num1;
-        
-        private int num2;
-        
-        public TestBean(int num1, int num2) {
-            this.num1 = num1;
-            this.num2 = num2;
-        }
-
-        public void setNum1(int num1) {
-            this.num1 = num1;
-        }
-
-        public int getNum1() {
-            return num1;
-        }
-
-        public void setNum2(int num2) {
-            this.num2 = num2;
-        }
-
-        public int getNum2() {
-            return num2;
-        }
-        
-        public String toString () {
-            return num1 + "/" + num2;
-        }
-        
-        
-        
-    }
-    
-    public static void main (String [] argv) {
-        Random rnd = new Random();
-        BeanComparator<TestBean> bc = new BeanComparator<TestBean>(TestBean.class,BeanComparator.TO_STRING,"num2","num1");
-        TreeSet<TestBean> set = new TreeSet<TestBean>(bc);
-        for (int i = 0; i < 20; i++) {
-            set.add(new TestBean(rnd.nextInt(),rnd.nextInt()));
-        }
-        System.out.println(set);
-    }
-
 }
