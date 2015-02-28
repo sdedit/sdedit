@@ -1,8 +1,11 @@
-<!-- This is a reusable ant (see http://ant.apache.org) script 
-     for compiling and running applications, for creating API
-     documentation and executable jar files.
-     
-     author: Markus Strauch
+<!-- 
+
+This is a legacy ant script that can still be used for building release files 
+(jar, exe and dmg).
+
+Note that it relies on the existence of a local maven repository at
+{user.home}/.m2, to which the freehep jar files have already been downloaded.
+
 -->
 <project basedir="." default="about" name="sdedit deployment ant script">
 	<description>Quick Sequence Diagram Editor</description>
