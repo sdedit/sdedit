@@ -39,7 +39,9 @@ import net.sf.sdedit.ui.components.Stainable;
 
 public class TreeNavigatorNodeRenderer extends JPanel implements TreeCellRenderer  {
 	
-	private boolean stained;
+    private static final long serialVersionUID = -8131576175100053862L;
+
+    private boolean stained;
 	
 	private DefaultTreeCellRenderer renderer;
 	
