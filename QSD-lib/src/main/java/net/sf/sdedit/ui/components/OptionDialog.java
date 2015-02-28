@@ -50,7 +50,12 @@ import net.sf.sdedit.util.UIUtilities;
  */
 public class OptionDialog extends JDialog {
 
-	private String chosenOption;
+	/**
+     * 
+     */
+    private static final long serialVersionUID = -2944581694704728259L;
+
+    private String chosenOption;
 
 	private ButtonPanel buttonPanel;
 
@@ -152,7 +157,10 @@ public class OptionDialog extends JDialog {
 		}
 		final String theOption = option.substring(i + 1);
 		Action action = new AbstractAction() {
-			{
+
+            private static final long serialVersionUID = 3674364416011034074L;
+
+            {
 				putValue(Action.NAME, theOption);
 			}
 
