@@ -1,12 +1,5 @@
 package net.sf.sdedit.util.base64;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-
-import net.sf.sdedit.util.Utilities;
 
 /**
  * A Base64 Encoder/Decoder.
@@ -194,22 +187,6 @@ public class Base64Coder {
 	private Base64Coder() {
 	}
 	
-	public static void main (String [] args) throws Exception {
-        if ("-e".equals(args[0])) {
-		  ByteArrayOutputStream os = new ByteArrayOutputStream();
-		  Utilities.pipe(new FileInputStream(args[1]), os);
-		  char [] c = encode(os.toByteArray());
-		  System.out.println(new String(c));
-		}
-        if ("-d".equals(args[0])) {
-        	File file = new File(args[1]);
-        	InputStreamReader r = new InputStreamReader(new FileInputStream(file));
-        	char [] c = new char[(int) file.length() - 1];
-        	r.read(c);
-        	ByteArrayInputStream bis = new ByteArrayInputStream(decode(c));
-        	Utilities.pipe(bis, System.out);
-        }
-	}
 
 } // end class Base64Coder
 
