@@ -37,7 +37,12 @@ import net.sf.sdedit.util.UIUtilities;
 
 public class JTreeSearcherUI extends JPanel implements ActionListener {
 
-	private JTreeSearcher searcher;
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 4696321804222233601L;
+
+    private JTreeSearcher searcher;
 
 	private JButton button;
 	
