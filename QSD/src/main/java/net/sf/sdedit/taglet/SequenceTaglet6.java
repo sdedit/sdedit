@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2011, Markus Strauch.
+// Copyright (c) 2006 - 2015, Markus Strauch.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ public class SequenceTaglet6 extends SequenceTaglet implements Taglet {
 			output = makeString(tag);
 		} catch (SequenceTagletException ste) {
 			warn(writer, "doclet.in", ste.getMessage(), tag.holder().name());
-			return ste.output;
+			return ste.getOutput();
 		}
 		return output;
 	}
@@ -66,7 +66,7 @@ public class SequenceTaglet6 extends SequenceTaglet implements Taglet {
 			} catch (SequenceTagletException ste) {
 				warn(writer, "doclet.in", ste.getMessage(), tags[0].holder()
 						.name());
-				output += ste.output;
+				output += ste.getOutput();
 			}
 		}
 		return output;

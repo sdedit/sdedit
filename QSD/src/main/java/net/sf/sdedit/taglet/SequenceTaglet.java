@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2011, Markus Strauch.
+// Copyright (c) 2006 - 2015, Markus Strauch.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -106,26 +106,15 @@ public abstract class SequenceTaglet {
 	}
 
 	/**
-	 * Creates a sequence diagram image from a part of the contents of a
-	 * sequence.diagram tag, saves it in the image directory and returns HTML
-	 * code that references the image.
-	 * 
-	 * 
-	 * @param path
-	 *            the path to the directory where the diagram image is to be
-	 *            stored (usually a path going upwards, i. e. containing ../'s)
-	 * @param imageBaseName
-	 *            the base name of the image to be stored
 	 * @param source
 	 *            string array containing the lines of the diagram specification
 	 * @return the output that is to appear on the javadoc page (i. e. the
-	 *         &lt;img&gt; tag referencing the image
+	 *         inline svg code)
 	 * @throws SequenceTagletException
 	 *             if the creation of the diagram fails
 	 */
 	private String generateOutput(String[] source)
 			throws SequenceTagletException {
-		System.out.println("generate output");
 		if (source == null || source.length == 0) {
 			return "";
 		}
@@ -149,7 +138,6 @@ public abstract class SequenceTaglet {
 		if (specification.length() == 0) {
 			return "";
 		}
-		System.out.println(specification);
 		SequenceConfiguration conf = ConfigurationManager
 				.createNewDefaultConfiguration(SequenceConfiguration.class)
 				.getDataObject();
@@ -243,26 +231,5 @@ public abstract class SequenceTaglet {
 		String output;
 		output = generateOutput(tag.text().split("\n"));
 		return output;
-	}
-
-	protected static class SequenceTagletException extends Exception {
-
-		private static final long serialVersionUID = 1L;
-		/**
-		 * Appears on the HTML page
-		 */
-		String output;
-
-		/**
-		 * 
-		 * @param warning
-		 *            the warning that is sent to the doclet
-		 * @param output
-		 *            the output that appears on the HTML page
-		 */
-		SequenceTagletException(String warning, String output) {
-			super(warning);
-			this.output = output;
-		}
 	}
 }

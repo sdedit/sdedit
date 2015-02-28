@@ -24,37 +24,28 @@
 
 package net.sf.sdedit.taglet;
 
-import net.sf.sdedit.util.PWriter;
+class SequenceTagletException extends Exception {
 
-import com.sun.javadoc.Tag;
-import com.sun.tools.doclets.Taglet;
+    private static final long serialVersionUID = 1L;
 
-/**
- * 
- * Taglet implementation conforming to tools.jar api as of JDK &gt;=7.
- * 
- */
-public class SequenceTaglet7 extends SequenceTaglet implements Taglet {
+    /**
+     * Appears on the HTML page
+     */
+    private String output;
 
+    String getOutput() {
+        return output;
+    }
 
-	public String toString(Tag tag) {
-		try {
-			return makeString(tag);
-		} catch (SequenceTagletException e) {
-			return e.getOutput();
-		}
-	}
-
-	public String toString(Tag[] tags) {
-		PWriter p = PWriter.create();
-		for (Tag tag : tags) {
-			try {
-				p.println(makeString(tag));
-			} catch (SequenceTagletException e) {
-				p.println(e.getOutput());
-			}
-		}
-		return p.toString();
-	}
-
+    /**
+     * 
+     * @param warning
+     *            the warning that is sent to the doclet
+     * @param output
+     *            the output that appears on the HTML page
+     */
+    SequenceTagletException(String warning, String output) {
+        super(warning);
+        this.output = output;
+    }
 }
