@@ -38,6 +38,8 @@ import javax.swing.JTextField;
 
 public class TextPanel extends JPanel implements KeyListener, ActionListener {
     
+    private static final long serialVersionUID = 9179130308944758277L;
+
     private JLabel label;
     
     private JTextField textField;
