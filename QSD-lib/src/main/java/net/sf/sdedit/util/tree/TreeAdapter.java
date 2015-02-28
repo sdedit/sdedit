@@ -117,7 +117,8 @@ public class TreeAdapter<T> implements TreeModel {
 		return new TreePath(treePath.toArray());
 	}
 	
-	public T getObjectForPath (TreePath path) {
+	@SuppressWarnings("unchecked")
+    public T getObjectForPath (TreePath path) {
 		Node node = (Node) path.getLastPathComponent();
 		return node.t;
 	}
@@ -243,12 +244,14 @@ public class TreeAdapter<T> implements TreeModel {
 		listeners.add(arg0);
 	}
 
-	public Object getChild(Object arg0, int arg1) {
-		Node node = (Node) arg0;
+	@SuppressWarnings("unchecked")
+    public Object getChild(Object arg0, int arg1) {
+        Node node = (Node) arg0;
 		return getNode(children(node)[arg1]);
 	}
 
-	public int getChildCount(Object arg0) {
+	@SuppressWarnings("unchecked")
+    public int getChildCount(Object arg0) {
 		Node node = (Node) arg0;
 		return children(node).length;
 	}
@@ -263,32 +266,12 @@ public class TreeAdapter<T> implements TreeModel {
 		return -1;
 	}
 
-	// public String toString() {
-	// StringWriter sw = new StringWriter();
-	// PrintWriter pw = new PrintWriter(sw);
-	// for (int i = 0; i < getChildCount(this); i++) {
-	// walk((T) getChild(this, i), pw, 0);
-	// }
-	// return sw.toString();
-	//
-	// }
-	//
-	// private void walk(T t, PrintWriter printWriter, int level) {
-	// for (int i = 0; i < level; i++) {
-	// printWriter.print(" ");
-	// }
-	// printWriter.println(t);
-	// for (int i = 0; i < getChildCount(t); i++) {
-	// walk((T) getChild(t, i), printWriter, level + 1);
-	// }
-	//
-	// }
-
 	public Object getRoot() {
 		return root;
 	}
 
-	public boolean isLeaf(Object arg0) {
+	@SuppressWarnings("unchecked")
+    public boolean isLeaf(Object arg0) {
 		return children((Node) arg0, true).length == 0;
 	}
 
