@@ -155,6 +155,7 @@
 			<fileset refid="jarfiles"/>
 		</unjar>
 		<delete dir="${dist}/tmp/libclasses/META-INF" />
+		<delete dir="${dist}/tmp/libclasses/org/freehep/graphicsio/test" />
 
 		<jar destfile="${dist}/sdedit-jar/${jarfile}">
 			<fileset dir="${dist}/tmp/libclasses" />
