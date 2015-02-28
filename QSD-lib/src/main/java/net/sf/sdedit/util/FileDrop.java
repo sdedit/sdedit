@@ -297,6 +297,7 @@ public class FileDrop
                     // over the drag target.
                 }   // end dragOver
 
+                @SuppressWarnings({ "rawtypes", "unchecked" })
                 public void drop( java.awt.dnd.DropTargetDropEvent evt )
                 {   log( out, "FileDrop: drop event." );
                     try
@@ -314,8 +315,6 @@ public class FileDrop
                             // Get a useful list
                             java.util.List fileList = (java.util.List) 
                                 tr.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
-                            java.util.Iterator iterator = fileList.iterator();
-
                             // Convert list to array
                             java.io.File[] filesTemp = new java.io.File[ fileList.size() ];
                             fileList.toArray( filesTemp );
@@ -424,7 +423,7 @@ public class FileDrop
         {   
             boolean support = false;
             try
-            {   Class arbitraryDndClass = Class.forName( "java.awt.dnd.DnDConstants" );
+            {   Class.forName( "java.awt.dnd.DnDConstants" );
                 support = true;
             }   // end try
             catch( Exception e )
@@ -438,7 +437,8 @@ public class FileDrop
     
      // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
      private static String ZERO_CHAR_STRING = "" + (char)0;
-     private static File[] createFileArray(BufferedReader bReader, PrintStream out)
+     @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static File[] createFileArray(BufferedReader bReader, PrintStream out)
      {
         try { 
             java.util.List list = new java.util.ArrayList();
@@ -648,6 +648,7 @@ public class FileDrop
      */
     public static class Event extends java.util.EventObject {
 
+        private static final long serialVersionUID = 1L;
         private java.io.File[] files;
 
         /**
@@ -801,7 +802,7 @@ public class FileDrop
          * @param fetcher The {@link Fetcher} that will return the data object
          * @since 1.1
          */
-        public TransferableObject( Class dataClass, Fetcher fetcher )
+        public TransferableObject( Class<?> dataClass, Fetcher fetcher )
         {   this.fetcher = fetcher;
             this.customFlavor = new java.awt.datatransfer.DataFlavor( dataClass, MIME_TYPE );
         }   // end constructor
