@@ -34,11 +34,9 @@ import net.sf.sdedit.diagram.IPaintDevice;
 import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
-import net.sf.sdedit.editor.EditorHintFactory;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.error.FatalError;
 import net.sf.sdedit.error.SemanticError;
-import net.sf.sdedit.error.SequenceDiagramError;
 import net.sf.sdedit.text.AbstractTextHandler;
 import net.sf.sdedit.text.TextHandler;
 import net.sf.sdedit.ui.PanelGraphicDevice;
@@ -64,12 +62,12 @@ public class SequenceDiagramTextTab extends DiagramTextTab {
 	@Override
 	protected boolean _handleDiagramError(DiagramError error) {
 		if (error == null) {
-			setError(false, "", -1, -1, null);
+			setError(false, "", -1, -1);
 			if (diagram().getFragmentManager().openFragmentsExist()) {
 				setError(
 						true,
 						"Warning: There are open comments. Use [c:<type> <text>]...[/c]",
-						-1, -1, null);
+						-1, -1);
 			}
 
 			int noteNumber = diagram().getNextFreeNoteNumber();
@@ -88,9 +86,7 @@ public class SequenceDiagramTextTab extends DiagramTextTab {
 						+ diagram().getCallerThread() + ": " : "";
 			}
 			setError(false, prefix + error.getMessage(),
-					handler.getLineBegin(), handler.getLineEnd(),
-					EditorHintFactory.createHint(this,
-							(SequenceDiagramError) error));
+					handler.getLineBegin(), handler.getLineEnd());
 		} else {
 			return false;
 		}

@@ -53,7 +53,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -78,7 +77,6 @@ import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Figure;
 import net.sf.sdedit.drawable.LabeledBox;
 import net.sf.sdedit.editor.Editor;
-import net.sf.sdedit.editor.EditorHint;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.editor.plugin.FileHandler;
 import net.sf.sdedit.error.DiagramError;
@@ -112,11 +110,7 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 
     private static final long serialVersionUID = -4105088603920744983L;
 
-    // final private UserInterfaceImpl ui;
-
     final private JLabel errorLabel;
-
-    final private JLabel hintLabel;
 
     final private JLabel statusLabel;
 
@@ -140,8 +134,6 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
      * starts, or -1. See {@linkplain #setError(boolean, String, int, int)}.
      */
     private int errorCharIndex;
-
-    private EditorHint hint;
 
     private JSplitPane splitter;
 
@@ -191,24 +183,13 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
                         return;
                     }
 
-                    if (hint != null
-                            && keyStroke.equals(globalConf
-                                    .getAcceptHintKeyStroke())) {
-                        hint.execute();
-                    } else if (keyStroke.equals(globalConf.getCutKeyStroke())) {
+                    if (keyStroke.equals(globalConf.getCutKeyStroke())) {
                         textArea.cut();
                     } else if (keyStroke.equals(globalConf.getCopyKeyStroke())) {
                         textArea.copy();
                     } else if (keyStroke.equals(globalConf.getPasteKeyStroke())) {
                         textArea.paste();
                     }
-
-                    /*
-                     * else if (keyStroke.equals(globalConf
-                     * .getNextTabKeyStroke())) { ui.nextTab(); } else if
-                     * (keyStroke.equals(globalConf .getPreviousTabKeyStroke()))
-                     * { ui.previousTab(); }
-                     */
                 }
             }
         });
@@ -260,29 +241,6 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
                 }
             }
         });
-        hintLabel = new JLabel("");
-        hintLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 4));
-        hintLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                if (hint != null) {
-                    hintLabel.setCursor(Constants.HAND_CURSOR);
-                }
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                hintLabel.setCursor(Cursor.getDefaultCursor());
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (hint != null) {
-                    hint.execute();
-                }
-
-            }
-        });
 
         changeTimer = new Timer(20 * ConfigurationManager
                 .getGlobalConfiguration().getAutodrawLatency(), this);
@@ -301,7 +259,6 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 
         bottomPanel.add(errorLabel, BorderLayout.CENTER);
         bottomPanel.add(statusLabel, BorderLayout.EAST);
-        bottomPanel.add(hintLabel, BorderLayout.WEST);
         bottomPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 20));
 
         statusPanel.add(bottomPanel, BorderLayout.CENTER);
@@ -546,7 +503,7 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
     }
 
     protected void setError(final boolean warning, final String error, final int begin,
-            final int end, final EditorHint hint) {
+            final int end) {
         invokeLater(new Runnable() {
             public void run() {
                 if (warning) {
@@ -557,13 +514,6 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
                 errorLabel.setText(error);
                 errorCharIndex = begin;
                 textArea.markError(begin, end);
-                if (hint != null) {
-                    hintLabel.setText("<html><u>[" + hint.getCaption() + "]");
-
-                } else {
-                    hintLabel.setText("");
-                }
-                DiagramTextTab.this.hint = hint;
             }
         });
     }
