@@ -43,6 +43,9 @@ Note that it relies on the existence of a local maven repository at
 	<target description="about this ant script" name="about">
 		<echo level="info">
 			<![CDATA[
+	  BEWARE THAT THIS SCRIPT CAN ONLY BE USED IF YOU HAVE ALREADY DOWNLOADED
+	  THE FREEHEP JAR FILES TO YOUR LOCAL MAVEN REPOSITORY!
+			
       Available targets:
       
       - compile
