@@ -143,7 +143,12 @@ public class ScalePanel extends JPanel implements Observer, MouseInputListener {
 
 	public final Action fitWidthAction = new AbstractAction() {
 
-		{
+		/**
+         * 
+         */
+        private static final long serialVersionUID = 2231002575786091241L;
+
+        {
 			putValue(Action.SHORT_DESCRIPTION, "Fit width");
 			putValue(Action.SMALL_ICON, fitWidthIcon);
 			putValue(ManagedAction.ID, "FIT_WIDTH");
@@ -157,7 +162,12 @@ public class ScalePanel extends JPanel implements Observer, MouseInputListener {
 
 	public final Action fitHeightAction = new AbstractAction() {
 
-		{
+		/**
+         * 
+         */
+        private static final long serialVersionUID = -778453888992105228L;
+
+        {
 			putValue(Action.SHORT_DESCRIPTION, "Fit height");
 			putValue(Action.SMALL_ICON, fitHeightIcon);
 			putValue(ManagedAction.ID, "FIT_HEIGHT");
@@ -171,7 +181,12 @@ public class ScalePanel extends JPanel implements Observer, MouseInputListener {
 
 	public final Action fitWindowAction = new AbstractAction() {
 
-		{
+		/**
+         * 
+         */
+        private static final long serialVersionUID = 288375725765949977L;
+
+        {
 			putValue(Action.SHORT_DESCRIPTION, "Fit window");
 			putValue(Action.SMALL_ICON, fitWindowIcon);
 			putValue(ManagedAction.ID, "FIT_WINDOW");
@@ -185,7 +200,12 @@ public class ScalePanel extends JPanel implements Observer, MouseInputListener {
 
 	public final Action normalSizeAction = new AbstractAction() {
 
-		{
+		/**
+         * 
+         */
+        private static final long serialVersionUID = -5840204247566703409L;
+
+        {
 			putValue(Action.SHORT_DESCRIPTION, "Zoom to 100 %");
 			putValue(Action.SMALL_ICON, normalSizeIcon);
 			putValue(ManagedAction.ID, "NORMAL_SIZE");
