@@ -50,19 +50,8 @@ import net.sf.sdedit.ui.components.configuration.DataObject;
 public class DateConfigurator<C extends DataObject> extends
 		Configurator<Date, C> implements FocusListener, KeyListener {
 
-	/*
-	 * public class DateParser { public static void main( String args[] ) {
-	 * DateFormat formater = DateFormat.getDateTimeInstance( ); try { Date date
-	 * = formater.parse( "23.7.2002 12:54:56" ); Calendar cal = new
-	 * GregorianCalendar( TimeZone.getTimeZone("ECT") ); cal.setTime( date );
-	 * 
-	 * DateFormat formater2 = DateFormat.getDateTimeInstance( DateFormat.LONG,
-	 * DateFormat.LONG ); System.out.println( formater2.format( cal.getTime() )
-	 * );
-	 * 
-	 * } catch ( ParseException e ) { System.err.println( e ); } } }
-	 */
-	// private static DateFormat dateFormat = DateFormat.getInstance();
+    private static final long serialVersionUID = -570697480220814586L;
+
 	private DateFormat dateFormat;
 
 	private GregorianCalendar calendar;

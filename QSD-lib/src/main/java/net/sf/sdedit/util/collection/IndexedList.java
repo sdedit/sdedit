@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -604,39 +603,4 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 		}
 	}
 	
-	public static void main (String [] argv) {
-		IndexedList<Integer> list = new IndexedList<Integer> ();
-		list.add(1);
-		list.add(2);
-		list.add(3);
-		Iterator<Integer> i = list.iterator();
-		while (i.hasNext()) {
-			i.next();
-			i.remove();
-		}
-		System.out.println(list);
-		list.add(5);
-		System.out.println(list);
-		list.add(6);
-		System.out.println(list);
-		list.add(7);
-		System.out.println(list);
-		BulkRemoveIterator<Integer> b = list.reverseIterator();
-		b.next();
-		b.next();
-		b.remove(1);
-		System.out.println(list);
-		list.addFirst(0);
-		System.out.println(list);
-		list.add(10);
-		System.out.println(list);
-		List<Integer> rep = Arrays.asList(new Integer [] {12,13,14});
-		list.replace(7, rep);
-		System.out.println(list);
-			
-		
-		
-		
-	}
-
 }
