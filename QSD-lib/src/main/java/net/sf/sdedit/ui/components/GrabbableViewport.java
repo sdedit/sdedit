@@ -48,7 +48,9 @@ import javax.swing.event.MouseInputListener;
  */
 public class GrabbableViewport extends JViewport implements MouseInputListener {
 
-	private static Cursor HAND = new Cursor(Cursor.MOVE_CURSOR);
+    private static final long serialVersionUID = -2824980836373317470L;
+
+    private static Cursor HAND = new Cursor(Cursor.MOVE_CURSOR);
 
 	private static Cursor DFLT = new Cursor(Cursor.DEFAULT_CURSOR);
 	
