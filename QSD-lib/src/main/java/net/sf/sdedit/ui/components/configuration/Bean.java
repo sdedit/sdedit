@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
@@ -232,7 +231,7 @@ public class Bean<T extends DataObject> implements Serializable,
 			return this;
 		}
 		if (name.equals("isA")) {
-			return ((Class) args[0]).isAssignableFrom(dataClass);
+		    return Class.class.cast(args[0]).isAssignableFrom(dataClass);
 		}
 		if (name.equals("cast")) {
 			return proxy;
