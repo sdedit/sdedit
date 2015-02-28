@@ -951,10 +951,18 @@ public class Utilities {
 			klass = obj.getClass();
 		}
 		try {
-			field = klass.getField(name);
+			field = klass.getDeclaredField(name);
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Field not available: "
-					+ klass.getName() + "." + name);
+			try {
+				field = klass.getField(name);
+			} catch (Exception e1) {
+				throw new IllegalArgumentException("Field not available: "
+						+ klass.getName() + "." + name);
+			}
+
+		}
+		if (!field.isAccessible()) {
+			field.setAccessible(true);
 		}
 		Object value;
 		try {

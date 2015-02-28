@@ -191,12 +191,7 @@ public abstract class SequenceTaglet {
 							+ "</font></B>" + code.toString() + "</DD>");
 		}
 
-		try {
-			exporter.export();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return "";
-		}
+		exporter.export();
 		ByteArrayInputStream in = new ByteArrayInputStream(stream.toByteArray());
 		Document svg;
 
@@ -212,58 +207,34 @@ public abstract class SequenceTaglet {
 
 	}
 
-	/**
-	 * @see com.sun.tools.doclets.internal.toolkit.taglets.Taglet#getName()
-	 */
 	public String getName() {
 		return tagName;
 	}
 
-	/**
-	 * @see com.sun.tools.doclets.internal.toolkit.taglets.Taglet#inConstructor()
-	 */
 	public boolean inConstructor() {
 		return true;
 	}
 
-	/**
-	 * @see com.sun.tools.doclets.internal.toolkit.taglets.Taglet#inField()
-	 */
 	public boolean inField() {
 		return true;
 	}
 
-	/**
-	 * @see com.sun.tools.doclets.internal.toolkit.taglets.Taglet#inMethod()
-	 */
 	public boolean inMethod() {
 		return true;
 	}
 
-	/**
-	 * @see com.sun.tools.doclets.internal.toolkit.taglets.Taglet#inOverview()
-	 */
 	public boolean inOverview() {
 		return false;
 	}
 
-	/**
-	 * @see com.sun.tools.doclets.internal.toolkit.taglets.Taglet#inPackage()
-	 */
 	public boolean inPackage() {
 		return true;
 	}
 
-	/**
-	 * @see com.sun.tools.doclets.internal.toolkit.taglets.Taglet#inType()
-	 */
 	public boolean inType() {
 		return true;
 	}
 
-	/**
-	 * @see com.sun.tools.doclets.internal.toolkit.taglets.Taglet#isInlineTag()
-	 */
 	public boolean isInlineTag() {
 		return false;
 	}
