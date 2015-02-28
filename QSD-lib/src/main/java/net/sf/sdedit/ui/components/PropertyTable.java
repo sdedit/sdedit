@@ -58,7 +58,12 @@ import net.sf.sdedit.util.UIUtilities;
 public class PropertyTable extends JComponent implements TableModel,
 		TableCellRenderer, MouseListener {
 
-	private JTable table;
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 6758557956454728031L;
+
+    private JTable table;
 
 	private Map<String, String> properties;
 
