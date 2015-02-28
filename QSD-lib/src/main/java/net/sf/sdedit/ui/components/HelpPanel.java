@@ -72,7 +72,9 @@ public class HelpPanel
     private HelpPanel () {
         pane = new JEditorPane() {
         	
-        	@Override
+            private static final long serialVersionUID = 4431767460703307223L;
+
+            @Override
         	public void paintComponent (Graphics g) {
         		((Graphics2D) g).setRenderingHints(new RenderingHints(
 						RenderingHints.KEY_ANTIALIASING,
