@@ -87,8 +87,8 @@ import net.sf.sdedit.util.MultiIterator;
  * 
  * [c:loop for all object specifications] 
  *   diag:spec=ddp.read
- *   diag:ll.new diag:
- *   head=ll.getHead() 
+ *   diag:ll.new 
+ *   diag:head=ll.getHead() 
  *   diag:pd.add(ll)
  *   diag:line=ll.getView() 
  *   diag:pd.add(line) 
@@ -104,7 +104,8 @@ import net.sf.sdedit.util.MultiIterator;
  * pd:arrow.setLeft(...),setWidth(...) 
  * gui:pd.draw(g2d)
  * [c:loop for all drawable objects in clip]
- *   pd:arrow.draw(g2d) pd:line.draw(g2d)
+ *   pd:arrow.draw(g2d) &
+ *   pd:line.draw(g2d) &
  * [/c]
  * </code>
  */
