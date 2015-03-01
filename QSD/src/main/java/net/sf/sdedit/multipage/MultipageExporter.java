@@ -37,7 +37,7 @@ import javax.swing.JPanel;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.PrintConfiguration;
 import net.sf.sdedit.diagram.DiagramFactory;
-import net.sf.sdedit.diagram.IPaintDevice;
+import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.ui.components.ZoomPane;
 import net.sf.sdedit.ui.impl.DiagramTab;
@@ -112,7 +112,7 @@ public class MultipageExporter extends JPanel {
 	public void init() throws DiagramError {
 		graphicDevice = new MultipagePaintDevice(properties, size);
 
-		IPaintDevice pd = tab.createPaintDevice(graphicDevice);
+		PaintDevice pd = tab.createPaintDevice(graphicDevice);
 		//PaintDevice pd = new PaintDevice(graphicDevice);
 		
 		DiagramFactory factory = tab.createFactory(pd);

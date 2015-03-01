@@ -31,7 +31,7 @@ import java.util.Map;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.DiagramFactory;
-import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SDPaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.server.Exporter;
 import net.sf.sdedit.text.TextHandler;
@@ -149,7 +149,7 @@ public abstract class SequenceTaglet {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		Exporter exporter = Exporter.getExporter("svg", "Landscape", "A4",
 				stream);
-		PaintDevice paintDevice = new PaintDevice(exporter);
+		SDPaintDevice paintDevice = new SDPaintDevice(exporter);
 		DiagramFactory factory = new SequenceDiagramFactory(specification,
 				paintDevice);
 

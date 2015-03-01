@@ -31,7 +31,7 @@ import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.DiagramDataProviderFactory;
 import net.sf.sdedit.diagram.DiagramFactory;
-import net.sf.sdedit.diagram.IPaintDevice;
+import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.diagram.NullPaintDevice;
@@ -65,7 +65,7 @@ public class DiagramProviderToText implements SequenceDiagramDataProvider {
 	}
 
 	public static String getText(final DiagramDataProviderFactory providerFactory) {
-		IPaintDevice ipd = new NullPaintDevice();
+		PaintDevice ipd = new NullPaintDevice();
 		SequenceConfiguration conf = ConfigurationManager
 				.createNewDefaultConfiguration(SequenceConfiguration.class).getDataObject();
 		conf.setThreaded(true);

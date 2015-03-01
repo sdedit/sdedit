@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.DiagramFactory;
-import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SDPaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.server.Exporter;
@@ -52,7 +52,7 @@ public class HelpImageGenerator {
 					try {
 						Exporter exporter = Exporter.getExporter("png",
 								"Landscape", "A4", fos);
-						PaintDevice paintDevice = new PaintDevice(exporter);
+						SDPaintDevice paintDevice = new SDPaintDevice(exporter);
 						DiagramFactory factory = new SequenceDiagramFactory(
 								seq, paintDevice);
 						factory.generateDiagram(conf.getDataObject());

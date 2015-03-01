@@ -152,7 +152,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 	/**
 	 * The container for the drawable objects created for messages etc.
 	 */
-	private final IPaintDevice paintDevice;
+	private final PaintDevice paintDevice;
 
 	/**
 	 * Maps a drawable object onto the state the DiagramDataProvider was in when
@@ -250,7 +250,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 	 *            for storing and drawing the boxes, arrows etc.
 	 */
 	public SequenceDiagram(SequenceConfiguration configuration,
-			SequenceDiagramDataProvider provider, IPaintDevice paintDevice) {
+			SequenceDiagramDataProvider provider, PaintDevice paintDevice) {
 		arrowSize = configuration.getArrowSize();
 		arrowColor = configuration.getArrowColor();
 		messagePadding = configuration.getMessagePadding();
@@ -675,7 +675,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 		this.callerThread = callerThread;
 	}
 
-	public IPaintDevice getPaintDevice() {
+	public PaintDevice getPaintDevice() {
 		return paintDevice;
 	}
 

@@ -30,8 +30,8 @@ import net.sf.sdedit.diagram.AbstractPaintDevice;
 import net.sf.sdedit.diagram.DiagramDataProvider;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.GraphicDevice;
-import net.sf.sdedit.diagram.IPaintDevice;
 import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SDPaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.error.DiagramError;
@@ -94,7 +94,7 @@ public class SequenceDiagramTextTab extends DiagramTextTab {
 	}
 
 	@Override
-	public DiagramFactory createFactory(IPaintDevice paintDevice) {
+	public DiagramFactory createFactory(PaintDevice paintDevice) {
 		return new SequenceDiagramFactory(this, paintDevice);
 	}
 
@@ -112,7 +112,7 @@ public class SequenceDiagramTextTab extends DiagramTextTab {
 			}
 			graphicDevice = ppd;
 		}
-		return new PaintDevice(graphicDevice);
+		return new SDPaintDevice(graphicDevice);
 	}
 
 }

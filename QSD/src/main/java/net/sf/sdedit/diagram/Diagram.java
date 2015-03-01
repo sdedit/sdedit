@@ -32,7 +32,7 @@ import net.sf.sdedit.error.DiagramError;
 
 public interface Diagram extends Constants {
     
-    public IPaintDevice getPaintDevice();
+    public PaintDevice getPaintDevice();
     
     public Drawable getDrawableForState(Object state);
     

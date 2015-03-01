@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.drawable.Line;
 
-public class NullPaintDevice implements IPaintDevice {
+public class NullPaintDevice implements PaintDevice {
 
     private Diagram diagram;
 

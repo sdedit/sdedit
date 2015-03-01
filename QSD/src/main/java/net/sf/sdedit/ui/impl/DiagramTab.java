@@ -55,7 +55,7 @@ import net.sf.sdedit.diagram.Diagram;
 import net.sf.sdedit.diagram.DiagramDataProviderFactory;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.GraphicDevice;
-import net.sf.sdedit.diagram.IPaintDevice;
+import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.drawable.Drawable;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.error.DiagramError;
@@ -286,12 +286,12 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		}
 	}
 	
-	public abstract DiagramFactory createFactory (IPaintDevice paintDevice);
+	public abstract DiagramFactory createFactory (PaintDevice paintDevice);
 	
 	private InputStream getTransferDataVector (String format) throws IOException {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		Exporter exporter = Exporter.getExporter(format, "Landscape", "A0", stream);
-		IPaintDevice paintDevice = createPaintDevice(exporter);
+		PaintDevice paintDevice = createPaintDevice(exporter);
 		DiagramFactory factory = createFactory(paintDevice);
 		try {
 			factory.generateDiagram(getConfiguration().getDataObject());
@@ -308,7 +308,7 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 	
 	private Image getTransferDataBitmap () throws IOException {
 		ImageGraphicsDevice ipd = new ImageGraphicsDevice(false);
-		IPaintDevice paintDevice = createPaintDevice(ipd);
+		PaintDevice paintDevice = createPaintDevice(ipd);
 		DiagramFactory factory = createFactory(paintDevice);
 		try {
 		    factory.generateDiagram(getConfiguration().getDataObject());

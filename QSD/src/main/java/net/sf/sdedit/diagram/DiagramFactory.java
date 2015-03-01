@@ -35,7 +35,7 @@ public interface DiagramFactory {
 
     public abstract DiagramDataProvider getProvider();
 
-    public IPaintDevice getPaintDevice();
+    public PaintDevice getPaintDevice();
 
     public Diagram getDiagram();
 

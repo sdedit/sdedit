@@ -26,7 +26,7 @@ package net.sf.sdedit.drawable;
 
 import java.awt.Graphics2D;
 
-import net.sf.sdedit.diagram.IPaintDevice;
+import net.sf.sdedit.diagram.PaintDevice;
 
 public class Text extends Drawable
 {
@@ -34,9 +34,9 @@ public class Text extends Drawable
     
     private int simpleHeight;
     
-    private IPaintDevice device;
+    private PaintDevice device;
     
-    public Text (String [] text, IPaintDevice device) {
+    public Text (String [] text, PaintDevice device) {
     	super(device.getDiagram());
         this.text = text;
         this.device = device;

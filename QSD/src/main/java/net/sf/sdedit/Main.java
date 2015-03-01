@@ -38,7 +38,7 @@ import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.DiagramFactory;
-import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SDPaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
 import net.sf.sdedit.editor.DiagramFileHandler;
 import net.sf.sdedit.editor.Editor;
@@ -269,7 +269,7 @@ public class Main implements Constants {
 				configure(conf, cmd);
 				if (type.equals("png")) {
 					ImageGraphicsDevice graphicDevice = new ImageGraphicsDevice();
-					PaintDevice paintDevice = new PaintDevice(graphicDevice);
+					SDPaintDevice paintDevice = new SDPaintDevice(graphicDevice);
 					DiagramFactory factory = new SequenceDiagramFactory(text,
 							paintDevice);
 					factory.generateDiagram(conf.getDataObject());
@@ -277,7 +277,7 @@ public class Main implements Constants {
 				} else {
 					Exporter graphicDevice = Exporter.getExporter(type,
 							orientation, format, out);
-					PaintDevice paintDevice = new PaintDevice(graphicDevice);
+					SDPaintDevice paintDevice = new SDPaintDevice(graphicDevice);
 					DiagramFactory factory = new SequenceDiagramFactory(text,
 							paintDevice);
 					factory.generateDiagram(conf.getDataObject());

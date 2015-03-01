@@ -26,7 +26,7 @@ package net.sf.sdedit.diagram;
 import java.awt.Font;
 
 
-public abstract class AbstractPaintDevice implements IPaintDevice {
+public abstract class AbstractPaintDevice implements PaintDevice {
     
     private final GraphicDevice graphicDevice;
     

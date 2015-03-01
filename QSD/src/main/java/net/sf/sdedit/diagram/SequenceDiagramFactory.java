@@ -36,7 +36,7 @@ public class SequenceDiagramFactory implements DiagramFactory,
 
     private String text;
 
-    private IPaintDevice paintDevice;
+    private PaintDevice paintDevice;
 
     private DiagramDataProviderFactory providerFactory;
 
@@ -45,19 +45,19 @@ public class SequenceDiagramFactory implements DiagramFactory,
     private DiagramDataProvider provider;
 
     public SequenceDiagramFactory(DiagramDataProviderFactory providerFactory,
-            IPaintDevice paintDevice) {
+            PaintDevice paintDevice) {
         this.providerFactory = providerFactory;
         this.paintDevice = paintDevice;
     }
 
-    public SequenceDiagramFactory(String text, IPaintDevice paintDevice) {
+    public SequenceDiagramFactory(String text, PaintDevice paintDevice) {
         this.paintDevice = paintDevice;
         this.providerFactory = this;
         this.text = text;
     }
 
     protected SequenceDiagram newDiagram(SequenceConfiguration configuration,
-            DiagramDataProvider provider, IPaintDevice paintDevice) {
+            DiagramDataProvider provider, PaintDevice paintDevice) {
         return new SequenceDiagram(configuration,
                 (SequenceDiagramDataProvider) provider, paintDevice);
     }
@@ -97,7 +97,7 @@ public class SequenceDiagramFactory implements DiagramFactory,
         return provider;
     }
 
-    public IPaintDevice getPaintDevice() {
+    public PaintDevice getPaintDevice() {
         return paintDevice;
     }
 

@@ -36,7 +36,7 @@ import javax.swing.Action;
 
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.diagram.DiagramFactory;
-import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.SDPaintDevice;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.ui.ImageGraphicsDevice;
 import net.sf.sdedit.ui.UserInterface;
@@ -77,7 +77,7 @@ public class SaveImageAction extends TabAction<DiagramTab> {
 	 */
 	void saveImage(DiagramTab tab) throws IOException {
 		ImageGraphicsDevice ipd = new ImageGraphicsDevice();
-		PaintDevice paintDevice = new PaintDevice(ipd);
+		SDPaintDevice paintDevice = new SDPaintDevice(ipd);
 		Configuration conf = tab.getConfiguration().getDataObject();
 		try {
 		    DiagramFactory factory = tab.createFactory(paintDevice);
