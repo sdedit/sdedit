@@ -279,5 +279,28 @@ s:f.save()
 s:&gt;m.done()&amp;</pre>
 	</div>
 	
+<h2>
+		<a name="reuse_space">Reusing space</a>
+</h2>
+	
+	<div class="sd">
+	<img name="reuse_space" src="sd/reuse_space.png"/>
+	<pre>m:Master
+/s1:Servant[x]
+/s2:Servant[x]
+/s3:NoReuseSpace[xf]
+/s4:Servant[x]
+
+
+m:s1.new()
+m:s1.executeTask()
+m:s2.new()
+m:s2.executeTask()
+m:s3.new()
+m:s3.executeTask()
+m:s4.new()
+m:s4.executeTask()
+</pre>
+	</div>
 </body>
 </html>
