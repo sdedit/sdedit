@@ -55,39 +55,35 @@ body {
 <title>Quick Sequence Diagram Editor tutorial</title>
 </head>
 <body>
-	<h2>
-		<a name="basic_example">A basic example</a>
-	</h2>
-  
-    <p>
-      We are starting with a simple example, involving only two
-      objects and a single message. A master object asks a servant object to execute
-      a task. The servant finishes the task and answers "done".
-    </p>
-    <p>
-      The text starts with two lines declaring the objects (name of the object
-      followed by : and the class name). The
-      object declaration is terminated by an empty line. What follows is the
-      description of the single message in the form: caller:answer=callee.message.
-    </p>
-	
-	<div class="sd">
-		<img name="basic" src="sd/basic.png"/>
-		<pre>m:Master
+  <h2>
+    <a name="basic_example">A basic example</a>
+  </h2>
+
+  <p>We are starting with a simple example, involving only two
+    objects and a single message. A master object asks a servant object
+    to execute a task. The servant finishes the task and answers "done".
+  </p>
+  <p>The text starts with two lines declaring the objects (name of
+    the object followed by : and the class name). The object declaration
+    is terminated by an empty line. What follows is the description of
+    the single message in the form: caller:answer=callee.message.</p>
+
+  <div class="sd">
+    <img name="basic" src="sd/basic.png"/>
+    <pre>m:Master
 s:Servant
 			
 m:done=s.executeTask()</pre>
-	</div>
-  
-    <h2>
+  </div>
+
+  <h2>
     <a name="anonymous">Anonymous objects</a>
   </h2>
-  
-    <p>
-      Every object has to have its own name. They can however be declared
-      anonymous [a], so their name will not appear on the diagram.
-    </p>
-  
+
+  <p>Every object has to have its own name. They can however be
+    declared anonymous [a], so their name will not appear on the
+    diagram.</p>
+
   <div class="sd">
     <img name="anonymous" src="sd/anonymous.png"/>
     <pre>m:Master[a]
@@ -95,52 +91,46 @@ s:Servant
       
 m:done=s.executeTask()</pre>
   </div>
-	
-	<h2>
-		<a name="stacking">Stacking</a>
-	</h2>
-  
-    <p>
-      Now we assume that the servant object needs some information from
-      the master in order to complete its task, so it makes a call back to
-      the master, who is reached by the program
-      flow for the second time then. This is represented by
-      a second lifeline stacked upon the master's first lifeline.
-    </p>
-    	
-	<div class="sd">
-	<img name="stacking" src="sd/stacking.png"/>
-	<pre>m:Master[a]
+
+  <h2>
+    <a name="stacking">Stacking</a>
+  </h2>
+
+  <p>Now we assume that the servant object needs some information
+    from the master in order to complete its task, so it makes a call
+    back to the master, who is reached by the program flow for the
+    second time then. This is represented by a second lifeline stacked
+    upon the master's first lifeline.</p>
+
+  <div class="sd">
+    <img name="stacking" src="sd/stacking.png"/>
+    <pre>m:Master[a]
 s:Servant
 d:Database
 
 m:done=s.executeTask()
 s:information=m.getSomeInformation()
 m:result=d.query()</pre>
-	</div>
-	
-	
-		<h2>
-		<a name="levels">Message levels</a>
-	</h2>
-	
-    <p>
-    In the prior example, right after the servant asks the master for
-    an information, the latter queries a database, presumably for
-    finding the required information.
-    </p>
-    <p>
-    But the master could as well give the information instantly and query
-    the database thereafter, for finding out something else.
-    In this case the getSomeInformation()
-    call must be terminated before the query is made. This can be achieved
-    by a "[1]" behind the caller name, which means: terminate 1
-    level of execution in which the object is involved, then send the message.
-    </p>
-  
-	<div class="sd">
-	<img name="levels" src="sd/levels.png"/>
-	<pre>m:Master[a]
+  </div>
+
+
+  <h2>
+    <a name="levels">Message levels</a>
+  </h2>
+
+  <p>In the prior example, right after the servant asks the master
+    for an information, the latter queries a database, presumably for
+    finding the required information.</p>
+  <p>But the master could as well give the information instantly and
+    query the database thereafter, for finding out something else. In
+    this case the getSomeInformation() call must be terminated before
+    the query is made. This can be achieved by a "[1]" behind the caller
+    name, which means: terminate 1 level of execution in which the
+    object is involved, then send the message.</p>
+
+  <div class="sd">
+    <img name="levels" src="sd/levels.png"/>
+    <pre>m:Master[a]
 s:Servant
 d:Database
 
@@ -148,31 +138,31 @@ m:done=s.executeTask()
 s:information=m.getSomeInformation()
 m[1]:result=d.query()
 </pre>
-	</div>
-	
-    <h2>
-		<a name="constructor">Constructor</a>
-	</h2>
-	
-	<div class="sd">
-	<img name="constructor" src="sd/constructor.png"/>
-	<pre>m:Master
+  </div>
+
+  <h2>
+    <a name="constructor">Constructor</a>
+  </h2>
+
+  <div class="sd">
+    <img name="constructor" src="sd/constructor.png"/>
+    <pre>m:Master
 s:Servant
 /f:File
 
 m:done=s.executeTask()
 s:f.new()
 </pre>
-	</div>
-	
+  </div>
 
-	<h2>
-		<a name="destructor">Destructor</a>
-	</h2>
-	
-	<div class="sd">
-	<img name="destructor" src="sd/destructor.png"/>
-	<pre>m:Master[a]
+
+  <h2>
+    <a name="destructor">Destructor</a>
+  </h2>
+
+  <div class="sd">
+    <img name="destructor" src="sd/destructor.png"/>
+    <pre>m:Master[a]
 s:Servant
 /f:File
 
@@ -181,15 +171,15 @@ s:f.new()
 s:f.save()
 s:f.destroy()
 </pre>
-	</div>
-	
-	<h2>
-		<a name="automatic">Automatic object</a>
-	</h2>
-	
-	<div class="sd">
-	<img name="automatic" src="sd/automatic.png"/>
-	<pre>m:Master[a]
+  </div>
+
+  <h2>
+    <a name="automatic">Automatic object</a>
+  </h2>
+
+  <div class="sd">
+    <img name="automatic" src="sd/automatic.png"/>
+    <pre>m:Master[a]
 s:Servant
 /f:File[x]
 
@@ -198,15 +188,15 @@ s:f.new()
 s:f.save()
 m:s.destroy()
 </pre>
-	</div>
-	
-	<h2>
-		<a name="thread">Threads</a>
-	</h2>
-	
-	<div class="sd">
-	<img name="thread" src="sd/thread.png"/>
-	<pre>m:Master
+  </div>
+
+  <h2>
+    <a name="thread">Threads</a>
+  </h2>
+
+  <div class="sd">
+    <img name="thread" src="sd/thread.png"/>
+    <pre>m:Master
 s:Servant
 /f:File[x]
 d:Database
@@ -217,15 +207,15 @@ m:d.query()
 s:f.save()
 s:m.done()
 </pre>
-	</div>
-	
-	<h2>
-		<a name="return">Returning instantly</a>
-	</h2>
-	
-	<div class="sd">
-	<img name="return" src="sd/return.png"/>
-	<pre>m:Master
+  </div>
+
+  <h2>
+    <a name="return">Returning instantly</a>
+  </h2>
+
+  <div class="sd">
+    <img name="return" src="sd/return.png"/>
+    <pre>m:Master
 s:Servant
 /f:File[x]
 d:Database
@@ -236,15 +226,15 @@ m:d.query()&amp;
 s:f.save()
 s:m.done()
 </pre>
-	</div>
-	
-	<h2>
-		<a name="signal">Signals</a>
-	</h2>
-	
-	<div class="sd">
-	<img name="signal" src="sd/signal.png"/>
-	<pre>m:Master
+  </div>
+
+  <h2>
+    <a name="signal">Signals</a>
+  </h2>
+
+  <div class="sd">
+    <img name="signal" src="sd/signal.png"/>
+    <pre>m:Master
 s:Servant
 /f:File[x]
 d:Database
@@ -255,15 +245,15 @@ m:d.query()&amp;
 s:f.save()
 s:&gt;m.done()&amp;
 </pre>
-	</div>
-	
-<h2>
-		<a name="comment">Comments</a>
-</h2>
-	
-	<div class="sd">
-	<img name="comment" src="sd/comment.png"/>
-	<pre>m:Master
+  </div>
+
+  <h2>
+    <a name="comment">Comments</a>
+  </h2>
+
+  <div class="sd">
+    <img name="comment" src="sd/comment.png"/>
+    <pre>m:Master
 s:Servant
 /f:File[x]
 d:Database
@@ -277,15 +267,15 @@ of the task to a file.
 *1
 s:f.save()
 s:&gt;m.done()&amp;</pre>
-	</div>
-	
-<h2>
-		<a name="reuse_space">Reusing space</a>
-</h2>
-	
-	<div class="sd">
-	<img name="reuse_space" src="sd/reuse_space.png"/>
-	<pre>m:Master
+  </div>
+
+  <h2>
+    <a name="reuse_space">Reusing space</a>
+  </h2>
+
+  <div class="sd">
+    <img name="reuse_space" src="sd/reuse_space.png"/>
+    <pre>m:Master
 /s1:Servant[x]
 /s2:Servant[x]
 /s3:NoReuseSpace[xf]
@@ -301,6 +291,119 @@ m:s3.executeTask()
 m:s4.new()
 m:s4.executeTask()
 </pre>
-	</div>
+  </div>
+
+  <h2>
+    <a name="async1">Actors</a>
+  </h2>
+  <p><a href="http://stackoverflow.com/questions/1850096/using-quick-sequence-diagram-editor-for-sequence-diagrams">
+  http://stackoverflow.com/questions/1850096/using-quick-sequence-diagram-editor-for-sequence-diagrams
+  </a></p>
+  <p>When a new thread is started (and a message from an user always
+    starts a new thread) it does not stop until it is explicitly stopped
+    or until the diagram ends. E.g. atm:stop terminates the atm thread</p>
+  <p>here a first attempt (everything in multithreaded mode):</p>
+
+
+  <div class="sd">
+    <img name="async1" src="sd/async1.png"/>
+    <pre>al:Actor
+bill:Actor
+atm:ATM[a]
+bank:Bank[a]
+
+al:atm.give me $10
+atm:al has $3=bank.check al's account balance
+atm:al.you only have $3
+atm:stop
+
+bill:atm.give me $20
+atm:bill has $765=bank.check bill's account balance
+atm:yes I'm sure, bill has $765=bank.hmm are you sure?
+atm:bill.here's $20, now go away
+atm:great, he's a cool dude=bank.I just gave Bill $20</pre>
+  </div>
+
+  <h2>
+    <a name="async2">Another version with asynchronous messages</a>
+  </h2>
+  <p>(arguably the messages should be asynchronous, since they are
+    transmitted over the network. Anyway now all arrows look the same)</p>
+  <p>"&gt;" at the start of a message starts a new thread (all
+    messages from users and processes start a new thread by default.)</p>
+  <p>"&amp;" at the end means that the call returns immediately, and
+    the new thread is not shown. you can use this to simulate sending
+    messages to existing threads. (all messages TO users and processes
+    always return immediately by default. )</p>
+
+  <div class="sd">
+    <img name="async2" src="sd/async2.png"/>
+    <pre>al:Actor
+bill:Actor
+atm:ATM[a]
+bank:Bank[a]
+
+al:atm.give me $10
+atm:&gt;bank.check al's account balance
+bank:&gt;atm.al has $3&amp;
+bank:stop
+atm:al.you only have $3
+atm:stop
+
+bill:atm.give me $20
+atm:&gt;bank.check bill's account balance
+bank:&gt;atm.bill has $765&amp;
+bank:stop
+
+atm:&gt;bank.hmm are you sure?
+bank:&gt;atm.yes I'm sure, bill has $765&amp;
+bank:stop
+
+atm:bill.here's $20, now go away
+atm:&gt;bank.I just gave Bill $20
+bank:&gt;atm.great, he's a cool dude&amp;
+bank:stop</pre>
+  </div>
+
+  <h2>
+    <a name="async3">The full example with all the wisecracks</a>
+  </h2>
+  <p>it is unclear from the example when exactly a thread in ATM
+    should stop. ATM seems to be acting more like a user or process, not
+    an object. So the example does not necessarily make sense</p>
+  <div class="sd">
+    <img name="async3" src="sd/async3.png"/>
+    <pre>al:Actor
+bill:Actor
+atm:ATM[a]
+bank:Bank[a]
+
+al:atm.give me $10
+atm:al has $3=bank.check al's account balance
+
+al:atm.what time is it
+atm:al.it's now
+atm:stop
+
+atm:al.stop bugging me
+atm:al.you only have $3
+
+atm:bill.and don't you open your mouth
+bill:atm.who asked you?&amp;
+atm:stop
+
+bill:atm.give me $20
+al:atm.hey, I'm not finished!&amp;
+atm:bill has $765=bank.check bill's account balance
+atm:yes I'm sure, bill has $765=bank.hmm are you sure?
+atm:bill.here's $20, now go away
+atm:great, he's a cool dude=bank.I just gave Bill $20
+atm:_
+atm:stop
+
+al:atm.what about my $10?
+atm:al.read my lips: you only have $3</pre>
+  </div>
+
 </body>
 </html>
