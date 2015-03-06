@@ -38,7 +38,6 @@ import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -89,14 +88,14 @@ public class DocUtil {
 				factory.setFeature(
 						"http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
 						false);
-			} catch (ParserConfigurationException pce) {
+			} catch (Throwable pce) {
 				System.err.println("Warning: " + pce.getMessage());
 			}
 			try {
 				factory.setFeature(
 						"http://apache.org/xml/features/nonvalidating/load-external-dtd",
 						false);
-			} catch (ParserConfigurationException pce) {
+			} catch (Throwable pce) {
 				System.err.println("Warning: " + pce.getMessage());
 			}
 
