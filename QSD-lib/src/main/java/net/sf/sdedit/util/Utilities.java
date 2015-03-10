@@ -1076,16 +1076,23 @@ public class Utilities {
 		int i;
 		for (i = 0; i < methods.length; i++) {
 			Method m = methods[i];
-			Class<?>[] classes = m.getParameterTypes();
-			boolean match = m.getName().equals(name)
-					&& classes.length == args.length;
-			for (int j = 0; match && j < classes.length; j++) {
-				match = classes[j].isAssignableFrom(args[j].getClass())
-						|| primitiveClasses.get(classes[j]) == args[j]
-								.getClass();
-			}
-			if (match) {
-				return m;
+			if (m.getName().equals(name)) {
+				Class<?>[] classes = m.getParameterTypes();
+				if (args == null) {
+					if (classes.length == 0) {
+						return m;
+					}
+				} else {
+					boolean match = args.length == classes.length;
+					for (int j = 0; match && j < args.length; j++) {
+						match = classes[j].isAssignableFrom(args[j].getClass())
+								|| primitiveClasses.get(classes[j]) == args[j]
+										.getClass();
+					}
+					if (match) {
+						return m;
+					}
+				}
 			}
 		}
 		return null;
