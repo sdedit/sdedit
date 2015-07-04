@@ -36,8 +36,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -110,6 +113,10 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	private ToolBar toolbar;
 
 	private PreferencesUI prefUI;
+	
+	private Timer timer;
+	
+	private Map<Runnable,UITimerTask> timerTasks;
 
 	static {
 		if (OS.TYPE != OS.Type.WINDOWS) {
@@ -152,6 +159,21 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		toolbar.setFloatable(false);
 
 		new FileDrop(this, this);
+		timer = new Timer(true);
+		timerTasks = new IdentityHashMap<Runnable, UITimerTask>();
+	}
+	
+	public void addTask (Runnable task, int period) {
+		UITimerTask tt = new UITimerTask(task);
+		timerTasks.put(task, tt);
+		timer.schedule(tt, 0, period);
+	}
+	
+	public void removeTask (Runnable task) {
+		UITimerTask tt = timerTasks.get(task);
+		if (tt != null) {
+			tt.cancel();
+		}
 	}
 
 	public void addListener(UserInterfaceListener listener) {
