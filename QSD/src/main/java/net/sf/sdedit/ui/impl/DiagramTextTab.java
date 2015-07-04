@@ -792,5 +792,22 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
     public boolean isIgnoreChanges() {
         return ignoreChanges;
     }
-
+    
+	protected void fileChanged(String text, Bean<? extends Configuration> conf) {
+		if (!text.equals(code) || !conf.equals(this.getConfiguration())) {
+			if (!globalConf.isAlwaysReloadChangedFiles()) {
+				String opt = get_UI().getOption("The file has changed. Do you want to reload it?", "No", "Always", "Yes");
+				if ("No".equals(opt)) {
+					return;
+				}
+				if ("Always".equals(opt)) {
+					globalConf.setAlwaysReloadChangedFiles(true);
+				}
+			}
+			setConfiguration(conf);
+			textArea.setText(text);
+			this.code = text;
+			setClean(true);			
+		}
+	}
 }
