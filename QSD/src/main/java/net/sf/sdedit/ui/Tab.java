@@ -29,7 +29,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.editor.Actions;
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
@@ -54,8 +57,10 @@ import net.sf.sdedit.ui.components.ZoomPane;
 import net.sf.sdedit.ui.components.Zoomable;
 import net.sf.sdedit.ui.components.buttons.ActionManager;
 import net.sf.sdedit.ui.components.buttons.Activator;
+import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.impl.TabContainerListener;
 import net.sf.sdedit.ui.impl.UserInterfaceImpl;
+import net.sf.sdedit.util.DocUtil.XMLException;
 import net.sf.sdedit.util.Pair;
 import net.sf.sdedit.util.Ref;
 
@@ -74,7 +79,7 @@ import net.sf.sdedit.util.Ref;
  */
 @SuppressWarnings("serial")
 public abstract class Tab extends JPanel implements Stainable,
-		TabContainerListener {
+		TabContainerListener, Runnable {
 
 	private static ImageIcon cleanIcon;
 
@@ -103,6 +108,8 @@ public abstract class Tab extends JPanel implements Stainable,
 	private String title;
 
 	private int id;
+
+	private long lastModified;
 
 	static {
 		cleanIcon = Icons.getIcon("close");
@@ -134,6 +141,7 @@ public abstract class Tab extends JPanel implements Stainable,
 		addTabListener(ui);
 		stainedListeners = new LinkedList<StainedListener>();
 		clean = true;
+		ui.addTask(this, 500);
 	}
 
 	public void setId(int id) {
@@ -223,11 +231,13 @@ public abstract class Tab extends JPanel implements Stainable,
 
 		if (getFileHandler() != null) {
 
-			actionManager.overload(faProvider.getSaveAction(getFileHandler(),
-					ui), faProvider.getSaveActivator);
+			actionManager.overload(
+					faProvider.getSaveAction(getFileHandler(), ui),
+					faProvider.getSaveActivator);
 
-			actionManager.overload(faProvider.getSaveAsAction(getFileHandler(),
-					ui), faProvider.getSaveActivator);
+			actionManager.overload(
+					faProvider.getSaveAsAction(getFileHandler(), ui),
+					faProvider.getSaveActivator);
 		}
 	}
 
@@ -272,6 +282,11 @@ public abstract class Tab extends JPanel implements Stainable,
 				}
 			});
 			this.clean = clean;
+			synchronized (this) {
+				if (file != null) {
+					lastModified = file.lastModified();
+				}				
+			}
 		}
 	}
 
@@ -283,8 +298,9 @@ public abstract class Tab extends JPanel implements Stainable,
 		return file;
 	}
 
-	public void setFile(File file) {
+	public synchronized void setFile(File file) {
 		this.file = file;
+		this.lastModified = file.lastModified();
 		if (file != null) {
 			setTitle(file.getName());
 		}
@@ -348,6 +364,7 @@ public abstract class Tab extends JPanel implements Stainable,
 			}
 			listeners.clear();
 			stainedListeners.clear();
+			ui.removeTask(this);
 			return true;
 		}
 		return false;
@@ -376,10 +393,10 @@ public abstract class Tab extends JPanel implements Stainable,
 		}
 
 		public void actionPerformed(ActionEvent e) {
-		    if (Tab.this.canClose()) {
-		        Tab.this.close(true);    
-		    }
-			
+			if (Tab.this.canClose()) {
+				Tab.this.close(true);
+			}
+
 		}
 	};
 
@@ -397,12 +414,46 @@ public abstract class Tab extends JPanel implements Stainable,
 
 	}
 
+	public final void run() {
+		if (getFileHandler() != null) {
+			boolean changed = false;
+			synchronized (this) {
+				if (file != null) {
+					if (file.lastModified() > lastModified) {
+						changed = true;
+						lastModified = file.lastModified();
+					}
+				}
+			}
+			if (changed) {
+				try {
+					InputStream is = new FileInputStream(file);
+					try {
+						Pair<String, Bean<? extends Configuration>> x = getFileHandler()
+								.load(is, "utf-8");
+						fileChanged(x.getFirst(), x.getSecond());
+					} finally {
+						is.close();
+					}
+				} catch (IOException e) {
+					ui.errorMessage(e, "Cannot load file", "cannot load file");
+				} catch (XMLException e) {
+					ui.errorMessage(e, "Cannot load file", "cannot load file");
+				}
+			}
+		}
+	}
+
+	protected void fileChanged(String text, Bean<? extends Configuration> conf) {
+				
+	}
+
 	protected abstract void _getContextActions(List<Action> actionList);
 
 	protected abstract List<Pair<Action, Activator>> getOverloadedActions();
 
 	public abstract FileHandler getFileHandler();
-	
-	public abstract String getCategory ();
+
+	public abstract String getCategory();
 
 }
