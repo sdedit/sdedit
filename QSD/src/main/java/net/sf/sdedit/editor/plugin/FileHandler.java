@@ -25,10 +25,15 @@ package net.sf.sdedit.editor.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
+import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
+import net.sf.sdedit.ui.components.configuration.Bean;
+import net.sf.sdedit.util.DocUtil;
+import net.sf.sdedit.util.Pair;
 
 /**
  * A <tt>FileHandler</tt> is responsible for loading and storing files
@@ -120,5 +125,8 @@ public interface FileHandler {
 	public boolean canLoad();
 
 	public boolean canSave();
+	
+	public Pair<String, Bean<? extends Configuration>> load(InputStream stream,
+			String encoding) throws IOException, DocUtil.XMLException;
 
 }
