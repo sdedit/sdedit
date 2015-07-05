@@ -34,8 +34,6 @@ import net.sf.sdedit.drawable.Strokes.StrokeType;
 
 public class LabeledBox extends Drawable {
 
-    private String label;
-
     private boolean underlined;
 
     private int headWidth;
@@ -56,6 +54,7 @@ public class LabeledBox extends Drawable {
         setTop(y);
         this.underlined = underlined;
         this.lifeline = lifeline;
+        String label;
         if (lifeline.isExternal()) {
             label = "";
         } else if (!_label.equals("")) {
@@ -65,11 +64,18 @@ public class LabeledBox extends Drawable {
         } else {
             label = lifeline.getName() + ":" + lifeline.getType();
         }
+        setLabel(label.split("\\\\n"));
         SequenceConfiguration conf = lifeline.getDiagram().getConfiguration();
         headWidth = conf.getHeadWidth();
         headHeight = conf.getHeadHeight();
         padding = conf.getHeadLabelPadding();
-        textWidth = lifeline.getDiagram().getPaintDevice().getTextWidth(label);
+        textWidth = 0;
+        for (String l : getLabel()) {
+        	int w = lifeline.getDiagram().getPaintDevice().getTextWidth(l);
+        	if (w > textWidth) {
+        		textWidth = w;
+        	}
+        }
         if (lifeline.isExternal()) {
             setWidth(lifeline.getDiagram().mainLifelineWidth);
         } else {
@@ -77,7 +83,8 @@ public class LabeledBox extends Drawable {
         }
         stroke = lifeline.isAlwaysActive() ? Strokes.getStroke(
                 StrokeType.SOLID, 2) : Strokes.getStroke(StrokeType.SOLID, 1);
-        setHeight(headHeight + 4);
+        int extraHeight = (getLabel().length - 1) * lifeline.getDiagram().getPaintDevice().getTextHeight();
+        setHeight(headHeight + 4 + extraHeight);
 
     }
 
@@ -89,6 +96,8 @@ public class LabeledBox extends Drawable {
         int axis = getLeft() + getWidth() / 2;
         int top = getTop();
         int width = getWidth();
+        
+        int headHeight = getHeight() - 4;
 
         if (lifeline.getDiagram().getConfiguration()
                 .isShouldShadowParticipants()) {
@@ -108,10 +117,15 @@ public class LabeledBox extends Drawable {
 
         int baseLine = top + headHeight / 2;
 
+        int textHeight = lifeline.getDiagram().getPaintDevice().getTextHeight();
+        
+        baseLine += (getLabel().length-1)*textHeight;
+        
         if (underlined) {
             g2d.drawLine(left, baseLine + 2, left + textWidth, baseLine + 2);
         }
-        g2d.drawString(label, left, baseLine);
+        
+        drawMultilineString(g2d, left, baseLine, lifeline.getDiagram().getConfiguration().getLabeledBoxBgColor());
     }
 
     public void computeLayoutInformation() {
