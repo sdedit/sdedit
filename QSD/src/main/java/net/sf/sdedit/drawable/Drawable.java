@@ -73,6 +73,10 @@ public abstract class Drawable implements Constants {
 		this.label = label;
 	}
 	
+	protected String[] getLabel() {
+		return label;
+	}
+	
     protected int textWidth() {
         return textWidth(false);
     }
