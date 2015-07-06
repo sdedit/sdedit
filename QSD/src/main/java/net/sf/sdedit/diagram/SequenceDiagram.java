@@ -904,8 +904,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 	}
 
 	public List<String> getSuggestions(String prefix) {
-		String regexp = "^" + prefix.replaceAll("\\*", ".*") + ".*$";
-		regexp = Pattern.quote(regexp);
+		String regexp = "^" + Pattern.quote(prefix.replaceAll("\\*", ".*")) + ".*$";
 		Pattern pattern = Pattern.compile(regexp);
 		List<String> suggestions = new LinkedList<String>();
 		for (Lifeline lifeline : this) {
