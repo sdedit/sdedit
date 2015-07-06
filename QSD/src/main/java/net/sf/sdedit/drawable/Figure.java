@@ -38,7 +38,6 @@ import net.sf.sdedit.drawable.Strokes.StrokeType;
  * 
  */
 public class Figure extends Drawable {
-    private String label;
 
     private int textHeight;
 
@@ -67,19 +66,26 @@ public class Figure extends Drawable {
     public Figure(Lifeline actor, String _label, int y, boolean underline) {
     	super(actor.getDiagram());
         setTop(y);
+        String lab;
         if (!_label.equals("")) {
-            this.label = _label;
+            lab = _label;
         } else {
-            label = actor.getName();
+            lab = actor.getName();
         }
+        setLabel(lab.split("\\\\n"));
         this.underline = underline;
         textHeight = actor.getDiagram().getPaintDevice().getTextHeight();
-        textWidth = actor.getDiagram().getPaintDevice().getTextWidth(label);
+        for (String l : getLabel()) {
+        	int tw = actor.getDiagram().getPaintDevice().getTextWidth(l);
+        	if (tw > textWidth) {
+        		textWidth = tw;
+        	}
+        }
         int width = Math.max(actor.getDiagram().getConfiguration()
                 .getActorWidth(), textWidth);
         setWidth(width);
         actorHeight = actor.getDiagram().getConfiguration().getHeadHeight();
-        setHeight(textHeight + actorHeight + 3);
+        setHeight(actorHeight + 3 + getLabel().length*textHeight);
         actorWidth = actor.getDiagram().getConfiguration().getActorWidth();
         shouldShadow = actor.getDiagram().getConfiguration()
                 .isShouldShadowParticipants();
@@ -89,16 +95,12 @@ public class Figure extends Drawable {
      * @see net.sf.sdedit.drawable.Drawable#drawObject(java.awt.Graphics2D)
      */
     protected void drawObject(Graphics2D g2d) {
+    	drawMultilineString(g2d,
+        		getLeft() + getWidth() / 2 - textWidth / 2,
+        		getTop() + getHeight() - 3,
+        		Color.WHITE, true, underline);
         renderActor(g2d, getTop(), getTop() + actorHeight - 2, getLeft()
                 + getWidth() / 2, actorWidth);
-
-        g2d.drawString(label, getLeft() + getWidth() / 2 - textWidth / 2,
-                getTop() + getHeight() - 3);
-        if (underline) {
-            g2d.drawLine(getLeft() + getWidth() / 2 - textWidth / 2, getTop()
-                    + getHeight() - 2, getLeft() + getWidth() / 2 + textWidth
-                    / 2, getTop() + getHeight() - 2);
-        }
     }
 
     private void renderActor(Graphics2D g, int from, int to, int axis, int width) {
