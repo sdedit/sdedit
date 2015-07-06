@@ -119,13 +119,11 @@ public class LabeledBox extends Drawable {
 
         int textHeight = lifeline.getDiagram().getPaintDevice().getTextHeight();
         
-        baseLine += (getLabel().length-1)*textHeight;
-        
-        if (underlined) {
-            g2d.drawLine(left, baseLine + 2, left + textWidth, baseLine + 2);
+        if (getLabel().length > 1) {
+            baseLine = top + 2 + getLabel().length*textHeight;    	
         }
         
-        drawMultilineString(g2d, left, baseLine, lifeline.getDiagram().getConfiguration().getLabeledBoxBgColor());
+        drawMultilineString(g2d, left, baseLine, lifeline.getDiagram().getConfiguration().getLabeledBoxBgColor(), true, underlined);
     }
 
     public void computeLayoutInformation() {
