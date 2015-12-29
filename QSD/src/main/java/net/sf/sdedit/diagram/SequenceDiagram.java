@@ -328,6 +328,10 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 	 *             if a message or object specification is semantically wrong
 	 */
 	public void generate() throws SemanticError, SyntaxError {
+		generate(true);
+	}
+	
+	public void generate(boolean complete) throws SemanticError, SyntaxError {
 
 		Fragment frame = null;
 		Text text = null;
@@ -379,10 +383,11 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 
 			fragmentManager.finishFragments();
 
-			if (getNumberOfLifelines() > 0) {
+			if (complete && getNumberOfLifelines() > 0) {
 
 				paintDevice.callSpecial("computeAxes", conf.getLeftMargin() + 6
 						+ getLifelineAt(0).getHead().getWidth() / 2);
+				
 				paintDevice.computeBounds();
 
 				// fixes bug 2019730 (notes appear outside of diagram)
