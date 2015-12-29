@@ -65,8 +65,8 @@ body {
   </p>
   <p>The text starts with two lines declaring the objects (name of
     the object followed by : and the class name). The object declaration
-    is terminated by an empty line. What follows is the description of
-    the single message in the form: caller:answer=callee.message.</p>
+    is terminated by an empty line. It follows the single message in the form:
+    caller:answer=callee.message.</p>
 
   <div class="sd">
     <img name="basic" src="sd/basic.png"/>
@@ -118,7 +118,7 @@ m:result=d.query()</pre>
     <a name="levels">Message levels</a>
   </h2>
 
-  <p>In the prior example, right after the servant asks the master
+  <p>In the previous example, right after the servant has asked the master
     for an information, the latter queries a database, presumably for
     finding the required information.</p>
   <p>But the master could as well give the information instantly and
@@ -143,6 +143,13 @@ m[1]:result=d.query()
   <h2>
     <a name="constructor">Constructor</a>
   </h2>
+  
+  <p>The servant might create a new object for completing his task.
+     This new object must already be a part of the object section,
+     with its name prefixed by &quot;/&quot;. It appears on the diagram
+     as soon as it receives a &quot;new&quot; message. It cannot receive
+     other messages before that.
+  </p> 
 
   <div class="sd">
     <img name="constructor" src="sd/constructor.png"/>
@@ -159,6 +166,13 @@ s:f.new()
   <h2>
     <a name="destructor">Destructor</a>
   </h2>
+  
+  <p>
+  Any object (not just newly created ones) can be explicitly removed 
+  from the diagram when it is
+  no longer needed. This can be accomplished by a &quot;destroy&quot;
+  message.
+  </p>
 
   <div class="sd">
     <img name="destructor" src="sd/destructor.png"/>
@@ -176,6 +190,16 @@ s:f.destroy()
   <h2>
     <a name="automatic">Automatic object</a>
   </h2>
+  
+  <p>
+  You can make Quick Sequence Diagram Editor found out on its own when
+  an object is no longer needed, which means that it is not and will not
+  be involved in an interaction anymore.</p>
+  <p>
+  Objects with the &quot;x&quot; flag set are treated like this. They
+  will be destroyed automatically.
+  </p>
+  
 
   <div class="sd">
     <img name="automatic" src="sd/automatic.png"/>
@@ -193,6 +217,19 @@ m:s.destroy()
   <h2>
     <a name="thread">Threads</a>
   </h2>
+  
+  <p>
+  We might use a separate thread on which the servant completes his
+  task, so the master can do something else instead of just waiting
+  for the servant.
+  </p>
+  <p>
+  When in a message the caller is separated from the callee by
+  &quot;:&gt;&quot; and not just &quot;:&quot; 
+  (<tt>m:&gt;s.executeTask()</tt> instead of <tt>m:s.executeTask</tt>) a new
+  thread is created. The caller can now send other messages without
+  interfering with the activity started by the callee.  
+  </p>
 
   <div class="sd">
     <img name="thread" src="sd/thread.png"/>
@@ -212,6 +249,19 @@ s:m.done()
   <h2>
     <a name="return">Returning instantly</a>
   </h2>
+  
+  <p>
+  In the previous example, the master's call to the database
+  seems to take a long time to complete. This is because the
+  master does not start any other activity and there is no need
+  for the call-flow to return to the master.
+  </p>
+  <p>
+  But often this is not intended, e. g. because the call to the
+  database actually is performed very quickly. When you add &amp;
+  as a suffix to a message (<tt>m:d.query()&amp;</tt>) the call-flow
+  returns instantly to the caller.
+  </p>
 
   <div class="sd">
     <img name="return" src="sd/return.png"/>
@@ -231,6 +281,20 @@ s:m.done()
   <h2>
     <a name="signal">Signals</a>
   </h2>
+  
+  <p>
+  In the previous examples, the servant sends a <tt>done()</tt> message to the
+  master in order to indicate that he has finished his task. It might
+  seem inappropriate that, as a consequence of the <tt>done()</tt>
+  message, the yellow thread's call-flow remains for some time at the
+  master.
+  </p>
+  <p>
+  A combination of thread-creation and instant returning comes in handy
+  here (<tt>s:&gt;m.done()&</tt>). It results in an arrow indicating only
+  a signal without actually creating a new call-flow or continuing an
+  existing one. 
+  </p>
 
   <div class="sd">
     <img name="signal" src="sd/signal.png"/>
@@ -296,9 +360,11 @@ m:s4.executeTask()
   <h2>
     <a name="async1">Actors</a>
   </h2>
-  <p><a href="http://stackoverflow.com/questions/1850096/using-quick-sequence-diagram-editor-for-sequence-diagrams">
+  <p>
+<a href="http://stackoverflow.com/questions/1850096/using-quick-sequence-diagram-editor-for-sequence-diagrams">
   http://stackoverflow.com/questions/1850096/using-quick-sequence-diagram-editor-for-sequence-diagrams
-  </a></p>
+  </a>
+</p>
   <p>When a new thread is started (and a message from an user always
     starts a new thread) it does not stop until it is explicitly stopped
     or until the diagram ends. E.g. atm:stop terminates the atm thread</p>
