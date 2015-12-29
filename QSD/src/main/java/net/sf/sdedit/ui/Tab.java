@@ -78,8 +78,7 @@ import net.sf.sdedit.util.Ref;
  * @author Markus Strauch
  */
 @SuppressWarnings("serial")
-public abstract class Tab extends JPanel implements Stainable,
-		TabContainerListener, Runnable {
+public abstract class Tab extends JPanel implements Stainable, TabContainerListener, Runnable {
 
 	private static ImageIcon cleanIcon;
 
@@ -220,8 +219,7 @@ public abstract class Tab extends JPanel implements Stainable,
 
 	protected abstract Zoomable<? extends JComponent> getZoomable();
 
-	public void activate(ActionManager actionManager,
-			FileActionProvider faProvider) {
+	public void activate(ActionManager actionManager, FileActionProvider faProvider) {
 
 		if (getOverloadedActions() != null) {
 			for (Pair<Action, Activator> action : getOverloadedActions()) {
@@ -231,13 +229,9 @@ public abstract class Tab extends JPanel implements Stainable,
 
 		if (getFileHandler() != null) {
 
-			actionManager.overload(
-					faProvider.getSaveAction(getFileHandler(), ui),
-					faProvider.getSaveActivator);
+			actionManager.overload(faProvider.getSaveAction(getFileHandler(), ui), faProvider.getSaveActivator);
 
-			actionManager.overload(
-					faProvider.getSaveAsAction(getFileHandler(), ui),
-					faProvider.getSaveActivator);
+			actionManager.overload(faProvider.getSaveAsAction(getFileHandler(), ui), faProvider.getSaveActivator);
 		}
 	}
 
@@ -245,8 +239,7 @@ public abstract class Tab extends JPanel implements Stainable,
 		return ui;
 	}
 
-	public void deactivate(ActionManager actionManager,
-			FileActionProvider faProvider) {
+	public void deactivate(ActionManager actionManager, FileActionProvider faProvider) {
 		if (getOverloadedActions() != null) {
 			for (Pair<Action, Activator> action : getOverloadedActions()) {
 				actionManager.unload(action.getFirst());
@@ -254,10 +247,8 @@ public abstract class Tab extends JPanel implements Stainable,
 		}
 
 		if (getFileHandler() != null) {
-			actionManager
-					.unload(faProvider.getSaveAction(getFileHandler(), ui));
-			actionManager.unload(faProvider.getSaveAsAction(getFileHandler(),
-					ui));
+			actionManager.unload(faProvider.getSaveAction(getFileHandler(), ui));
+			actionManager.unload(faProvider.getSaveAsAction(getFileHandler(), ui));
 		}
 	}
 
@@ -285,7 +276,7 @@ public abstract class Tab extends JPanel implements Stainable,
 			synchronized (this) {
 				if (file != null) {
 					lastModified = file.lastModified();
-				}				
+				}
 			}
 		}
 	}
@@ -300,7 +291,11 @@ public abstract class Tab extends JPanel implements Stainable,
 
 	public synchronized void setFile(File file) {
 		this.file = file;
-		this.lastModified = file.lastModified();
+		if (file == null) {
+			this.lastModified = 0;
+		} else {
+			this.lastModified = file.lastModified();
+		}
 		if (file != null) {
 			setTitle(file.getName());
 		}
@@ -313,17 +308,13 @@ public abstract class Tab extends JPanel implements Stainable,
 		Editor editor = Editor.getEditor();
 		String option;
 		if (noToAll != null) {
-			option = editor.getUI().getOption(
-					"<html>There are unsaved changes. "
-							+ "Do you want<br>to save them?", "Cancel", "No",
-					"::::Yes#", "No to all");
+			option = editor.getUI().getOption("<html>There are unsaved changes. " + "Do you want<br>to save them?",
+					"Cancel", "No", "::::Yes#", "No to all");
 			noToAll.t = false;
 
 		} else {
-			option = editor.getUI().getOption(
-					"<html>There are unsaved changes. "
-							+ "Do you want<br>to save them?", "Cancel", "No",
-					"::::Yes#");
+			option = editor.getUI().getOption("<html>There are unsaved changes. " + "Do you want<br>to save them?",
+					"Cancel", "No", "::::Yes#");
 
 		}
 		if (option.equals("Yes")) {
@@ -429,8 +420,7 @@ public abstract class Tab extends JPanel implements Stainable,
 				try {
 					InputStream is = new FileInputStream(file);
 					try {
-						Pair<String, Bean<? extends Configuration>> x = getFileHandler()
-								.load(is, "utf-8");
+						Pair<String, Bean<? extends Configuration>> x = getFileHandler().load(is, "utf-8");
 						fileChanged(x.getFirst(), x.getSecond());
 					} finally {
 						is.close();
@@ -445,7 +435,7 @@ public abstract class Tab extends JPanel implements Stainable,
 	}
 
 	protected void fileChanged(String text, Bean<? extends Configuration> conf) {
-				
+
 	}
 
 	protected abstract void _getContextActions(List<Action> actionList);
