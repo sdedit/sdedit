@@ -75,7 +75,7 @@ public class SequenceDiagramFactory implements DiagramFactory,
             SequenceDiagram _diagram = newDiagram(configuration, provider,
                     new NullPaintDevice());
             try {
-                _diagram.generate();
+                _diagram.generate(false);
             } catch (DiagramError ignored) {
 
             }
