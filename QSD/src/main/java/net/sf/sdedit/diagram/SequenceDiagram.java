@@ -550,7 +550,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 
 		finish();
 		for (Lifeline line : getLifelines()) {
-			if (!line.isAlwaysActive()) {
+			if (!line.isAlwaysActive() && line.isAlive()) {
 				line.terminate();
 			}
 		}
@@ -596,6 +596,9 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 	 * Adds a new (root) lifeline for an object with the name and type given.
 	 */
 	private boolean addLifeline(Lifeline lifeline) throws SemanticError {
+		if (lifeline.getDiagram() != this) {
+			throw new IllegalArgumentException("cannot add a lifeline of another diagram");
+		}
 		if (lifelineMap.get(lifeline.getName()) != null) {
 			throw new SemanticError(provider, lifeline.getName()
 					+ " already exists");
@@ -858,27 +861,6 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 		noteManager.associateMessage(number, msg);
 	}
 
-	public void toggleWaitingStatus(int thread) {
-		for (Lifeline lifeline : getLifelines(thread)) {
-			lifeline.toggleWaitingStatus();
-		}
-	}
-
-	private Set<Lifeline> getLifelines(int thread) {
-		Set<Lifeline> lifelines = new HashSet<Lifeline>();
-		Lifeline firstCaller = first.get(thread);
-		if (!firstCaller.isAlwaysActive()) {
-			lifelines.add(firstCaller);
-		}
-		for (Message msg : threadStacks.get(thread)) {
-			lifelines.add(msg.getCaller());
-			if (msg.getCallee() != null) {
-				lifelines.add(msg.getCallee());
-			}
-		}
-		return lifelines;
-	}
-
 	public Iterator<Lifeline> iterator() {
 		List<Iterator<Lifeline>> iterators = new ArrayList<Iterator<Lifeline>>();
 		for (List<Lifeline> list : lifelineList) {
@@ -898,10 +880,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 		if (reverseIdMap != null && reverseIdMap.containsKey(messageId)) {
 			for (String name : reverseIdMap.get(messageId)) {
 				Lifeline lifeline = getLifeline(name);
-				if (lifeline != null && lifeline.isAutodestroy()) {
-					// terminate will be called once again on termination of the
-					// diagram
-					// FIXME
+				if (lifeline != null && lifeline.isAlive() && lifeline.isAutodestroy()) {
 					lifeline.terminate();
 				}
 			}
