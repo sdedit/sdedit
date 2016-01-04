@@ -48,7 +48,7 @@ import net.sf.sdedit.util.Grep.Region;
  * 
  * @author Markus Strauch
  */
-public final class Lifeline implements Comparable<Lifeline>{
+public final class Lifeline implements Comparable<Lifeline> {
 
 	/**
 	 * The direction of the lifeline, for root lifelines Direction.CENTER, for
@@ -66,7 +66,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 	 * The type of the object.
 	 */
 	private final String type;
-	
+
 	private final String label;
 
 	/**
@@ -146,7 +146,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 	 * The line representation most recently created for this lifeline
 	 */
 	private Line lastLine;
-	
+
 	private boolean anonymous;
 
 	/**
@@ -171,14 +171,14 @@ public final class Lifeline implements Comparable<Lifeline>{
 	private final boolean external;
 
 	private boolean waiting;
-	
+
 	private Region nameRegion;
-	
+
 	private final boolean saveSpace;
 
 	private boolean destroyed;
-	
-	public String toString () {
+
+	public String toString() {
 		String string = name + ":" + type;
 		if (label.length() > 0) {
 			string += " \"" + label + "\" ";
@@ -187,17 +187,21 @@ public final class Lifeline implements Comparable<Lifeline>{
 			string = "/" + string;
 		}
 		String flags = "";
-		if (process) flags += "p";
-		if (external) flags += "e";
-		if (autodestroy) flags += "x";
-		if (hasThread) flags += "t";
-		
+		if (process)
+			flags += "p";
+		if (external)
+			flags += "e";
+		if (autodestroy)
+			flags += "x";
+		if (hasThread)
+			flags += "t";
+
 		if (flags.length() > 0) {
 			string += " [" + flags + "]";
 		}
-		
+
 		return string;
-		
+
 	}
 
 	/**
@@ -233,9 +237,9 @@ public final class Lifeline implements Comparable<Lifeline>{
 	 * @param diagram
 	 *            the diagram to which the lifeline belongs
 	 */
-	public Lifeline(String name, String type, String label, boolean alive,
-			boolean anonymous, boolean role, boolean process, boolean hasThread, boolean autodestroy,
-			boolean external, boolean saveSpace, SequenceDiagram diagram) {
+	public Lifeline(String name, String type, String label, boolean alive, boolean anonymous, boolean role,
+			boolean process, boolean hasThread, boolean autodestroy, boolean external, boolean saveSpace,
+			SequenceDiagram diagram) {
 		this.diagram = diagram;
 		this.name = name;
 		this.type = type;
@@ -261,13 +265,11 @@ public final class Lifeline implements Comparable<Lifeline>{
 			view = new Rectangle(computeDrawableWidth(), this);
 			active = true;
 		} else if (process) {
-			head = new LabeledBox(this, label, diagram.getVerticalPosition(),
-					anonymous, !role);
+			head = new LabeledBox(this, label, diagram.getVerticalPosition(), anonymous, !role);
 			view = new Rectangle(computeDrawableWidth(), this);
 			active = true;
 		} else {
-			head = new LabeledBox(this, label, diagram.getVerticalPosition(),
-					anonymous, !role);
+			head = new LabeledBox(this, label, diagram.getVerticalPosition(), anonymous, !role);
 			// view = new Line(computeDrawableWidth(), this);
 			view = new Line(1, this);
 			active = false;
@@ -335,31 +337,29 @@ public final class Lifeline implements Comparable<Lifeline>{
 	}
 
 	public List<ExtensibleDrawable> getAllViews() {
-	    
-	    int lineTop = Integer.MAX_VALUE;
-	    int lineBottom = -1;
-	    Line mainLine = null;
-	    
-	    
-	    
-	    for (ExtensibleDrawable view : allViews) {
-	        if (view instanceof Line) {
-	            
-	            Line line = (Line) view;
-	            if (mainLine == null) {
-	                mainLine = line;
-	                line.setMainLine(true);
-	            }
-	            lineTop = Math.min(lineTop, line.getTop());
-	            lineBottom = Math.max(lineBottom, line.getBottom());
-	        }
-	        
-	    }
-	    if (mainLine != null) {
-	        mainLine.setTop(lineTop);
-	        mainLine.setBottom(lineBottom);
-	    }
-	    
+
+		int lineTop = Integer.MAX_VALUE;
+		int lineBottom = -1;
+		Line mainLine = null;
+
+		for (ExtensibleDrawable view : allViews) {
+			if (view instanceof Line) {
+
+				Line line = (Line) view;
+				if (mainLine == null) {
+					mainLine = line;
+					line.setMainLine(true);
+				}
+				lineTop = Math.min(lineTop, line.getTop());
+				lineBottom = Math.max(lineBottom, line.getBottom());
+			}
+
+		}
+		if (mainLine != null) {
+			mainLine.setTop(lineTop);
+			mainLine.setBottom(lineBottom);
+		}
+
 		return allViews;
 	}
 
@@ -369,7 +369,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 			if (line != this && thread == line.thread) {
 				callLevel++;
 			}
-			
+
 		}
 		return callLevel;
 	}
@@ -470,8 +470,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 	public Lifeline getLastInThread(int thread) {
 		Lifeline last = null;
 		for (Lifeline lifeline : getAllLifelines()) {
-			if (lifeline.getThread() == thread
-					&& (last == null || lifeline.level > last.level)) {
+			if (lifeline.getThread() == thread && (last == null || lifeline.level > last.level)) {
 				last = lifeline;
 			}
 		}
@@ -542,7 +541,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 	 * Call this method when an object is created via a 'new' message.
 	 */
 	public void giveBirth() {
- 		alive = true;
+		alive = true;
 		head.setVisible(true);
 		view.setVisible(true);
 	}
@@ -611,8 +610,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 					}
 				}
 			} else {
-				theDirection = caller.getPosition() < getPosition() ? Direction.LEFT
-						: Direction.RIGHT;
+				theDirection = caller.getPosition() < getPosition() ? Direction.LEFT : Direction.RIGHT;
 			}
 		}
 		return new Lifeline(root, theDirection, thread);
@@ -624,24 +622,26 @@ public final class Lifeline implements Comparable<Lifeline>{
 	 * to this lifeline was called. Thus its active flag is set false.
 	 */
 	public void finish() {
-
 		setActive(false);
 		getRoot().setRectangleBottom(diagram.getVerticalPosition());
 	}
 
 	public void terminate() {
+		if (!alive) {
+			throw new IllegalStateException("cannot terminate lifeline " + name + ", it is not alive");
+		}
 		ExtensibleDrawable _view = lastLine != null ? lastLine : view;
-		if (alive && autodestroy) {
-			int lengthOfLastLine = Math
-					.max(6, rectangleBottom - _view.getTop());
+		if (autodestroy) {
+			int bottom = Math.max(rectangleBottom, diagram.getVerticalPosition());
+			bottom += 6;
 			cross = new Cross(this);
-			int y = _view.getTop() + lengthOfLastLine + cross.getHeight();
+			int y = bottom + cross.getHeight();
 			if (y > diagram.getVerticalPosition()) {
 				diagram.extendLifelines(y - diagram.getVerticalPosition());
 			}
-			cross.setTop(_view.getTop() + lengthOfLastLine);
+			cross.setTop(bottom);
 			diagram.getPaintDevice().addExtraordinary(cross);
-			_view.setHeight(lengthOfLastLine);
+			_view.setBottom(bottom);
 		}
 		alive = false;
 	}
@@ -677,29 +677,9 @@ public final class Lifeline implements Comparable<Lifeline>{
 			}
 			break;
 		case CENTER:
-			throw new IllegalStateException("The lifeline is not root, but"
-					+ " has center direction");
+			throw new IllegalStateException("The lifeline is not root, but" + " has center direction");
 		}
 		getRoot().setRectangleBottom(diagram.getVerticalPosition());
-	}
-
-	public void toggleWaitingStatus() {
-		if (!active) {
-			throw new IllegalArgumentException(
-					"an inactive lifeline cannot change its waiting status");
-		}
-		waiting = !waiting;
-		int y = view.getTop() + view.getHeight();
-
-		if (waiting) {
-			lastLine = new Line(1, this);
-			lastLine.setLeft(view.getLeft() + view.getWidth() / 2);
-
-			view = lastLine;
-		} else {
-			view = new Rectangle(computeDrawableWidth(), this);
-		}
-		view.setTop(y);
 	}
 
 	public void setActive(boolean active) {
@@ -709,8 +689,7 @@ public final class Lifeline implements Comparable<Lifeline>{
 		this.active = active;
 		if (this != getRoot()) {
 			if (active) {
-				view.setTop(parent.getView().getTop()
-						+ parent.getView().getHeight());
+				view.setTop(parent.getView().getTop() + parent.getView().getHeight());
 				view.setHeight(0);
 			}
 			return;
@@ -742,15 +721,14 @@ public final class Lifeline implements Comparable<Lifeline>{
 	public Drawable getHead() {
 		return head;
 	}
-	
-	public boolean isAnonymous () {
-        return anonymous;
+
+	public boolean isAnonymous() {
+		return anonymous;
 	}
 
 	private int computeDrawableWidth() {
-		return sideLevel == 0 ? diagram.getConfiguration()
-				.getMainLifelineWidth() : diagram.getConfiguration()
-				.getSubLifelineWidth();
+		return sideLevel == 0 ? diagram.getConfiguration().getMainLifelineWidth()
+				: diagram.getConfiguration().getSubLifelineWidth();
 	}
 
 	public boolean isExternal() {
@@ -767,31 +745,31 @@ public final class Lifeline implements Comparable<Lifeline>{
 		return cross;
 	}
 
-    public int compareTo(Lifeline lifeline) {
-        return this.name.compareTo(lifeline.name);
-    }
+	public int compareTo(Lifeline lifeline) {
+		return this.name.compareTo(lifeline.name);
+	}
 
-    public void setNameRegion(Region region) {
-        this.nameRegion = region;
-    }
+	public void setNameRegion(Region region) {
+		this.nameRegion = region;
+	}
 
-    public Region getNameRegion() {
-        return nameRegion;
-    }
-    
-    public boolean isSavingSpace () {
-        return saveSpace;
-    }
-    
-    public boolean isAutodestroy () {
-        return autodestroy;
-    }
+	public Region getNameRegion() {
+		return nameRegion;
+	}
+
+	public boolean isSavingSpace() {
+		return saveSpace;
+	}
+
+	public boolean isAutodestroy() {
+		return autodestroy;
+	}
 
 	public void setDestroyed(boolean destroyed) {
 		this.destroyed = destroyed;
 	}
-	
-	public boolean isDestroyed () {
+
+	public boolean isDestroyed() {
 		return destroyed;
 	}
 }
