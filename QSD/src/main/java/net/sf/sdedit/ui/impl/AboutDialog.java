@@ -25,9 +25,6 @@
 package net.sf.sdedit.ui.impl;
 
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -36,15 +33,15 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.DecimalFormat;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 
 import net.sf.sdedit.ui.components.HelpPanel;
+import net.sf.sdedit.util.UIUtilities;
 
 @SuppressWarnings("serial")
-public class AboutDialog extends JDialog implements ActionListener {
+public class AboutDialog extends JDialog {
 
     private String text;
 
@@ -76,19 +73,11 @@ public class AboutDialog extends JDialog implements ActionListener {
                 }
             }
         }
-
         showPanel();
-
-        JButton close = new JButton("Close");
-        close.addActionListener(this);
-        getContentPane().add(close, BorderLayout.SOUTH);
         setModal(true);
         setTitle("About sdedit");
         pack();
-        setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2
-                - getWidth() / 2,
-                Toolkit.getDefaultToolkit().getScreenSize().height / 2
-                        - getHeight() / 2);
+        UIUtilities.centerWindow(this);
     }
 
     private void showPanel() {
@@ -103,17 +92,20 @@ public class AboutDialog extends JDialog implements ActionListener {
         DecimalFormat format = new DecimalFormat("####.#");
         String _used = format.format(used);
         String _avail = format.format(avail);
+        String _version = 
+        		System.getProperty("java.version") + " (" +
+        		System.getProperty("os.name") + ")";
 
         text = text.replaceFirst("_USED_", _used + " MB");
         text = text.replaceFirst("_AVAIL_", _avail + " MB");
+        text = text.replaceFirst("_JAVA_VERSION_", _version);
+        
 
         if (editorPane != null) {
             getContentPane().remove(editorPane);
         }
-
         editorPane = new HelpPanel(text).getPane();
         editorPane.addMouseListener(new MouseAdapter(){
-
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -121,18 +113,8 @@ public class AboutDialog extends JDialog implements ActionListener {
                     showPanel();
                 }
             }
-            
-           
-            
         });
-
         getContentPane().add(editorPane, BorderLayout.CENTER);
-
         editorPane.revalidate();
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-        dispose();
     }
 }
