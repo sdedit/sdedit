@@ -134,7 +134,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	 */
 	public void showAboutDialog(URL aboutURL) {
 		System.gc();
-		new AboutDialog(this, aboutURL).setVisible(true);
+		new AboutDialog(this, aboutURL, "About Quick Sequence Diagram Editor").setVisible(true);
 	}
 
 	private ActionManager actionManager() {

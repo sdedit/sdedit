@@ -27,10 +27,9 @@ package net.sf.sdedit.ui.impl;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 
 import javax.swing.JDialog;
@@ -39,82 +38,64 @@ import javax.swing.JFrame;
 
 import net.sf.sdedit.ui.components.HelpPanel;
 import net.sf.sdedit.util.UIUtilities;
+import net.sf.sdedit.util.Utilities;
 
 @SuppressWarnings("serial")
 public class AboutDialog extends JDialog {
 
-    private String text;
+	private String text;
 
-    private JEditorPane editorPane;
+	private JEditorPane editorPane;
+	
 
-    public AboutDialog(JFrame frame, URL aboutURL) {
-        super(frame);
-        getContentPane().setLayout(new BorderLayout());
-        text = "";
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(
-                    new InputStreamReader(aboutURL.openStream()));
-            for (;;) {
-                String line = br.readLine();
-                if (line == null) {
-                    break;
-                }
-                text += line + "\n";
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        showPanel();
-        setModal(true);
-        setTitle("About sdedit");
-        pack();
-        UIUtilities.centerWindow(this);
-    }
+	public AboutDialog(JFrame frame, URL aboutURL, String title) {
+		super(frame);
+		getContentPane().setLayout(new BorderLayout());
+		try {
+			text = Utilities.toString(aboutURL, Charset.forName("utf-8"));
+		} catch (IOException e) {
+			throw new IllegalArgumentException("cannot read about text from " + aboutURL);
+		}
+		text = Utilities.unixEncode(text);
+		showPanel();
+		setModal(true);
+		setTitle(title);
+		pack();
+		UIUtilities.centerWindow(this);
+	}
 
-    private void showPanel() {
-        String text = this.text;
-        long max = Runtime.getRuntime().maxMemory();
-        long total = Runtime.getRuntime().totalMemory();
-        long free = Runtime.getRuntime().freeMemory();
+	private void showPanel() {
+		String text = this.text;
+		long max = Runtime.getRuntime().maxMemory();
+		long total = Runtime.getRuntime().totalMemory();
+		long free = Runtime.getRuntime().freeMemory();
 
-        double used = 1D * (total - free) / (1 << 20);
-        double avail = 1D * (max - total + free) / (1 << 20);
+		double used = 1D * (total - free) / (1 << 20);
+		double avail = 1D * (max - total + free) / (1 << 20);
 
-        DecimalFormat format = new DecimalFormat("####.#");
-        String _used = format.format(used);
-        String _avail = format.format(avail);
-        String _version = 
-        		System.getProperty("java.version") + " (" +
-        		System.getProperty("os.name") + ")";
+		DecimalFormat format = new DecimalFormat("####.#");
+		String _used = format.format(used);
+		String _avail = format.format(avail);
+		String _version = System.getProperty("java.version") + " (" + System.getProperty("os.name") + ")";
 
-        text = text.replaceFirst("_USED_", _used + " MB");
-        text = text.replaceFirst("_AVAIL_", _avail + " MB");
-        text = text.replaceFirst("_JAVA_VERSION_", _version);
-        
+		text = text.replaceFirst("_USED_", _used + " MB");
+		text = text.replaceFirst("_AVAIL_", _avail + " MB");
+		text = text.replaceFirst("_JAVA_VERSION_", _version);
 
-        if (editorPane != null) {
-            getContentPane().remove(editorPane);
-        }
-        editorPane = new HelpPanel(text).getPane();
-        editorPane.addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    System.gc();
-                    showPanel();
-                }
-            }
-        });
-        getContentPane().add(editorPane, BorderLayout.CENTER);
-        editorPane.revalidate();
-    }
+		if (editorPane != null) {
+			getContentPane().remove(editorPane);
+		}
+		editorPane = new HelpPanel(text).getPane();
+		editorPane.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					System.gc();
+					showPanel();
+				}
+			}
+		});
+		getContentPane().add(editorPane, BorderLayout.CENTER);
+		editorPane.revalidate();
+	}
 }
