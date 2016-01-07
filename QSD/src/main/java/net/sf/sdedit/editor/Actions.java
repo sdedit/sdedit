@@ -107,7 +107,7 @@ public final class Actions implements Constants {
 	final Action configureDiagramAction;
 
 	final Action helpAction;
-	
+
 	final Action tutorialAction;
 
 	final Action helpOnMultithreadingAction;
@@ -163,8 +163,7 @@ public final class Actions implements Constants {
 			throw new IllegalStateException("ui reference must not be null");
 		}
 
-		canConfigureActivator = new TabActivator<DiagramTab>(DiagramTab.class,
-				ui) {
+		canConfigureActivator = new TabActivator<DiagramTab>(DiagramTab.class, ui) {
 			@Override
 			protected boolean _isEnabled(DiagramTab tab) {
 				return tab.getConfiguration() != null;
@@ -177,27 +176,24 @@ public final class Actions implements Constants {
 				return tab.canClose();
 			}
 		};
-		
-		exportMapFileActivator = new TabActivator<SequenceDiagramTextTab>(
-				SequenceDiagramTextTab.class, ui) {
 
-					@Override
-					protected boolean _isEnabled(SequenceDiagramTextTab tab) {
-						return !tab.isEmpty() && tab.getFile() != null;
-					}
-			
+		exportMapFileActivator = new TabActivator<SequenceDiagramTextTab>(SequenceDiagramTextTab.class, ui) {
+
+			@Override
+			protected boolean _isEnabled(SequenceDiagramTextTab tab) {
+				return !tab.isEmpty() && tab.getFile() != null;
+			}
+
 		};
 
-		nonEmptyDiagramActivator = new TabActivator<DiagramTab>(
-				DiagramTab.class, ui) {
+		nonEmptyDiagramActivator = new TabActivator<DiagramTab>(DiagramTab.class, ui) {
 			@Override
 			protected boolean _isEnabled(DiagramTab tab) {
 				return !tab.isEmpty();
 			}
 		};
 
-		noDiagramErrorActivator = new TabActivator<DiagramTab>(
-				DiagramTab.class, ui) {
+		noDiagramErrorActivator = new TabActivator<DiagramTab>(DiagramTab.class, ui) {
 			@Override
 			protected boolean _isEnabled(DiagramTab tab) {
 				return !tab.isEmpty() && tab.getDiagramError() == null;
@@ -207,18 +203,16 @@ public final class Actions implements Constants {
 		canNarrowActivator = new TabActivator<DiagramTab>(DiagramTab.class, ui) {
 			@Override
 			protected boolean _isEnabled(DiagramTab tab) {
-				if (tab.getConfiguration().getDataObject()
-						.isA(SequenceConfiguration.class)) {
-					SequenceConfiguration conf = tab.getConfiguration()
-							.getDataObject().cast(SequenceConfiguration.class);
+				if (tab.getConfiguration().getDataObject().isA(SequenceConfiguration.class)) {
+					SequenceConfiguration conf = tab.getConfiguration().getDataObject()
+							.cast(SequenceConfiguration.class);
 					return conf.getGlue() > 0;
 				}
 				return false;
 			}
 		};
 
-		textTabActivator = new TabActivator<DiagramTextTab>(
-				DiagramTextTab.class, ui) {
+		textTabActivator = new TabActivator<DiagramTextTab>(DiagramTextTab.class, ui) {
 			@Override
 			protected boolean _isEnabled(DiagramTextTab tab) {
 				return true;
@@ -232,21 +226,17 @@ public final class Actions implements Constants {
 			}
 		};
 
-		verticalSplitPossibleActivator = new TabActivator<DiagramTextTab>(
-				DiagramTextTab.class, ui) {
+		verticalSplitPossibleActivator = new TabActivator<DiagramTextTab>(DiagramTextTab.class, ui) {
 			@Override
 			protected boolean _isEnabled(DiagramTextTab tab) {
-				return !tab.getConfiguration().getDataObject()
-						.isVerticallySplit();
+				return !tab.getConfiguration().getDataObject().isVerticallySplit();
 			}
 		};
 
-		horizontalSplitPossibleActivator = new TabActivator<DiagramTextTab>(
-				DiagramTextTab.class, ui) {
+		horizontalSplitPossibleActivator = new TabActivator<DiagramTextTab>(DiagramTextTab.class, ui) {
 			@Override
 			protected boolean _isEnabled(DiagramTextTab tab) {
-				return tab.getConfiguration().getDataObject()
-						.isVerticallySplit();
+				return tab.getConfiguration().getDataObject().isVerticallySplit();
 			}
 		};
 
@@ -286,7 +276,7 @@ public final class Actions implements Constants {
 			}
 
 			protected void _actionPerformed(DiagramTextTab tab, ActionEvent e) {
-				tab.setCode("");
+				tab.getTextArea().setText("");
 			}
 		};
 
@@ -295,8 +285,7 @@ public final class Actions implements Constants {
 				putValue(ICON_NAME, "globalsettings");
 				putValue(ManagedAction.ID, "GLOBAL_SETTINGS");
 				putValue(Action.SHORT_DESCRIPTION, "Edit global preferences");
-				putValue(Action.NAME, getShortcut(GLOBAL_CONFIGURATION)
-						+ "&Global preferences...");
+				putValue(Action.NAME, getShortcut(GLOBAL_CONFIGURATION) + "&Global preferences...");
 			}
 
 			public void actionPerformed(ActionEvent e) {
@@ -309,8 +298,7 @@ public final class Actions implements Constants {
 				putValue(ICON_NAME, "configure");
 				putValue(ManagedAction.ID, "LOCAL_SETTINGS");
 				putValue(Action.SHORT_DESCRIPTION, "Edit diagram preferences");
-				putValue(Action.NAME, getShortcut(DIAGRAM_CONFIGURATION)
-						+ "&Diagram preferences...");
+				putValue(Action.NAME, getShortcut(DIAGRAM_CONFIGURATION) + "&Diagram preferences...");
 			}
 
 			protected void _actionPerformed(DiagramTab tab, ActionEvent e) {
@@ -322,8 +310,7 @@ public final class Actions implements Constants {
 			{
 				putValue(ICON_NAME, "help");
 				putValue(ManagedAction.ID, "HELP");
-				putValue(Action.SHORT_DESCRIPTION,
-						"Display a comprehensive help page");
+				putValue(Action.SHORT_DESCRIPTION, "Display a comprehensive help page");
 				putValue(Action.NAME, Shortcuts.getShortcut(HELP) + "&Help");
 			}
 
@@ -331,13 +318,12 @@ public final class Actions implements Constants {
 				editor.getUI().help("Help", "help", true);
 			}
 		};
-		
+
 		tutorialAction = new AbstractAction() {
 			{
 				putValue(ICON_NAME, "help");
-				//putValue(ManagedAction.ID, "HELP");
-				putValue(Action.SHORT_DESCRIPTION,
-						"Display a tutorial");
+				// putValue(ManagedAction.ID, "HELP");
+				putValue(Action.SHORT_DESCRIPTION, "Display a tutorial");
 				putValue(Action.NAME, "&Tutorial");
 			}
 
@@ -349,28 +335,24 @@ public final class Actions implements Constants {
 		helpOnMultithreadingAction = new AbstractAction() {
 			{
 				putValue(ICON_NAME, "help");
-				putValue(Action.SHORT_DESCRIPTION,
-						"Show a help page dedicated to multithreading");
+				putValue(Action.SHORT_DESCRIPTION, "Show a help page dedicated to multithreading");
 				putValue(Action.NAME, "&Multithreading help");
 			}
 
 			public void actionPerformed(ActionEvent e) {
-				editor.getUI().help("Multithreading help",
-						"multithreading_help", false);
+				editor.getUI().help("Multithreading help", "multithreading_help", false);
 			}
 		};
 
 		asyncNotesAction = new AbstractAction() {
 			{
 				putValue(ICON_NAME, "help");
-				putValue(Action.SHORT_DESCRIPTION,
-						"Show a help page containing notes on asynchronous messages");
+				putValue(Action.SHORT_DESCRIPTION, "Show a help page containing notes on asynchronous messages");
 				putValue(Action.NAME, "&Notes on asynchronous messages");
 			}
 
 			public void actionPerformed(ActionEvent e) {
-				editor.getUI().help("Notes on asynchronous messages", "async",
-						false);
+				editor.getUI().help("Notes on asynchronous messages", "async", false);
 			}
 		};
 
@@ -379,15 +361,13 @@ public final class Actions implements Constants {
 				putValue(ICON_NAME, "new");
 				putValue(ManagedAction.ID, "NEW_DIAGRAM");
 				putValue(Action.NAME, getShortcut(NEW) + "&New diagram");
-				putValue(Action.SHORT_DESCRIPTION,
-						"Add a tab for a new sequence diagram");
+				putValue(Action.SHORT_DESCRIPTION, "Add a tab for a new sequence diagram");
 			}
 
 			public void actionPerformed(ActionEvent e) {
 				Bean<SequenceConfiguration> conf = ConfigurationManager
 						.createNewDefaultConfiguration(SequenceConfiguration.class);
-				editor.getUI()
-						.addSequenceDiagramTextTab("untitled", conf, true);
+				editor.getUI().addSequenceDiagramTextTab("untitled", conf, true);
 			}
 
 		};
@@ -452,9 +432,7 @@ public final class Actions implements Constants {
 			protected void _actionPerformed(DiagramTab tab, ActionEvent e) {
 				SequenceConfiguration conf = tab.getConfiguration().getDataObject().cast(SequenceConfiguration.class);
 				if (conf != null) {
-					conf.setGlue(conf.getGlue()
-							+ ConfigurationManager.getGlobalConfiguration()
-									.getGlueChangeAmount());
+					conf.setGlue(conf.getGlue() + ConfigurationManager.getGlobalConfiguration().getGlueChangeAmount());
 				}
 			}
 		};
@@ -469,9 +447,8 @@ public final class Actions implements Constants {
 			protected void _actionPerformed(DiagramTab tab, ActionEvent e) {
 				SequenceConfiguration conf = tab.getConfiguration().getDataObject().cast(SequenceConfiguration.class);
 				if (conf != null) {
-					int glue = Math.max(0, conf.getGlue()
-							- ConfigurationManager.getGlobalConfiguration()
-									.getGlueChangeAmount());
+					int glue = Math.max(0,
+							conf.getGlue() - ConfigurationManager.getGlobalConfiguration().getGlueChangeAmount());
 					conf.setGlue(glue);
 				}
 			}
@@ -480,8 +457,7 @@ public final class Actions implements Constants {
 		redoAction = new TabAction<DiagramTextTab>(DiagramTextTab.class, ui) {
 			{
 				putValue(Action.NAME, getShortcut(REDO) + "&Redo");
-				putValue(Action.SHORT_DESCRIPTION,
-						"Redo the typing that has most recently been undone");
+				putValue(Action.SHORT_DESCRIPTION, "Redo the typing that has most recently been undone");
 
 				putValue(ICON_NAME, "redo");
 			}
@@ -494,8 +470,7 @@ public final class Actions implements Constants {
 		undoAction = new TabAction<DiagramTextTab>(DiagramTextTab.class, ui) {
 			{
 				putValue(Action.NAME, getShortcut(UNDO) + "&Undo");
-				putValue(Action.SHORT_DESCRIPTION,
-						"Undo the typing that has most recently been done");
+				putValue(Action.SHORT_DESCRIPTION, "Undo the typing that has most recently been done");
 
 				putValue(ICON_NAME, "undo");
 			}
@@ -512,8 +487,7 @@ public final class Actions implements Constants {
 			}
 
 			public void actionPerformed(ActionEvent evt) {
-				editor.getUI().showAboutDialog(
-						Utilities.getResource("about.html"));
+				editor.getUI().showAboutDialog(Utilities.getResource("about.html"));
 			}
 		};
 
@@ -522,8 +496,7 @@ public final class Actions implements Constants {
 				putValue(Action.NAME, getShortcut(FULL_SCREEN) + "&Full screen");
 				putValue(ICON_NAME, "fullscreen");
 				putValue(ManagedAction.ID, "FULL_SCREEN");
-				putValue(Action.SHORT_DESCRIPTION,
-						"Display the diagram in full-screen mode");
+				putValue(Action.SHORT_DESCRIPTION, "Display the diagram in full-screen mode");
 			}
 
 			protected void _actionPerformed(Tab tab, ActionEvent evt) {
@@ -537,8 +510,7 @@ public final class Actions implements Constants {
 			{
 				putValue(Action.NAME, getShortcut(FILTER) + "&Filter...");
 				putValue(ICON_NAME, "filter");
-				putValue(Action.SHORT_DESCRIPTION,
-						"Filter the (selected) text through a command");
+				putValue(Action.SHORT_DESCRIPTION, "Filter the (selected) text through a command");
 			}
 
 			protected void _actionPerformed(DiagramTextTab tab, ActionEvent evt) {
@@ -556,44 +528,32 @@ public final class Actions implements Constants {
 
 			public void actionPerformed(ActionEvent evt) {
 				if (editor.isServerRunning()) {
-					if (editor.getUI().confirmOrCancel(
-							"Stop real-time diagram server?") == 1) {
+					if (editor.getUI().confirmOrCancel("Stop real-time diagram server?") == 1) {
 						editor.shutDownServer();
 					}
 					return;
 				}
-				String port = String.valueOf(ConfigurationManager
-						.getGlobalConfiguration().getRealtimeServerPort());
-				port = editor
-						.getUI()
-						.getString(
-								"Enter the port where"
-										+ " the real-time diagram\nserver should listen (0 for any free port):",
-								port);
+				String port = String.valueOf(ConfigurationManager.getGlobalConfiguration().getRealtimeServerPort());
+				port = editor.getUI().getString(
+						"Enter the port where" + " the real-time diagram\nserver should listen (0 for any free port):",
+						port);
 				if (port == null || port.equals("")) {
 					return;
 				}
 				try {
 					int p = Integer.parseInt(port);
 					int actualPort = editor.startRealtimeServer(p);
-					ConfigurationManager.getGlobalConfiguration()
-							.setRealtimeServerPort(p);
-					editor.getUI().message(
-							"Started real-time diagram server@localhost:"
-									+ actualPort);
+					ConfigurationManager.getGlobalConfiguration().setRealtimeServerPort(p);
+					editor.getUI().message("Started real-time diagram server@localhost:" + actualPort);
 				} catch (Exception e) {
-					editor.getUI()
-							.errorMessage(e, null,
-									"The real-time diagram server could not be started.");
+					editor.getUI().errorMessage(e, null, "The real-time diagram server could not be started.");
 				}
 			}
 		};
 
-		splitLeftRightAction = new TabAction<DiagramTextTab>(
-				DiagramTextTab.class, ui) {
+		splitLeftRightAction = new TabAction<DiagramTextTab>(DiagramTextTab.class, ui) {
 			{
-				putValue(Action.NAME, getShortcut(SPLIT_LEFT_RIGHT)
-						+ "Split view left/right");
+				putValue(Action.NAME, getShortcut(SPLIT_LEFT_RIGHT) + "Split view left/right");
 				putValue(ManagedAction.ID, "SPLIT_LEFT_RIGHT");
 				putValue(ICON_NAME, "view_left_right");
 				putValue(Action.SHORT_DESCRIPTION, "Split view left/right");
@@ -604,11 +564,9 @@ public final class Actions implements Constants {
 			}
 		};
 
-		splitTopBottomAction = new TabAction<DiagramTextTab>(
-				DiagramTextTab.class, ui) {
+		splitTopBottomAction = new TabAction<DiagramTextTab>(DiagramTextTab.class, ui) {
 			{
-				putValue(Action.NAME, getShortcut(SPLIT_TOP_BOTTOM)
-						+ "Split view top/bottom");
+				putValue(Action.NAME, getShortcut(SPLIT_TOP_BOTTOM) + "Split view top/bottom");
 				putValue(ManagedAction.ID, "SPLIT_TOP_BOTTOM");
 				putValue(ICON_NAME, "view_top_bottom");
 				putValue(Action.SHORT_DESCRIPTION, "Split view top/bottom");
@@ -619,8 +577,7 @@ public final class Actions implements Constants {
 			}
 		};
 
-		copyBitmapToClipBoardAction = new TabAction<DiagramTab>(
-				DiagramTab.class, ui) {
+		copyBitmapToClipBoardAction = new TabAction<DiagramTab>(DiagramTab.class, ui) {
 			{
 				putValue(Action.NAME, "Copy diagram (as bitmap)");
 				putValue(ManagedAction.ID, "COPY_BITMAP_TO_CLIPBOARD");
@@ -634,14 +591,12 @@ public final class Actions implements Constants {
 			}
 		};
 
-		copyVectorGraphicsToClipBoardAction = new TabAction<DiagramTab>(
-				DiagramTab.class, ui) {
+		copyVectorGraphicsToClipBoardAction = new TabAction<DiagramTab>(DiagramTab.class, ui) {
 			{
 				putValue(Action.NAME, "Copy diagram (as vector graphics)");
 				putValue(ManagedAction.ID, "COPY_VG_TO_CLIPBOARD");
 				putValue(ICON_NAME, "image");
-				putValue(Action.SHORT_DESCRIPTION,
-						"Copy diagram (as vector graphics)");
+				putValue(Action.SHORT_DESCRIPTION, "Copy diagram (as vector graphics)");
 
 			}
 
@@ -695,7 +650,6 @@ public final class Actions implements Constants {
 
 		};
 
-		
 	}
 
 	final Action getExampleAction(final String name, final String file) {
@@ -707,8 +661,7 @@ public final class Actions implements Constants {
 
 			public void actionPerformed(ActionEvent e) {
 				try {
-					URL url = getClass().getResource(
-							"/net/sf/sdedit/examples/" + file);
+					URL url = getClass().getResource("/net/sf/sdedit/examples/" + file);
 					DiagramTextTab tab = (DiagramTextTab) editor.load(url);
 					if (tab != null) {
 						// prevent user from overwriting example file
@@ -721,8 +674,7 @@ public final class Actions implements Constants {
 				}
 
 				catch (Exception ex) {
-					editor.getUI().errorMessage(ex, null,
-							"Loading example from classpath failed");
+					editor.getUI().errorMessage(ex, null, "Loading example from classpath failed");
 				}
 			}
 		};
@@ -732,8 +684,7 @@ public final class Actions implements Constants {
 		return new AbstractAction() {
 			{
 				putValue(Action.NAME, new File(fileName).getName());
-				putValue(Action.SHORT_DESCRIPTION,
-						new File(fileName).getAbsolutePath());
+				putValue(Action.SHORT_DESCRIPTION, new File(fileName).getAbsolutePath());
 
 			}
 
@@ -762,11 +713,9 @@ public final class Actions implements Constants {
 				putValue(ICON_NAME, filetype);
 				putValue(ManagedAction.ID, "MULTI_PAGE_EXPORT");
 				putValue(Action.SHORT_DESCRIPTION,
-						"Prints or exports the diagram in multi-page "
-								+ filetype.toUpperCase() + " format");
-				putValue(Action.NAME, getShortcut(PRINT)
-						+ "&Print/export multi-page " + filetype.toUpperCase()
-						+ "...");
+						"Prints or exports the diagram in multi-page " + filetype.toUpperCase() + " format");
+				putValue(Action.NAME,
+						getShortcut(PRINT) + "&Print/export multi-page " + filetype.toUpperCase() + "...");
 			}
 
 			protected void _actionPerformed(DiagramTab tab, ActionEvent e) {
