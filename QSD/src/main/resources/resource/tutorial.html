@@ -146,8 +146,8 @@ m[1]:result=d.query()
   
   <p>The servant might create a new object for completing his task.
      This new object must already be a part of the object section,
-     with its name prefixed by &quot;/&quot;. It appears on the diagram
-     as soon as it receives a &quot;new&quot; message. It cannot receive
+     with its name prefixed by "/". It appears on the diagram
+     as soon as it receives a "new" message. It cannot receive
      other messages before that.
   </p> 
 
@@ -170,7 +170,7 @@ s:f.new()
   <p>
   Any object (not just newly created ones) can be explicitly removed 
   from the diagram when it is
-  no longer needed. This can be accomplished by a &quot;destroy&quot;
+  no longer needed. This can be accomplished by a "destroy"
   message.
   </p>
 
@@ -196,7 +196,7 @@ s:f.destroy()
   an object is no longer needed, which means that it is not and will not
   be involved in an interaction anymore.</p>
   <p>
-  Objects with the &quot;x&quot; flag set are treated like this. They
+  Objects with the "x" flag set are treated like this. They
   will be destroyed automatically.
   </p>
   
@@ -225,7 +225,7 @@ m:s.destroy()
   </p>
   <p>
   When in a message the caller is separated from the callee by
-  &quot;:&gt;&quot; and not just &quot;:&quot; 
+  ":&gt;" and not just ":" 
   (<tt>m:&gt;s.executeTask()</tt> instead of <tt>m:s.executeTask</tt>) a new
   thread is created. The caller can now send other messages without
   interfering with the activity started by the callee.  
@@ -291,7 +291,7 @@ s:m.done()
   </p>
   <p>
   A combination of thread-creation and instant returning comes in handy
-  here (<tt>s:&gt;m.done()&</tt>). It results in an arrow indicating only
+  here (<tt>s:&gt;m.done()&amp;</tt>). It results in an arrow indicating only
   a signal without actually creating a new call-flow or continuing an
   existing one. 
   </p>
@@ -312,25 +312,79 @@ s:&gt;m.done()&amp;
   </div>
 
   <h2>
-    <a name="comment">Comments</a>
+    <a name="note">Notes</a>
   </h2>
+  
+  <p>We can put notes on the diagram and associate them to lifelines or
+  messages. A note is declared inside the message 
+  section, if starts 
+  with + or * followed by a unique number and the name of a lifeline
+  and is terminated by + or * followed by the
+  same number. For example:
+  </p>
+  <p>
+  <tt>+1 s1<br/>
+  This is a note to appear beside s1<br/>
+  +1<br/>
+  </tt>
+  </p>
+  
+  <p>  
+   + creates a note that consumes its own vertical space,
+  whereas a note declared with * is just placed on the right side of the
+  indicated lifeline without adding any space, which might lead to a
+  collision.</p>
+  
+  <p>
+  Any note that is ever declared on a diagram can be associated to
+  any number of lifelines and messages before or afterwards. An association to a lifeline
+  is accomplished by the note number in parentheses followed by the
+  lifeline name, for example
+  </p>
+  <p>
+  <tt>(1) s1</tt>
+  </p>
+  <p>
+  whereas an association to a
+  message is made when the message is prefixed by the parenthised note number,
+  for example
+  </p>
+  <p>
+  <tt>(3) s1:data=f.read()</tt>
+  </p>
+
 
   <div class="sd">
-    <img name="comment" src="sd/comment.png"/>
+    <img name="note" src="sd/note.png"/>
     <pre>m:Master
-s:Servant
+s1:Servant[x]
+s2:Servant[x]
 /f:File[x]
 d:Database
 
-m:&gt;s.executeTask()
-s:f.new()&amp;
-m:d.query()&amp;
-*1 s
-Saving the result
-of the task to a file.
-*1
-s:f.save()
-s:&gt;m.done()&amp;</pre>
+m:&gt;s1.start()
++1 s1
+Starting the 1st thread
++1
+(1) s1
+m:&gt;s2.start()
+*2 s2
+Starting the 2nd thread
+*2
+
++3 d
+This happens on the 1st thread
++3
+(3) s1:f.new
+
++4 s1
+This happens on the 2nd thread
++4
+(4)s2:result=d.query
+(3) s1:data=f.read()
+
+s2:&gt;m.done()&amp;
+s1:&gt;m.done()&amp;</pre>
   </div>
 
   <h2>
