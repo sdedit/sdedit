@@ -89,9 +89,9 @@ public class AboutDialog extends JDialog {
 		editorPane.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
-					System.gc();
-					showPanel();
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					AboutDialog.this.setVisible(false);
+					AboutDialog.this.dispose();
 				}
 			}
 		});
