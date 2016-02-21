@@ -80,7 +80,7 @@ public class AboutDialog extends JDialog {
 
 		text = text.replaceFirst("_USED_", _used + " MB");
 		text = text.replaceFirst("_AVAIL_", _avail + " MB");
-		text = text.replaceFirst("_JAVA_VERSION_", _version);
+		text = text.replaceFirst("_JAVA_", _version);
 
 		if (editorPane != null) {
 			getContentPane().remove(editorPane);
