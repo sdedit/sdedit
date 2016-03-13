@@ -2,14 +2,16 @@ cd ..
 
 rm -rf doc
 
-cd src/main/java
+jarfile=$(realpath __dist/sdedit-jar/sdedit*jar)
 
-find . -type f -name "*.java" | xargs \
+find src/main/java ../QSD-lib/src/main/java -type f -name "*.java" | xargs \
 javadoc \
- -tagletpath ../../../__dist/sdedit-jar/sdedit-4.2-SNAPSHOT.jar \
- -classpath ../../../__dist/sdedit-jar/sdedit-4.2-SNAPSHOT.jar \
+ -tagletpath $jarfile \
+ -classpath $jarfile \
  -taglet net.sf.sdedit.taglet.SequenceTaglet \
- -sourcepath . \
+ -sourcepath src/main/java:../QSD-lib/src/main/java \
  -encoding utf-8 \
  -docencoding utf-8 \
- -d ../../../doc \
+ -Xdoclint:none \
+ -d doc
+ 
