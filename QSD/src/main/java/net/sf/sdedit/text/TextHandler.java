@@ -66,6 +66,8 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 	private SequenceDiagram diagram;
 	
 	private final Grep grep;
+	
+	private Map<String,String> userData;
 
 	/**
 	 * Creates a new <tt>TextHandler</tt> for the given text.
@@ -164,7 +166,28 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 	public boolean advance() {
 		return advance(true);
 	}
-
+	
+	private void updateUserData (String txt) {
+		if (txt.length() == 0) {
+			userData = null;
+		} else {
+			userData = new HashMap<String, String>();
+			for (String part : txt.split(";")) {
+				int i = part.indexOf(':');
+				if (i > 0) {
+					String key = part.substring(0, i).trim();
+					key = key.toLowerCase();
+					String value = part.substring(i+1).trim();
+					if (value.length() == 0) {
+						userData.remove(key);
+					} else {
+						userData.put(key, value);
+					}
+				}
+			}
+		}
+	}
+	
 	private boolean advance(boolean ignoreEmptyLines) {
 		try {
 			if (!ready()) {
@@ -182,6 +205,11 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 				if (ignoreEmptyLines) {
 					line = line.trim();
 				}
+				
+				if (section == 1 && line.trim().startsWith("#!")) {
+					updateUserData(line.trim().substring(2));
+				}
+				
 				if (section == -1 && (line.equals("") || line.startsWith("#"))) {
 					continue;
 				}
@@ -272,6 +300,7 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 			throw e;
 		}
 		setCurrentLine(null);
+		data.setUserData(userData);
 		return data;
 	}
 
