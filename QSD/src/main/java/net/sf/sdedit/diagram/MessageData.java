@@ -23,6 +23,8 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.diagram;
 
+import java.util.Map;
+
 import net.sf.sdedit.message.BroadcastMessage;
 
 /**
@@ -60,6 +62,8 @@ public class MessageData {
 	private boolean isStatic;
 	
 	private boolean isBold;
+
+	private Map<String, String> userData;
 	
 	public MessageData() {
 		// default values (some properties are not mandatory, if left out by
@@ -383,6 +387,19 @@ public class MessageData {
 	public void setBroadcastType(int broadcastType) {
 		this.broadcastType = broadcastType;
 	}
+
+	public void setUserData(Map<String, String> userData) {
+		this.userData = userData;		
+	}
+	
+	public String getUserData (String key) {
+		if (userData == null) {
+			return null;
+		}
+		return userData.get(key);
+	}
+	
+	
 
 }
 //{{core}}
