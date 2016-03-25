@@ -123,7 +123,7 @@ public class LabeledBox extends Drawable {
             baseLine = top + 2 + getLabel().length*textHeight;    	
         }
         
-        drawMultilineString(g2d, left, baseLine, lifeline.getDiagram().getConfiguration().getLabeledBoxBgColor(), true, underlined);
+        drawMultilineString(g2d, Color.BLACK, left, baseLine, lifeline.getDiagram().getConfiguration().getLabeledBoxBgColor(), true, underlined);
     }
 
     public void computeLayoutInformation() {

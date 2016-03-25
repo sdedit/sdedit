@@ -95,7 +95,7 @@ public class Figure extends Drawable {
      * @see net.sf.sdedit.drawable.Drawable#drawObject(java.awt.Graphics2D)
      */
     protected void drawObject(Graphics2D g2d) {
-    	drawMultilineString(g2d,
+    	drawMultilineString(g2d, Color.BLACK,
         		getLeft() + getWidth() / 2 - textWidth / 2,
         		getTop() + getHeight() - 3,
         		Color.WHITE, true, underline);

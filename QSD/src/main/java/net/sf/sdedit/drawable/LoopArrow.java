@@ -102,10 +102,10 @@ public class LoopArrow extends Arrow
             t == -1 ? null : getMessage().getDiagram().threadColors[t];
 		Font font = g.getFont();
 		g.setFont(getFont(font));
-        drawMultilineString(g, textPoint.x, textPoint.y, back);
+        drawMultilineString(g, getFontColor(), textPoint.x, textPoint.y, back);
 		g.setFont(font);
         
-        g.setColor(color);
+        g.setColor(getColor());
         int sgn = getAlign() == Direction.RIGHT ? 1 : -1;
 
         g.setStroke(getStroke() == ArrowStroke.SOLID ? solid() : dashed());

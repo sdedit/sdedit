@@ -31,6 +31,8 @@ import java.awt.Polygon;
 import java.awt.Stroke;
 
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.diagram.MessageData;
+import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.drawable.Strokes.StrokeType;
 import net.sf.sdedit.message.Answer;
 import net.sf.sdedit.message.BroadcastMessage;
@@ -62,7 +64,7 @@ public class Arrow extends SequenceElement {
 
 	private int fontStyle;
 
-	protected final Color color;
+	// protected final Color color;
 
 	private static String[] splitMessage(String text, int length) {
 		if (length > 0) {
@@ -71,35 +73,29 @@ public class Arrow extends SequenceElement {
 		return text.split("\\\\n");
 	}
 
-	protected Arrow(Message message, Lifeline boundary0, Lifeline boundary1,
-			ArrowStroke stroke, Direction align, int y) {
-		super(message.getDiagram(), boundary0, boundary1, splitMessage(
-				message.getText(), message.getDiagram().messageLineLength),
-				align, y);
+	protected Arrow(Message message, Lifeline boundary0, Lifeline boundary1, ArrowStroke stroke, Direction align,
+			int y) {
+		super(message.getDiagram(), boundary0, boundary1,
+				splitMessage(message.getText(), message.getDiagram().messageLineLength), align, y);
 		this.message = message;
-		this.color = message.getDiagram().arrowColor;
 		isAnswer = message instanceof Answer;
 		int headSize;
 		this.stroke = stroke;
 		if (stroke != ArrowStroke.NONE) {
 			headSize = diagram().arrowSize;
 			headType = message instanceof BroadcastMessage ? ArrowHeadType.ROUNDED
-					: message.isSynchronous() ? ArrowHeadType.CLOSED
-							: ArrowHeadType.OPEN;
+					: message.isSynchronous() ? ArrowHeadType.CLOSED : ArrowHeadType.OPEN;
 		} else {
 			// does not matter, but final field must be initialized
 			headType = ArrowHeadType.CLOSED;
 			headSize = 0;
 		}
 		int totalTextHeight = textHeight();
-		setHeight(totalTextHeight + configuration().getMessageLabelSpace()
-				+ diagram().arrowSize / 2);
+		setHeight(totalTextHeight + configuration().getMessageLabelSpace() + diagram().arrowSize / 2);
 
-		setWidth(headSize + leftPadding() + rightPadding()
-				+ diagram().messagePadding + textWidth());
+		setWidth(headSize + leftPadding() + rightPadding() + diagram().messagePadding + textWidth());
 
-		fontStyle = (message.getData().isStatic() && !isAnswer ? Font.ITALIC
-				: 0)
+		fontStyle = (message.getData().isStatic() && !isAnswer ? Font.ITALIC : 0)
 				| (message.getData().isBold() && !isAnswer ? Font.BOLD : 0);
 
 	}
@@ -130,8 +126,7 @@ public class Arrow extends SequenceElement {
 	 *            the vertical position of the arrow
 	 */
 	public Arrow(Message message, ArrowStroke stroke, Direction align, int y) {
-		this(message, message.getCaller(), message.getCallee(), stroke, align,
-				y);
+		this(message, message.getCaller(), message.getCallee(), stroke, align, y);
 	}
 
 	/**
@@ -167,13 +162,10 @@ public class Arrow extends SequenceElement {
 	}
 
 	public static int getInnerHeight(Message message) {
-		//int l = message.getText().split("\\\\n").length;
-		int l = splitMessage(
-				message.getText(), message.getDiagram().messageLineLength).length;
-		return message.getDiagram().getPaintDevice().getTextHeight()
-				* l
-				+ message.getDiagram().getConfiguration()
-						.getMessageLabelSpace();
+		// int l = message.getText().split("\\\\n").length;
+		int l = splitMessage(message.getText(), message.getDiagram().messageLineLength).length;
+		return message.getDiagram().getPaintDevice().getTextHeight() * l
+				+ message.getDiagram().getConfiguration().getMessageLabelSpace();
 	}
 
 	/**
@@ -208,9 +200,10 @@ public class Arrow extends SequenceElement {
 	protected void drawObject(Graphics2D g2d) {
 		Font font = g2d.getFont();
 		g2d.setFont(getFont(font));
+		g2d.setColor(getFontColor());
 		drawText(g2d);
 		g2d.setFont(font);
-		g2d.setColor(color);
+		g2d.setColor(getColor());
 		int sgn = getAlign() == Direction.LEFT ? 1 : -1;
 
 		if (stroke != ArrowStroke.NONE) {
@@ -226,12 +219,49 @@ public class Arrow extends SequenceElement {
 		}
 	}
 
+	private Color getUserColor(String key) {
+		MessageData data = getMessage().getData();
+		Color color = null;
+		if (data.getMessage().length() > 0) {
+			color = Utilities.decodeColor(data.getUserData(key));
+		}
+		return color;
+	}
+
+	protected Color getBackgroundColor() {
+		MessageData data = getMessage().getData();
+		Color backgroundColor = null;
+		if (data.getMessage().length() > 0) {
+			backgroundColor = getUserColor("background-color");
+			if (backgroundColor == null) {
+				SequenceDiagram diag = diagram();
+				int t = data.getThread();
+				if (t >= 0 && diag.opaqueText) {
+					backgroundColor = diag.threadColors[t];
+				}
+			}
+		}
+		return backgroundColor;
+	}
+
+	protected Color getColor() {
+		Color color = getUserColor("color");
+		if (color == null) {
+			color = diagram().arrowColor;
+		}
+		return color;
+	}
+
+	protected Color getFontColor() {
+		Color color = getUserColor("color");
+		if (color == null) {
+			color = Color.BLACK;
+		}
+		return color;
+	}
+
 	protected void drawText(Graphics2D g2d) {
-		int t = getMessage().getData().getThread();
-		Color back = getMessage().getData().getMessage().length() == 0
-				|| !diagram().opaqueText || t == -1 ? null : getMessage()
-				.getDiagram().threadColors[t];
-		drawMultilineString(g2d, textPoint.x, textPoint.y, back);
+		drawMultilineString(g2d, getFontColor(), textPoint.x, textPoint.y, getBackgroundColor());
 	}
 
 	/**
@@ -261,15 +291,13 @@ public class Arrow extends SequenceElement {
 		setLeft(left);
 		setWidth(Math.max(getWidth(), right - left));
 
-		int x_from = align == Direction.LEFT ? getLeft() + getWidth()
-				: getLeft();
+		int x_from = align == Direction.LEFT ? getLeft() + getWidth() : getLeft();
 		int x_to = align == Direction.LEFT ? getLeft() : getLeft() + getWidth();
 
 		int sgn = align == Direction.LEFT ? 1 : -1;
 
-		int text_x = sgn == 1 ? x_from - diagram().messagePadding - textWidth()
-				- rightPadding() : x_from + diagram().messagePadding
-				+ leftPadding();
+		int text_x = sgn == 1 ? x_from - diagram().messagePadding - textWidth() - rightPadding()
+				: x_from + diagram().messagePadding + leftPadding();
 		int v = getTop() + textHeight() + diagram().messageLabelSpace;
 
 		pts = new Point[2];
@@ -300,8 +328,7 @@ public class Arrow extends SequenceElement {
 		int size = diagram().arrowSize;
 		switch (headType) {
 		case CLOSED:
-			Polygon p = new Polygon(new int[] { x, x + sgn * size,
-					x + sgn * size, x },
+			Polygon p = new Polygon(new int[] { x, x + sgn * size, x + sgn * size, x },
 					new int[] { y, y - size, y + size, y }, 4);
 			g.fillPolygon(p);
 			break;

@@ -24,6 +24,7 @@
 
 package net.sf.sdedit.drawable;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import net.sf.sdedit.diagram.PaintDevice;
@@ -57,7 +58,7 @@ public class Text extends Drawable
     @Override
     protected void drawObject(Graphics2D g2d) {
         g2d.setFont(device.getFont(true));
-        drawMultilineString(g2d, text, getLeft(), getBottom() -4 , 
+        drawMultilineString(g2d, Color.BLACK, text, getLeft(), getBottom() -4 , 
                 simpleHeight, getWidth(), null, false, false);
     }
 

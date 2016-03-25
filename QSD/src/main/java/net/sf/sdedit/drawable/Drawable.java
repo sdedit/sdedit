@@ -212,6 +212,7 @@ public abstract class Drawable implements Constants {
 	}
 
 	protected static final void drawMultilineString(Graphics2D g,
+			Color color,
 			String[] string, int x, int y, int simpleHeight, int width,
 			Color background, boolean center, boolean underline) {
 		if (background != null) {
@@ -221,7 +222,7 @@ public abstract class Drawable implements Constants {
 			top = y - height + 2;
 			g.fillRect(x - 1, top, width, height);
 		}
-		g.setColor(Color.BLACK);
+		g.setColor(color);
 		for (int i = 0; i < string.length; i++) {
 			int yy = y - i * simpleHeight;
 			String str = string[string.length-1-i];
@@ -241,15 +242,15 @@ public abstract class Drawable implements Constants {
 		}
 	}
 	
-    protected void drawMultilineString(Graphics2D g, int x, int y,
+    protected void drawMultilineString(Graphics2D g, Color color, int x, int y,
             Color background, boolean center, boolean underline) {
-        drawMultilineString(g, label, x, y, diagram.getPaintDevice()
+        drawMultilineString(g, color, label, x, y, diagram.getPaintDevice()
                 .getTextHeight(), textWidth(), background, center, underline);
     }
     
-    protected void drawMultilineString(Graphics2D g, int x, int y,
+    protected void drawMultilineString(Graphics2D g, Color color, int x, int y,
             Color background) {
-    	drawMultilineString(g, x, y, background, false, false);
+    	drawMultilineString(g, color, x, y, background, false, false);
 
     }
 

@@ -281,30 +281,9 @@ public class Note extends SequenceElement
         g2d.fillPolygon(p2);
         
         g2d.setColor(Color.BLACK);
-        
         g2d.draw(p1);
         g2d.draw(p2);
-        
-        
-        /*
-        
-        
-        
-        
-        g2d.drawLine(left + margin, getTop() + margin, cornerx, getTop()
-                + margin);
-        g2d.drawLine(left + margin, getTop() + margin, left + margin, getTop()
-                + getHeight() - margin);
-        g2d.drawLine(left + margin, getTop() + getHeight() - margin, left
-                + getWidth() - margin, getTop() + getHeight() - margin);
-        g2d.drawLine(left + getWidth() - margin, getTop() + getHeight()
-                - margin, left + getWidth() - margin, cornery);
-        g2d.drawLine(cornerx, cornery, cornerx, getTop() + margin);
-        g2d.drawLine(cornerx, cornery, left + getWidth() - margin, cornery);
-        g2d.drawLine(cornerx, getTop() + margin, left + getWidth() - margin,
-                cornery);
-                */
-        drawMultilineString(g2d, left + margin + padding, getTop()
+        drawMultilineString(g2d, Color.BLACK, left + margin + padding, getTop()
                 + getHeight() - margin - padding, null);
         for (Point anchor : targets) {
             Point start = findStart(anchor);
