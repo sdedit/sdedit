@@ -410,6 +410,44 @@ m:s4.new()
 m:s4.executeTask()
 </pre>
   </div>
+  
+  <h2>
+    <a name="user-colors">User-defined colors</a>
+  </h2>
+  <p>
+     If you want to style arrows and texts with individual colors, e. g.
+     for grouping them visually, you can insert a comment starting with #! 
+     before the messages you want to style. 
+  </p>
+  <p>
+    The comment should read like a CSS block on a single line. The property
+    "color" defines the color of the arrow and the text, whereas
+    "background-color" defines the text's background color.
+  </p>
+  <p>
+    An empty comment (#!) resets your color settings, texts will be black,
+    arrows will be colored normally.
+  </p>
+  
+    <div class="sd">
+    <img name="user-colors" src="sd/user-colors.png"/>
+    <pre>
+    a:A
+    b:B
+    c:C
+    
+    #!color:#00FF00;background-color:gray;
+    a:b.green on gray
+    #!color:orange;
+    b:c.orange without background
+    #!color:black;background-color:#FFFF00;
+    c:a.black on yellow
+    a:c.black on yellow again
+    #!
+    a[1]:_
+    a:b.default style
+</pre>
+  </div>
 
   <h2>
     <a name="async1">Actors</a>
