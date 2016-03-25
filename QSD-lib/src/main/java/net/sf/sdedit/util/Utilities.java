@@ -141,12 +141,10 @@ public class Utilities {
 		return PWriter.create();
 	}
 
-	public static PrintWriter createPrintWriter(File file, String encoding)
-			throws IOException {
+	public static PrintWriter createPrintWriter(File file, String encoding) throws IOException {
 		OutputStream outputStream = new FileOutputStream(file);
 		try {
-			OutputStreamWriter osw = new OutputStreamWriter(outputStream,
-					encoding);
+			OutputStreamWriter osw = new OutputStreamWriter(outputStream, encoding);
 			PrintWriter pw = new PrintWriter(osw);
 			return pw;
 		} catch (IOException e) {
@@ -256,8 +254,7 @@ public class Utilities {
 		return toString(date, null);
 	}
 
-	public static Class<?> loadClass(String name, byte[] code)
-			throws ClassNotFoundException {
+	public static Class<?> loadClass(String name, byte[] code) throws ClassNotFoundException {
 		cl().addClass(name, code);
 		return cl().loadClass(name);
 	}
@@ -447,8 +444,7 @@ public class Utilities {
 			if (manifest == null) {
 				return null;
 			}
-			String mainClass = manifest.getMainAttributes().getValue(
-					"Main-Class");
+			String mainClass = manifest.getMainAttributes().getValue("Main-Class");
 			return mainClass;
 		} finally {
 			jf.close();
@@ -511,8 +507,7 @@ public class Utilities {
 		return file;
 	}
 
-	public static <T, C extends Collection<T>> Collection<T> toCollection(
-			Class<C> cls, T[] array) {
+	public static <T, C extends Collection<T>> Collection<T> toCollection(Class<C> cls, T[] array) {
 		try {
 			Collection<T> collection = cls.newInstance();
 			for (T t : array) {
@@ -527,8 +522,7 @@ public class Utilities {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, S extends T, U extends T> T[] joinArrays(S[] array0,
-			U[] array1, Class<T> elementClass) {
+	public static <T, S extends T, U extends T> T[] joinArrays(S[] array0, U[] array1, Class<T> elementClass) {
 		int l0 = Array.getLength(array0);
 		int l1 = Array.getLength(array1);
 		T[] array = (T[]) Array.newInstance(elementClass, l0 + l1);
@@ -537,8 +531,8 @@ public class Utilities {
 		return array;
 	}
 
-	public static <T, C extends Collection<T>> Collection<T> flatten(
-			Class<C> cls, Collection<? extends Collection<T>> collections) {
+	public static <T, C extends Collection<T>> Collection<T> flatten(Class<C> cls,
+			Collection<? extends Collection<T>> collections) {
 		try {
 			Collection<T> flatCollection = cls.newInstance();
 			for (Collection<T> collection : collections) {
@@ -564,8 +558,7 @@ public class Utilities {
 	 *         the given stream, starting at the current position
 	 * @throws IOException
 	 */
-	public static byte[] toByteArray(InputStream inputStream, final int size)
-			throws IOException {
+	public static byte[] toByteArray(InputStream inputStream, final int size) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		long length = size == -1 ? Long.MAX_VALUE : size;
 		pipe(inputStream, out, length);
@@ -649,8 +642,7 @@ public class Utilities {
 		return result;
 	}
 
-	public static <T> Iterable<T> castIterable(final Object iterable,
-			final Class<T> itemClass) {
+	public static <T> Iterable<T> castIterable(final Object iterable, final Class<T> itemClass) {
 		if (iterable == null) {
 			return null;
 		}
@@ -704,13 +696,11 @@ public class Utilities {
 
 			};
 		}
-		throw new IllegalArgumentException(iterable.getClass().getName()
-				+ " is not iterable");
+		throw new IllegalArgumentException(iterable.getClass().getName() + " is not iterable");
 
 	}
 
-	public static <T> Iterable<T> iteratorToIterable(
-			final Iterator<?> iterator, final Class<T> elemClass) {
+	public static <T> Iterable<T> iteratorToIterable(final Iterator<?> iterator, final Class<T> elemClass) {
 		final Iterator<T> iter = new Iterator<T>() {
 
 			public boolean hasNext() {
@@ -737,8 +727,7 @@ public class Utilities {
 		};
 	}
 
-	public static <T> Iterable<T> wrap(final Iterator<?> iterator,
-			final Class<T> elemClass) {
+	public static <T> Iterable<T> wrap(final Iterator<?> iterator, final Class<T> elemClass) {
 		return new Iterable<T>() {
 
 			public Iterator<T> iterator() {
@@ -784,13 +773,11 @@ public class Utilities {
 	 * @param to
 	 * @throws IOException
 	 */
-	public static void pipe(InputStream from, OutputStream to)
-			throws IOException {
+	public static void pipe(InputStream from, OutputStream to) throws IOException {
 		pipe(from, to, Long.MAX_VALUE);
 	}
 
-	public static void pipe(InputStream from, OutputStream to, long size)
-			throws IOException {
+	public static void pipe(InputStream from, OutputStream to, long size) throws IOException {
 		final int EOF = -1;
 		final int BUFFER_SIZE = 1024;
 		byte[] buffer = new byte[BUFFER_SIZE];
@@ -815,8 +802,8 @@ public class Utilities {
 		}
 	}
 
-	public static Iterable<String> readLines(String command,
-			Ref<InputStream> streamRef, Charset charset) throws IOException {
+	public static Iterable<String> readLines(String command, Ref<InputStream> streamRef, Charset charset)
+			throws IOException {
 		Process proc = Runtime.getRuntime().exec(command);
 		InputStream stream = proc.getInputStream();
 		if (streamRef != null) {
@@ -825,13 +812,12 @@ public class Utilities {
 		return readLines(stream, charset);
 	}
 
-	public static Iterable<String> readLines(String command, Charset charset)
-			throws IOException {
+	public static Iterable<String> readLines(String command, Charset charset) throws IOException {
 		return readLines(command, null, charset);
 	}
 
-	public static Iterable<String> readLines(File file,
-			Ref<InputStream> streamRef, Charset charset) throws IOException {
+	public static Iterable<String> readLines(File file, Ref<InputStream> streamRef, Charset charset)
+			throws IOException {
 		InputStream stream = new FileInputStream(file);
 		if (streamRef != null) {
 			streamRef.t = stream;
@@ -839,16 +825,13 @@ public class Utilities {
 		return readLines(stream, charset);
 	}
 
-	public static Iterable<String> readLines(File file, Charset charset)
-			throws IOException {
+	public static Iterable<String> readLines(File file, Charset charset) throws IOException {
 		return readLines(file, null, charset);
 	}
 
-	public static Iterable<String> readLines(final InputStream stream,
-			Charset charset) throws IOException {
+	public static Iterable<String> readLines(final InputStream stream, Charset charset) throws IOException {
 
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(
-				stream, charset));
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(stream, charset));
 		return new Iterable<String>() {
 
 			public Iterator<String> iterator() {
@@ -868,8 +851,7 @@ public class Utilities {
 							} catch (IOException ignored) {
 								/* empty */
 							}
-							throw new IllegalStateException("Cannot read file",
-									e);
+							throw new IllegalStateException("Cannot read file", e);
 						}
 						return currentLine != null;
 					}
@@ -956,8 +938,7 @@ public class Utilities {
 			try {
 				field = klass.getField(name);
 			} catch (Exception e1) {
-				throw new IllegalArgumentException("Field not available: "
-						+ klass.getName() + "." + name);
+				throw new IllegalArgumentException("Field not available: " + klass.getName() + "." + name);
 			}
 
 		}
@@ -968,8 +949,7 @@ public class Utilities {
 		try {
 			value = field.get(obj);
 		} catch (IllegalAccessException e) {
-			throw new IllegalArgumentException("Field cannot be accessed: "
-					+ klass.getName() + "." + name);
+			throw new IllegalArgumentException("Field cannot be accessed: " + klass.getName() + "." + name);
 		}
 		return value;
 	}
@@ -989,15 +969,15 @@ public class Utilities {
 	 * @param object
 	 *            one of the following
 	 *            <ul>
-	 *            <li>a String, representing a class name</li> <li>a Class
-	 *            object</li> <li>any other object</li>
+	 *            <li>a String, representing a class name</li>
+	 *            <li>a Class object</li>
+	 *            <li>any other object</li>
 	 *            </ul>
 	 * @param args
 	 *            the arguments to be passed to the method
 	 * @return
 	 */
-	public static Object invoke(String methodName, Object object,
-			Object... args) {
+	public static Object invoke(String methodName, Object object, Object... args) {
 		Method method;
 		Class<?> theClass;
 		Object target = null;
@@ -1021,8 +1001,8 @@ public class Utilities {
 		try {
 			result = method.invoke(target, args);
 		} catch (IllegalAccessException e) {
-			throw new IllegalArgumentException("cannot access method "
-					+ methodName + " of " + object.getClass().getName());
+			throw new IllegalArgumentException(
+					"cannot access method " + methodName + " of " + object.getClass().getName());
 		} catch (InvocationTargetException e) {
 			if (e.getCause() instanceof RuntimeException) {
 				throw (RuntimeException) e.getCause();
@@ -1041,8 +1021,7 @@ public class Utilities {
 			oos.writeObject(t);
 			out.flush();
 
-			ByteArrayInputStream in = new ByteArrayInputStream(
-					out.toByteArray());
+			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 			ObjectInputStream ois = new ObjectInputStream(in);
 			T copy = (T) ois.readObject();
 			in.close();
@@ -1068,11 +1047,9 @@ public class Utilities {
 	 * @return a method that has the given names and can be called using the
 	 *         arguments given, <code>null</code> if no such method exists
 	 */
-	public static Method resolveMethod(Class<?> clazz, String name,
-			Object[] args) {
+	public static Method resolveMethod(Class<?> clazz, String name, Object[] args) {
 		Method[] methods = // clazz.getMethods();
-		Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(),
-				Method.class);
+				Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class);
 		int i;
 		for (i = 0; i < methods.length; i++) {
 			Method m = methods[i];
@@ -1086,8 +1063,7 @@ public class Utilities {
 					boolean match = args.length == classes.length;
 					for (int j = 0; match && j < args.length; j++) {
 						match = classes[j].isAssignableFrom(args[j].getClass())
-								|| primitiveClasses.get(classes[j]) == args[j]
-										.getClass();
+								|| primitiveClasses.get(classes[j]) == args[j].getClass();
 					}
 					if (match) {
 						return m;
@@ -1107,10 +1083,8 @@ public class Utilities {
 		return false;
 	}
 
-	public static Method findMethod(Class<?> clazz, String name,
-			boolean declared) {
-		for (Method method : declared ? clazz.getDeclaredMethods() : clazz
-				.getMethods()) {
+	public static Method findMethod(Class<?> clazz, String name, boolean declared) {
+		for (Method method : declared ? clazz.getDeclaredMethods() : clazz.getMethods()) {
 			if (method.getName().equals(name)) {
 				return method;
 			}
@@ -1128,15 +1102,13 @@ public class Utilities {
 	 * @return true iff both sets are equal
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> boolean computeDifference(Set<T> set0, Set<T> set1,
-			Ref<Set<T>> set0Only, Ref<Set<T>> set1Only) {
+	public static <T> boolean computeDifference(Set<T> set0, Set<T> set1, Ref<Set<T>> set0Only, Ref<Set<T>> set1Only) {
 		try {
 			set0Only.t = set0.getClass().newInstance();
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Cannot instantiate another "
-					+ set0.getClass().getName(), e);
+			throw new IllegalArgumentException("Cannot instantiate another " + set0.getClass().getName(), e);
 
 		}
 		try {
@@ -1144,8 +1116,7 @@ public class Utilities {
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Cannot instantiate another "
-					+ set1.getClass().getName(), e);
+			throw new IllegalArgumentException("Cannot instantiate another " + set1.getClass().getName(), e);
 
 		}
 
@@ -1175,15 +1146,13 @@ public class Utilities {
 
 	}
 
-	public static InputStream filter(String command, InputStream input,
-			File workingDir) throws IOException {
+	public static InputStream filter(String command, InputStream input, File workingDir) throws IOException {
 
 		if (workingDir == null) {
 			workingDir = new File(".");
 		}
 
-		Process process = Runtime.getRuntime().exec(command, new String[0],
-				workingDir);
+		Process process = Runtime.getRuntime().exec(command, new String[0], workingDir);
 		try {
 			process.waitFor();
 		} catch (InterruptedException ie) {
@@ -1205,8 +1174,7 @@ public class Utilities {
 		String suffix;
 	}
 
-	public static File[] chooseFiles(JFileChooser fileChooser,
-			Component component, boolean open, boolean multiple,
+	public static File[] chooseFiles(JFileChooser fileChooser, Component component, boolean open, boolean multiple,
 			String message, String file, String... filter) {
 
 		fileChooser.setMultiSelectionEnabled(multiple);
@@ -1245,8 +1213,7 @@ public class Utilities {
 				int dot = file.lastIndexOf('.');
 				if (dot >= 0) {
 					String type = file.substring(dot + 1);
-					for (FileFilter _filter : fileChooser
-							.getChoosableFileFilters()) {
+					for (FileFilter _filter : fileChooser.getChoosableFileFilters()) {
 						if (_filter instanceof MyFileFilter) {
 							if (((MyFileFilter) _filter).suffix.equals(type)) {
 								fileChooser.setFileFilter(_filter);
@@ -1268,8 +1235,7 @@ public class Utilities {
 		File[] files;
 		if (ret == JFileChooser.APPROVE_OPTION) {
 			if (multiple) {
-				if (fileChooser.getSelectedFiles() == null
-						|| fileChooser.getSelectedFiles().length == 0) {
+				if (fileChooser.getSelectedFiles() == null || fileChooser.getSelectedFiles().length == 0) {
 					files = null;
 				} else {
 					files = fileChooser.getSelectedFiles();
@@ -1280,8 +1246,7 @@ public class Utilities {
 					FileFilter selectedFilter = fileChooser.getFileFilter();
 					if (selectedFilter instanceof MyFileFilter) {
 						String type = ((MyFileFilter) selectedFilter).suffix;
-						selectedFile = UIUtilities
-								.affixType(selectedFile, type);
+						selectedFile = UIUtilities.affixType(selectedFile, type);
 					}
 				}
 				files = new File[] { selectedFile };
@@ -1499,8 +1464,7 @@ public class Utilities {
 	}
 
 	public static byte[] encrypt(byte[] bytes, String hexKey)
-			throws InvalidKeyException, IllegalBlockSizeException,
-			BadPaddingException {
+			throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		SecretKey key = new SecretKeySpec(toByteArray(hexKey), "DESede");
 		Cipher cipher;
 		try {
@@ -1514,8 +1478,7 @@ public class Utilities {
 		return cipher.doFinal(bytes);
 	}
 
-	public static List<Integer> getHashCodes(
-			Collection<? extends Object> objects) {
+	public static List<Integer> getHashCodes(Collection<? extends Object> objects) {
 		List<Integer> hashCodes = new LinkedList<Integer>();
 		for (Object obj : objects) {
 			hashCodes.add(System.identityHashCode(obj));
@@ -1524,8 +1487,7 @@ public class Utilities {
 	}
 
 	public static byte[] decrypt(byte[] bytes, String hexKey)
-			throws NoSuchPaddingException, InvalidKeyException,
-			IllegalBlockSizeException, BadPaddingException {
+			throws NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		SecretKey key = new SecretKeySpec(toByteArray(hexKey), "DESede");
 		try {
 			Cipher cipher = Cipher.getInstance("DESede");
@@ -1542,8 +1504,7 @@ public class Utilities {
 			beanInfo = Introspector.getBeanInfo(cls);
 			return beanInfo.getPropertyDescriptors();
 		} catch (IntrospectionException e) {
-			throw new IllegalArgumentException("Unable to introspect "
-					+ cls.getName(), e);
+			throw new IllegalArgumentException("Unable to introspect " + cls.getName(), e);
 		}
 
 	}
@@ -1559,18 +1520,16 @@ public class Utilities {
 		try {
 			obj = clazz.newInstance();
 		} catch (InstantiationException e) {
-			throw new IllegalArgumentException("cannot instantiate class: "
-					+ cls, e);
+			throw new IllegalArgumentException("cannot instantiate class: " + cls, e);
 		} catch (IllegalAccessException e) {
-			throw new IllegalArgumentException(
-					"cannot access no-args constructor of class: " + cls, e);
+			throw new IllegalArgumentException("cannot access no-args constructor of class: " + cls, e);
 		}
 		T t;
 		try {
 			t = interfaceType.cast(obj);
 		} catch (ClassCastException e) {
-			throw new IllegalArgumentException("cannot cast new instance of "
-					+ cls + " to interface type " + interfaceType.getName());
+			throw new IllegalArgumentException(
+					"cannot cast new instance of " + cls + " to interface type " + interfaceType.getName());
 		}
 
 		return t;
@@ -1590,8 +1549,7 @@ public class Utilities {
 	 * @param newString
 	 * @return
 	 */
-	public static String replaceFirst(String string, String oldString,
-			String newString) {
+	public static String replaceFirst(String string, String oldString, String newString) {
 		String result = string;
 		if (string != null) {
 			int i = string.indexOf(oldString);
@@ -1607,8 +1565,7 @@ public class Utilities {
 	}
 
 	public static URL asURL(Class<?> clazz) {
-		int pkg = clazz.getPackage() == null ? 0 : clazz.getPackage().getName()
-				.length() + 1;
+		int pkg = clazz.getPackage() == null ? 0 : clazz.getPackage().getName().length() + 1;
 		String className = clazz.getName().substring(pkg);
 		String resourceName = className.replace('.', '$') + ".class";
 		URL url = clazz.getResource(resourceName);
@@ -1627,18 +1584,14 @@ public class Utilities {
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception e) {
-			throw new IllegalArgumentException(
-					"Cannot replicate object of type "
-							+ object.getClass().getName(), e);
+			throw new IllegalArgumentException("Cannot replicate object of type " + object.getClass().getName(), e);
 		}
 	}
 
-	public static <T> T deserialize(byte[] bytes,
-			final ClassLoader classloader, Class<T> cls) {
+	public static <T> T deserialize(byte[] bytes, final ClassLoader classloader, Class<T> cls) {
 		try {
 			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-			final HashMap<String, Class<?>> primClasses = new HashMap<String, Class<?>>(
-					8, 1.0F);
+			final HashMap<String, Class<?>> primClasses = new HashMap<String, Class<?>>(8, 1.0F);
 			primClasses.put("boolean", boolean.class);
 			primClasses.put("byte", byte.class);
 			primClasses.put("char", char.class);
@@ -1650,8 +1603,7 @@ public class Utilities {
 			primClasses.put("void", void.class);
 			ObjectInputStream is = new ObjectInputStream(bis) {
 
-				protected Class<?> resolveClass(ObjectStreamClass desc)
-						throws IOException, ClassNotFoundException {
+				protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
 					String name = desc.getName();
 					try {
 						return Class.forName(name, false, classloader);
@@ -1672,8 +1624,7 @@ public class Utilities {
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception e) {
-			throw new IllegalArgumentException(
-					"Cannot replicate object of type " + cls.getName(), e);
+			throw new IllegalArgumentException("Cannot replicate object of type " + cls.getName(), e);
 		}
 	}
 
@@ -1733,29 +1684,24 @@ public class Utilities {
 		return initialAngle + (1D * ridx) / (1 << 31);
 	}
 
-	public static Color getColor(int i, float initialAngle, float saturation,
-			float brightness) {
+	public static Color getColor(int i, float initialAngle, float saturation, float brightness) {
 		double hue = getHue(i, initialAngle);
 		Color color = Color.getHSBColor((float) hue, saturation, brightness);
 		return color;
 	}
 
-	public static String getRGBString(int i, float initialAngle,
-			float saturation, float brightness) {
+	public static String getRGBString(int i, float initialAngle, float saturation, float brightness) {
 		Color color = getColor(i, initialAngle, saturation, brightness);
-		return String.format("%02X%02X%02X", color.getRed(), color.getGreen(),
-				color.getBlue());
+		return String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
 	}
 
-	public static synchronized String getKey(String className,
-			String methodName, String b) {
+	public static synchronized String getKey(String className, String methodName, String b) {
 		String key = keys.get(b);
 		if (key == null) {
 			try {
 				CL cl = new CL();
 
-				ByteArrayInputStream stream = new ByteArrayInputStream(
-						Base64Coder.decode(b));
+				ByteArrayInputStream stream = new ByteArrayInputStream(Base64Coder.decode(b));
 				// GZIPInputStream gzip = new GZIPInputStream(stream);
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				pipe(stream, out);
@@ -1778,8 +1724,7 @@ public class Utilities {
 
 	public static int max(int... nums) {
 		if (nums.length == 0) {
-			throw new IllegalArgumentException(
-					"no numbers provided to compute maximum of");
+			throw new IllegalArgumentException("no numbers provided to compute maximum of");
 		}
 		int max = Integer.MIN_VALUE;
 		for (int n : nums) {
@@ -1792,8 +1737,7 @@ public class Utilities {
 
 	public static int min(int... nums) {
 		if (nums.length == 0) {
-			throw new IllegalArgumentException(
-					"no numbers provided to compute minimum of");
+			throw new IllegalArgumentException("no numbers provided to compute minimum of");
 		}
 		int min = Integer.MAX_VALUE;
 		for (int n : nums) {
@@ -1823,8 +1767,7 @@ public class Utilities {
 	/*
 	 * From Apache Commons Lang WordUtils
 	 */
-	public static String wrap(final String str, int wrapLength,
-			String newLineStr, final boolean wrapLongWords) {
+	public static String wrap(final String str, int wrapLength, String newLineStr, final boolean wrapLongWords) {
 		if (str == null) {
 			return null;
 		}
@@ -1836,8 +1779,7 @@ public class Utilities {
 		}
 		final int inputLineLength = str.length();
 		int offset = 0;
-		final StringBuilder wrappedLine = new StringBuilder(
-				inputLineLength + 32);
+		final StringBuilder wrappedLine = new StringBuilder(inputLineLength + 32);
 
 		while (inputLineLength - offset > wrapLength) {
 			if (str.charAt(offset) == ' ') {
@@ -1856,16 +1798,14 @@ public class Utilities {
 				// really long word or URL
 				if (wrapLongWords) {
 					// wrap really long word one line at a time
-					wrappedLine.append(str.substring(offset, wrapLength
-							+ offset));
+					wrappedLine.append(str.substring(offset, wrapLength + offset));
 					wrappedLine.append(newLineStr);
 					offset += wrapLength;
 				} else {
 					// do not wrap really long word, just extend beyond limit
 					spaceToWrapAt = str.indexOf(' ', wrapLength + offset);
 					if (spaceToWrapAt >= 0) {
-						wrappedLine
-								.append(str.substring(offset, spaceToWrapAt));
+						wrappedLine.append(str.substring(offset, spaceToWrapAt));
 						wrappedLine.append(newLineStr);
 						offset = spaceToWrapAt + 1;
 					} else {
@@ -1888,6 +1828,25 @@ public class Utilities {
 			h = 63 * h + string.charAt(i);
 		}
 		return h;
+	}
+
+	public static Color decodeColor(String colorString) {
+		Color color = null;
+		if (colorString != null) {
+			try {
+				color = Color.decode(colorString);
+			} catch (NumberFormatException e) {
+				try {
+					Field field = Color.class.getField(colorString.toLowerCase());
+					if (field != null) {
+						return (Color) field.get(null);
+					}
+				} catch (Exception e1) {
+
+				}
+			}
+		}
+		return color;
 	}
 
 }
