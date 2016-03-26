@@ -31,7 +31,8 @@ enum MessageType {
 	SPAWN_WITH_LEVEL(new Object[] { PREFIX, LEVELS, SPAWN, "(.+?)", DOT, "(.*)" }, "noteId", "dummy", "spawner",
 			"dummy", "levelString", "threadString", "levelString", "callee", "message"),
 
-	SPAWN_WITHOUT_LEVEL(new Object[] { PREFIX, SPAWN, "(.+?)", DOT, "(.*)" }, "dummy", "spawner", "callee", "message");
+	SPAWN_WITHOUT_LEVEL(new Object[] { PREFIX, SPAWN, "(.+?)", DOT, "(.*)" }, "noteId", "dummy", "spawner",
+			"callee", "message");
 
 	private String[] properties;
 	
