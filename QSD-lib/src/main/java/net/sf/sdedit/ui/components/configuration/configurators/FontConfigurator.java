@@ -52,6 +52,8 @@ import net.sf.sdedit.ui.components.configuration.DataObject;
 public class FontConfigurator<C extends DataObject> extends Configurator<Font, C>
 		implements ActionListener, ChangeListener {
 
+	private static final long serialVersionUID = -5774694431117789385L;
+
 	private static final int strut = 5;
 
 	private JComboBox nameComboBox;

@@ -44,6 +44,8 @@ import net.sf.sdedit.ui.components.configuration.DataObject;
 public class ColorConfigurator<C extends DataObject> extends
 		Configurator<Color, C> {
 
+	private static final long serialVersionUID = 5894127763719308668L;
+
 	private JLabel label;
 
 	private JLabel caption;

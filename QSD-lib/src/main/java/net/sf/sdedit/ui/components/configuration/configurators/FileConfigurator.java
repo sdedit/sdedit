@@ -51,6 +51,8 @@ import net.sf.sdedit.util.base64.Base64;
 public class FileConfigurator<C extends DataObject> extends Configurator<File,C> implements 
 FocusListener {
 
+	private static final long serialVersionUID = -8346750584632429872L;
+
 	private JTextField fileTextField;
 
 	private JButton browseButton;

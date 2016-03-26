@@ -30,7 +30,6 @@ import java.util.Enumeration;
 import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -145,20 +144,6 @@ public class JTreeFacade implements PopupActions.Provider,
 				tree.addSelectionPath(path);
 			}
 		}
-	}
-
-	private Map<Object, Integer> computeIndices() {
-		Map<Object, Integer> map = new IdentityHashMap<Object, Integer>();
-		BreadthFirstSearch bfs = new BreadthFirstSearch(tree.getModel());
-		int i = 0;
-		TreePath path = bfs.next();
-		while (path != null) {
-			map.put(path.getLastPathComponent(), i);
-			i++;
-			path = bfs.next();
-		}
-		return map;
-
 	}
 
 	public List<TreePath> getVisibleNodes() {

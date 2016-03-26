@@ -44,6 +44,8 @@ import net.sf.sdedit.ui.components.configuration.DataObject;
 public class NumberConfigurator<C extends DataObject> extends Configurator<Integer,C> 
 implements ChangeListener
 {
+	private static final long serialVersionUID = 5195045084014309318L;
+
 	private JSpinner spinner;
 	
 	private int min;

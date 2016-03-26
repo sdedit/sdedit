@@ -39,6 +39,8 @@ import net.sf.sdedit.ui.components.configuration.DataObject;
 
 public abstract class StringConfigurator<C extends DataObject> extends Configurator<String,C> {
 
+	private static final long serialVersionUID = 8966157940262654741L;
+
 	private JPanel bottomPanel;
 	
 	private JLabel label;

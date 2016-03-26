@@ -40,6 +40,8 @@ import net.sf.sdedit.ui.components.configuration.DataObject;
 public class FreeStringConfigurator<C extends DataObject> extends
 		StringConfigurator<C> implements FocusListener, KeyListener {
 
+	private static final long serialVersionUID = -8187247399759901746L;
+	
 	private JTextField textField;
 
 	public FreeStringConfigurator(Bean<C> bean, PropertyDescriptor property) {

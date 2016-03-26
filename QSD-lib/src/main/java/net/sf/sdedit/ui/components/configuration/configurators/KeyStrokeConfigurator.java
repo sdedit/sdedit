@@ -51,6 +51,8 @@ import net.sf.sdedit.ui.components.configuration.DataObject;
 public class KeyStrokeConfigurator<C extends DataObject> extends
 		Configurator<KeyStroke, C> implements KeyListener, FocusListener {
 
+	private static final long serialVersionUID = -5757931457664748425L;
+
 	private JTextField textField;
 
 	private JLabel label;

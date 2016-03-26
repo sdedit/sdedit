@@ -37,6 +37,8 @@ import net.sf.sdedit.icons.Icons;
 public abstract class ConfigurationAction<T extends DataObject> extends
 		AbstractAction implements Runnable {
 
+	private static final long serialVersionUID = -7896814237715570372L;
+
 	private String property;
 
 	private AbstractButton button;

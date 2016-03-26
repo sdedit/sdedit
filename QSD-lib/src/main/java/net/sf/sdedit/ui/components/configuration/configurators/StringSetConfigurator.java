@@ -48,6 +48,8 @@ public class StringSetConfigurator<C extends DataObject> extends
 		Configurator<String[], C> implements StringSelectionReceiver,
 		ListSelectionListener {
 
+	private static final long serialVersionUID = 6259747723598495800L;
+
 	private JList list;
 
 	private ListModelAdapter lma;

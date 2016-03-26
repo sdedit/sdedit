@@ -45,6 +45,8 @@ import net.sf.sdedit.ui.components.configuration.DataObject;
 public class SingleStringSelectionConfigurator<C extends DataObject> extends
 		StringConfigurator<C> implements ActionListener, ListCellRenderer, StringSelectionReceiver {
 
+	private static final long serialVersionUID = 8263390939195390348L;
+
 	protected JComboBox comboBox;
 
 	private BasicComboBoxRenderer renderer;

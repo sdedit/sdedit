@@ -76,10 +76,10 @@ public class MultiBeanPane extends JPanel implements ConfigurationUIListener,
 	public void saveTo (File file) throws IOException {
 		OutputStream os = new FileOutputStream(file);
 		try {
-			BufferedOutputStream bos = new BufferedOutputStream(os);
-			ObjectOutputStream oos = new ObjectOutputStream(bos);
-			oos.writeObject(beans);
-			bos.flush();
+			os = new BufferedOutputStream(os);
+			os = new ObjectOutputStream(os);
+			((ObjectOutputStream) os).writeObject(beans);
+			os.flush();
 		} finally {
 			os.close();
 		}
@@ -90,14 +90,13 @@ public class MultiBeanPane extends JPanel implements ConfigurationUIListener,
 		InputStream is = new FileInputStream(file);
 		LinkedList<Bean<? extends NamedDataObject>> beans = null;
 		try {
-			BufferedInputStream bis = new BufferedInputStream(is);
-			ObjectInputStream ois = new ObjectInputStream(bis);
+			is = new BufferedInputStream(is);
+			is = new ObjectInputStream(is);
 			try {
-				beans = (LinkedList<Bean<? extends NamedDataObject>>) ois.readObject();
+				beans = (LinkedList<Bean<? extends NamedDataObject>>) ((ObjectInputStream) is).readObject();
 			} catch (ClassNotFoundException e) {
-				throw new IllegalArgumentException ("Cannot read ");
+				throw new IllegalArgumentException ("Cannot read from: " + file.getAbsolutePath());
 			}
-			
 		} finally {
 			is.close();
 		}
