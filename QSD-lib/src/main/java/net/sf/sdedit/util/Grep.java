@@ -122,6 +122,15 @@ public class Grep {
 			return text;
 		}
 	}
+	
+	private Pattern getPattern (String regexp) {
+		Pattern pattern = patternCache.get(regexp);
+		if (pattern == null) {
+			pattern = Pattern.compile(regexp);
+			patternCache.put(regexp, pattern);
+		}
+		return pattern;
+	}
 
 	/**
 	 * Matches a string against a regular expression and returns an array of the
@@ -136,18 +145,20 @@ public class Grep {
 	 *         regular expression, or <tt>null</tt>, if the string does not
 	 *         match the regular expression
 	 */
-	public String[] parse(final String regexp, final String string) {
+	public String [] parse(final String regexp, final String string) {
 		return parse(regexp, string, null);
 	}
+	
+	public String[] parse(final Pattern pattern, final String string) {
+		return parse(pattern, string, null);
+	}
+	
+	public String[] parse(final String regexp, final String string, List<Region> regions) {
+		return parse(getPattern(regexp), string, regions);
+	}
 
-	public String[] parse(final String regexp, final String string,
+	public String[] parse(final Pattern pattern, final String string,
 			List<Region> regions) {
-		// final String escaped = Escaper.escape(string);
-		Pattern pattern = patternCache.get(regexp);
-		if (pattern == null) {
-			pattern = Pattern.compile(regexp);
-			patternCache.put(regexp, pattern);
-		}
 		final Matcher matcher = pattern.matcher(string);
 		if (!matcher.matches()) {
 			return null;
@@ -167,6 +178,14 @@ public class Grep {
 		}
 		return groups;
 	}
+	
+	public boolean parseAndSetProperties(final Object bean,
+			final String regexp, final String string,
+			final Map<String, Region> propertyRegions,
+			final String... properties)
+	{
+		return parseAndSetProperties(bean, getPattern(regexp), string, propertyRegions, properties);
+	}
 
 	/**
 	 * Matches a string against a regular expression and uses the resulting
@@ -178,7 +197,7 @@ public class Grep {
 	 * 
 	 * @param bean
 	 *            a bean
-	 * @param regexp
+	 * @param pattern
 	 *            a regular expression
 	 * @param string
 	 *            a string to match the regular expression against
@@ -189,7 +208,7 @@ public class Grep {
 	 *             if the bean could not be introspected
 	 */
 	public boolean parseAndSetProperties(final Object bean,
-			final String regexp, final String string,
+			final Pattern pattern, final String string,
 			final Map<String, Region> propertyRegions,
 			final String... properties) {
 
@@ -198,7 +217,7 @@ public class Grep {
 			regions = new ArrayList<Region>();
 		}
 
-		final String[] parsed = parse(regexp, string, regions);
+		final String[] parsed = parse(pattern, string, regions);
 		if (parsed == null) {
 			return false;
 		}
