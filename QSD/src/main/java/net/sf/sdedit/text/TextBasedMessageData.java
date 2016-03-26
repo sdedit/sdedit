@@ -52,22 +52,9 @@ import net.sf.sdedit.util.Grep.Region;
  */
 public class TextBasedMessageData extends MessageData {
 
-	private final static String LEVELS = "(" + "\\[(\\d*),(\\d+)\\]" + "|"
-			+ "\\[(\\d+)\\]" + ")";
-
-	private final static String PREFIX = "(\\(\\d*(,\\d+)?\\))?\\s*(.+)";
-
-	private static final String COLON = "(?<!\\\\):(?!>)";
-
-	private static final String SPAWN = "(?<!\\\\):>";
-
-	private static final String DOT = "(?<!\\\\)\\.";
-
-	private static final String EQ = "(?<!\\\\)=";
-
 	private String string;
-	
-	private final Map<String,Grep.Region> regions;
+
+	private final Map<String, Grep.Region> regions;
 
 	/**
 	 * Creates a new <tt>MessageParser</tt> for parsing a string.
@@ -95,45 +82,14 @@ public class TextBasedMessageData extends MessageData {
 		if (string.indexOf(':') == -1) {
 			throw new SyntaxError(null, "not a valid message - ':' missing");
 		}
-		success = /* Level, thread, and answer */
-		grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON + "(.*)" + EQ
-				+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy", "caller",
-				"dummy", "levelString", "threadString", "levelString",
-				"answer", "callee", "message")
-				/* Level, thread, no answer */
-				|| grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON
-						+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy",
-						"caller", "dummy", "levelString", "threadString",
-						"levelString", "callee", "message")
-				/* No level/thread, but answer */
-				|| grep.parseAndSetProperties(this, PREFIX + COLON + "(.*)"
-						+ EQ + "(.+?)" + DOT + "(.*)", string, regions, "noteId",
-						"dummy", "caller", "answer", "callee", "message")
-				/* No level/thread, no answer */
-				|| grep.parseAndSetProperties(this, PREFIX + COLON + "(.*?)"
-						+ DOT + "(.*)", string, regions, "noteId", "dummy", "caller",
-						"callee", "message")
-				/* primitive with level */
-				|| grep.parseAndSetProperties(this, PREFIX + LEVELS + COLON
-						+ "(.*)", string, regions, "noteId", "dummy", "caller", "dummy",
-						"levelString", "threadString", "levelString",
-						"message")
-				/* primitive without level */
-				|| grep.parseAndSetProperties(this, PREFIX + COLON + "(.*)",
-						string, regions, "noteId", "dummy", "caller", "message")
-				/* spawn with level */
-				|| grep.parseAndSetProperties(this, PREFIX + LEVELS + SPAWN
-						+ "(.+?)" + DOT + "(.*)", string, regions, "noteId", "dummy",
-						"spawner", "dummy", "levelString", "threadString",
-						"levelString", "callee", "message")
-				/* spawn without level */
-				|| grep.parseAndSetProperties(this, PREFIX + SPAWN + "(.+?)"
-						+ DOT + "(.*)", string, regions, "noteId", "dummy", "spawner",
-						"callee", "message");
-
-		if (!success) {
-			throw new SyntaxError(null, "not a valid message");
+		for (MessageType type : MessageType.values()) {
+			success = grep.parseAndSetProperties(this, type.getPattern(), string, regions, type.getProperties());
+			if (success) {
+				return;
+			}
 		}
+		throw new SyntaxError(null, "not a valid message");
+
 	}
 
 	@Override
@@ -147,8 +103,7 @@ public class TextBasedMessageData extends MessageData {
 
 	@Override
 	public void setCallee(String callee) {
-		if (callee.length() >= 2 && callee.charAt(0) == '{'
-				&& callee.charAt(callee.length() - 1) == '}') {
+		if (callee.length() >= 2 && callee.charAt(0) == '{' && callee.charAt(callee.length() - 1) == '}') {
 			setCallees(callee.substring(1, callee.length() - 1).split(","));
 
 		} else {
@@ -201,9 +156,9 @@ public class TextBasedMessageData extends MessageData {
 			}
 		}
 	}
-	
-	public Region getRegion (String property) {
-	    return regions.get(property);
+
+	public Region getRegion(String property) {
+		return regions.get(property);
 	}
 }
 // {{core}}
