@@ -186,7 +186,7 @@ Note that it relies on the existence of a local maven repository at
 		<move file="${dist}/sdedit-win32/sdedit.exe" tofile="${dist}/sdedit-win32/${exefile}" />
 	</target>
 
-	<target depends="jar" description="creates windows executable" name="windows">
+	<target depends="jar" description="creates windows executable" name="windows-not-recommended">
 		<mkdir dir="${dist}/sdedit-win32" />
 		<copy todir="${dist}/sdedit-win32" flatten="true">
 			<fileset dir="targets/common" />
@@ -214,7 +214,7 @@ Note that it relies on the existence of a local maven repository at
 		</exec>
 	</target>
 
-	<target name="all" description="builds all deployment targets" depends="jar,windows,macosx" />
+	<target name="all" description="builds all deployment targets" depends="jar,win-jsmooth,macosx" />
 
 	<target name="clean" description="deletes the distribution working folder and contents">
 		<delete dir="${dist}" />
