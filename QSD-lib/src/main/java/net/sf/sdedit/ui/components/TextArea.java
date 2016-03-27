@@ -245,6 +245,7 @@ public class TextArea extends JTextPane implements UndoableEditListener,
 		final int caret = getCaretPosition();
 		final String text = getText();
 		int i = Math.min(text.length() - 1, caret);
+		// search for the next character that is not a line break
 		for (; i >= 0; i--) {
 			final char c = text.charAt(i);
 			if (c != '\n' && c != '\r') {
@@ -254,7 +255,7 @@ public class TextArea extends JTextPane implements UndoableEditListener,
 		for (; i >= 0; i--) {
 			final char c = text.charAt(i);
 			if (c == '\n' || c == '\r') {
-				return i + 2;
+				return i + 1; //2;
 			}
 		}
 		return 0;
