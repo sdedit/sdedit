@@ -296,7 +296,7 @@ public abstract class AbstractFileHandler implements FileHandler {
 		                }
  		            }
 					ui.getTabContainer().enableTabHistory();
-					ui.selectTab(tab);
+					//ui.selectTab(tab);
 				}
 			});
 			return tab;
