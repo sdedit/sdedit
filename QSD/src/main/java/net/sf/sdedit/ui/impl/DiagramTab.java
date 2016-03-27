@@ -278,12 +278,10 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		if (!isDataFlavorSupported(flavor)) {
 			throw new UnsupportedFlavorException(flavor);
 		}
-		
 		if (flavor.equals(EMF_FLAVOR)) {
 			return getTransferDataVector("emf");
-		} else {
-			return getTransferDataBitmap();
 		}
+		return getTransferDataBitmap();
 	}
 	
 	public abstract DiagramFactory createFactory (PaintDevice paintDevice);
@@ -295,8 +293,6 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		DiagramFactory factory = createFactory(paintDevice);
 		try {
 			factory.generateDiagram(getConfiguration().getDataObject());
-		} catch (RuntimeException re) {
-			throw re;
 		} catch (DiagramError e) {
 			/* ignored */
 		}
@@ -312,8 +308,6 @@ public abstract class DiagramTab extends Tab implements PropertyChangeListener,
 		DiagramFactory factory = createFactory(paintDevice);
 		try {
 		    factory.generateDiagram(getConfiguration().getDataObject());
-		} catch (RuntimeException re) {
-			throw re;
 		} catch (DiagramError e) {
 			/* ignored */
 		}
