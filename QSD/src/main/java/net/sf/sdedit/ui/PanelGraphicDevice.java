@@ -132,14 +132,11 @@ public class PanelGraphicDevice extends
 			JPanel zp = panel.getZoomPane().getPanel();
 			Point point = e.getPoint();
 			if (lastDrawableMovedOver != null) {
-
-				if (!lastDrawableMovedOver.contains(point)) {
-					partner.mouseExitedDrawable(lastDrawableMovedOver);
-					zp.setCursor(Cursor.getDefaultCursor());
-
-				} else {
+				if (lastDrawableMovedOver.contains(point)) {
 					return;
 				}
+				partner.mouseExitedDrawable(lastDrawableMovedOver);
+				zp.setCursor(Cursor.getDefaultCursor());
 			}
 			lastDrawableMovedOver = null;
 			for (Drawable drawable : drawables()) {
@@ -332,11 +329,13 @@ public class PanelGraphicDevice extends
 				}
 		        g2.setColor(Color.BLACK);
 		        g2.setStroke(Strokes.defaultStroke());
-				for (Drawable drawable : drawables()) {
+		        for (Drawable drawable : drawables()) {
 					if (drawable.intersects(clipBounds)) {
 						if (drawable == highlighted) {
-							g2.setColor(Color.YELLOW);
-							g2.fillRect(drawable.getLeft(), drawable.getTop(), drawable.getWidth(), drawable.getHeight());
+							Graphics gg = g2.create();
+							gg.setColor(Color.YELLOW);
+							gg.fillRect(drawable.getLeft()-5, drawable.getTop()-5, drawable.getWidth()+10, drawable.getHeight()+10);
+							gg.dispose();
 						}
 						drawable.draw(g2);
 					}
