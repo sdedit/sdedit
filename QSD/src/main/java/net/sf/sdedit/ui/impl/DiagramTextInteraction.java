@@ -64,7 +64,7 @@ public class DiagramTextInteraction extends DiagramInteraction {
 		if (diag != null) {
 			Integer pos = (Integer) diag.getStateForDrawable(drawable);
 			if (pos != null) {
-				tab.moveCursorToPosition(pos - 1);
+				tab.moveCursorToPosition(pos);
 			}
 		}
 		if (drawable instanceof Note) {
