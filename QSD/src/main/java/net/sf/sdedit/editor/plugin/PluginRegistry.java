@@ -45,10 +45,10 @@ public final class PluginRegistry implements Iterable<Plugin>{
 		plugins.add(plugin);
 	}
 	
-	public <T extends Plugin> Plugin getPlugin(Class<T> cls) {
+	public <T extends Plugin> T getPlugin(Class<T> cls) {
 		for (Plugin plugin : this) {
 			if (cls == plugin.getClass()) {
-				return plugin;
+				return cls.cast(plugin);
 			}
 		}
 		return null;
