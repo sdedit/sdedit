@@ -828,6 +828,10 @@ public class Utilities {
 	public static Iterable<String> readLines(File file, Charset charset) throws IOException {
 		return readLines(file, null, charset);
 	}
+	
+	public static Iterable<String> readLines(URL url, Charset charset) throws IOException {
+		return readLines(url.openStream(), charset);
+	}
 
 	public static Iterable<String> readLines(final InputStream stream, Charset charset) throws IOException {
 
@@ -868,39 +872,6 @@ public class Utilities {
 		};
 	}
 
-	// /**
-	// * Calls a method that fits the given parameters inside a new thread
-	// *
-	// * @param object
-	// * the object on which the method is called
-	// * @param methodName
-	// * name of the method
-	// * @param args
-	// * array of parameter Objects
-	// * @param listener
-	// * listener object that is notified when the method returns
-	// * @param lock
-	// * lock to avoid a call while another one has not finished
-	// * @throws IllegalArgumentException
-	// * if no fitting method is found
-	// */
-	// public static void invoke (Object object, String methodName,
-	// Object [] args, MethodReturnedListener listener, Object lock)
-	// {
-	// Method m = resolveMethod (object.getClass (), methodName, args);
-	// if (m == null)
-	// {
-	// throw new IllegalArgumentException ("there is no method"
-	// + " named " + methodName + " taking arguments "
-	// + Arrays.asList (args) + " declared in "
-	// + object.getClass ());
-	// }
-	// MethodInvoker invoker = new MethodInvoker (object, m, args, listener,
-	// lock);
-	// Thread thread = new Thread (invoker);
-	// threadSet.add (thread);
-	// thread.start ();
-	// }
 
 	public static Class<?> getWrapperClass(Class<?> primitiveClass) {
 		return primitiveClasses.get(primitiveClass);
