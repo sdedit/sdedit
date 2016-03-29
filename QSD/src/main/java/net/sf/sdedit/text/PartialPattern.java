@@ -27,7 +27,7 @@ enum PartialPattern {
 	static {
 		URL resource = PartialPattern.class.getResource("patterns");
 		try {
-			for (String line : Utilities.readLines(resource.openStream(), Charset.forName("utf-8"))) {
+			for (String line : Utilities.readLines(resource, Charset.forName("utf-8"))) {
 				line = line.trim();
 				if (!line.startsWith("#")) {
 					int i = line.indexOf('=');
