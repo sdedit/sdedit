@@ -346,6 +346,7 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
             ConfigurationManager.getGlobalConfigurationBean()
                     .removePropertyChangeListener(this);
             changeTimer.stop();
+            scrollTimer.stop();
         }
         return close;
     }
