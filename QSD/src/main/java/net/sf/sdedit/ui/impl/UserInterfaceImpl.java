@@ -64,7 +64,6 @@ import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.SequenceConfiguration;
-import net.sf.sdedit.editor.Decisions;
 import net.sf.sdedit.editor.Editor;
 import net.sf.sdedit.editor.TabActivator;
 import net.sf.sdedit.editor.plugin.Plugin;
@@ -77,7 +76,6 @@ import net.sf.sdedit.ui.UserInterface;
 import net.sf.sdedit.ui.UserInterfaceListener;
 import net.sf.sdedit.ui.components.GrabbableViewport;
 import net.sf.sdedit.ui.components.MenuBar;
-import net.sf.sdedit.ui.components.OptionDialog;
 import net.sf.sdedit.ui.components.ScalePanel;
 import net.sf.sdedit.ui.components.ToolBar;
 import net.sf.sdedit.ui.components.buttons.ActionManager;
@@ -90,13 +88,11 @@ import net.sf.sdedit.util.FileDrop;
 import net.sf.sdedit.util.FileDrop.Listener;
 import net.sf.sdedit.util.OS;
 import net.sf.sdedit.util.Predicate;
-import net.sf.sdedit.util.Ref;
 import net.sf.sdedit.util.UIUtilities;
 
 @SuppressWarnings("serial")
-public final class UserInterfaceImpl extends JFrame implements Constants,
-		UserInterface, TabContainerListener, HyperlinkListener,
-		ConfigurationUIListener, TabListener, Listener {
+public final class UserInterfaceImpl extends JFrame implements Constants, UserInterface, TabContainerListener,
+		HyperlinkListener, ConfigurationUIListener, TabListener, Listener {
 
 	private TabContainer tabContainer;
 
@@ -113,18 +109,17 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	private ToolBar toolbar;
 
 	private PreferencesUI prefUI;
-	
+
 	private Timer timer;
-	
-	private Map<Runnable,UITimerTask> timerTasks;
+
+	private Map<Runnable, UITimerTask> timerTasks;
 
 	static {
 		if (OS.TYPE != OS.Type.WINDOWS) {
 			GrabbableViewport.setHandCursorIcon(Icons.getIcon("grabbing"));
 		}
-		ToolTipManager.sharedInstance().setDismissDelay(
-				1000 * ConfigurationManager.getGlobalConfiguration()
-						.getTooltipDismissDelay());
+		ToolTipManager.sharedInstance()
+				.setDismissDelay(1000 * ConfigurationManager.getGlobalConfiguration().getTooltipDismissDelay());
 	}
 
 	/*
@@ -162,14 +157,14 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		timer = new Timer(true);
 		timerTasks = new IdentityHashMap<Runnable, UITimerTask>();
 	}
-	
-	public void addTask (Runnable task, int period) {
+
+	public void addTask(Runnable task, int period) {
 		UITimerTask tt = new UITimerTask(task);
 		timerTasks.put(task, tt);
 		timer.schedule(tt, 0, period);
 	}
-	
-	public void removeTask (Runnable task) {
+
+	public void removeTask(Runnable task) {
 		UITimerTask tt = timerTasks.get(task);
 		if (tt != null) {
 			tt.cancel();
@@ -181,8 +176,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 	}
 
 	public void addCategory(String category, String icon) {
-		ImageIcon imageIcon = icon == null || icon.equals("") ? null : Icons
-				.getIcon(icon);
+		ImageIcon imageIcon = icon == null || icon.equals("") ? null : Icons.getIcon(icon);
 		menuBar.addMenu(category, imageIcon);
 	}
 
@@ -200,14 +194,10 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 
 	}
 
-	public void addConfigurationAction(String category,
-			ConfigurationAction<?> action, Activator activator) {
-		JCheckBoxMenuItem item = MenuBar.makeMenuItem(
-				action.getValue(Action.NAME).toString(),
-				JCheckBoxMenuItem.class);
+	public void addConfigurationAction(String category, ConfigurationAction<?> action, Activator activator) {
+		JCheckBoxMenuItem item = MenuBar.makeMenuItem(action.getValue(Action.NAME).toString(), JCheckBoxMenuItem.class);
 		menuBar.addItem(category, item);
-		item.setToolTipText(action.getValue(Action.SHORT_DESCRIPTION)
-				.toString());
+		item.setToolTipText(action.getValue(Action.SHORT_DESCRIPTION).toString());
 		item.setIcon((Icon) action.getValue(Action.SMALL_ICON));
 
 		registerComponent(item, action, activator);
@@ -242,8 +232,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		}
 	}
 
-	private final TabActivator<Tab> zoomActivator = new TabActivator<Tab>(
-			Tab.class, this) {
+	private final TabActivator<Tab> zoomActivator = new TabActivator<Tab>(Tab.class, this) {
 		@Override
 		protected boolean _isEnabled(Tab tab) {
 			return tab.canZoom();
@@ -261,8 +250,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 
 		for (Plugin plugin : PluginRegistry.getInstance()) {
 			if (plugin.getCategory() != null) {
-				tabContainer
-						.addCategory(plugin.getCategory(), plugin.getIcon());
+				tabContainer.addCategory(plugin.getCategory(), plugin.getIcon());
 			}
 		}
 
@@ -312,18 +300,15 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		setJMenuBar(menuBar);
 
 		// printDialog.loadProfiles();
-		ConfigurationManager.getGlobalConfigurationBean()
-				.addPropertyChangeListener(new PropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent evt) {
-						enableComponents();
-						if (evt.getPropertyName().equals("tooltipDismissDelay")) {
-							ToolTipManager.sharedInstance().setDismissDelay(
-									ConfigurationManager
-											.getGlobalConfiguration()
-											.getTooltipDismissDelay() * 1000);
-						}
-					}
-				});
+		ConfigurationManager.getGlobalConfigurationBean().addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				enableComponents();
+				if (evt.getPropertyName().equals("tooltipDismissDelay")) {
+					ToolTipManager.sharedInstance().setDismissDelay(
+							ConfigurationManager.getGlobalConfiguration().getTooltipDismissDelay() * 1000);
+				}
+			}
+		});
 
 		enableComponents();
 		setTitle("Quick Sequence Diagram Editor");
@@ -347,11 +332,9 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		return name;
 	}
 
-	public Tab addSequenceDiagramTextTab(String tabTitle,
-			Bean<SequenceConfiguration> configuration, boolean selectIt) {
+	public Tab addSequenceDiagramTextTab(String tabTitle, Bean<SequenceConfiguration> configuration, boolean selectIt) {
 		DiagramTextTab tab = new SequenceDiagramTextTab(this,
-				ConfigurationManager.getGlobalConfiguration().getEditorFont(),
-				configuration);
+				ConfigurationManager.getGlobalConfiguration().getEditorFont(), configuration);
 		tab.setTitle(tabTitle);
 		addTab(tab, selectIt);
 		return tab;
@@ -393,8 +376,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				action.actionPerformed(new ActionEvent(this,
-						ActionEvent.ACTION_PERFORMED, ""));
+				action.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
 			}
 		});
 	}
@@ -429,12 +411,10 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 
 	// TODO
 	// change into addToggleAction
-	public void addPredicateAction(String category, String name,
-			String description, String tooltip, Icon icon,
+	public void addPredicateAction(String category, String name, String description, String tooltip, Icon icon,
 			final Predicate predicate, boolean initialValue) {
 
-		menuBar.addToggleAction(category, name, description, tooltip, icon,
-				predicate, initialValue);
+		menuBar.addToggleAction(category, name, description, tooltip, icon, predicate, initialValue);
 
 	}
 
@@ -515,26 +495,6 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 		return UIUtilities.getOption(this, text, options);
 	}
 
-	public String getOptionWithDecision(String text, int decisionKey,
-			String... options) {
-		String decision = Decisions.getDecisionString(decisionKey);
-		String choice = null;
-		if (decision != null) {
-			OptionDialog optionDialog = new OptionDialog(this,
-					"Please choose an option", Icons.getIcon("question"), text,
-					decision);
-			for (String option : options) {
-				optionDialog.addOption(option);
-			}
-			Ref<Boolean> dec = new Ref<Boolean>();
-			choice = optionDialog.getOption(dec);
-			if (dec.t) {
-				Decisions.setUnused(decisionKey);
-			}
-		}
-		return choice;
-	}
-
 	public void applyConfiguration() {
 		prefUI.applyConfiguration();
 	}
@@ -551,27 +511,20 @@ public final class UserInterfaceImpl extends JFrame implements Constants,
 			if (message.length() > 0) {
 				message += "\n\n";
 			}
-			message += "An exception of type "
-					+ throwable.getClass().getSimpleName() + "\n";
+			message += "An exception of type " + throwable.getClass().getSimpleName() + "\n";
 			message += "has occurred with the message:\n";
 			message += throwable.getMessage();
 			if (throwable.getCause() != null) {
-				message += "\n\nThe exception was caused by a "
-						+ throwable.getCause().getClass().getSimpleName();
-				message += "\nwith the message "
-						+ throwable.getCause().getMessage();
+				message += "\n\nThe exception was caused by a " + throwable.getCause().getClass().getSimpleName();
+				message += "\nwith the message " + throwable.getCause().getMessage();
 			}
 		}
-		JOptionPane.showMessageDialog(this, message, _caption,
-				JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(this, message, _caption, JOptionPane.ERROR_MESSAGE);
 	}
 
 	public void addDefaultTab() {
-		addSequenceDiagramTextTab(
-				"untitled",
-				ConfigurationManager
-						.createNewDefaultConfiguration(SequenceConfiguration.class),
-				true);
+		addSequenceDiagramTextTab("untitled",
+				ConfigurationManager.createNewDefaultConfiguration(SequenceConfiguration.class), true);
 	}
 
 	public void tabIsClosed(Tab tab) {
