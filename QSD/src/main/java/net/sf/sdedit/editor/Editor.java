@@ -42,7 +42,6 @@ import net.sf.sdedit.Constants;
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.ConfigurationManager;
 import net.sf.sdedit.config.GlobalConfiguration;
-import net.sf.sdedit.eclipse.Eclipse;
 import net.sf.sdedit.editor.apple.AppInstaller;
 import net.sf.sdedit.editor.plugin.FileActionProvider;
 import net.sf.sdedit.editor.plugin.FileHandler;
@@ -570,9 +569,11 @@ public final class Editor implements Constants, UserInterfaceListener
 				server.shutDown();
 			}
 			ui.exit();
+			/*
 			if (Eclipse.getEclipse() == null) {
 				System.exit(0);
 			}
+			*/
 		}
 	}
 

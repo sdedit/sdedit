@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -112,7 +113,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants, UserIn
 
 	private Timer timer;
 
-	private Map<Runnable, UITimerTask> timerTasks;
+	private Map<Runnable, TimerTask> timerTasks;
 
 	static {
 		if (OS.TYPE != OS.Type.WINDOWS) {
@@ -155,17 +156,22 @@ public final class UserInterfaceImpl extends JFrame implements Constants, UserIn
 
 		new FileDrop(this, this);
 		timer = new Timer(true);
-		timerTasks = new IdentityHashMap<Runnable, UITimerTask>();
+		timerTasks = new IdentityHashMap<Runnable, TimerTask>();
 	}
 
-	public void addTask(Runnable task, int period) {
-		UITimerTask tt = new UITimerTask(task);
+	public void addTask(final Runnable task, int period) {
+		TimerTask tt = new TimerTask() {
+			@Override
+			public void run() {
+				task.run();
+			}
+		};
 		timerTasks.put(task, tt);
 		timer.schedule(tt, 0, period);
 	}
 
 	public void removeTask(Runnable task) {
-		UITimerTask tt = timerTasks.get(task);
+		TimerTask tt = timerTasks.get(task);
 		if (tt != null) {
 			tt.cancel();
 		}
