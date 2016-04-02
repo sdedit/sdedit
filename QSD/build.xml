@@ -108,7 +108,7 @@ Note that it relies on the existence of a local maven repository at
 				<exclude name="**/*.java" />
 			</fileset>
 		</copy>
-		<javac debug="on" nowarn="on" encoding="ISO-8859-1" failonerror="false" source="1.5" target="1.5" destdir="${build}" includeantruntime="true">
+		<javac debug="on" nowarn="on" encoding="UTF-8" failonerror="false" source="1.6" target="1.6" destdir="${build}" includeantruntime="true">
 			<src path="${src}" />
 			<src path="${sdedit.lib.src}" />
 			<classpath>
@@ -163,7 +163,7 @@ Note that it relies on the existence of a local maven repository at
 		<delete dir="${dist}/tmp/libclasses/META-INF" />
 		<delete dir="${dist}/tmp/libclasses/org/freehep/graphicsio/test" />
 
-		<jar destfile="${dist}/sdedit-jar/${jarfile}">
+		<jar destfile="${dist}/sdedit-jar/${jarfile}" >
 			<fileset dir="${dist}/tmp/libclasses" />
 			<fileset dir="${build}" />
 			<fileset dir="." includes="META-INF/**/*" />
