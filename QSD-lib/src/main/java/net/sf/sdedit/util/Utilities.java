@@ -338,23 +338,6 @@ public class Utilities {
 		return str;
 	}
 
-	public static String hourDiff(Date firstDate, Date lastDate) {
-		Calendar cal1 = new GregorianCalendar(TimeZone.getDefault());
-		Calendar cal2 = new GregorianCalendar(TimeZone.getDefault());
-		cal1.setTime(firstDate);
-		cal2.setTime(lastDate);
-		int d1 = cal1.get(Calendar.DAY_OF_YEAR);
-		int d2 = cal2.get(Calendar.DAY_OF_YEAR);
-		int h1 = cal1.get(Calendar.HOUR_OF_DAY);
-		int h2 = cal2.get(Calendar.HOUR_OF_DAY);
-		int m1 = cal1.get(Calendar.MINUTE);
-		int m2 = cal2.get(Calendar.MINUTE);
-		int diff = d2 * 24 * 60 + h2 * 60 + m2 - d1 * 24 * 60 - h1 * 60 - m1;
-		String min = String.valueOf(diff % 60);
-		return (diff / 60) + ":" + lpad(min, '0', 2);
-
-	}
-
 	public static int[] makeInts(int from, int to) {
 		if (to < from) {
 			throw new IllegalArgumentException("from=" + from + ", to=" + to);
@@ -700,6 +683,7 @@ public class Utilities {
 
 	}
 
+	@Deprecated
 	public static <T> Iterable<T> iteratorToIterable(final Iterator<?> iterator, final Class<T> elemClass) {
 		final Iterator<T> iter = new Iterator<T>() {
 
@@ -726,7 +710,8 @@ public class Utilities {
 
 		};
 	}
-
+	
+	
 	public static <T> Iterable<T> wrap(final Iterator<?> iterator, final Class<T> elemClass) {
 		return new Iterable<T>() {
 
@@ -1117,6 +1102,7 @@ public class Utilities {
 
 	}
 
+	@Deprecated
 	public static InputStream filter(String command, InputStream input, File workingDir) throws IOException {
 
 		if (workingDir == null) {
@@ -1226,202 +1212,6 @@ public class Utilities {
 			files = null;
 		}
 		return files;
-	}
-
-	public static class Record6<T1, T2, T3, T4, T5, T6> {
-
-		public T1 getField1() {
-			return field1;
-		}
-
-		public void setField1(T1 field1) {
-			this.field1 = field1;
-		}
-
-		public T2 getField2() {
-			return field2;
-		}
-
-		public void setField2(T2 field2) {
-			this.field2 = field2;
-		}
-
-		public T3 getField3() {
-			return field3;
-		}
-
-		public void setField3(T3 field3) {
-			this.field3 = field3;
-		}
-
-		public T4 getField4() {
-			return field4;
-		}
-
-		public void setField4(T4 field4) {
-			this.field4 = field4;
-		}
-
-		public T5 getField5() {
-			return field5;
-		}
-
-		public void setField5(T5 field5) {
-			this.field5 = field5;
-		}
-
-		public T6 getField6() {
-			return field6;
-		}
-
-		public void setField6(T6 field6) {
-			this.field6 = field6;
-		}
-
-		private T1 field1;
-
-		private T2 field2;
-
-		private T3 field3;
-
-		private T4 field4;
-
-		private T5 field5;
-
-		private T6 field6;
-
-	}
-
-	public static class Record5<T1, T2, T3, T4, T5> {
-
-		public T1 getField1() {
-			return field1;
-		}
-
-		public void setField1(T1 field1) {
-			this.field1 = field1;
-		}
-
-		public T2 getField2() {
-			return field2;
-		}
-
-		public void setField2(T2 field2) {
-			this.field2 = field2;
-		}
-
-		public T3 getField3() {
-			return field3;
-		}
-
-		public void setField3(T3 field3) {
-			this.field3 = field3;
-		}
-
-		public T4 getField4() {
-			return field4;
-		}
-
-		public void setField4(T4 field4) {
-			this.field4 = field4;
-		}
-
-		public T5 getField5() {
-			return field5;
-		}
-
-		public void setField5(T5 field5) {
-			this.field5 = field5;
-		}
-
-		private T1 field1;
-
-		private T2 field2;
-
-		private T3 field3;
-
-		private T4 field4;
-
-		private T5 field5;
-
-	}
-
-	public static class Record4<T1, T2, T3, T4> {
-
-		private T1 field1;
-
-		private T2 field2;
-
-		private T3 field3;
-
-		private T4 field4;
-
-		public T1 getField1() {
-			return field1;
-		}
-
-		public void setField1(T1 field1) {
-			this.field1 = field1;
-		}
-
-		public T2 getField2() {
-			return field2;
-		}
-
-		public void setField2(T2 field2) {
-			this.field2 = field2;
-		}
-
-		public T3 getField3() {
-			return field3;
-		}
-
-		public void setField3(T3 field3) {
-			this.field3 = field3;
-		}
-
-		public T4 getField4() {
-			return field4;
-		}
-
-		public void setField4(T4 field4) {
-			this.field4 = field4;
-		}
-
-	}
-
-	public static class Record3<T1, T2, T3> {
-
-		public T1 getField1() {
-			return field1;
-		}
-
-		public void setField1(T1 field1) {
-			this.field1 = field1;
-		}
-
-		public T2 getField2() {
-			return field2;
-		}
-
-		public void setField2(T2 field2) {
-			this.field2 = field2;
-		}
-
-		public T3 getField3() {
-			return field3;
-		}
-
-		public void setField3(T3 field3) {
-			this.field3 = field3;
-		}
-
-		private T1 field1;
-
-		private T2 field2;
-
-		private T3 field3;
-
 	}
 
 	public static String generateKey() {
