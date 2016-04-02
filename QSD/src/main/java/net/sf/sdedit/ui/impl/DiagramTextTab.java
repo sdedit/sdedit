@@ -561,11 +561,6 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 		changeTimer.stop();
 	}
 
-	/*
-	 * public void displayDiagram(SequenceDiagram diagram, DiagramError error) {
-	 * super.displayDiagram(diagram, error); //addClassTabs(); }
-	 */
-
 	protected void handleBug(Diagram diagram, RuntimeException ex) {
 
 		String name = "sdedit-errorlog-" + System.currentTimeMillis();
