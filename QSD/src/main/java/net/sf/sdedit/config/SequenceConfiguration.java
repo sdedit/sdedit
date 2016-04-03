@@ -121,8 +121,6 @@ public interface SequenceConfiguration extends Configuration {
 
 	public boolean isReturnArrowVisible();
 
-	public boolean isReuseSpace();
-
 	public boolean isShouldShadowParticipants();
 
 	public boolean isThreaded();

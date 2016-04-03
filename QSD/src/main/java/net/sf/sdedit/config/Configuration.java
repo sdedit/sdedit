@@ -81,8 +81,5 @@ public interface Configuration extends DataObject {
 	@Adjustable(editable = true, info = "Arrow thickness", category = "Line thickness", min = 1)
 	public void setArrowThickness(int arrowThickness);
 
-	@Adjustable(editable = true, category = "Misc", info = "Reuse space of destroyed objects")
-	public void setReuseSpace(boolean reuseSpace);
-
 }
 // {{core}}
