@@ -42,11 +42,11 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.ui.components.configuration.Adjustable;
 import net.sf.sdedit.ui.components.configuration.Bean;
 import net.sf.sdedit.ui.components.configuration.Configurator;
 import net.sf.sdedit.ui.components.configuration.DataObject;
-import net.sf.sdedit.util.base64.Base64;
 
 public class FileConfigurator<C extends DataObject> extends Configurator<File,C> implements 
 FocusListener {
@@ -63,29 +63,7 @@ FocusListener {
 	
 	private String [] fileTypes;
 	
-	private static ImageIcon openIcon = new ImageIcon(
-			Base64.decodeBase64EncodedImage(
-					"iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAABGdBTUE"
-					+ "AAK/INwWK6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAASAAAAE"
-					+ "gARslrPgAAAsBJREFUKM+ljU1oHFUAgL83M7ub/ckmWU2KuqbVdtvYS"
-					+ "H8oBQUpgaKHiicPikgvgohabxYKPffmScGbBfGqeLCh6EGprZSaFlFT"
-					+ "Y6KbzW5S26ab/Zt5M+/Nm/e8eRA8+V0/Pj74H4j/Evuf/YzVlQfi7Jl"
-					+ "nnqpU8q/p1HxxYF/t1jffbfDpxycBCP4dvXv2CuVykcFQTr31+uGX9z"
-					+ "05+d7ux8efvnHr3vyXl5pvzEyXdv45L5xvfXT8YJUkdYSJ9a7c6C6/u"
-					+ "je8Pt+Yev9Ao/bSbL1SwsFacxB//lXz3AcXVj48dXraLl4cJ5h7Yuyd"
-					+ "kyeqyBT6vZS5momOzkwMjs5P7SoVC75SFq0zZh+rFI8cmjnz/Cvxb5c"
-					+ "+OfF1o/MtwVheMFn10VuSR3TMwvFKebZeLntCoBT4nkCljptrkgeJv1"
-					+ "eUi29PPHc1H0vPBJl1WOuIthNmqwG58hib3ZTMgNaQJBmXlwasdgXVy"
-					+ "Ul2H6ucKtbVoR+/b4+CzIJ18NNdWGkl7NnxiY0lUQ6ZWAajjGFawJ+e"
-					+ "4PeBRzxUuZ+v3Xu034kXA2sd/VFGv6d584Ua+ZJH5Pus33U07zgi7di"
-					+ "JoP2L5H6rx05zOBje70sXpFcDa2Hlz4S5+hiVmRy3O4Z+DGttQXPDsN"
-					+ "5Jabci+n8Nibsh9FREYDYJzJIXK0urLZlvFNkYCbYin/UtSxRZVGIZD"
-					+ "TVhmOIE5Au+8/OugDAtrF0OVlsJC0eq7HkoQARQ2yXo5SxhaOiOa449"
-					+ "nBIeBC0FSeiJ23+I4rUls1wq5bpBZ1Ny+MUajZoPgKsIVM1DRiDrIKW"
-					+ "PjDKkDJBxgV4YJpmzP+RyHgHKcGdbs3i9j8nAWUeSZESRQkqNlAoZKZ"
-					+ "JYI+OUm7/Ktt00S10BwUhmpy9e3sYXYI0jyywmzUh1itGGVKek2mB0h"
-					+ "lJGqJ5rU/JGLrb8DdKwhwGMgWXLAAAAInpUWHRTb2Z0d2FyZQAAeNpz"
-					+ "TMlPSlXwzE1MTw1KTUypBAAvnAXUrgypTQAAAABJRU5ErkJggg=="));
+	private static ImageIcon openIcon = Icons.getIcon("open");
 
 	public FileConfigurator(Bean<C> bean, PropertyDescriptor property) {
 		super(bean, property);
