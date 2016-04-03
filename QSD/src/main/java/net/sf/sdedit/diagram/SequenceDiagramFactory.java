@@ -31,78 +31,71 @@ import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.text.TextHandler;
 
-public class SequenceDiagramFactory implements DiagramFactory,
-        DiagramDataProviderFactory {
+public class SequenceDiagramFactory implements DiagramFactory, DiagramDataProviderFactory {
 
-    private String text;
+	private String text;
 
-    private PaintDevice paintDevice;
+	private PaintDevice paintDevice;
 
-    private DiagramDataProviderFactory providerFactory;
+	private DiagramDataProviderFactory providerFactory;
 
-    private Diagram diagram;
+	private Diagram diagram;
 
-    private DiagramDataProvider provider;
+	private DiagramDataProvider provider;
 
-    public SequenceDiagramFactory(DiagramDataProviderFactory providerFactory,
-            PaintDevice paintDevice) {
-        this.providerFactory = providerFactory;
-        this.paintDevice = paintDevice;
-    }
+	public SequenceDiagramFactory(DiagramDataProviderFactory providerFactory, PaintDevice paintDevice) {
+		this.providerFactory = providerFactory;
+		this.paintDevice = paintDevice;
+	}
 
-    public SequenceDiagramFactory(String text, PaintDevice paintDevice) {
-        this.paintDevice = paintDevice;
-        this.providerFactory = this;
-        this.text = text;
-    }
+	public SequenceDiagramFactory(String text, PaintDevice paintDevice) {
+		this.paintDevice = paintDevice;
+		this.providerFactory = this;
+		this.text = text;
+	}
 
-    protected SequenceDiagram newDiagram(SequenceConfiguration configuration,
-            DiagramDataProvider provider, PaintDevice paintDevice) {
-        return new SequenceDiagram(configuration,
-                (SequenceDiagramDataProvider) provider, paintDevice);
-    }
+	protected SequenceDiagram newDiagram(SequenceConfiguration configuration, DiagramDataProvider provider,
+			PaintDevice paintDevice) {
+		return new SequenceDiagram(configuration, (SequenceDiagramDataProvider) provider, paintDevice);
+	}
 
-    public DiagramDataProvider createProvider() {
-        return new TextHandler(text);
-    }
+	public DiagramDataProvider createProvider() {
+		return new TextHandler(text);
+	}
 
-    public void generateDiagram(Configuration conf)
-            throws DiagramError {
-    	SequenceConfiguration configuration = conf.cast(SequenceConfiguration.class);
-        Map<Integer, List<String>> map = null;
-        if (configuration.isReuseSpace()) {
-            provider = providerFactory.createProvider();
-            SequenceDiagram _diagram = newDiagram(configuration, provider,
-                    new NullPaintDevice());
-            try {
-                _diagram.generate(false);
-            } catch (DiagramError ignored) {
+	public void generateDiagram(Configuration conf) throws DiagramError {
+		SequenceConfiguration configuration = conf.cast(SequenceConfiguration.class);
+		Map<Integer, List<String>> map = null;
+		provider = providerFactory.createProvider();
+		SequenceDiagram _diagram = newDiagram(configuration, provider, new NullPaintDevice());
+		try {
+			_diagram.generate(false);
+		} catch (DiagramError ignored) {
 
-            }
-            map = _diagram.makeReverseIdMap();
-        }
-        provider = providerFactory.createProvider();
-        diagram = newDiagram(configuration, provider, paintDevice);
-        if (map != null) {
-            ((SequenceDiagram) getDiagram()).setReverseIdMap(map);
-        }
-        diagram.generate();
-    }
+		}
+		map = _diagram.makeReverseIdMap();
+		provider = providerFactory.createProvider();
+		diagram = newDiagram(configuration, provider, paintDevice);
+		if (map != null) {
+			((SequenceDiagram) getDiagram()).setReverseIdMap(map);
+		}
+		diagram.generate();
+	}
 
-    public DiagramDataProviderFactory getProviderFactory() {
-        return providerFactory;
-    }
+	public DiagramDataProviderFactory getProviderFactory() {
+		return providerFactory;
+	}
 
-    public DiagramDataProvider getProvider() {
-        return provider;
-    }
+	public DiagramDataProvider getProvider() {
+		return provider;
+	}
 
-    public PaintDevice getPaintDevice() {
-        return paintDevice;
-    }
+	public PaintDevice getPaintDevice() {
+		return paintDevice;
+	}
 
-    public Diagram getDiagram() {
-        return diagram;
-    }
+	public Diagram getDiagram() {
+		return diagram;
+	}
 
 }
