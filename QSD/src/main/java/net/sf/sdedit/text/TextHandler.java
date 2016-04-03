@@ -61,8 +61,6 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 
 	private int objectSectionEnd;
 	
-	private boolean reuseSpace;
-	
 	private SequenceDiagram diagram;
 	
 	private final Grep grep;
@@ -100,7 +98,6 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 	 */
 	public void setDiagram(SequenceDiagram diagram) {
 		this.diagram = diagram;
-		this.reuseSpace = diagram.getConfiguration().isReuseSpace();
 	}
 	
 	public Object getState() {
@@ -346,6 +343,10 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 		if (!label.equals("")) {
 			label = label.substring(1, label.length() - 1);
 		}
+		
+		if (flags.indexOf('f') >= 0) {
+			throw new SyntaxError(this, "The f flag is not supported anymore. Use v (variable, the inverse of f[ixed]) instead.");
+		}
 
 		boolean anon = flags.indexOf('a') >= 0;
 		boolean role = flags.indexOf('r') >= 0;
@@ -353,25 +354,17 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 		boolean hasThread = flags.indexOf('t') >= 0;
 		boolean autoDestroy = flags.indexOf('x') >= 0;
 		boolean external = flags.indexOf('e') >= 0;
-		boolean saveSpace = reuseSpace && flags.indexOf('f') == -1;
+		boolean saveSpace = flags.indexOf('v') >= 0;
+		
+		
 
 		Lifeline lifeline;
-
-//		if (external && !process) {
-//			throw new SyntaxError(this,
-//					"only processes can be declared external");
-//		}
 
 		if (name.startsWith("/")) {
 			if (type.equals("Actor") || process) {
 				throw new SyntaxError(this,
 						"processes and actors must be visible");
 			}
-			/*
-			if (hasThread) {
-				throw new SyntaxError(this,
-						"invisible objects cannot have their own thread");
-			}*/
 			lifeline = new Lifeline(name.substring(1), type, label, false,
 					anon, role, false, false, autoDestroy, external, saveSpace,
 					diagram);
@@ -389,6 +382,10 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 			if ((type.equals("Actor") || process) && autoDestroy) {
 				throw new SyntaxError(this,
 						"actors cannot be (automatically) destroyed");
+			}
+			
+			if (saveSpace) {
+				throw new SyntaxError(this, "only objects that are created by a constructor can have a variable position");
 			}
 
 			lifeline = new Lifeline(parts[0], parts[1], label, true, anon,
