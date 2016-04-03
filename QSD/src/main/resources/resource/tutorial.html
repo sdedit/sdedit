@@ -395,21 +395,16 @@ s1:&gt;m.done()&amp;</pre>
   <a href="#automatic">automatically</a>, the column of the screen where
   its lifeline was displayed is no longer used, so it might be reused
   by objects that are <a href="#constructor">created</a> thereafter.
-  This has to be enabled by the diagram configuration: Misc/Reuse space of destroyed objects.
+  This applies only to objects with the [v] variable flag set.
   </p>
-  
-  <p>
-  Objects marked with the [f] (fixed) flag will have their very own column when they are created.
-  </p>
-  
   <div class="sd">
     <img name="reuse_space" src="sd/reuse_space.png"/>
     <pre>m:Master
-/s1:Servant[xf]
-/s2:Servant[x]
-/s3:NoReuseSpace[f]
-/s4:Servant
-/s5:Servant
+/s1:Servant[x]
+/s2:Servant[xv]
+/s3:NoReuseSpace
+/s4:Servant[v]
+/s5:Servant[v]
 
 m:s1.new()
 m:s1.executeTask()
