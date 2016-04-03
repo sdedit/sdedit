@@ -47,7 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import net.sf.sdedit.util.base64.Base64;
+import net.sf.sdedit.icons.Icons;
 
 public class FullScreen extends JFrame implements KeyListener, ActionListener {
 
@@ -65,32 +65,7 @@ public class FullScreen extends JFrame implements KeyListener, ActionListener {
 
 	private Timer hideClosePanelTimer;
 
-	private static final String imageString = "iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUE"
-			+ "AAK/INwWK6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAASAAAAE"
-			+ "gARslrPgAAAvdJREFUOMutlF1rXGUQx39zztk9+5LtptuURi+ChhpBi"
-			+ "kWkXogIghd65Y39AOoXEPEDCEIvJAUv9UoQgqhfwFRBsMWbvnihFKok"
-			+ "GiSoqa2N2e55e2bGi7O72cQIIg4Mz8wDz4//DDOPnF3dbGM60CKLrAp"
-			+ "oGdAqMBtrVaGlYpP7ca5VQIuAViGYhdvSeyQk873W2wu95rPi81LmRl"
-			+ "ko9Wns50qRO2WulIVhuWIYKoZFinM3+Oin9/3yi2vJQj99/cxSP9YqI"
-			+ "sucUQZZBqPRrDujBBAIDh6gFAgxEAPlNrBTEsl60mvG8SCNKYDUhLZD"
-			+ "LpAJ5DHkDciakKWQtSDrwChz8h6YAQjabfNLTlqYd5PlY3D+UbCywCT"
-			+ "BJcaU2h3c6oe1O2qgCsHAyxJz4Y/dhDffibl5A5JOAx5oZujVj5DBEs"
-			+ "wtIg8+jLS6HGWO4Dvb2PAevnMV7y/w20NP02kJAJGbQxRjlVN8cIFi9"
-			+ "Q1878+/YdwdVSc4lD/cpHzrNapLH1N5ShUcc6+BuEHcJDq5gv/8O7a5"
-			+ "XXf/AAzcHTPHDTwI9v0GPorQ48uoAWNg4jYmL62QXlhDogYyf2IfNwO"
-			+ "rgQF77An8vXVMwNo97L5OeCQ+jmRwinhw6mChXqubwtwxNbw9h58+U9"
-			+ "+roru7+FThBH24a1OYTYFmhs2onfUJJsL838PGsTpYFKMSYw6qNquwh"
-			+ "uitG+jXX4CnxOdfwTtzRyoxBLY2iNY/RY61qZ55CWNuKiaaluyBsP4h"
-			+ "1dq72HBvOshHAX17k8YnqyTffYmJMNu1WmExRL/9jOjcU+B9XP65XHN"
-			+ "Duh2ql1+lEX6ltXUFFp+fAZpB2iF58gV4bhFvH8fiJuKG1Hsxnso6Rg"
-			+ "N2+ixh+XHCnQ0sbkLYn9vk9r2Cbzb2CLqC7iiqGRqGaDBUFVObxqpWj"
-			+ "42D47j3cXf27t9hVBggJJeu/Xjx86+u97SsIq0UDTr+YBWdeKhPqxSr"
-			+ "v5jD+x1lw7tbIKUACdA9tG//1Yr/gXHQ/gJla4L5jBzrYgAAACJ6VFh"
-			+ "0U29mdHdhcmUAAHjac0zJT0pV8MxNTE8NSk1MqQQAL5wF1K4MqU0AAA"
-			+ "AASUVORK5CYII=";
-
-	private static final ImageIcon noFullScreenIcon = new ImageIcon(Base64
-			.decodeBase64EncodedImage(imageString));
+	private static final ImageIcon noFullScreenIcon = Icons.getIcon("large/nofullscreen");
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == hideClosePanelTimer) {

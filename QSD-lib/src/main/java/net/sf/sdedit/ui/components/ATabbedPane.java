@@ -38,8 +38,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 
+import net.sf.sdedit.icons.Icons;
 import net.sf.sdedit.util.Utilities;
-import net.sf.sdedit.util.base64.Base64;
 
 /**
  * An <tt>ATabbedPane</tt> is an advanced <tt>JTabbedPane</tt> that allows
@@ -58,53 +58,9 @@ public class ATabbedPane extends JTabbedPane {
 
 	private final static long serialVersionUID = 0xAB343921;
 
-	private static String cleanString = "iVBORw0KGgoAAAANSUhEUgAAABA"
-			+ "AAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRv"
-			+ "YmUgSW1hZ2VSZWFkeXHJZTwAAAOVSURBVHjaYtTUdGdAA4K/fv3U+Pv3rw+QLfT//"
-			+ "3+Gf//+vWNiYtjCwsJyAyj2HiT2//8/sGKAAGJB1gkU9Pj581eNnJyctaamMgM/Py"
-			+ "8DIyMDw+fPXxlu3rxfdfPmjaPMzIwtTEzMO2B6AAKIBaH5fw4LC1tHeHgQt7u7PYO"
-			+ "OjhIDNzcb2IBfv/4x3LjxiGHr1n3WK1duXPPx45sKJiamKSB9AAHECPIC0GZ3ZmbW"
-			+ "zQkJkazu7rYMLCyMDD9//gYZCzWcgYGVlRUozsxw9Oh5hv7+Gb8/fXrnC+TvBAggZ"
-			+ "hERZb7fv3/PdnCwV7C3twT69w+DlpYcw5s3HxkeP34FdP53IPsDg6qqNAMXFxvQIA"
-			+ "4GoGXMFy9eVgK6eg1AADH9/ftbW0hIxEpFRQms0MBAlYGDg51BQ0OegZ2dneH58zd"
-			+ "AMRUGKSlhBnFxQYY7dx4CvfSHQVBQyAqkFyCAmIWEFDOlpaVtgQHH8O7dB4aXLz8w"
-			+ "qKjIMHBysoE1SUqKMCgoSIC90te3lGHNmu0MDx8+Yfjx4xvQmz9eAgQQCzAwhBiBI"
-			+ "fX69RugwC+GR4+eAl3yliEx0Y+Bl5eDQU5ODBwG3d0LGdau3QH0AjMwLFiBruQEBj"
-			+ "CTEEAAsYBC+du3HwxPnjxnAMY90JCfoLBlePXqLdAAabDNX778AHvl37+/QP9DYub"
-			+ "fP0haAAggJlAi+fr1M8Pbt2+Bml4z8PBwMxQURDMoK0uDbf78+QfYJY2N2Qy2thZA"
-			+ "//8CGsIMtOg70MI/7wACiAkYkluAfmH48+cPMOHwMbS1FTJoaspB/bwYqHE6w4cP3"
-			+ "xn4+DgYWltzgAGqywCMNbABQBdsAQggJmAsX/3+/esxkPNAoX7jxgNQomKYMWMtw6"
-			+ "5dRxkuXLjGMHHiEobv338x3Lv3DEhDLAO6+hjQq1cBAohRWdkOqOGvOwcHz2Z1dU1"
-			+ "WcXEJBgkJYYbbtx+AExIogH/9+s2gra0KDOgPwLTxmOHKlfO/v3z55AtM0jsBAggY"
-			+ "jfKg0Lz769eP958/f7FnZ2djAyYUBhERQWBUcgLDhItBWFiY4f37j8AYeshw/frVr"
-			+ "1++fCwFal4O8iZAAIENAKdpRoZTwLg99/Llc8VPnz7JffnyFWQwMAa+Mdy/fw+YmW"
-			+ "4w3Lp1/eiPH19zgJqXwfIQQACBvQDNiaBsC/K/IDCQNICKfNjYWIVAYQNMH++AIb4"
-			+ "FGPrg7IycgwECDADIUZC5UWvTuwAAAABJRU5ErkJggg==";
+	private static Image clean = Icons.getIcon("close").getImage();
 
-	private static String stainedString = "iVBORw0KGgoAAAANSUhEUgAAA"
-			+ "BAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEw"
-			+ "EAmpwYAAAAB3RJTUUH1wMbBRAgdDDcCwAAAyVJREFUOMtdk0tsVGUYhp/vP2eml9P"
-			+ "LzLRAq4MUqKVyS2tIkBZKCCZl0bIgLly68xLcSECjBkx04cIlCy8bFgYXspKaiqZN"
-			+ "jGkXalACaGPaUrHTmSntdJzpdOac8//nd6FtiO/++fK+yfPJlXQj/0vSGNNrTDQCp"
-			+ "AAibEEhY0rJDLAGYK0FwH2ctNae0Vq/29a+bXBH127qm1oACKoV8g/m387lc1MK+U"
-			+ "Ap+WaTcR+DzzuO++Gzp4e9/Wdf4MnBU8SaWxDHwdSq5H+a5u6Xnw/e/nb8RrVafUu"
-			+ "EqwByJd2ItXZYKXXzudFzsf3nXkS5MUzgbzWLjMGtq0eUYn5inMlrn4ZV3x91RG45"
-			+ "J5vdliiKPnv6cF9Xz/NnsFFE59HjlB4uUJz/g2phhfVclm2H+om3JlBKIdWKk5mf3"
-			+ "WPhhrLWHmj0vIHte3soZ5dInziN6zXRefQ4bn0DpaVF0seGaO3eR/OuPTz6/S4mDP"
-			+ "EaGge05YAz1OS8mki1nUh0PsFGYYXSg1m2H+on1tRMa1c3rTt30XawD4CJCy9zZ/w"
-			+ "rVrNLhGGIMTrvikhKRKisrqADn7XMX1RW8gy8+T7xRJJk70GsMUxcfIVfvhvHcVyU"
-			+ "o4jFY1CrplwRwfdrrGUzRMagwxCA0sIc7X1HAAjLJf7OZbHWIiIoUVseKGttIfB9N"
-			+ "kolysUi9Z7HqUvv0d53BGsMQXGNeCLJyNVr7D3cjzEaEUGHGm0pKGvtmA41URTR4H"
-			+ "mMfvQxHceGAJi89Bpfv/4S1XyWulQ7Zz+5Trq7B601WodEMKaA+0HgTxtjcGMxlu/"
-			+ "8jDWGHy6/wczU9yzO/Mbk5QuE5RKr934l9H2iKGIj1NPAfXmnIw4w7LruzY70zlhz"
-			+ "WzstOzpYnpsF+K9uQOe+Z1hfeUQxnyPz50JY0dGoCLecoSYHYE5rs1bbqJx0HSeul"
-			+ "MJLthFvaKCu0cNLpKiWihSWMuQyi5WKNhdF+AJg8wAi8mOg9e1ysbi7Vi49FVTWEc"
-			+ "CvrFNYWiS/+JDs8vJUzUTnRbi+qfnmhH+djyxAMrC21xVGXKVSUWSpWVuwljERtt5"
-			+ "5M/8AP9V9H5Qdd08AAAAASUVORK5CYII=";
-
-	private static Image clean = Base64.decodeBase64EncodedImage(cleanString);
-
-	private static Image stain = Base64.decodeBase64EncodedImage(stainedString);
+	private static Image stain = Icons.getIcon("close2").getImage();
 
 	private List<ATabbedPaneListener> listeners;
 
