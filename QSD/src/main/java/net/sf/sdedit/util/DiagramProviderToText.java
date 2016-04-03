@@ -69,7 +69,6 @@ public class DiagramProviderToText implements SequenceDiagramDataProvider {
 		SequenceConfiguration conf = ConfigurationManager
 				.createNewDefaultConfiguration(SequenceConfiguration.class).getDataObject();
 		conf.setThreaded(true);
-		conf.setReuseSpace(false);
 		DiagramDataProviderFactory myFactory = new 
 		DiagramDataProviderFactory() {
 		    
