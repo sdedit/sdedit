@@ -57,8 +57,6 @@ public interface GlobalConfiguration extends DataObject {
 
 	public boolean isBackupFiles();
 
-	public boolean isAlwaysReloadChangedFiles();
-
 	public int getTooltipDismissDelay();
 
 	public boolean isHighlightCurrent();
@@ -92,9 +90,6 @@ public interface GlobalConfiguration extends DataObject {
 
 	@Adjustable(dflt = 6, min = 0, max = 25, category = "Files", info = "Max. number of recent files")
 	public void setMaxNumOfRecentFiles(int maxNumOfRecentFiles);
-
-	@Adjustable(category = "Files", info = "Always reload changed files")
-	public void setAlwaysReloadChangedFiles(boolean always);
 
 	@Adjustable(dflt = 60001, min = 1, max = 65535, editable = false, category = "Server", info = "Receiver server port number")
 	public void setRealtimeServerPort(int receiverServerPort);
