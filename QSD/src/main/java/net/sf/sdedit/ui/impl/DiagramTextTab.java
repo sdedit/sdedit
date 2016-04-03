@@ -149,6 +149,8 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 	private Timer scrollTimer;
 
 	private boolean ignoreChanges;
+	
+	private boolean reloadChangedFiles;
 
 	public DiagramTextTab(UserInterfaceImpl ui, Font codeFont, Bean<? extends Configuration> configuration
 
@@ -726,14 +728,14 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 
 	protected void fileChanged(String text, Bean<? extends Configuration> conf) {
 		if (!text.equals(code) || !conf.equals(this.getConfiguration())) {
-			if (!globalConf.isAlwaysReloadChangedFiles()) {
-				String opt = get_UI().getOption("The file has changed. Do you want to reload it?", "No", "Always",
+			if (!reloadChangedFiles) {
+				String opt = get_UI().getOption("The file has changed. Do you want to reload it?", "No", "Always in this tab",
 						"Yes");
 				if ("No".equals(opt)) {
 					return;
 				}
-				if ("Always".equals(opt)) {
-					globalConf.setAlwaysReloadChangedFiles(true);
+				if ("Always in this tab".equals(opt)) {
+					reloadChangedFiles = true;
 				}
 			}
 			setConfiguration(conf);
