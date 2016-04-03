@@ -44,7 +44,6 @@ public class HelpImageGenerator {
 					String seq = preText.getTextContent();
 					Bean<SequenceConfiguration> conf = ConfigurationManager
 							.createNewDefaultConfiguration(SequenceConfiguration.class);
-					conf.getDataObject().setReuseSpace(true);
 					String name = img.getAttribute("name");
 					File dir = new File(helpDirectory, "sd");
 					dir.mkdir();
