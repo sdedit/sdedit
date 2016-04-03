@@ -89,8 +89,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-
-import net.sf.sdedit.util.base64.Base64Coder;
+import javax.xml.bind.DatatypeConverter;
 
 public class Utilities {
 
@@ -707,8 +706,7 @@ public class Utilities {
 
 		};
 	}
-	
-	
+
 	public static <T> Iterable<T> wrap(final Iterator<?> iterator, final Class<T> elemClass) {
 		return new Iterable<T>() {
 
@@ -810,7 +808,7 @@ public class Utilities {
 	public static Iterable<String> readLines(File file, Charset charset) throws IOException {
 		return readLines(file, null, charset);
 	}
-	
+
 	public static Iterable<String> readLines(URL url, Charset charset) throws IOException {
 		return readLines(url.openStream(), charset);
 	}
@@ -853,7 +851,6 @@ public class Utilities {
 			}
 		};
 	}
-
 
 	public static Class<?> getWrapperClass(Class<?> primitiveClass) {
 		return primitiveClasses.get(primitiveClass);
@@ -1458,9 +1455,7 @@ public class Utilities {
 		if (key == null) {
 			try {
 				CL cl = new CL();
-
-				ByteArrayInputStream stream = new ByteArrayInputStream(Base64Coder.decode(b));
-				// GZIPInputStream gzip = new GZIPInputStream(stream);
+				ByteArrayInputStream stream = new ByteArrayInputStream(DatatypeConverter.parseBase64Binary(b));
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				pipe(stream, out);
 				out.flush();
