@@ -569,9 +569,10 @@ public final class Editor implements Constants, UserInterfaceListener
 				server.shutDown();
 			}
 			ui.exit();
+			System.exit(0);
 			/*
 			if (Eclipse.getEclipse() == null) {
-				System.exit(0);
+
 			}
 			*/
 		}
