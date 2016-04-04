@@ -375,7 +375,7 @@ final class MessageProcessor {
 				&& diagram.firstCaller() == null) {
 			/*
 			 * The message described by MessageData is the first that occurs on
-			 * the thread 0, no object is yet active. So set the caller active
+			 * the thread 0, no object is active yet. So set the caller active
 			 * and declare it the first caller.
 			 */
 			diagram.setFirstCaller(rootCaller);
@@ -554,12 +554,6 @@ final class MessageProcessor {
 
 	void execute(final ForwardMessage message) throws SemanticError {
 
-		// if (message.getCaller().isWaiting()) {
-		// if (!(message instanceof Primitive) || !((Primitive)
-		// message).isSynchronizing()) {
-		// throw new SemanticError (provider, "the thread is blocked");
-		// }
-		// }
 		if (message instanceof Primitive && diagram.isThreaded()
 				&& message.getText().equals("stop") && !caller.isAlwaysActive()) {
 			diagram.finish(diagram.getCallerThread());
