@@ -614,7 +614,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 			first.set(thread, lifeline);
 			lifeline.setThread(thread);
 		}
-		if (!lifeline.isSavingSpace()) {
+		if (!lifeline.isVariable()) {
 			positionMap.put(lifeline.getName(), add(lifeline));
 		}
 		lifelineMap.put(lifeline.getName(), lifeline);
