@@ -30,8 +30,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.sf.sdedit.diagram.Lifeline;
+import net.sf.sdedit.diagram.LifelineFlag;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.diagram.SequenceDiagram;
 import net.sf.sdedit.diagram.SequenceDiagramDataProvider;
@@ -40,6 +42,8 @@ import net.sf.sdedit.error.SyntaxError;
 import net.sf.sdedit.util.Grep;
 import net.sf.sdedit.util.Grep.Region;
 import net.sf.sdedit.util.Pair;
+
+import static net.sf.sdedit.diagram.LifelineFlag.*;
 
 /**
  * A <tt>DiagramDataProvider</tt> implementation, reading a diagram
@@ -348,48 +352,41 @@ public class TextHandler extends AbstractTextHandler implements SequenceDiagramD
 			throw new SyntaxError(this, "The f flag is not supported anymore. Use v (variable, the inverse of f[ixed]) instead.");
 		}
 
-		boolean anon = flags.indexOf('a') >= 0;
-		boolean role = flags.indexOf('r') >= 0;
-		boolean process = flags.indexOf('p') >= 0;
-		boolean hasThread = flags.indexOf('t') >= 0;
-		boolean autoDestroy = flags.indexOf('x') >= 0;
-		boolean external = flags.indexOf('e') >= 0;
-		boolean saveSpace = flags.indexOf('v') >= 0;
+		Set<LifelineFlag> lflags = LifelineFlag.getFlags(flags);
 		
-		
-
 		Lifeline lifeline;
 
 		if (name.startsWith("/")) {
-			if (type.equals("Actor") || process) {
+			if (type.equals(Lifeline.ACTOR) || LifelineFlag.PROCESS.in(lflags)) {
 				throw new SyntaxError(this,
 						"processes and actors must be visible");
 			}
+			lflags.remove(LifelineFlag.THREAD);
+			lflags.remove(LifelineFlag.PROCESS);
 			lifeline = new Lifeline(name.substring(1), type, label, false,
-					anon, role, false, false, autoDestroy, external, saveSpace,
+					lflags,
 					diagram);
 		} else {
 
-			if (type.equals("Actor")) {
-				if (anon) {
+			if (type.equals(Lifeline.ACTOR)) {
+				if (ANONYMOUS.in(lflags)) {
 					throw new SyntaxError(this, "actors cannot be anonymous");
 				}
 			}
-			if ((type.equals("Actor") || process) && hasThread) {
+			if ((type.equals(Lifeline.ACTOR) || PROCESS.in(lflags)) && THREAD.in(lflags)) {
 				throw new SyntaxError(this,
 						"actors cannot have their own thread");
 			}
-			if ((type.equals("Actor") || process) && autoDestroy) {
+			if ((type.equals(Lifeline.ACTOR) || PROCESS.in(lflags)) && AUTOMATIC.in(lflags)) {
 				throw new SyntaxError(this,
 						"actors cannot be (automatically) destroyed");
 			}
 			
-			if (saveSpace) {
+			if (VARIABLE.in(lflags)) {
 				throw new SyntaxError(this, "only objects that are created by a constructor can have a variable position");
 			}
 
-			lifeline = new Lifeline(parts[0], parts[1], label, true, anon,
-					role, process, hasThread, autoDestroy, external, false,
+			lifeline = new Lifeline(parts[0], parts[1], label, true, lflags,
 					diagram);
 		}
 		
