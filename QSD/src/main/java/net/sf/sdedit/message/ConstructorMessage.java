@@ -70,7 +70,7 @@ public class ConstructorMessage extends ForwardMessage
         extendLifelines(getConfiguration().getSpaceBeforeConstruction());
         
         // find a space where there is no active line and get its position
-        if (getCallee().isSavingSpace()) {
+        if (getCallee().isVariable()) {
             getDiagram().reuseSpace(getCallee());
         }
   
