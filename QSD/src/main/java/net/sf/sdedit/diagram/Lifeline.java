@@ -23,8 +23,19 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.diagram;
 
+import static net.sf.sdedit.diagram.LifelineFlag.ANONYMOUS;
+import static net.sf.sdedit.diagram.LifelineFlag.AUTOMATIC;
+import static net.sf.sdedit.diagram.LifelineFlag.EXTERNAL;
+import static net.sf.sdedit.diagram.LifelineFlag.PROCESS;
+import static net.sf.sdedit.diagram.LifelineFlag.ROLE;
+import static net.sf.sdedit.diagram.LifelineFlag.THREAD;
+import static net.sf.sdedit.diagram.LifelineFlag.VARIABLE;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import net.sf.sdedit.drawable.Cross;
 import net.sf.sdedit.drawable.Drawable;
@@ -49,6 +60,8 @@ import net.sf.sdedit.util.Grep.Region;
  * @author Markus Strauch
  */
 public final class Lifeline implements Comparable<Lifeline> {
+
+	public static final String ACTOR = "Actor";
 
 	/**
 	 * The direction of the lifeline, for root lifelines Direction.CENTER, for
@@ -133,27 +146,9 @@ public final class Lifeline implements Comparable<Lifeline> {
 	private int thread;
 
 	/**
-	 * Flag denoting if this lifeline belongs to a process (a passive actor)
-	 */
-	private final boolean process;
-
-	/**
-	 * Flag denoting if a thread is statically spawned for this lifeline
-	 */
-	private final boolean hasThread;
-
-	/**
 	 * The line representation most recently created for this lifeline
 	 */
 	private Line lastLine;
-
-	private boolean anonymous;
-
-	/**
-	 * Flag denoting if the lifeline is to be destroyed when it has performed
-	 * its last activity
-	 */
-	private final boolean autodestroy;
 
 	/**
 	 * The vertical position where the most recently created rectangle for
@@ -168,15 +163,11 @@ public final class Lifeline implements Comparable<Lifeline> {
 	 */
 	private final List<ExtensibleDrawable> allViews;
 
-	private final boolean external;
-
-	private boolean waiting;
-
 	private Region nameRegion;
 
-	private final boolean saveSpace;
-
 	private boolean destroyed;
+
+	private Set<LifelineFlag> flags;
 
 	public String toString() {
 		String string = name + ":" + type;
@@ -186,22 +177,10 @@ public final class Lifeline implements Comparable<Lifeline> {
 		if (!alive) {
 			string = "/" + string;
 		}
-		String flags = "";
-		if (process)
-			flags += "p";
-		if (external)
-			flags += "e";
-		if (autodestroy)
-			flags += "x";
-		if (hasThread)
-			flags += "t";
-
-		if (flags.length() > 0) {
-			string += " [" + flags + "]";
+		if (flags.size() > 0) {
+			string += " [" + LifelineFlag.toString(flags) + "]";
 		}
-
 		return string;
-
 	}
 
 	/**
@@ -223,22 +202,12 @@ public final class Lifeline implements Comparable<Lifeline> {
 	 *            flag denoting whether the object is visible from the start (
 	 *            <tt>true</tt>) or it will come into existence by receiving a
 	 *            new message
-	 * @param anonymous
-	 *            flag denoting whether the name of the instance will be shown
-	 *            on the diagram
-	 * @param role
-	 *            flag denoting whether the object is a role rather, so its
-	 *            place could be taken by another object of another class, with
-	 *            a similar behaviour; the visible effect of this is that the
-	 *            name of the instance and the class will not be underlined
-	 * @param activeObject
-	 *            flag denoting if the object is active, i. e. all messages sent
-	 *            to the object spawn a new thread
+	 * @param flags
+	 *            a set of flags configuring the behavior of the lifeline
 	 * @param diagram
 	 *            the diagram to which the lifeline belongs
 	 */
-	public Lifeline(String name, String type, String label, boolean alive, boolean anonymous, boolean role,
-			boolean process, boolean hasThread, boolean autodestroy, boolean external, boolean saveSpace,
+	public Lifeline(String name, String type, String label, boolean alive, Set<LifelineFlag> flags,
 			SequenceDiagram diagram) {
 		this.diagram = diagram;
 		this.name = name;
@@ -247,29 +216,23 @@ public final class Lifeline implements Comparable<Lifeline> {
 		this.alive = alive;
 		this.thread = 0;
 		this.level = 0;
-		this.process = process;
-		this.hasThread = hasThread;
-		this.autodestroy = autodestroy;
-		this.external = external;
+		this.flags = flags;
 		this.label = label;
-		this.anonymous = anonymous;
-		this.saveSpace = saveSpace;
 		parent = null;
 		root = this;
 		sideLevel = 0;
 		rectangleBottom = 0;
-		waiting = false;
 		allViews = new LinkedList<ExtensibleDrawable>();
-		if (type.equals("Actor")) {
-			head = new Figure(this, label, diagram.getVerticalPosition(), !role);
+		if (type.equals(ACTOR)) {
+			head = new Figure(this, label, diagram.getVerticalPosition(), !is(ROLE));
 			view = new Rectangle(computeDrawableWidth(), this);
 			active = true;
-		} else if (process) {
-			head = new LabeledBox(this, label, diagram.getVerticalPosition(), anonymous, !role);
+		} else if (is(PROCESS)) {
+			head = new LabeledBox(this, label, diagram.getVerticalPosition(), is(ANONYMOUS), !is(ROLE));
 			view = new Rectangle(computeDrawableWidth(), this);
 			active = true;
 		} else {
-			head = new LabeledBox(this, label, diagram.getVerticalPosition(), anonymous, !role);
+			head = new LabeledBox(this, label, diagram.getVerticalPosition(), is(ANONYMOUS), !is(ROLE));
 			// view = new Line(computeDrawableWidth(), this);
 			view = new Line(1, this);
 			active = false;
@@ -278,6 +241,10 @@ public final class Lifeline implements Comparable<Lifeline> {
 		head.setVisible(alive);
 		view.setVisible(alive);
 		addView(view);
+	}
+
+	public boolean is(LifelineFlag flag) {
+		return flag.in(flags);
 	}
 
 	/**
@@ -301,18 +268,16 @@ public final class Lifeline implements Comparable<Lifeline> {
 		this.direction = direction;
 		this.root = root;
 		this.thread = thread;
-		this.external = root.external;
+		this.flags = new HashSet<LifelineFlag>(root.flags);
 		this.label = root.label;
-		this.anonymous = root.anonymous;
-		this.saveSpace = root.saveSpace;
-		autodestroy = false;
-		hasThread = false;
+		flags.remove(AUTOMATIC);
+		flags.remove(THREAD);
+		flags.remove(PROCESS);
 		diagram = root.diagram;
 		alive = true;
 		parent = root;
 		level = root.getAllLifelines().size();
 		allViews = null;
-		waiting = false;
 		if (direction == Direction.LEFT) {
 			while (parent.leftChild != null) {
 				parent = parent.leftChild;
@@ -328,7 +293,6 @@ public final class Lifeline implements Comparable<Lifeline> {
 		active = false;
 		view = new Rectangle(computeDrawableWidth(), this);
 		head = null;
-		process = false;
 		// view's top will be set inside setActive(true)
 	}
 
@@ -375,7 +339,7 @@ public final class Lifeline implements Comparable<Lifeline> {
 	}
 
 	public boolean hasThread() {
-		return hasThread;
+		return is(THREAD);
 	}
 
 	public void setThread(int thread) {
@@ -384,10 +348,6 @@ public final class Lifeline implements Comparable<Lifeline> {
 
 	public int getThread() {
 		return thread;
-	}
-
-	public boolean isWaiting() {
-		return waiting;
 	}
 
 	/**
@@ -443,7 +403,7 @@ public final class Lifeline implements Comparable<Lifeline> {
 	}
 
 	public boolean isAlwaysActive() {
-		return type.equals("Actor") || process;
+		return type.equals(ACTOR) || is(PROCESS);
 	}
 
 	/**
@@ -451,8 +411,8 @@ public final class Lifeline implements Comparable<Lifeline> {
 	 * 
 	 * @return a list containing this lifeline and all of its sub lifelines
 	 */
-	public LinkedList<Lifeline> getAllLifelines() {
-		LinkedList<Lifeline> list = new LinkedList<Lifeline>();
+	public List<Lifeline> getAllLifelines() {
+		List<Lifeline> list = new ArrayList<Lifeline>();
 		list.add(this);
 		Lifeline line = leftChild;
 		while (line != null) {
@@ -631,7 +591,7 @@ public final class Lifeline implements Comparable<Lifeline> {
 			throw new IllegalStateException("cannot terminate lifeline " + name + ", it is not alive");
 		}
 		ExtensibleDrawable _view = lastLine != null ? lastLine : view;
-		if (autodestroy) {
+		if (is(AUTOMATIC)) {
 			int bottom = Math.max(rectangleBottom, diagram.getVerticalPosition());
 			bottom += 6;
 			cross = new Cross(this);
@@ -699,7 +659,6 @@ public final class Lifeline implements Comparable<Lifeline> {
 			view = new Rectangle(computeDrawableWidth(), this);
 
 		} else {
-			// view = new Line(computeDrawableWidth(), this);
 			view = new Line(1, this);
 			lastLine = (Line) view;
 		}
@@ -723,7 +682,7 @@ public final class Lifeline implements Comparable<Lifeline> {
 	}
 
 	public boolean isAnonymous() {
-		return anonymous;
+		return is(ANONYMOUS);
 	}
 
 	private int computeDrawableWidth() {
@@ -732,7 +691,7 @@ public final class Lifeline implements Comparable<Lifeline> {
 	}
 
 	public boolean isExternal() {
-		return external;
+		return is(EXTERNAL);
 	}
 
 	public void destroy() {
@@ -757,12 +716,12 @@ public final class Lifeline implements Comparable<Lifeline> {
 		return nameRegion;
 	}
 
-	public boolean isSavingSpace() {
-		return saveSpace;
+	public boolean isVariable() {
+		return is(VARIABLE);
 	}
 
 	public boolean isAutodestroy() {
-		return autodestroy;
+		return is(AUTOMATIC);
 	}
 
 	public void setDestroyed(boolean destroyed) {
