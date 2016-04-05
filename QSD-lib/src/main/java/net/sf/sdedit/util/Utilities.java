@@ -679,34 +679,6 @@ public class Utilities {
 
 	}
 
-	@Deprecated
-	public static <T> Iterable<T> iteratorToIterable(final Iterator<?> iterator, final Class<T> elemClass) {
-		final Iterator<T> iter = new Iterator<T>() {
-
-			public boolean hasNext() {
-				return iterator.hasNext();
-			}
-
-			public T next() {
-				return elemClass.cast(iterator.next());
-			}
-
-			public void remove() {
-				iterator.remove();
-
-			}
-
-		};
-
-		return new Iterable<T>() {
-
-			public Iterator<T> iterator() {
-				return iter;
-			}
-
-		};
-	}
-
 	public static <T> Iterable<T> wrap(final Iterator<?> iterator, final Class<T> elemClass) {
 		return new Iterable<T>() {
 
