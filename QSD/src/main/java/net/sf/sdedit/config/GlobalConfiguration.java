@@ -67,9 +67,6 @@ public interface GlobalConfiguration extends DataObject {
 	@Adjustable(dflt = 1, min = 0, max = 1, category = "Automation", info = "Scroll diagram as you type")
 	public void setAutoScroll(boolean autoScroll);
 
-	@Adjustable(info = "Autostart RT diagram server", category = "Server")
-	public void setAutostartServer(boolean autostartServer);
-
 	@Adjustable(info = "Update diagram as you type", category = "Automation")
 	public void setAutoUpdate(boolean autoUpdate);
 
@@ -105,6 +102,9 @@ public interface GlobalConfiguration extends DataObject {
 	
 	@Adjustable(category = "Misc", info = "Look & Feel (requires restart)", stringSelectionProvided = true)
 	public void setLookAndFeel(String lookAndFeel);
+	
+	@Adjustable(info = "Autostart RT diagram server", category = "Misc")
+	public void setAutostartServer(boolean autostartServer);
 
 }
 // {{core}}
