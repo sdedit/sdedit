@@ -24,81 +24,23 @@
 
 package net.sf.sdedit.util;
 
-import java.lang.reflect.Method;
+import java.awt.Desktop;
 import java.net.URI;
 
-import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 /**
  * A <tt>HyperlinkListener</tt> implementation that opens a browser for http
- * hyperlinks, using <tt>java.awt.Desktop</tt>, and thus only working when
- * JDK version &gt;= is available at runtime.
+ * hyperlinks, using <tt>java.awt.Desktop</tt>.
  * 
  * @author Markus Strauch
  * 
  */
 public class Browser implements HyperlinkListener {
 
-	private static Browser instance;
+	public Browser() {
 
-	private static final Object desktop;
-
-	private static final Method browseMethod;
-
-	private static final Method mailtoMethod;
-
-	private static String jdklt6 = "Browsing is only supported by\nJDK 6 or higher";
-
-	private static String notSupported = "Operation not supported by\nyour environment";
-
-	private static final boolean jdk6;
-
-	private static final boolean supported;
-
-	private Browser() {
-
-	}
-
-	/**
-	 * Returns the singleton {@linkplain Browser} instance.
-	 * 
-	 * @return the singleton {@linkplain Browser} instance
-	 */
-	public static Browser getBrowser() {
-		if (instance == null) {
-			instance = new Browser();
-		}
-		return instance;
-	}
-
-	static {
-		Object _desktop = null;
-		Method _browseMethod = null;
-		Method _mailtoMethod = null;
-		boolean _jdk6 = false;
-		boolean _supported = false;
-		try {
-			Class<?> desktopClass = Class.forName("java.awt.Desktop");
-			_jdk6 = true;
-			Method supportedMethod = desktopClass
-					.getMethod("isDesktopSupported");
-			_supported = (Boolean) supportedMethod.invoke(null);
-			if (_supported) {
-				Method getDesktopMethod = desktopClass.getMethod("getDesktop");
-				_desktop = getDesktopMethod.invoke(null);
-				_browseMethod = desktopClass.getMethod("browse", URI.class);
-				_mailtoMethod = desktopClass.getMethod("mail", URI.class);
-			}
-		} catch (Exception e) {
-			/* empty */
-		}
-		jdk6 = _jdk6;
-		supported = _supported;
-		desktop = _desktop;
-		browseMethod = _browseMethod;
-		mailtoMethod = _mailtoMethod;
 	}
 
 	/**
@@ -109,39 +51,22 @@ public class Browser implements HyperlinkListener {
 	 *            event encapsulation the click of the URL
 	 */
 	public void hyperlinkUpdate(HyperlinkEvent e) {
-		if (e.getURL().getProtocol() == null ||
-				(!e.getURL().getProtocol().equals("http") &&
-						!e.getURL().getProtocol().equals("mailto"))) {
+		if (e.getURL().getProtocol() == null
+				|| (!e.getURL().getProtocol().equals("http") && !e.getURL().getProtocol().equals("mailto"))) {
 			return;
 		}
-		if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-			if (!jdk6) {
-				JOptionPane.showMessageDialog(null, jdklt6);
-				return;
-			}
-			if (desktop == null || !supported) {
-				JOptionPane.showMessageDialog(null, notSupported);
-				return;
-			}
-			if (e.getURL().getProtocol().equals("http")) {
-				if (browseMethod != null) {
-					try {
-						URI uri = e.getURL().toURI();
-						browseMethod.invoke(desktop, uri);
-					} catch (Exception ex) {
-						/* empty */
-					}
-				}
-			} else if (e.getURL().getProtocol().equals("mailto")) {
-				if (mailtoMethod != null) {
-					try {
-						URI uri = e.getURL().toURI();
-						mailtoMethod.invoke(desktop, uri);
-					} catch (Exception ex) {
-						/* empty */
-					}
+		try {
+			Desktop desktop = Desktop.getDesktop();
+			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+				URI uri = e.getURL().toURI();
+				if (e.getURL().getProtocol().equals("http")) {
+					desktop.browse(uri);
+				} else if (e.getURL().getProtocol().equals("mailto")) {
+					desktop.mail(uri);
 				}
 			}
+		} catch (Exception x) {
+			x.printStackTrace();
 		}
 	}
 }
