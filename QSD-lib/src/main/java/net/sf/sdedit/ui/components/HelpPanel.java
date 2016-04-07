@@ -84,7 +84,7 @@ public class HelpPanel
         };
         pane.setContentType("text/html; charset=UTF-8");
         pane.setEditable(false);
-        pane.addHyperlinkListener(Browser.getBrowser());
+        pane.addHyperlinkListener(new Browser());
     }
     
     public HelpPanel (String text) {

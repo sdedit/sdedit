@@ -116,7 +116,7 @@ public class AdvancedHelpPanel extends JPanel implements MouseListener,
 		expandNavigator();
 		navigator.addMouseListener(this);
 		navigator.addMouseMotionListener(this);
-		editorPane.addHyperlinkListener(Browser.getBrowser());
+		editorPane.addHyperlinkListener(new Browser());
 		editorPane.addHyperlinkListener(listener);
 	}
 
