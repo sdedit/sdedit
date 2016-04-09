@@ -105,10 +105,8 @@ public final class Editor implements Constants, UserInterfaceListener
 	}
 
 	private Editor() {
-		UIUtilities.setGlobalFont(ConfigurationManager.getGlobalConfiguration()
-				.getGuiFont());
-		String laf = ConfigurationManager.getGlobalConfiguration()
-				.getLookAndFeel();
+		UIUtilities.setGlobalFont(ConfigurationManager.getGlobalConfiguration().getGuiFont());
+		String laf = ConfigurationManager.getGlobalConfiguration().getLookAndFeel();
 		LookAndFeelManager.changeTo(laf);
 		globals = new HashMap<String, Object>();
 
@@ -147,11 +145,9 @@ public final class Editor implements Constants, UserInterfaceListener
 		if (globalConfiguration.isAutostartServer()) {
 			try {
 				startRealtimeServer(globalConfiguration.getRealtimeServerPort());
-				ui.message("Started real-time diagram server @localhost:"
-						+ server.getPort());
+				ui.message("Started real-time diagram server @localhost:" + server.getPort());
 			} catch (Exception e) {
-				ui.errorMessage(e, null,
-						"The real-time diagram server could not be started.");
+				ui.errorMessage(e, null, "The real-time diagram server could not be started.");
 			}
 		}
 		setup = true;
@@ -163,8 +159,7 @@ public final class Editor implements Constants, UserInterfaceListener
 				} catch (RuntimeException e) {
 					throw e;
 				} catch (Exception e) {
-					ui.errorMessage(e, null,
-							"Cannot load " + fileToLoad.getAbsolutePath());
+					ui.errorMessage(e, null, "Cannot load " + fileToLoad.getAbsolutePath());
 				}
 			}
 		}
@@ -232,8 +227,7 @@ public final class Editor implements Constants, UserInterfaceListener
 		}
 		if (handler == null) {
 			ui.errorMessage(null, null,
-					"Cannot handle " + file + "\nSupported file-types are: "
-							+ Utilities.join(",", getFileTypes()));
+					"Cannot handle " + file + "\nSupported file-types are: " + Utilities.join(",", getFileTypes()));
 			return null;
 		}
 		return handler.loadFile(url, ui);
@@ -362,29 +356,20 @@ public final class Editor implements Constants, UserInterfaceListener
 
 		// ui.addCategory("&File.Open", "open");
 
-		ui.addAction("&File", fileActionProvider.getOpenAction(ui),
-				fileActionProvider.getOpenActivator);
+		ui.addAction("&File", fileActionProvider.getOpenAction(ui), fileActionProvider.getOpenActivator);
 
 		ui.addCategory("&File.Open &recent file", "open");
 
-		ui.addAction("&File",
-				fileActionProvider.getSaveAction(defaultFileHandler, ui),
+		ui.addAction("&File", fileActionProvider.getSaveAction(defaultFileHandler, ui),
 				fileActionProvider.getSaveActivator);
 
-		ui.addAction("&File",
-				fileActionProvider.getSaveAsAction(defaultFileHandler, ui),
+		ui.addAction("&File", fileActionProvider.getSaveAsAction(defaultFileHandler, ui),
 				fileActionProvider.getSaveActivator);
 
 		Action exportAction = actions.getExportAction();
 
-		Action saveImageAction = new SaveImageAction(ui);
-
 		if (exportAction != null) {
-			ui.addAction("&File", exportAction,
-					actions.nonEmptyDiagramActivator);
-		} else {
-			ui.addAction("&File", saveImageAction,
-					actions.nonEmptyDiagramActivator);
+			ui.addAction("&File", exportAction, actions.nonEmptyDiagramActivator);
 		}
 
 		ui.addAction("&File", actions.closeTabAction, actions.canCloseActivator);
@@ -392,26 +377,20 @@ public final class Editor implements Constants, UserInterfaceListener
 
 		Action printPDFAction = actions.getPrintAction("pdf");
 		if (printPDFAction != null) {
-			ui.addAction("&File", printPDFAction,
-					actions.noDiagramErrorActivator);
+			ui.addAction("&File", printPDFAction, actions.noDiagramErrorActivator);
 		}
 		ui.addAction("&File", actions.quitAction, null);
 
-		ConfigurationAction<Configuration> wrapAction = new TabConfigurationAction(
-				"lineWrap", "[control shift W]&Wrap lines",
-				"Wrap lines whose length exceed the width of the text area",
-				"wrap", ui);
+		ConfigurationAction<Configuration> wrapAction = new TabConfigurationAction("lineWrap",
+				"[control shift W]&Wrap lines", "Wrap lines whose length exceed the width of the text area", "wrap",
+				ui);
 
-		ConfigurationAction<Configuration> threadedAction = new TabConfigurationAction(
-				"threaded",
-				Shortcuts.getShortcut(Shortcuts.ENABLE_THREADS)
-						+ "Enable &multithreading",
-				"Create diagrams with arbitrarily many sequences running concurrently",
-				"threads", ui);
+		ConfigurationAction<Configuration> threadedAction = new TabConfigurationAction("threaded",
+				Shortcuts.getShortcut(Shortcuts.ENABLE_THREADS) + "Enable &multithreading",
+				"Create diagrams with arbitrarily many sequences running concurrently", "threads", ui);
 
 		ConfigurationAction<GlobalConfiguration> autoUpdateAction = new ConfigurationAction<GlobalConfiguration>(
-				"autoUpdate", "Auto-redraw", "Update diagram as you type",
-				"reload") {
+				"autoUpdate", "Auto-redraw", "Update diagram as you type", "reload") {
 			@Override
 			public Bean<GlobalConfiguration> getBean() {
 				return ConfigurationManager.getGlobalConfigurationBean();
@@ -419,10 +398,8 @@ public final class Editor implements Constants, UserInterfaceListener
 		};
 
 		ConfigurationAction<GlobalConfiguration> autoScrollAction = new ConfigurationAction<GlobalConfiguration>(
-				"autoScroll",
-				"Auto-scrolling",
-				"Scroll automatically to where the message currently being specified is visible",
-				"autoscroll") {
+				"autoScroll", "Auto-scrolling",
+				"Scroll automatically to where the message currently being specified is visible", "autoscroll") {
 			@Override
 			public Bean<GlobalConfiguration> getBean() {
 				return ConfigurationManager.getGlobalConfigurationBean();
@@ -433,16 +410,12 @@ public final class Editor implements Constants, UserInterfaceListener
 		ui.addAction("&Edit", actions.redoAction, actions.textTabActivator);
 		ui.addAction("&Edit", actions.clearAction, actions.textTabActivator);
 
-		ui.addConfigurationAction("&Edit", threadedAction,
-				actions.textTabActivator);
+		ui.addConfigurationAction("&Edit", threadedAction, actions.textTabActivator);
 
 		ui.addAction("&Edit", actions.configureGloballyAction, null);
-		ui.addAction("&Edit", actions.configureDiagramAction,
-				actions.diagramTabActivator);
-		ui.addAction("&Edit", actions.copyBitmapToClipBoardAction,
-				actions.nonEmptyDiagramActivator);
-		ui.addAction("&Edit", actions.copyVectorGraphicsToClipBoardAction,
-				actions.nonEmptyDiagramActivator);
+		ui.addAction("&Edit", actions.configureDiagramAction, actions.diagramTabActivator);
+		ui.addAction("&Edit", actions.copyBitmapToClipBoardAction, actions.nonEmptyDiagramActivator);
+		ui.addAction("&Edit", actions.copyVectorGraphicsToClipBoardAction, actions.nonEmptyDiagramActivator);
 		/*
 		 * ui.addAction("&Edit", actions.prettyPrintAction,
 		 * actions.nonEmptyDiagramActivator);
@@ -455,17 +428,13 @@ public final class Editor implements Constants, UserInterfaceListener
 
 		ui.addAction("&View", actions.redrawAction, actions.diagramTabActivator);
 
-		ui.addAction("&View", actions.widenAction,
-				actions.canConfigureActivator);
+		ui.addAction("&View", actions.widenAction, actions.canConfigureActivator);
 		ui.addAction("&View", actions.narrowAction, actions.canNarrowActivator);
 		ui.addConfigurationAction("&View", wrapAction, actions.textTabActivator);
-		ui.addAction("&View", actions.fullScreenAction,
-				actions.supportsFullScreenActivator);
+		ui.addAction("&View", actions.fullScreenAction, actions.supportsFullScreenActivator);
 
-		ui.addAction("&View", actions.splitLeftRightAction,
-				actions.horizontalSplitPossibleActivator);
-		ui.addAction("&View", actions.splitTopBottomAction,
-				actions.verticalSplitPossibleActivator);
+		ui.addAction("&View", actions.splitLeftRightAction, actions.horizontalSplitPossibleActivator);
+		ui.addAction("&View", actions.splitTopBottomAction, actions.verticalSplitPossibleActivator);
 
 		if (OS.TYPE != OS.Type.MAC) {
 			ui.setQuitAction(actions.quitAction);
@@ -479,20 +448,12 @@ public final class Editor implements Constants, UserInterfaceListener
 			}
 		}
 
-		ui.addToToolbar(fileActionProvider.getOpenAction(ui),
-				fileActionProvider.getOpenActivator);
-		ui.addToToolbar(
-				fileActionProvider.getSaveAction(defaultFileHandler, ui),
-				fileActionProvider.getSaveActivator);
-		ui.addToToolbar(
-				fileActionProvider.getSaveAsAction(defaultFileHandler, ui),
+		ui.addToToolbar(fileActionProvider.getOpenAction(ui), fileActionProvider.getOpenActivator);
+		ui.addToToolbar(fileActionProvider.getSaveAction(defaultFileHandler, ui), fileActionProvider.getSaveActivator);
+		ui.addToToolbar(fileActionProvider.getSaveAsAction(defaultFileHandler, ui),
 				fileActionProvider.getSaveActivator);
 
-		if (exportAction != null) {
-			ui.addToToolbar(exportAction, actions.nonEmptyDiagramActivator);
-		} else {
-			ui.addToToolbar(saveImageAction, actions.nonEmptyDiagramActivator);
-		}
+		ui.addToToolbar(exportAction, actions.nonEmptyDiagramActivator);
 
 		if (printPDFAction != null) {
 			ui.addToToolbar(printPDFAction, actions.noDiagramErrorActivator);
@@ -501,18 +462,14 @@ public final class Editor implements Constants, UserInterfaceListener
 		ui.addToolbarSeparator();
 
 		ui.addToToolbar(actions.configureGloballyAction, null);
-		ui.addToToolbar(actions.configureDiagramAction,
-				actions.diagramTabActivator);
+		ui.addToToolbar(actions.configureDiagramAction, actions.diagramTabActivator);
 		ui.addToToolbar(actions.redrawAction, actions.diagramTabActivator);
 
 		ui.addToolbarSeparator();
 
-		ui.addToToolbar(actions.fullScreenAction,
-				actions.supportsFullScreenActivator);
-		ui.addToToolbar(actions.splitLeftRightAction,
-				actions.horizontalSplitPossibleActivator);
-		ui.addToToolbar(actions.splitTopBottomAction,
-				actions.verticalSplitPossibleActivator);
+		ui.addToToolbar(actions.fullScreenAction, actions.supportsFullScreenActivator);
+		ui.addToToolbar(actions.splitLeftRightAction, actions.horizontalSplitPossibleActivator);
+		ui.addToToolbar(actions.splitTopBottomAction, actions.verticalSplitPossibleActivator);
 
 		ui.addToolbarSeparator();
 
@@ -522,8 +479,7 @@ public final class Editor implements Constants, UserInterfaceListener
 
 		ui.addAction("E&xtras", actions.serverAction, null);
 		ui.addAction("E&xtras", actions.filterAction, actions.textTabActivator);
-		ui.addAction("E&xtras", new ExportMapAction(this),
-				actions.exportMapFileActivator);
+		ui.addAction("E&xtras", new ExportMapAction(this), actions.exportMapFileActivator);
 
 		ui.addAction("&Help", actions.helpAction, null);
 		ui.addAction("&Help", actions.tutorialAction, null);
@@ -533,17 +489,12 @@ public final class Editor implements Constants, UserInterfaceListener
 			ui.addAction("&Help", actions.showAboutDialogAction, null);
 		}
 
-		ui.addAction("&Help.&Examples",
-				actions.getExampleAction("Ticket order", "order.sdx"), null);
-		ui.addAction("&Help.&Examples",
-				actions.getExampleAction("Breadth first search", "bfs.sdx"),
+		ui.addAction("&Help.&Examples", actions.getExampleAction("Ticket order", "order.sdx"), null);
+		ui.addAction("&Help.&Examples", actions.getExampleAction("Breadth first search", "bfs.sdx"), null);
+		ui.addAction("&Help.&Examples", actions.getExampleAction("Levels", "levels.sdx"), null);
+		ui.addAction("&Help.&Examples", actions.getExampleAction("SSH 2 (by courtesy of Carlos Duarte)", "ssh.sdx"),
 				null);
-		ui.addAction("&Help.&Examples",
-				actions.getExampleAction("Levels", "levels.sdx"), null);
-		ui.addAction("&Help.&Examples", actions.getExampleAction(
-				"SSH 2 (by courtesy of Carlos Duarte)", "ssh.sdx"), null);
-		ui.addAction("&Help.&Examples",
-				actions.getExampleAction("Webserver", "webserver.sdx"), null);
+		ui.addAction("&Help.&Examples", actions.getExampleAction("Webserver", "webserver.sdx"), null);
 
 	}
 
@@ -562,8 +513,7 @@ public final class Editor implements Constants, UserInterfaceListener
 				ConfigurationManager.storeConfigurations();
 			} catch (IOException e) {
 				e.printStackTrace();
-				ui.errorMessage(e, null,
-						"Could not save the global preferences file.");
+				ui.errorMessage(e, null, "Could not save the global preferences file.");
 			}
 			if (server != null) {
 				server.shutDown();
@@ -571,10 +521,10 @@ public final class Editor implements Constants, UserInterfaceListener
 			ui.exit();
 			System.exit(0);
 			/*
-			if (Eclipse.getEclipse() == null) {
-
-			}
-			*/
+			 * if (Eclipse.getEclipse() == null) {
+			 * 
+			 * }
+			 */
 		}
 	}
 
