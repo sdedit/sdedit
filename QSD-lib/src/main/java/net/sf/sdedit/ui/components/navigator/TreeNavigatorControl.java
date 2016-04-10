@@ -39,21 +39,19 @@ import javax.swing.tree.TreePath;
 import net.sf.sdedit.ui.components.Stainable;
 import net.sf.sdedit.ui.components.StainedListener;
 
-class TreeNavigatorControl implements TreeSelectionListener, StainedListener,
-		MouseListener {
+class TreeNavigatorControl implements TreeSelectionListener, StainedListener, MouseListener {
 
 	private TreeNavigatorModel treeModel;
 
 	private TreeNavigatorPane navigator;
 
 	private TreePath[] formerSelection;
-	
+
 	private boolean ignoreValueChanged;
 
 	private ContextActionsProvider contextActionsProvider;
 
-	protected TreeNavigatorControl(TreeNavigatorPane navigator,
-			TreeNavigatorModel treeModel) {
+	protected TreeNavigatorControl(TreeNavigatorPane navigator, TreeNavigatorModel treeModel) {
 		this.navigator = navigator;
 		this.treeModel = treeModel;
 		formerSelection = new TreePath[0];
@@ -62,7 +60,7 @@ class TreeNavigatorControl implements TreeSelectionListener, StainedListener,
 	protected void setContextActionsProvider(ContextActionsProvider provider) {
 		this.contextActionsProvider = provider;
 	}
-	
+
 	public void valueChanged(TreeSelectionEvent e) {
 		if (ignoreValueChanged) {
 			return;
@@ -72,8 +70,7 @@ class TreeNavigatorControl implements TreeSelectionListener, StainedListener,
 		TreePath[] paths = navigator.getTree().getSelectionPaths();
 		if (paths != null) {
 			for (TreePath path : navigator.getTree().getSelectionPaths()) {
-				TreeNavigatorNode node = (TreeNavigatorNode) path
-						.getLastPathComponent();
+				TreeNavigatorNode node = (TreeNavigatorNode) path.getLastPathComponent();
 				comp = node.getComponent();
 				if (comp == null) {
 					ignoreValueChanged = true;
@@ -82,7 +79,7 @@ class TreeNavigatorControl implements TreeSelectionListener, StainedListener,
 					return;
 				}
 				if (firstComp == null) {
-					firstComp = comp;					
+					firstComp = comp;
 				}
 			}
 			if (firstComp != null) {
@@ -107,18 +104,19 @@ class TreeNavigatorControl implements TreeSelectionListener, StainedListener,
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (navigator.getSelectedComponent() != null
-				&& contextActionsProvider != null
-				&& SwingUtilities.isRightMouseButton(e)) {
-			List<Action> actions = contextActionsProvider
-					.getContextActions(navigator.getSelectedComponent());
-			if (actions != null && !actions.isEmpty()) {
-				JPopupMenu menu = null;
-				menu = new JPopupMenu();
-				for (Action action : actions) {
-					menu.add(action);
+		if (SwingUtilities.isRightMouseButton(e) && contextActionsProvider != null) {
+			TreePath path = navigator.getPathFor(e);
+			TreeNavigatorNode node = (TreeNavigatorNode) path.getLastPathComponent();
+			if (node.getComponent() != null) {
+				List<Action> actions = contextActionsProvider.getContextActions(node.getComponent());
+				if (actions != null && !actions.isEmpty()) {
+					JPopupMenu menu = new JPopupMenu();
+					navigator.setSelectedComponent(node.getComponent());
+					for (Action action : actions) {
+						menu.add(action);
+					}
+					menu.show((Component) e.getSource(), e.getX(), e.getY());
 				}
-				menu.show((Component) e.getSource(), e.getX(), e.getY());
 			}
 		}
 	}
