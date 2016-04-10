@@ -24,6 +24,8 @@
 package net.sf.sdedit.ui.components.navigator;
 
 import java.awt.BorderLayout;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,7 +83,7 @@ public class TreeNavigatorPane extends JPanel {
     private final Set<String> categories;
 
     private boolean historyEnabled;
-
+    
     public TreeNavigatorPane(double resizeWeight) {
         setLayout(new BorderLayout());
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -230,7 +232,7 @@ public class TreeNavigatorPane extends JPanel {
     }
 
     private boolean setSelectedComponentEntered = false;
-
+    
     protected boolean setSelectedComponent(final JComponent comp,
             boolean selectInTree, boolean updateHistory) {
         if (setSelectedComponentEntered) {
@@ -370,6 +372,17 @@ public class TreeNavigatorPane extends JPanel {
 
     public void disableHistory() {
         historyEnabled = false;
+    }
+    
+    public TreePath getPathFor(MouseEvent e) {
+    	int x = e.getX();
+    	int y = e.getY();
+    	TreePath path = navigationTree.getClosestPathForLocation(x,y);
+    	Rectangle rect = navigationTree.getPathBounds(path);
+    	if (rect.contains(x, y)) {
+    		return path;
+    	}
+    	return null;
     }
 
 }
