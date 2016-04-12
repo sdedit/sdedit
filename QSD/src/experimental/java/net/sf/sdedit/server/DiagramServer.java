@@ -23,13 +23,12 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
@@ -38,9 +37,10 @@ import net.sf.sdedit.config.SequenceConfiguration;
 import net.sf.sdedit.diagram.DiagramFactory;
 import net.sf.sdedit.diagram.SDPaintDevice;
 import net.sf.sdedit.diagram.SequenceDiagramFactory;
-import net.sf.sdedit.error.SemanticError;
-import net.sf.sdedit.error.SyntaxError;
+import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.text.TextHandler;
+import net.sf.sdedit.util.PWriter;
+import net.sf.sdedit.util.Utilities;
 
 /**
  * This class implements a simple server that uses a TCP socket to receive a
@@ -53,10 +53,10 @@ import net.sf.sdedit.text.TextHandler;
  * <li>The client sends 'END'</li>
  * <li>
  * <ul>
- * <li> If the diagram cannot be created due to an error, the server sends a
+ * <li>If the diagram cannot be created due to an error, the server sends a
  * message starting with 'ERROR:' and ending with a description of the error.
  * </li>
- * <li> Otherwise the server sends the image data.</li>
+ * <li>Otherwise the server sends the image data.</li>
  * </ul>
  * </li>
  * </ol>
@@ -102,8 +102,7 @@ public class DiagramServer extends Thread {
 		start();
 	}
 
-	private static class ServerThread extends Thread implements
-			Comparable<ServerThread> {
+	private static class ServerThread extends Thread implements Comparable<ServerThread> {
 
 		private LinkedList<Socket> queue;
 
@@ -143,65 +142,48 @@ public class DiagramServer extends Thread {
 					}
 					socket = queue.removeLast();
 				}
+				String type = null;
+				PWriter writer = PWriter.create();
+				writer.setLineSeparator("\n");
+				boolean skip = false;
 				try {
-					InputStreamReader isr = new InputStreamReader(socket
-							.getInputStream(), "utf-8");
-					BufferedReader reader = new BufferedReader(isr);
-					String type = reader.readLine().trim();
-					StringBuilder buffer = new StringBuilder();
-					String line;
-					while (true) {
-						line = reader.readLine();
-						if (line == null || line.equals("END")) {
-							break;
+					for (String line : Utilities.readLines(socket.getInputStream(), Charset.forName("utf-8"))) {
+						if (!skip) {
+							if (line.equals("END")) {
+								skip = true;
+							} else if (type == null) {
+								type = line.trim();
+							} else {
+								writer.println(line);
+							}
 						}
-						buffer.append(line + "\n");
 					}
-					OutputStreamWriter osr = new OutputStreamWriter(socket
-							.getOutputStream(), "utf-8");
+					OutputStreamWriter osr = new OutputStreamWriter(socket.getOutputStream(), "utf-8");
 					PrintWriter pw = new PrintWriter(osr);
 					try {
-						Exporter exporter = Exporter
-								.getExporter(type, null, "A4",
-										socket.getOutputStream());
-						if (exporter == null) {
-							throw new RuntimeException(
-									"FreeHEP library missing.");
-						}
+						Exporter exporter = Exporter.getExporter(type, null, "A4", socket.getOutputStream());
 						SDPaintDevice paintDevice = new SDPaintDevice(exporter);
-						DiagramFactory factory = new SequenceDiagramFactory(buffer.toString(), paintDevice);
+						DiagramFactory factory = new SequenceDiagramFactory(writer.toString(), paintDevice);
 						factory.generateDiagram(ConfigurationManager
-                                .createNewDefaultConfiguration(SequenceConfiguration.class).getDataObject());
+								.createNewDefaultConfiguration(SequenceConfiguration.class).getDataObject());
 						exporter.export();
-					} catch (SyntaxError se) {
+					} catch (DiagramError se) {
 						TextHandler th = (TextHandler) se.getProvider();
-						String msg = "ERROR:syntax error in line "
-								+ th.getLineNumber() + ": " + se.getMessage();
+						String msg = "ERROR:syntax error in line " + th.getLineNumber() + ": " + se.getMessage();
 						pw.println(msg);
-						pw.flush();
-						pw.close();
-					} catch (SemanticError se) {
-						TextHandler th = (TextHandler) se.getProvider();
-						String msg = "ERROR:semantic error in line "
-								+ th.getLineNumber() + ": " + se.getMessage();
-						pw.println(msg);
-						pw.flush();
-						pw.close();
-					} catch (Throwable t) {
+					} catch (RuntimeException t) {
 						pw.println("ERROR:fatal error: " + t.getMessage());
+					} finally {
 						pw.flush();
 						pw.close();
 					}
-					socket.close();
-				} catch (Throwable t) {
-					t.printStackTrace();
+				} catch (IOException e) {
+					throw new IllegalStateException(e);
 				} finally {
-					if (socket != null) {
-						try {
-							socket.close();
-						} catch (Exception ignored) {
-							/* empty */
-						}
+					try {
+						socket.close();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
 			}
