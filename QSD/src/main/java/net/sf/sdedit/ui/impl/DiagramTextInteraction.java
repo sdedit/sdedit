@@ -73,10 +73,12 @@ public class DiagramTextInteraction extends DiagramInteraction {
 			if (link != null) {
 				File current = tab.getFile();
 				File linked;
-				if (current != null) {
+				if (link.isAbsolute()) {
+					linked = new File(link);
+				} else if (current != null) {
 					linked = new File(current.toURI().resolve(link));
 				} else {
-					linked = new File(link);
+					return;
 				}
 				if (!tab.get_UI().selectTabWith(linked)) {
 					try {
@@ -87,10 +89,8 @@ public class DiagramTextInteraction extends DiagramInteraction {
 						tab.get_UI().errorMessage(e, null, null);
 					}
 				}
-
 			}
 		}
-
 	}
 
 	/**
@@ -127,8 +127,8 @@ public class DiagramTextInteraction extends DiagramInteraction {
 			if (text.startsWith("/")) {
 				text = text.substring(1);
 			}
-			if (lifeline.getDiagram().getConfiguration().isThreaded()
-					&& !lifeline.isAlwaysActive() && (ed instanceof Rectangle)) {
+			if (lifeline.getDiagram().getConfiguration().isThreaded() && !lifeline.isAlwaysActive()
+					&& (ed instanceof Rectangle)) {
 				text = text + " [thread=" + lifeline.getThread() + "]";
 			}
 
