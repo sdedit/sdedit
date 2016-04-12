@@ -1,0 +1,12 @@
+Quick Sequence Diagram Editor 4.2 is a simplified release (some more or less 
+experimental features that are not very useful were removed or are still being
+removed) with a slightly improved documentation (there is a tutorial now).
+
+The old documentation has still to be revised, there may be still some 
+explanations of features that have already been removed (see above).
+
+Version 4.2 contains Freehep Vectorgraphics 2.4 which should run now on any 
+platform with any Java version from 1.6 on. The former version had some
+problems because it used internal APIs that changed with Java 1.7.
+
+See https://sourceforge.net/p/sdedit/wiki/CHANGELOG/
