@@ -206,8 +206,8 @@ body {
 	</h3>
 
 	<div class="para">An object declaration can be followed by a
-		sequence of &lt;flags&gt; between square brackets. Four flags
-		(a,p,r,x) are supported:</div>
+		sequence of &lt;flags&gt; between square brackets. These flags
+		are supported:</div>
 
 	<h4>
 		<a name="how.objects.flags.anonymous">a-nonymous</a>
@@ -238,13 +238,30 @@ body {
 	<h4>
 		<a name="how.objects.flags.destroy">x-auto-destruction</a>
 	</h4>
+	
+	<div>
+		The object will be destroyed automatically when the last
+		activity that it was involved in has finished.
+	</div>
+	
+	<h4>
+		<a name="how.objects.flags.variable">v-variable</a>
+	</h4>
+	
+	<div>
+	   The object's lifeline might be placed at the horizontal position of
+	   an object that has already been destroyed (relevant only for 
+	   initially invisible objects).
+	</div>
 
 	<div class="para">The object is destroyed when it has sent its
 		last answer, denoted by a cross below its lifeline. One might
 		interpret this as automatic destruction of non-persistent objects by a
 		garbage collector.</div>
 
-
+	<h4>
+		<a name="how.objects.flags.other">others</a>
+	</h4>
 
 	<div class="para">
 		There are other flags, relevant for <a href="Multithreading help:multithreading_help.html">
@@ -738,10 +755,6 @@ object:Class #!href="../foo.html#bar"
 		<a name="print">Printing</a>
 	</h1>
 
-	<div class="para">Printing is not supported by the "light"
-		executable jar file, unless it is used with the FreeHEP library on the
-		class path.</div>
-
 	<div class="para">If FreeHEP is available, diagrams can be
 		printed by external programs that are able to process PS oder PDF
 		files. Choose "Print" in the "File" menu, then select a suitable
@@ -776,47 +789,6 @@ object:Class #!href="../foo.html#bar"
 	</h1>
 
 	<pre>&lt;run-command&gt; &lt;OPTIONS&gt; &lt;sdfiles&gt;</pre>
-
-	<div class="para">&lt;run-command&gt; is "sdedit.sh",
-		"sdedit.bat" or "java -jar sdedit-2.10.jar".</div>
-
-	<div class="para">&lt;sdfiles&gt; are the names of files that,
-		when specified, will be loaded into the text area for editing.</div>
-
-	<tt>OPTIONS:</tt>
-
-	<div class="para">
-
-		<tt>-o output.png</tt>
-		: one sdfile must be specified and, without any user interaction, the
-		resulting diagram is written to output.png, which is of course in PNG
-		format.
-	</div>
-
-	<div class="para">
-
-		<tt>-s &lt;port&gt;</tt>
-		: starts the Quick Sequence Diagram Server listening at the given
-		&lt;port&gt;
-	</div>
-
-	<h2>
-		<a name="command_line_usage.client">sd-client.pl</a>
-	</h2>
-
-	<div class="para">When the Quick Sequence Diagram Server runs,
-		the Perl script sd-client.pl (which is a part of the full version of
-		Quick Sequence Diagram Editor) can be used to create sequence diagrams
-		from text files:</div>
-
-	<tt> perl sd-client.pl &lt;type&gt; &lt;infile.sd&gt;
-		&lt;outfile&gt; </tt>
-
-	<div class="para">&lt;type&gt; is one of
-		{ps,pdf,svg,swf,emf,bmp,png,gif,jpg}. sd-client.pl uses port 62015 by
-		default, for using another port you must edit the script.</div>
-
-
 
 
 	<h1>
@@ -863,7 +835,7 @@ object:Class #!href="../foo.html#bar"
 		<a name="copyright">Copyright</a>
 	</h1>
 
-	<div class="para">Copyright (c) 2006/07 Markus Strauch. All
+	<div class="para">Copyright (c) 2006 - 2016 Markus Strauch. All
 		rights reserved.</div>
 
 
