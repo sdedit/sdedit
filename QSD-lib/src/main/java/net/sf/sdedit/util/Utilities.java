@@ -108,7 +108,6 @@ public class Utilities {
 		primitiveClasses.put(Character.TYPE, Character.class);
 		primitiveClasses.put(Byte.TYPE, Byte.class);
 		primitiveClasses.put(Short.TYPE, Short.class);
-		primitiveClasses.put(Integer.TYPE, Integer.class);
 		primitiveClasses.put(Long.TYPE, Long.class);
 		primitiveClasses.put(Float.TYPE, Float.class);
 		primitiveClasses.put(Double.TYPE, Double.class);
