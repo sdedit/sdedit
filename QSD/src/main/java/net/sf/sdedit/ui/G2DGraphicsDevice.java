@@ -55,10 +55,6 @@ public abstract class G2DGraphicsDevice extends AbstractGraphicDevice
      */
     protected abstract Graphics2D createDummyGraphics(boolean bold);
     
-    private Graphics2D dummy;
-    
-    private Graphics2D boldDummy;
-    
     private Graphics2D g2d;
     
     protected G2DGraphicsDevice () {
@@ -77,28 +73,6 @@ public abstract class G2DGraphicsDevice extends AbstractGraphicDevice
         }
     }
     
-    private Graphics2D dummy() {
-        if (dummy == null) {
-            dummy = createDummyGraphics(false);
-        }
-        return dummy;
-    }
-    
-    private Graphics2D boldDummy () {
-        if (boldDummy == null) {
-            boldDummy = createDummyGraphics(true);
-        }
-        return boldDummy;
-    }
-
-    public int getTextHeight(boolean bold) {
-        return (bold ? boldDummy() : dummy()).getFontMetrics().getHeight();
-    }
-
-    public int getTextWidth(String text, boolean bold) {
-        return (bold ? boldDummy() : dummy()).getFontMetrics().stringWidth(text);
-    }
-
     public void close(int width, int height, boolean empty) {
         super.close(width, height, empty);
         g2d = createGraphics(); 
