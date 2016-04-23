@@ -27,14 +27,13 @@ package net.sf.sdedit.ui;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
+import java.awt.font.FontRenderContext;
 
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
@@ -60,15 +59,6 @@ import net.sf.sdedit.ui.components.Zoomable;
  */
 public class PanelGraphicDevice extends
 		AbstractGraphicDevice implements MouseInputListener, Constants {
-	/**
-	 * FontMetrics of the normal font.
-	 */
-	private FontMetrics fontMetrics;
-
-	/**
-	 * FontMetrics of the bold font.
-	 */
-	private FontMetrics boldFontMetrics;
 
 	/**
 	 * The drawable object that the mouse move most recently over.
@@ -168,22 +158,6 @@ public class PanelGraphicDevice extends
 		this.partner = partner;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.sdedit.diagram.GraphicDevice#getTextHeight(boolean)
-	 */
-	public int getTextHeight(boolean bold) {
-		return (bold ? boldFontMetrics : fontMetrics).getHeight();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see net.sf.sdedit.diagram.GraphicDevice#getTextWidth(java.lang.String, boolean)
-	 */
-	public int getTextWidth(String text, boolean bold) {
-		return (bold ? boldFontMetrics : fontMetrics).stringWidth(text);
-	}
-
 	/**
 	 * Returns the panel for displaying the diagram.
 	 * 
@@ -194,6 +168,7 @@ public class PanelGraphicDevice extends
 	}
 
 	public void setAntialiasing(boolean on) {
+		setFontRenderContext(on);
 		antialias = on;
 	}
 
@@ -356,14 +331,6 @@ public class PanelGraphicDevice extends
 
     public void initialize(Diagram diagram) {
         super.initialize(diagram);
-        Graphics preGraphics = new BufferedImage(1, 1,
-                BufferedImage.TYPE_INT_RGB).getGraphics();
-        preGraphics.setFont(getFont(false));
-        fontMetrics = preGraphics.getFontMetrics();
-        Graphics boldGraphics = new BufferedImage(1, 1,
-                BufferedImage.TYPE_INT_RGB).getGraphics();
-        boldGraphics.setFont(getFont(true));
-        boldFontMetrics = boldGraphics.getFontMetrics();
     }
     
 }
