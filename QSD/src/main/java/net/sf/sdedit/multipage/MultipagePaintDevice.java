@@ -28,7 +28,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,10 +50,6 @@ public class MultipagePaintDevice extends AbstractGraphicDevice {
 
 	private Dimension pageSize;
 
-	private Graphics2D graphics;
-
-	private Graphics2D boldGraphics;
-
 	private List<MultipagePanel> panels;
 
 	private double scale;
@@ -74,12 +69,6 @@ public class MultipagePaintDevice extends AbstractGraphicDevice {
 	public void initialize(Diagram diagram) {
 		super.initialize(diagram);
 		this.diagram = diagram;
-		graphics = (Graphics2D) new BufferedImage(1, 1,
-				BufferedImage.TYPE_USHORT_GRAY).getGraphics();
-		graphics.setFont(getFont(false));
-		boldGraphics = (Graphics2D) new BufferedImage(1, 1,
-				BufferedImage.TYPE_USHORT_GRAY).getGraphics();
-		boldGraphics.setFont(getFont(false));
 	}
 
 	public Dimension getPageSize() {
@@ -142,34 +131,6 @@ public class MultipagePaintDevice extends AbstractGraphicDevice {
 		}
 	}
 
-	// @Override
-	// public void addSequenceElement (SequenceElement elem) {
-	// int y0 = elem.getTop() % pageSize.height;
-	// int y1 = y0 + elem.getHeight();
-	// int v = getDiagram().getVerticalPosition();
-	// if (y1 >= pageSize.height) {
-	// int beginOfNextPage = 0; // compute position where content of next
-	// page/panel begins
-	// // consider margins and heads
-	// getDiagram().extendLifelines(beginOfNextPage - v);
-	// elem.setTop(beginOfNextPage);
-	// }
-	// // TODO change Message.updateView such that lifelines are activated
-	// // after the arrow has been added (via addSequenceElement)
-	// // -- the top position of an arrow is valid only if it has
-	// // already been added to the PaintDevice
-	// super.addSequenceElement(elem);
-	// }
-
-	public int getTextHeight(boolean bold) {
-		return (bold ? boldGraphics : graphics).getFontMetrics().getHeight();
-	}
-
-	public int getTextWidth(String text, boolean bold) {
-		return (bold ? boldGraphics : graphics).getFontMetrics().stringWidth(
-				text);
-	}
-
 	public class MultipagePanel extends JPanel implements Zoomable<JPanel> {
 
         private static final long serialVersionUID = -112626883258199079L;
@@ -214,6 +175,7 @@ public class MultipagePaintDevice extends AbstractGraphicDevice {
 		@Override
 		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g.create();
+			g2d.setFont(diagram.getConfiguration().getFont());
 			g2d.scale(scale, scale);
 			Rectangle clipBounds = g2d.getClipBounds();
 			g2d.setColor(Color.WHITE);
