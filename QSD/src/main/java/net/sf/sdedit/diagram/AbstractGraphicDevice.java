@@ -24,6 +24,7 @@
 package net.sf.sdedit.diagram;
 
 import java.awt.Font;
+import java.awt.font.FontRenderContext;
 
 import net.sf.sdedit.drawable.Drawable;
 
@@ -39,8 +40,14 @@ public abstract class AbstractGraphicDevice implements GraphicDevice {
 
     private int height;
     
+	private FontRenderContext fontRenderContext;
+    
     protected Iterable<Drawable> drawables () {
         return drawables;
+    }
+    
+    protected void setFontRenderContext(boolean antialiasing) {
+    	fontRenderContext = new FontRenderContext(null, antialiasing, true);	
     }
 
     public void initialize(Diagram diagram) {
@@ -48,12 +55,23 @@ public abstract class AbstractGraphicDevice implements GraphicDevice {
         plainFont = diagram.getConfiguration().getFont();
         boldFont = new Font(plainFont.getName(), Font.BOLD,
                 plainFont.getSize() + 1);
-    }
+        setFontRenderContext(false);
+	}
+    
+    @Override
+	public int getTextHeight(boolean bold) {
+		return Math.round(getFont(bold).getLineMetrics("A", fontRenderContext).getHeight());
+	}
+
+    @Override
+	public int getTextWidth(String text, boolean bold) {
+		return (int) Math.ceil(getFont(bold).getStringBounds(text, fontRenderContext).getWidth());
+	}
 
     public Font getFont(boolean bold) {
         return bold ? boldFont : plainFont;
     }
-
+    
     public void close(int width, int height, boolean empty) {
         this.width = width;
         this.height = height;
