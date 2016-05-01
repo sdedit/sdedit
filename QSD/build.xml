@@ -34,6 +34,7 @@ Note that it relies on the existence of a local maven repository at
 
 	<fileset id="jarfiles" dir="${user.home}/.m2/repository/org/freehep">
 		<include name="**/*.jar"/>
+		<exclude name="**/*sources.jar"/>
 	</fileset>
 
 	<path id="libs">
@@ -117,6 +118,9 @@ Note that it relies on the existence of a local maven repository at
 				</pathelement>
 			</classpath>
 		</javac>
+		
+		<!-- Interfaces under com.sun are only needed in order to compile the taglets, at runtime they
+		     must not be there, the should instead by replaced by the classes provided by the JDK -->
 		
 		<delete dir="${build}/com"/>
 
