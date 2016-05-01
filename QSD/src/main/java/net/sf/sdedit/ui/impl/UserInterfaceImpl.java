@@ -215,7 +215,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants, UserIn
 		actionManager().registerButton(comp, action, activator);
 	}
 
-	void enableComponents() {
+	public void enableComponents() {
 		actionManager().enableComponents();
 	}
 
