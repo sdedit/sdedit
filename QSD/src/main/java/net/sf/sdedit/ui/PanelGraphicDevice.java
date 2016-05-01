@@ -33,7 +33,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
-import java.awt.font.FontRenderContext;
 
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
