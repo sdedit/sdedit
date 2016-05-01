@@ -41,6 +41,7 @@ import net.sf.sdedit.ui.Tab;
 import net.sf.sdedit.ui.UserInterface;
 import net.sf.sdedit.ui.components.buttons.Activator;
 import net.sf.sdedit.ui.components.buttons.ManagedAction;
+import net.sf.sdedit.ui.impl.UserInterfaceImpl;
 import net.sf.sdedit.util.Utilities;
 
 @SuppressWarnings("serial")
@@ -190,6 +191,7 @@ public class FileActionProvider {
 			protected void _actionPerformed(Tab tab, ActionEvent e) {
 				try {
 					handler.save(tab, false);
+					((UserInterfaceImpl) ui).enableComponents();
 				} catch (IOException ex) {
 					ex.printStackTrace();
 					ui.errorMessage(ex, null, null);
