@@ -97,13 +97,17 @@ class ExportMapAction extends AbstractAction {
 		int dot = Math.min(name.length(), name.lastIndexOf('.'));
 		name = currentFile.getName().substring(0, dot);
 		File target = new File(currentFile.getParent(), name + ".html");
+		boolean exists = target.exists();
 
-		if (!target.exists()
+		if (!exists
 				|| 1 == editor.getUI().confirmOrCancel(
 						"Overwrite existing file:\n" + target.getAbsolutePath()
 								+ "?")) {
 			try {
 				generateMapFile(diagram, textHandler, name, target);
+				if (!exists) {
+					editor.getUI().message("HTML map saved as:\n" + target.getAbsolutePath());
+				}
 			} catch (IOException ex) {
 				editor.getUI().errorMessage(
 						ex,
