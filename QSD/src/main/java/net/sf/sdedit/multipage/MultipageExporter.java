@@ -34,6 +34,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.freehep.graphicsio.PageConstants;
+
 import net.sf.sdedit.config.Configuration;
 import net.sf.sdedit.config.PrintConfiguration;
 import net.sf.sdedit.diagram.DiagramFactory;
@@ -41,25 +43,25 @@ import net.sf.sdedit.diagram.PaintDevice;
 import net.sf.sdedit.error.DiagramError;
 import net.sf.sdedit.ui.components.ZoomPane;
 import net.sf.sdedit.ui.impl.DiagramTab;
-
-import org.freehep.graphicsio.PageConstants;
+import net.sf.sdedit.util.OS;
+import net.sf.sdedit.util.OS.Type;
+import net.sf.sdedit.util.Utilities;
+import net.sf.sdedit.util.WindowsRegistry;
 
 @SuppressWarnings("unchecked")
 public class MultipageExporter extends JPanel {
 
-    private static final long serialVersionUID = 6686854000552365972L;
+	private static final long serialVersionUID = 6686854000552365972L;
 
-    private static Class<? extends Graphics2D> ps;
+	private static Class<? extends Graphics2D> ps;
 
 	private static Class<? extends Graphics2D> pdf;
 
 	static {
-		
+
 		try {
-			ps = (Class<? extends Graphics2D>) Class
-					.forName("org.freehep.graphicsio.ps.PSGraphics2D");
-			pdf = (Class<? extends Graphics2D>) Class
-					.forName("org.freehep.graphicsio.pdf.PDFGraphics2D");
+			ps = (Class<? extends Graphics2D>) Class.forName("org.freehep.graphicsio.ps.PSGraphics2D");
+			pdf = (Class<? extends Graphics2D>) Class.forName("org.freehep.graphicsio.pdf.PDFGraphics2D");
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (ClassNotFoundException ignored) {
@@ -85,14 +87,12 @@ public class MultipageExporter extends JPanel {
 
 	private DiagramTab tab;
 
-	public MultipageExporter(PrintConfiguration properties, DiagramTab tab,
-			Configuration configuration) {
+	public MultipageExporter(PrintConfiguration properties, DiagramTab tab, Configuration configuration) {
 		super();
 		this.properties = properties;
 		this.tab = tab;
 		this.configuration = configuration;
-		size = PageConstants.getSize(properties.getFormat(), properties
-				.getOrientation());
+		size = PageConstants.getSize(properties.getFormat(), properties.getOrientation());
 		// 149 / 210
 		// 223 / 315
 		double wide = 315D;
@@ -113,15 +113,31 @@ public class MultipageExporter extends JPanel {
 		graphicDevice = new MultipagePaintDevice(properties, size);
 
 		PaintDevice pd = tab.createPaintDevice(graphicDevice);
-		//PaintDevice pd = new PaintDevice(graphicDevice);
+
+		String cmd = properties.getCommand();
 		
+		if (cmd == null || Utilities.in(cmd, "", "AcroRd32.exe")) {
+			if (OS.TYPE == Type.WINDOWS) {
+				String value = WindowsRegistry.getValue("HKEY_CLASSES_ROOT/acrobat/shell/open/command", "(Standard)");
+				if (value != null && value.length() > 0 && value.charAt(0) == '"') {
+					value = value.substring(1);
+					int i = value.indexOf('"');
+					if (i > 0) {
+						value = value.substring(0, i);
+						properties.setCommand(value);
+					}
+				}
+			} else {
+				properties.setCommand("lpr");
+			}
+		}
+
 		DiagramFactory factory = tab.createFactory(pd);
 		factory.generateDiagram(configuration);
 		int n = graphicDevice.getPanels().size();
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		int i = 0;
-		for (MultipagePaintDevice.MultipagePanel panel : graphicDevice
-				.getPanels()) {
+		for (MultipagePaintDevice.MultipagePanel panel : graphicDevice.getPanels()) {
 			i++;
 			JPanel wrap = new JPanel();
 			wrap.setLayout(new BoxLayout(wrap, BoxLayout.Y_AXIS));
@@ -148,10 +164,9 @@ public class MultipageExporter extends JPanel {
 
 	public void exportTo(OutputStream stream, String type) throws IOException {
 		// OutputStream stream = new FileOutputStream(file);
-		Class<? extends Graphics2D> gc = type.toLowerCase().equals("pdf") ? pdf
-				: ps;
-		ExportDocument export = new ExportDocument(gc, graphicDevice, stream,
-				properties.getFormat(), properties.getOrientation());
+		Class<? extends Graphics2D> gc = type.toLowerCase().equals("pdf") ? pdf : ps;
+		ExportDocument export = new ExportDocument(gc, graphicDevice, stream, properties.getFormat(),
+				properties.getOrientation());
 		export.export();
 	}
 }
