@@ -49,6 +49,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -994,6 +995,31 @@ public class Utilities {
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> Constructor<T> resolveConstructor(Class<T> clazz, Object... args) {
+		Constructor<?> c = null;
+		for (Constructor<?> constructor : clazz.getConstructors()) {
+			Class<?>[] classes = constructor.getParameterTypes();
+			if (args.length == 0) {
+				if (classes.length == 0) {
+					c = constructor;
+					break;
+				}
+			} else {
+				boolean match = args.length == classes.length;
+				for (int j = 0; match && j < args.length; j++) {
+					match = classes[j].isAssignableFrom(args[j].getClass())
+							|| primitiveClasses.get(classes[j]) == args[j].getClass();
+				}
+				if (match) {
+					c = constructor;
+					break;
+				}
+			}
+		}
+		return (Constructor<T>) c;
+	}
 
 	public static <T> boolean in(T element, T... set) {
 		for (T s : set) {
@@ -1232,33 +1258,49 @@ public class Utilities {
 		} catch (IntrospectionException e) {
 			throw new IllegalArgumentException("Unable to introspect " + cls.getName(), e);
 		}
-
 	}
-
-	public static <T> T newInstance(String cls, Class<T> interfaceType) {
-		Class<?> clazz;
-		try {
-			clazz = Class.forName(cls);
-		} catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException("class not found: " + cls, e);
+	
+	private static <T> T newInstance(Class<?> clazz, Class<T> interfaceType, Object... args) {
+		Constructor<?> constructor = resolveConstructor(clazz, args);
+		if (constructor == null) {
+			throw new IllegalArgumentException("constructor not found: " + clazz.getName() + "#" + classesString(args, false));
 		}
 		Object obj;
 		try {
-			obj = clazz.newInstance();
+			obj = constructor.newInstance(args);
 		} catch (InstantiationException e) {
-			throw new IllegalArgumentException("cannot instantiate class: " + cls, e);
+			throw new IllegalArgumentException("cannot instantiate class: " + clazz.getName(), e);
 		} catch (IllegalAccessException e) {
-			throw new IllegalArgumentException("cannot access no-args constructor of class: " + cls, e);
+			throw new IllegalArgumentException("cannot access constructor of class: " + clazz.getName(), e);
+		} catch (InvocationTargetException ite) {
+			if (ite.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) ite.getTargetException();
+			}
+			throw new IllegalArgumentException(ite);
 		}
 		T t;
 		try {
 			t = interfaceType.cast(obj);
 		} catch (ClassCastException e) {
 			throw new IllegalArgumentException(
-					"cannot cast new instance of " + cls + " to interface type " + interfaceType.getName());
+					"cannot cast new instance of " + clazz.getName() + " to interface type " + interfaceType.getName());
 		}
 
-		return t;
+		return t;		
+	}
+
+	public static <T> T newInstance(String cls, Class<T> interfaceType, Object... args) {
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(cls);
+		} catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("class not found: " + cls, e);
+		}
+		return newInstance(clazz, interfaceType, args);
+	}
+	
+	public static <T> T newInstance(Class<T> clazz, Object... args) {
+		return newInstance(clazz, clazz, args);
 	}
 
 	/**
