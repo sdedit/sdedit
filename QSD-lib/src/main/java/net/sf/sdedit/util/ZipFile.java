@@ -45,6 +45,8 @@ public class ZipFile {
 
 	private Charset charset;
 
+	private File rootDir;
+
 	public ZipFile(File file, boolean createNew, Charset charset) throws IOException {
 		this.file = file;
 		this.charset = charset;
@@ -59,6 +61,10 @@ public class ZipFile {
 		this(file, createNew, null);
 	}
 
+	protected void setRootDirectory(File rootDirectory) {
+		this.rootDir = rootDirectory;
+	}
+
 	public static void createFromFiles(File file, File... files) throws IOException {
 		if (files != null) {
 			ZipFile zipFile = new ZipFile(file, true);
@@ -69,8 +75,16 @@ public class ZipFile {
 		}
 	}
 
+	@Deprecated
 	public static void createFromFlatDirectory(File file, File dir) throws IOException {
-		createFromFiles(file, dir.listFiles());
+		createFromDirectory(file, dir, Charset.defaultCharset());
+	}
+	
+	public static void createFromDirectory(File zipFile, File dir, Charset charset) throws IOException {
+		ZipFile zip = new ZipFile(zipFile, true);
+		zip.setRootDirectory(dir);
+		zip.addFile(dir);
+		zip.close();
 	}
 
 	protected ZipOutputStream openNew() throws IOException {
@@ -88,7 +102,7 @@ public class ZipFile {
 		InputStream is = new FileInputStream(file);
 		ZipInputStream stream;
 		if (charset == null) {
-			stream = new ZipInputStream(is);			
+			stream = new ZipInputStream(is);
 		} else {
 			stream = Utilities.newInstance(ZipInputStream.class, is, charset);
 		}
@@ -99,22 +113,35 @@ public class ZipFile {
 		if (zos == null) {
 			throw new IllegalStateException("ZipFile in is read-file mode");
 		}
-		InputStream fis = new FileInputStream(file);
-		try {
-			BufferedInputStream bis = new BufferedInputStream(fis);
-			ZipEntry zipEntry = new ZipEntry(file.getName());
-			zos.putNextEntry(zipEntry);
-			Utilities.pipe(bis, zos);
-			zos.closeEntry();
-		} finally {
-			fis.close();
+		if (file.isDirectory()) {
+			File[] files = file.listFiles();
+			if (files != null) {
+				for (File f : files) {
+					addFile(f);
+				}
+			}
+		} else {
+			InputStream fis = new FileInputStream(file);
+			try {
+				BufferedInputStream bis = new BufferedInputStream(fis);
+				String name = file.getName();
+				if (rootDir != null) {
+					name = file.getAbsolutePath().substring(rootDir.getAbsolutePath().length() + 1);
+				}
+				ZipEntry zipEntry = new ZipEntry(name);
+				zos.putNextEntry(zipEntry);
+				Utilities.pipe(bis, zos);
+				zos.closeEntry();
+			} finally {
+				fis.close();
+			}
 		}
 	}
 
 	public void close() throws IOException {
 		if (zos != null) {
 			zos.flush();
-			zos.close();			
+			zos.close();
 		}
 	}
 
@@ -160,5 +187,4 @@ public class ZipFile {
 			zis.close();
 		}
 	}
-	
 }
