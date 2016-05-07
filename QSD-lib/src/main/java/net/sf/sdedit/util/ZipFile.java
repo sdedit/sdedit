@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -42,37 +43,56 @@ public class ZipFile {
 
 	private ZipInputStream zis;
 
-	public ZipFile(File file, boolean createNew) throws IOException {
+	private Charset charset;
+
+	public ZipFile(File file, boolean createNew, Charset charset) throws IOException {
 		this.file = file;
+		this.charset = charset;
 		if (createNew) {
 			zos = openNew();
 		} else {
 			zis = openExisting();
 		}
 	}
-	
+
+	public ZipFile(File file, boolean createNew) throws IOException {
+		this(file, createNew, null);
+	}
+
 	public static void createFromFiles(File file, File... files) throws IOException {
 		if (files != null) {
 			ZipFile zipFile = new ZipFile(file, true);
 			for (File f : files) {
 				zipFile.addFile(f);
 			}
-			zipFile.close();			
+			zipFile.close();
 		}
 	}
-	
+
 	public static void createFromFlatDirectory(File file, File dir) throws IOException {
 		createFromFiles(file, dir.listFiles());
-	}	
+	}
 
 	protected ZipOutputStream openNew() throws IOException {
 		OutputStream os = new FileOutputStream(file);
-		return new ZipOutputStream(os);
+		ZipOutputStream stream;
+		if (charset == null) {
+			stream = new ZipOutputStream(os);
+		} else {
+			stream = Utilities.newInstance(ZipOutputStream.class, os, charset);
+		}
+		return stream;
 	}
 
 	protected ZipInputStream openExisting() throws IOException {
 		InputStream is = new FileInputStream(file);
-		return new ZipInputStream(is);
+		ZipInputStream stream;
+		if (charset == null) {
+			stream = new ZipInputStream(is);			
+		} else {
+			stream = Utilities.newInstance(ZipInputStream.class, is, charset);
+		}
+		return stream;
 	}
 
 	public void addFile(File file) throws IOException {
@@ -92,11 +112,10 @@ public class ZipFile {
 	}
 
 	public void close() throws IOException {
-		if (zos == null) {
-			throw new IllegalStateException("ZipFile is in read-file mode");
+		if (zos != null) {
+			zos.flush();
+			zos.close();			
 		}
-		zos.flush();
-		zos.close();
 	}
 
 	public String getNextEntry() throws IOException {
@@ -123,9 +142,9 @@ public class ZipFile {
 
 	public void storeFiles(File directory) throws IOException {
 		if (zis == null) {
-			throw new IllegalStateException(
-					"ZipFile is in create-new-file mode");
+			throw new IllegalStateException("ZipFile is in create-new-file mode");
 		}
+		directory.mkdirs();
 		try {
 			String name;
 			while ((name = getNextEntry()) != null) {
@@ -141,4 +160,5 @@ public class ZipFile {
 			zis.close();
 		}
 	}
+	
 }
