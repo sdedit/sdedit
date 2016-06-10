@@ -971,7 +971,7 @@ public class Utilities {
 	 */
 	public static Method resolveMethod(Class<?> clazz, String name, Object[] args) {
 		Method[] methods = // clazz.getMethods();
-				Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class);
+		Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class);
 		int i;
 		for (i = 0; i < methods.length; i++) {
 			Method m = methods[i];
@@ -995,7 +995,7 @@ public class Utilities {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> Constructor<T> resolveConstructor(Class<T> clazz, Object... args) {
 		Constructor<?> c = null;
@@ -1259,11 +1259,12 @@ public class Utilities {
 			throw new IllegalArgumentException("Unable to introspect " + cls.getName(), e);
 		}
 	}
-	
+
 	private static <T> T newInstance(Class<?> clazz, Class<T> interfaceType, Object... args) {
 		Constructor<?> constructor = resolveConstructor(clazz, args);
 		if (constructor == null) {
-			throw new IllegalArgumentException("constructor not found: " + clazz.getName() + "#" + classesString(args, false));
+			throw new IllegalArgumentException(
+					"constructor not found: " + clazz.getName() + "#" + classesString(args, false));
 		}
 		Object obj;
 		try {
@@ -1286,7 +1287,7 @@ public class Utilities {
 					"cannot cast new instance of " + clazz.getName() + " to interface type " + interfaceType.getName());
 		}
 
-		return t;		
+		return t;
 	}
 
 	public static <T> T newInstance(String cls, Class<T> interfaceType, Object... args) {
@@ -1298,7 +1299,7 @@ public class Utilities {
 		}
 		return newInstance(clazz, interfaceType, args);
 	}
-	
+
 	public static <T> T newInstance(Class<T> clazz, Object... args) {
 		return newInstance(clazz, clazz, args);
 	}
@@ -1613,6 +1614,38 @@ public class Utilities {
 			}
 		}
 		return color;
+	}
+
+	public static <T1, T2> Iterable<Pair<T1, T2>> pairs(final Iterable<T1> i1, final Iterable<T2> i2) {
+		return new Iterable<Pair<T1, T2>>() {
+
+			@Override
+			public Iterator<Pair<T1, T2>> iterator() {
+				return new Iterator<Pair<T1, T2>>() {
+
+					private Iterator<T1> ii1 = i1.iterator();
+
+					private Iterator<T2> ii2 = i2.iterator();
+
+					@Override
+					public boolean hasNext() {
+						return ii1.hasNext() & ii2.hasNext();
+					}
+
+					@Override
+					public Pair<T1, T2> next() {
+						return pair(ii1.next(), ii2.next());
+					}
+
+					@Override
+					public void remove() {
+						ii1.remove();
+						ii2.remove();
+					}
+				};
+			}
+
+		};
 	}
 
 }
