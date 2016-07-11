@@ -167,7 +167,7 @@ public class ZipFile {
 		Utilities.pipe(zis, out);
 	}
 
-	public void storeFiles(File directory) throws IOException {
+	public void storeFiles(File directory, String regex, String replacement) throws IOException {
 		if (zis == null) {
 			throw new IllegalStateException("ZipFile is in create-new-file mode");
 		}
@@ -175,7 +175,11 @@ public class ZipFile {
 		try {
 			String name;
 			while ((name = getNextEntry()) != null) {
+				if (regex != null) {
+					name = name.replaceAll(regex, replacement);
+				}
 				File outFile = new File(directory, name);
+				outFile.getParentFile().mkdirs();
 				OutputStream out = new FileOutputStream(outFile);
 				try {
 					storeNextEntry(out);
@@ -186,5 +190,9 @@ public class ZipFile {
 		} finally {
 			zis.close();
 		}
+	}
+	
+	public void storeFiles(File directory) throws IOException {
+		storeFiles(directory, null, null);
 	}
 }
