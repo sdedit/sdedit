@@ -24,7 +24,6 @@
 
 package net.sf.sdedit.drawable;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -33,141 +32,126 @@ import net.sf.sdedit.message.Message;
 import net.sf.sdedit.util.Direction;
 import net.sf.sdedit.util.UIUtilities;
 
+public class LoopArrow extends Arrow {
+	private int xExtent;
 
-public class LoopArrow extends Arrow
-{
-    private int xExtent;
+	private Drawable from;
 
-    private Drawable from;
+	private Drawable to;
 
-    private Drawable to;
+	/**
+	 * Creates a new LoopArrow.
+	 * 
+	 * @param msg
+	 *            a self-message or answer to self
+	 * @param stroke
+	 *            the stroke to be used for drawing the arrow
+	 * @param align
+	 *            Align.LEFT if the message is to be drawn on the left of a
+	 *            lifeline, otherwise Align.RIGHT
+	 * @param y
+	 *            the vertical position where to start drawing
+	 */
+	public LoopArrow(Message msg, ArrowStroke stroke, Direction align, int y) {
+		super(msg, stroke, align, y);
+		init();
+	}
 
-    /**
-     * Creates a new LoopArrow.
-     * 
-     * @param msg
-     *            a self-message or answer to self
-     * @param stroke
-     *            the stroke to be used for drawing the arrow
-     * @param align
-     *            Align.LEFT if the message is to be drawn on the left of a
-     *            lifeline, otherwise Align.RIGHT
-     * @param y
-     *            the vertical position where to start drawing
-     */
-    public LoopArrow(Message msg, ArrowStroke stroke, Direction align, int y) {
-        super(msg, stroke, align, y);
-        init();
-    }
+	private void init() {
+		Message message = getMessage();
+		xExtent = diagram().selfMessageXExtent;
+		setWidth(diagram().messagePadding + xExtent + diagram().subLifelineWidth + textWidth());
+		from = message.getCaller().getView();
+		to = message.getCallee().getView();
+		if (getAlign() == Direction.LEFT) {
+			// loop arrows on the left must have a left neighbour
+			setLeftEndpoint(message.getCallee().getLeftNeighbour().getView());
+			if (message.getCaller().getSideLevel() < message.getCallee().getSideLevel()) {
+				setRightEndpoint(message.getCaller().getView());
+			} else {
+				setRightEndpoint(message.getCallee().getView());
+			}
+		} else {
+			int p = message.getCallee().getPosition();
 
-    private void init() {
-        Message message = getMessage();
-        xExtent = diagram().selfMessageXExtent;
-        setWidth(diagram().messagePadding + xExtent + diagram().subLifelineWidth + textWidth());
-        from = message.getCaller().getView();
-        to = message.getCallee().getView();
-        if (getAlign() == Direction.LEFT) {
-            // loop arrows on the left must have a left neighbour
-            setLeftEndpoint(message.getCallee().getLeftNeighbour().getView());
-            if (message.getCaller().getSideLevel() < message.getCallee()
-                    .getSideLevel()) {
-                setRightEndpoint(message.getCaller().getView());
-            } else {
-                setRightEndpoint(message.getCallee().getView());
-            }
-        } else {
-            int p = message.getCallee().getPosition();
+			if (p < message.getDiagram().getNumberOfLifelines() - 1
+					&& message.getDiagram().getLifelineAt(p + 1).isAlive()) {
+				setRightEndpoint(message.getCallee().getRightNeighbour().getView());
+			} else {
+				setRightEndpoint((Line) message.getDiagram().getPaintDevice().callSpecial("getRightBound", null));
+			}
+			if (message.getCaller().getSideLevel() < message.getCallee().getSideLevel()) {
+				setLeftEndpoint(message.getCaller().getView());
+			} else {
+				setLeftEndpoint(message.getCallee().getView());
+			}
+		}
+	}
 
-            if (p < message.getDiagram().getNumberOfLifelines() - 1
-                    && message.getDiagram().getLifelineAt(p + 1).isAlive()) {
-                setRightEndpoint(message.getCallee().getRightNeighbour()
-                        .getView());
-            } else {
-                setRightEndpoint((Line) message.getDiagram().getPaintDevice()
-                        .callSpecial("getRightBound", null));
-            }
-            if (message.getCaller().getSideLevel() < message.getCallee()
-                    .getSideLevel()) {
-                setLeftEndpoint(message.getCaller().getView());
-            } else {
-                setLeftEndpoint(message.getCallee().getView());
-            }
-        }
-    }
-
-    @Override
-    protected void drawObject(Graphics2D g) {
-        int t = getMessage().getData().getThread();
-        Color back = !diagram().opaqueText ||
-            t == -1 ? null : getMessage().getDiagram().threadColors[t];
+	@Override
+	protected void drawObject(Graphics2D g) {
 		Font font = g.getFont();
 		g.setFont(getFont(font));
-        drawMultilineString(g, getFontColor(), textPoint.x, textPoint.y, back);
+		drawMultilineString(g, getFontColor(), textPoint.x, textPoint.y, getBackgroundColor());
 		g.setFont(font);
-        
-        g.setColor(getColor());
-        int sgn = getAlign() == Direction.RIGHT ? 1 : -1;
+		g.setColor(getColor());
+		int sgn = getAlign() == Direction.RIGHT ? 1 : -1;
+		g.setStroke(getStroke() == ArrowStroke.SOLID ? solid() : dashed());
+		UIUtilities.drawPolyline(g, pts);
+		drawArrowHead(g, pts[3].x, pts[3].y, sgn);
+	}
 
-        g.setStroke(getStroke() == ArrowStroke.SOLID ? solid() : dashed());
-        
-        UIUtilities.drawPolyline (g, pts);
-        
-        drawArrowHead(g, pts[3].x, pts[3].y, sgn);
+	public int getInnerHeight() {
+		return textHeight();
+	}
 
+	/**
+	 * Returns an array of four points, representing the positions of the points
+	 * that are connected by the lines of which the loop arrow is made up.
+	 * 
+	 * @return an array of four points, representing the positions of the points
+	 *         that are connected by the lines of which the loop arrow is made
+	 *         up
+	 */
+	public Point[] getLinePoints() {
+		return pts;
+	}
 
-    }
+	public Point getAnchor() {
+		return pts[1];
+	}
 
-    public int getInnerHeight() {
-        return textHeight();
-    }
+	@Override
+	public void computeLayoutInformation() {
+		int y_to = getTop() + textHeight();
+		int y_from = getTop();
 
-    /**
-     * Returns an array of four points, representing the positions of the points
-     * that are connected by the lines of which the loop arrow is made up.
-     * 
-     * @return an array of four points, representing the positions of the points
-     *         that are connected by the lines of which the loop arrow is made
-     *         up
-     */
-    public Point[] getLinePoints() {
-        return pts;
-    }
-    
-    public Point getAnchor () {
-        return pts[1];
-    }
+		int x_from, x_to;
 
-    @Override
-    public void computeLayoutInformation() {
-        int y_to = getTop() + textHeight();
-        int y_from = getTop();
+		if (getAlign() == Direction.RIGHT) {
+			x_from = from.getLeft() + from.getWidth();
+			x_to = to.getLeft() + to.getWidth();
+			setLeft(Math.min(x_from, x_to));
+		} else {
+			x_from = from.getLeft();
+			x_to = to.getLeft();
+			setLeft(Math.min(x_from - getWidth(), x_to - getWidth()));
+		}
 
-        int x_from, x_to;
+		int outer_x = getAlign() == Direction.RIGHT ? Math.max(x_to + xExtent, x_from + xExtent)
+				: Math.min(x_to - xExtent, x_from - xExtent);
 
-        if (getAlign() == Direction.RIGHT) {
-            x_from = from.getLeft() + from.getWidth();
-            x_to = to.getLeft() + to.getWidth();
-            setLeft(Math.min(x_from, x_to));
-        } else {
-            x_from = from.getLeft();
-            x_to = to.getLeft();
-            setLeft(Math.min(x_from - getWidth(), x_to - getWidth()));
-        }
+		pts = new Point[4];
 
-        int outer_x = getAlign() == Direction.RIGHT ? Math.max(x_to + xExtent,
-                x_from + xExtent) : Math.min(x_to - xExtent, x_from - xExtent);
+		pts[0] = new Point(x_from, y_from);
+		pts[1] = new Point(outer_x, y_from);
+		pts[2] = new Point(outer_x, y_to);
+		pts[3] = new Point(x_to, y_to);
 
-        pts = new Point[4];
-
-        pts[0] = new Point(x_from, y_from);
-        pts[1] = new Point(outer_x, y_from);
-        pts[2] = new Point(outer_x, y_to);
-        pts[3] = new Point(x_to, y_to);
-
-        int textOffset = getAlign() == Direction.RIGHT ? diagram().messagePadding : -textWidth()
-                - diagram().messagePadding;
-        int textY = isAnswer ? y_to : y_from + textHeight();
-        textPoint = new Point(outer_x + textOffset, textY);
-    }
+		int textOffset = getAlign() == Direction.RIGHT ? diagram().messagePadding
+				: -textWidth() - diagram().messagePadding;
+		int textY = isAnswer ? y_to : y_from + textHeight();
+		textPoint = new Point(outer_x + textOffset, textY);
+	}
 }
-//{{core}}
+// {{core}}
