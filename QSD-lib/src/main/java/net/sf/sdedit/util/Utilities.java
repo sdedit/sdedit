@@ -57,6 +57,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
@@ -754,6 +755,34 @@ public class Utilities {
 		}
 	}
 
+	public static void concatenate(File target, Collection<File> source) throws IOException {
+		boolean append = false;
+		for (File file : source) {
+			long size = file.length();
+			long transferred = 0;
+			@SuppressWarnings("resource")
+			FileChannel to = new FileOutputStream(target, append).getChannel();
+			append = true;
+			try {
+				@SuppressWarnings("resource")
+				FileChannel from = new FileInputStream(file).getChannel();
+				try {
+					while (transferred < size) {
+						transferred += to.transferFrom(from, transferred, size - transferred);
+					}
+				} finally {
+					from.close();
+				}
+			} finally {
+				to.close();
+			}
+		}
+	}
+
+	public static void concatenate(File target, File... source) throws IOException {
+		concatenate(target, Arrays.asList(source));
+	}
+
 	public static Iterable<String> readLines(String command, Ref<InputStream> streamRef, Charset charset)
 			throws IOException {
 		Process proc = Runtime.getRuntime().exec(command);
@@ -971,7 +1000,7 @@ public class Utilities {
 	 */
 	public static Method resolveMethod(Class<?> clazz, String name, Object[] args) {
 		Method[] methods = // clazz.getMethods();
-		Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class);
+				Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class);
 		int i;
 		for (i = 0; i < methods.length; i++) {
 			Method m = methods[i];
@@ -1647,5 +1676,4 @@ public class Utilities {
 
 		};
 	}
-
 }
