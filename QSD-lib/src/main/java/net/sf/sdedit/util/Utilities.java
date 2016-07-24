@@ -76,6 +76,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
@@ -760,21 +761,21 @@ public class Utilities {
 		for (File file : source) {
 			long size = file.length();
 			long transferred = 0;
-			@SuppressWarnings("resource")
-			FileChannel to = new FileOutputStream(target, append).getChannel();
+			FileOutputStream outputStream = new FileOutputStream(target, append);
 			append = true;
 			try {
-				@SuppressWarnings("resource")
-				FileChannel from = new FileInputStream(file).getChannel();
+				FileChannel to = outputStream.getChannel();
+				FileInputStream inputStream = new FileInputStream(file);
 				try {
+					FileChannel from = inputStream.getChannel();
 					while (transferred < size) {
 						transferred += to.transferFrom(from, transferred, size - transferred);
 					}
 				} finally {
-					from.close();
+					inputStream.close();
 				}
 			} finally {
-				to.close();
+				outputStream.close();
 			}
 		}
 	}
@@ -1545,9 +1546,9 @@ public class Utilities {
 	}
 
 	public static Map<String, Object> toMap(Object bean) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new TreeMap<String, Object>();
 		for (PropertyDescriptor prop : getProperties(bean.getClass())) {
-			if (prop.getReadMethod() != null) {
+			if (!"class".equals(prop.getName()) && prop.getReadMethod() != null) {
 				Object value;
 				try {
 					value = prop.getReadMethod().invoke(bean);
