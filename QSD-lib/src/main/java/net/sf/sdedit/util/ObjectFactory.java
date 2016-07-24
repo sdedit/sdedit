@@ -75,6 +75,12 @@ public final class ObjectFactory {
 		if (nonPrimitive != null) {
 			cls = nonPrimitive;
 		}
+		if (cls == Integer.class && string != null && string.indexOf('.')>=0) {
+			return Math.round(Float.parseFloat(string));
+		}
+		if (cls == Long.class && string != null && string.indexOf('.')>=0) {
+			return Math.round(Double.parseDouble(string));
+		}
 		try {
 			if (string == null) {
 				return cls.newInstance();
