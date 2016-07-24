@@ -44,6 +44,27 @@ public class LookupTable<T> {
 		boolean isKey();
 
 	}
+	
+	public static class TooManyMatches extends Exception {
+
+		private static final long serialVersionUID = 6220615962525615889L;
+		
+		private String message;
+		
+		public TooManyMatches (Object fact, List<Object> ts) {
+			PWriter p = PWriter.create();
+			p.println("Could not find unique best match for " + Utilities.toMap(fact));
+			p.println("There are " + ts.size() + " matches:");
+			for (Object t : ts) {
+				p.println(Utilities.toMap(t));
+			}
+			this.message = p.toString();
+		}
+		
+		public String getMessage () {
+			return message;
+		}
+	}
 
 	private final Set<T> rows;
 
@@ -136,7 +157,7 @@ public class LookupTable<T> {
 		rows.add(t);
 	}
 
-	public T getBestMatch(Object o) {
+	public T getBestMatch(Object o) throws TooManyMatches {
 		Map<String, Object> okeys = getKeys(null);
 		for (Entry<String, Object> entry : Utilities.toMap(o).entrySet()) {
 			String key = entry.getKey();
@@ -152,13 +173,9 @@ public class LookupTable<T> {
 		if (best.size() == 1) {
 			return best.get(0);
 		}
-		PWriter p = PWriter.create();
-		p.println("Could not find unique best match for " + Utilities.toMap(o));
-		p.println("There are " + best.size() + " matches:");
-		for (T b : best) {
-			p.println(Utilities.toMap(b));
-		}
-		throw new IllegalArgumentException(p.toString());
+		List<Object> obj = new ArrayList<Object>();
+		obj.addAll(best);
+		throw new TooManyMatches(o, obj);
 	}
 
 	private TreeMap<Integer, List<T>> getMatches(Map<String, Object> tkeys) {

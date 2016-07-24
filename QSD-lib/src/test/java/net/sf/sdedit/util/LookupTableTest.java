@@ -1,5 +1,7 @@
 package net.sf.sdedit.util;
 
+import net.sf.sdedit.util.LookupTable.TooManyMatches;
+
 public class LookupTableTest {
 	
 	static class Fact {
@@ -98,7 +100,7 @@ public class LookupTableTest {
 		
 	}
 	
-	public static void main(String... a) {
+	public static void main(String... a) throws TooManyMatches {
 		LookupTable<Entry> l = new LookupTable<Entry>(Entry.class);
 		l.add("k","A","i","10","l","100","value","first");
 		l.add("k","B","l","100","value","another");
