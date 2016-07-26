@@ -35,6 +35,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -294,7 +296,19 @@ public class DocUtil {
 	public static String toString(Node node) {
 		return toString(node, false);
 	}
-
+	
+	public static Map<String,String> toMap(Element element) {
+		Map<String,String> map = new LinkedHashMap<String,String>();
+		NamedNodeMap nnm = element.getAttributes();
+		for (int i = 0; i < nnm.getLength(); i++) {
+			Node node = nnm.item(i);
+			String name = node.getNodeName();
+			String attr = element.getAttribute(name);
+			map.put(name, attr);
+		}
+		return map;
+	}
+	
 	public static String toString(Node node, boolean deep) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
