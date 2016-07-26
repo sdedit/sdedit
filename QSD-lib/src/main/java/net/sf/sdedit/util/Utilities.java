@@ -1545,6 +1545,27 @@ public class Utilities {
 		return min;
 	}
 
+	public static <T> T fromMap(Map<String, Object> map, Class<T> cls) {
+		T t = newInstance(cls);
+		for (PropertyDescriptor prop : getProperties(cls)) {
+			Object value = map.get(prop.getName());
+			if (value != null) {
+				if (!prop.getPropertyType().isInstance(value)) {
+					value = ObjectFactory.createFromString(prop.getPropertyType(), value.toString());
+				}
+				try {
+					prop.getWriteMethod().invoke(t, value);
+				} catch (RuntimeException e) {
+					throw e;
+				} catch (Exception e) {
+					throw new IllegalStateException(
+							"cannot set property " + prop.getName() + " of class " + cls.getName(), e);
+				}
+			}
+		}
+		return t;
+	}
+
 	public static Map<String, Object> toMap(Object bean) {
 		Map<String, Object> map = new TreeMap<String, Object>();
 		for (PropertyDescriptor prop : getProperties(bean.getClass())) {
@@ -1645,7 +1666,7 @@ public class Utilities {
 		}
 		return color;
 	}
-
+	
 	public static <T1, T2> Iterable<Pair<T1, T2>> pairs(final Iterable<T1> i1, final Iterable<T2> i2) {
 		return new Iterable<Pair<T1, T2>>() {
 
