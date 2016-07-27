@@ -156,8 +156,8 @@ public class LookupTable<T> {
 		}
 		rows.add(t);
 	}
-
-	public T getBestMatch(Object o) throws TooManyMatches {
+	
+	public Map<String,Object> getKeyMap(Object o) {
 		Map<String, Object> okeys = getKeys(null);
 		for (Entry<String, Object> entry : Utilities.toMap(o).entrySet()) {
 			String key = entry.getKey();
@@ -165,6 +165,11 @@ public class LookupTable<T> {
 				okeys.put(entry.getKey(), cast(keys.get(key).getPropertyType(), entry.getValue()));
 			}
 		}
+		return okeys;
+	}
+
+	public T getBestMatch(Object o) throws TooManyMatches {
+		Map<String, Object> okeys = getKeyMap(o);
 		TreeMap<Integer, List<T>> matches = getMatches(okeys);
 		if (matches.isEmpty()) {
 			return null;
