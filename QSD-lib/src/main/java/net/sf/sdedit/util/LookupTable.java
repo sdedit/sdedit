@@ -73,6 +73,8 @@ public class LookupTable<T> {
 	private final Map<String, PropertyDescriptor> values;
 
 	private final Class<T> type;
+	
+	private Map<Object,T> hashMap;
 
 	public LookupTable(Class<T> type) {
 		this.type = type;
@@ -85,7 +87,15 @@ public class LookupTable<T> {
 			throw new IllegalArgumentException(ie);
 		}
 	}
-
+	
+	public void setUseHashing(boolean use) {
+		if (use) {
+			hashMap = new HashMap<Object, T>();
+		} else {
+			hashMap = null;
+		}
+	}
+	
 	public int getSize() {
 		return rows.size();
 	}
@@ -169,6 +179,13 @@ public class LookupTable<T> {
 	}
 
 	public T getBestMatch(Object o) throws TooManyMatches {
+		T match;
+		if (hashMap != null) {
+			match = hashMap.get(o);
+			if (match != null) {
+				return match;
+			}
+		}
 		Map<String, Object> okeys = getKeyMap(o);
 		TreeMap<Integer, List<T>> matches = getMatches(okeys);
 		if (matches.isEmpty()) {
@@ -176,7 +193,11 @@ public class LookupTable<T> {
 		}
 		List<T> best = matches.firstEntry().getValue();
 		if (best.size() == 1) {
-			return best.get(0);
+			match = best.get(0);
+			if (hashMap != null) {
+				hashMap.put(o, match);
+			}
+			return match;
 		}
 		List<Object> obj = new ArrayList<Object>();
 		obj.addAll(best);
@@ -237,6 +258,9 @@ public class LookupTable<T> {
 		for (PropertyDescriptor desc : keys.values()) {
 			Object value = map.remove(desc.getName());
 			value = cast(desc.getPropertyType(), value);
+			if (value == null) {
+				continue;
+			}
 			try {
 				desc.getWriteMethod().invoke(row, value);
 			} catch (Exception e) {
@@ -245,6 +269,9 @@ public class LookupTable<T> {
 		}
 		for (PropertyDescriptor desc : values.values()) {
 			Object value = map.remove(desc.getName());
+			if (value == null) {
+				continue;
+			}
 			value = cast(desc.getPropertyType(), value);
 			try {
 				desc.getWriteMethod().invoke(row, value);
