@@ -36,7 +36,7 @@ import java.util.Map;
  * 
  */
 public final class ObjectFactory {
-
+	
 	private static final Map<Class<?>, Constructor<?>> stringConstructorMap;
 
 	static {
@@ -45,6 +45,10 @@ public final class ObjectFactory {
 
 	private ObjectFactory() {
 		/* empty */
+	}
+	
+	public static <T> T castFromString(final Class<T> cls, final String string) {
+		return cls.cast(createFromString(cls, string));
 	}
 
 	/**
@@ -70,6 +74,14 @@ public final class ObjectFactory {
 		}
 		if (cls == Font.class) {
 			return Font.decode(string);
+		}
+		if (cls.isEnum()) {
+			for (Object constant : cls.getEnumConstants()) {
+				if (string.equals(constant.toString())) {
+					return constant;
+				}
+			}
+			throw new IllegalArgumentException("no such constant of enum " + cls.getName() + ": " + string);
 		}
 		final Class<?> nonPrimitive = Utilities.getWrapperClass(cls);
 		if (nonPrimitive != null) {
@@ -114,5 +126,6 @@ public final class ObjectFactory {
 					+ e.getMessage());
 		}
 	}
+	
 }
 // {{core}}
