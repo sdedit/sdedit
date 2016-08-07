@@ -76,12 +76,7 @@ public final class ObjectFactory {
 			return Font.decode(string);
 		}
 		if (cls.isEnum()) {
-			for (Object constant : cls.getEnumConstants()) {
-				if (string.equals(constant.toString())) {
-					return constant;
-				}
-			}
-			throw new IllegalArgumentException("no such constant of enum " + cls.getName() + ": " + string);
+			return Utilities.invoke("valueOf", cls, string);
 		}
 		final Class<?> nonPrimitive = Utilities.getWrapperClass(cls);
 		if (nonPrimitive != null) {
