@@ -157,14 +157,16 @@ public class LookupTable<T> {
 		return nulls;
 	}
 
-	public void add(T t) {
+	public T add(T t) {
 		Map<Integer, List<T>> matches = getMatches(getKeys(t));
 		int nulls = countNullKeys(t);
 		List<T> existing = matches.get(nulls);
+		T ex = null;
 		if (existing != null) {
-			rows.remove(existing.get(0));
+			rows.remove(ex = existing.get(0));
 		}
 		rows.add(t);
+		return ex;
 	}
 	
 	public Map<String,Object> getKeyMap(Object o) {
@@ -282,8 +284,7 @@ public class LookupTable<T> {
 		if (!map.isEmpty()) {
 			throw new IllegalArgumentException("some keys could not be found: " + map.keySet());
 		}
-		add(row);
-		return row;
+		return add(row);
 	}
 
 }
