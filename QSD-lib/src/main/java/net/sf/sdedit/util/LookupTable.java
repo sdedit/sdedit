@@ -90,22 +90,6 @@ public class LookupTable<T> {
 		}
 	}
 
-	/**
-	 * When hashing is used, the {@linkplain #getBestMatch(Object)} will store
-	 * all objects for which a T was found in a hash map, associating them to
-	 * their corresponding T. So when an object is looked up, it will be
-	 * searched in the hash map first. This is much faster than making a
-	 * reflection based comparison to all present T objects, but it will only
-	 * work if the objects to be lookup up are &quot;hashable&quot; in a way
-	 * that {@linkplain java.lang.Object#equals(Object)} and
-	 * {@linkplain java.lang.Object#hashCode()} treat two objects equal if and
-	 * only if their key attributes (that they have in common with the T class)
-	 * have equal values.
-	 * 
-	 * @param use
-	 *            flag denoting if a hash map should be used to look up and
-	 *            store objects
-	 */
 	public T getLastAdded () {
 		return last;
 	}
