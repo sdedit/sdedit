@@ -44,14 +44,14 @@ public class LookupTable<T> {
 		boolean isKey();
 
 	}
-	
+
 	public static class TooManyMatches extends Exception {
 
 		private static final long serialVersionUID = 6220615962525615889L;
-		
+
 		private String message;
-		
-		public TooManyMatches (Object fact, List<Object> ts) {
+
+		public TooManyMatches(Object fact, List<Object> ts) {
 			PWriter p = PWriter.create();
 			p.println("Could not find unique best match for " + Utilities.toMap(fact));
 			p.println("There are " + ts.size() + " matches:");
@@ -60,8 +60,8 @@ public class LookupTable<T> {
 			}
 			this.message = p.toString();
 		}
-		
-		public String getMessage () {
+
+		public String getMessage() {
 			return message;
 		}
 	}
@@ -74,7 +74,9 @@ public class LookupTable<T> {
 
 	private final Class<T> type;
 	
-	private Map<Object,T> hashMap;
+	private T last;
+
+	private Map<Object, T> hashMap;
 
 	public LookupTable(Class<T> type) {
 		this.type = type;
@@ -87,7 +89,43 @@ public class LookupTable<T> {
 			throw new IllegalArgumentException(ie);
 		}
 	}
+
+	/**
+	 * When hashing is used, the {@linkplain #getBestMatch(Object)} will store
+	 * all objects for which a T was found in a hash map, associating them to
+	 * their corresponding T. So when an object is looked up, it will be
+	 * searched in the hash map first. This is much faster than making a
+	 * reflection based comparison to all present T objects, but it will only
+	 * work if the objects to be lookup up are &quot;hashable&quot; in a way
+	 * that {@linkplain java.lang.Object#equals(Object)} and
+	 * {@linkplain java.lang.Object#hashCode()} treat two objects equal if and
+	 * only if their key attributes (that they have in common with the T class)
+	 * have equal values.
+	 * 
+	 * @param use
+	 *            flag denoting if a hash map should be used to look up and
+	 *            store objects
+	 */
+	public T getLastAdded () {
+		return last;
+	}
 	
+	/**
+	 * When hashing is used, the {@linkplain #getBestMatch(Object)} will store
+	 * all objects for which a T was found in a hash map, associating them to
+	 * their corresponding T. So when an object is looked up, it will be
+	 * searched in the hash map first. This is much faster than making a
+	 * reflection based comparison to all present T objects, but it will only
+	 * work if the objects to be lookup up are &quot;hashable&quot; in a way
+	 * that {@linkplain java.lang.Object#equals(Object)} and
+	 * {@linkplain java.lang.Object#hashCode()} treat two objects equal if and
+	 * only if their key attributes (that they have in common with the T class)
+	 * have equal values.
+	 * 
+	 * @param use
+	 *            flag denoting if a hash map should be used to look up and
+	 *            store objects
+	 */
 	public void setUseHashing(boolean use) {
 		if (use) {
 			hashMap = new HashMap<Object, T>();
@@ -95,7 +133,7 @@ public class LookupTable<T> {
 			hashMap = null;
 		}
 	}
-	
+
 	public int getSize() {
 		return rows.size();
 	}
@@ -166,10 +204,11 @@ public class LookupTable<T> {
 			rows.remove(ex = existing.get(0));
 		}
 		rows.add(t);
+		last = t;
 		return ex;
 	}
-	
-	public Map<String,Object> getKeyMap(Object o) {
+
+	public Map<String, Object> getKeyMap(Object o) {
 		Map<String, Object> okeys = getKeys(null);
 		for (Entry<String, Object> entry : Utilities.toMap(o).entrySet()) {
 			String key = entry.getKey();
