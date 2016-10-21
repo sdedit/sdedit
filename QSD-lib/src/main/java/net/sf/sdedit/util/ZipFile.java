@@ -61,7 +61,7 @@ public class ZipFile {
 		this(file, createNew, null);
 	}
 
-	protected void setRootDirectory(File rootDirectory) {
+	public void setRootDirectory(File rootDirectory) {
 		this.rootDir = rootDirectory;
 	}
 
