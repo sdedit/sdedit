@@ -77,12 +77,15 @@ public class LookupTable<T> {
 	private T last;
 
 	private Map<Object, T> hashMap;
+	
+	private boolean checkKeys;
 
 	public LookupTable(Class<T> type) {
 		this.type = type;
 		this.rows = new LinkedHashSet<T>();
 		this.keys = new HashMap<String, PropertyDescriptor>();
 		this.values = new HashMap<String, PropertyDescriptor>();
+		checkKeys = true;
 		try {
 			initialize();
 		} catch (IntrospectionException ie) {
@@ -304,10 +307,19 @@ public class LookupTable<T> {
 				throw new IllegalStateException(e);
 			}
 		}
-		if (!map.isEmpty()) {
+		
+		if (checkKeys && !map.isEmpty()) {
 			throw new IllegalArgumentException("some keys could not be found: " + map.keySet());
 		}
 		return add(row);
+	}
+
+	public boolean isCheckKeys() {
+		return checkKeys;
+	}
+
+	public void setCheckKeys(boolean checkKeys) {
+		this.checkKeys = checkKeys;
 	}
 
 }
