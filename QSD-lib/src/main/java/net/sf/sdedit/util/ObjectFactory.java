@@ -88,6 +88,9 @@ public final class ObjectFactory {
 		if (cls == Long.class && string != null && string.indexOf('.')>=0) {
 			return Math.round(Double.parseDouble(string));
 		}
+		if ("".equals(string) && Number.class.isAssignableFrom(cls)) {
+			return null;
+		}
 		try {
 			if (string == null) {
 				return cls.newInstance();
