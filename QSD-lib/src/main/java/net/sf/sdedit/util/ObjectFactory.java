@@ -26,7 +26,11 @@ package net.sf.sdedit.util;
 
 import java.awt.Font;
 import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,6 +53,31 @@ public final class ObjectFactory {
 	
 	public static <T> T castFromString(final Class<T> cls, final String string) {
 		return cls.cast(createFromString(cls, string));
+	}
+	
+	public static Object[] createArrayFromString(Class<?> cls, final String string, String entrySeparator, String rangeSeparator) {
+		List<Object> objects = new ArrayList<Object>();
+		String[] strings = string.split(entrySeparator);
+		for (String _string : strings) {
+			String[] _strings = _string.split(rangeSeparator);
+			if (_strings.length == 1) {
+				objects.add(createFromString(cls, _strings[0]));
+			} else if (_strings.length == 2) {
+				BigDecimal from = (BigDecimal) createFromString(BigDecimal.class, _strings[0]);
+				BigDecimal to = (BigDecimal) createFromString(BigDecimal.class, _strings[1]);
+				while (from.compareTo(to) <= 0) {
+					objects.add(createFromString(cls, from.toString()));
+					from = from.add(BigDecimal.ONE);
+				}
+			} else {
+				throw new IllegalArgumentException("illegal range in string: " + _string);
+			}
+		}
+		return objects.toArray(new Object[objects.size()]);
+	}
+	
+	public static Object[] createArrayFromString(Class<?> cls, final String string) {
+		return createArrayFromString(cls, string, "\\+", "\\-");
 	}
 
 	/**
@@ -123,6 +152,11 @@ public final class ObjectFactory {
 					+ e.getClass().getSimpleName() + " with the message: "
 					+ e.getMessage());
 		}
+	}
+	
+	public static void main (String [] argv) {
+		Object[] array = (Object[]) ObjectFactory.createArrayFromString(Double.class, "1+2+3+4+10-20");
+		System.out.println(Arrays.asList(array));
 	}
 	
 }
