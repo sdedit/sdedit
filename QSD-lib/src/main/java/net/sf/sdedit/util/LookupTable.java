@@ -11,11 +11,11 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
@@ -66,9 +66,9 @@ public class LookupTable<T> {
 		}
 	}
 
-	private final Set<T> rows;
+	private final Map<String,T> rows;
 
-	private final Map<String, PropertyDescriptor> keys;
+	private final SortedMap<String, PropertyDescriptor> keys;
 
 	private final Map<String, PropertyDescriptor> values;
 
@@ -82,8 +82,8 @@ public class LookupTable<T> {
 
 	public LookupTable(Class<T> type) {
 		this.type = type;
-		this.rows = new LinkedHashSet<T>();
-		this.keys = new HashMap<String, PropertyDescriptor>();
+		this.rows = new LinkedHashMap<String,T>();
+		this.keys = new TreeMap<String, PropertyDescriptor>();
 		this.values = new HashMap<String, PropertyDescriptor>();
 		checkKeys = true;
 		try {
@@ -127,7 +127,7 @@ public class LookupTable<T> {
 
 	public String toString() {
 		PWriter pw = PWriter.create();
-		for (T t : rows) {
+		for (T t : rows.values()) {
 			pw.println(Utilities.toMap(t).toString());
 		}
 		return pw.toString();
@@ -150,8 +150,8 @@ public class LookupTable<T> {
 		}
 	}
 
-	private Map<String, Object> getKeys(T t) {
-		Map<String, Object> k = new TreeMap<String, Object>();
+	private Map<String, Object> getKeys(final T t) {
+		Map<String, Object> k = new LinkedHashMap<String, Object>(keys.size());
 		for (Entry<String, PropertyDescriptor> entry : keys.entrySet()) {
 			Object value = null;
 			if (t != null) {
@@ -166,33 +166,11 @@ public class LookupTable<T> {
 		return k;
 	}
 
-	private int countNullKeys(T t) {
-		int nulls = 0;
-		for (PropertyDescriptor p : keys.values()) {
-			Object value;
-			try {
-				value = p.getReadMethod().invoke(t);
-			} catch (Exception e) {
-				throw new IllegalStateException(e);
-			}
-			if (value == null) {
-				nulls++;
-			}
-		}
-		return nulls;
-	}
-
-	public T add(T t) {
-		Map<Integer, List<T>> matches = getMatches(getKeys(t));
-		int nulls = countNullKeys(t);
-		List<T> existing = matches.get(nulls);
-		T ex = null;
-		if (existing != null) {
-			rows.remove(ex = existing.get(0));
-		}
-		rows.add(t);
+	public T add(final T t) {
+		String keyString = getKeys(t).toString();
+		T previous = rows.put(keyString, t);
 		last = t;
-		return ex;
+		return previous;
 	}
 
 	public Map<String, Object> getKeyMap(Object o) {
@@ -237,7 +215,7 @@ public class LookupTable<T> {
 			throw new IllegalArgumentException("map keys do not match: " + tkeys.keySet());
 		}
 		TreeMap<Integer, List<T>> matches = new TreeMap<Integer, List<T>>();
-		rows: for (T row : rows) {
+		rows: for (T row : rows.values()) {
 			Map<String, Object> rkeys = getKeys(row);
 			int nulls = 0;
 			for (Pair<Object, Object> pair : Utilities.pairs(tkeys.values(), rkeys.values())) {
@@ -307,7 +285,6 @@ public class LookupTable<T> {
 				throw new IllegalStateException(e);
 			}
 		}
-		
 		if (checkKeys && !map.isEmpty()) {
 			throw new IllegalArgumentException("some keys could not be found: " + map.keySet());
 		}
