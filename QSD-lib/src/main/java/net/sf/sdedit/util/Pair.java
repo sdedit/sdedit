@@ -24,6 +24,8 @@
 
 package net.sf.sdedit.util;
 
+import java.io.Serializable;
+
 /**
  * <tt>Pair</tt> objects can hold two objects of types <tt>F</tt> and <tt>S</tt>
  *
@@ -31,9 +33,11 @@ package net.sf.sdedit.util;
  * @param <S> the type of the second entry of the pair
  * 
  */
-public class Pair<F,S> implements Comparable<Pair<F,S>>
+public class Pair<F,S> implements Comparable<Pair<F,S>>, Serializable
 {
-    private F first;
+	private static final long serialVersionUID = -7755711272159335160L;
+
+	private F first;
     
     private S second;
     

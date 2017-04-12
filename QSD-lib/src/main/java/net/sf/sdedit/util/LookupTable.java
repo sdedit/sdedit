@@ -4,6 +4,8 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.io.Serializable;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -35,7 +37,12 @@ import java.util.TreeMap;
  * @param <T>
  *            The class of the objects with key attributes
  */
-public class LookupTable<T> {
+public class LookupTable<T> implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8407940305663509149L;
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
@@ -68,9 +75,9 @@ public class LookupTable<T> {
 
 	private final Map<String,T> rows;
 
-	private final SortedMap<String, PropertyDescriptor> keys;
+	private transient SortedMap<String, PropertyDescriptor> keys;
 
-	private final Map<String, PropertyDescriptor> values;
+	private transient Map<String, PropertyDescriptor> values;
 
 	private final Class<T> type;
 	
@@ -95,6 +102,18 @@ public class LookupTable<T> {
 
 	public T getLastAdded () {
 		return last;
+	}
+	
+	private void readObject(java.io.ObjectInputStream in) throws IOException,
+			ClassNotFoundException {
+		in.defaultReadObject();
+		this.keys = new TreeMap<String, PropertyDescriptor>();
+		this.values = new HashMap<String, PropertyDescriptor>();
+		try {
+			initialize();
+		} catch (IntrospectionException ie) {
+			throw new IllegalArgumentException(ie);
+		}
 	}
 	
 	/**
