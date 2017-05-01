@@ -24,43 +24,28 @@
 
 package net.sf.sdedit.drawable;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 
-import net.sf.sdedit.diagram.PaintDevice;
+import net.sf.sdedit.diagram.Diagram;
 
-public class Text extends Drawable
-{
-    private String [] text;
-    
-    private int simpleHeight;
-    
-    private PaintDevice device;
-    
-    public Text (String [] text, PaintDevice device) {
-    	super(device.getDiagram());
-        this.text = text;
-        this.device = device;
-        simpleHeight = device.getTextHeight(true);
-        setHeight(text.length * simpleHeight + 4);
-        int w = 0;
-        for (int i = 0; i < text.length; i++) {
-            w = Math.max(w, device.getTextWidth(text[i], true));
-        }
-        setWidth(w);
-    }
+public class Text extends Drawable {
 
-    @Override
-    public void computeLayoutInformation() {
-        
-    }
+	public Text(String[] text, Diagram diagram) {
+		super(diagram);
+		addLabel().setLabel(text);
+		setHeight(getLabel().textHeight() + 4);
+		setWidth(getLabel().textWidth());
+	}
 
-    @Override
-    protected void drawObject(Graphics2D g2d) {
-        g2d.setFont(device.getFont(true));
-        drawMultilineString(g2d, Color.BLACK, text, getLeft(), getBottom() -4 , 
-                simpleHeight, getWidth(), null, false, false);
-    }
+	@Override
+	public void computeLayoutInformation() {
+
+	}
+
+	@Override
+	protected void drawObject(Graphics2D g2d) {
+		getLabel().drawLabel(g2d, getLeft(), getBottom() - 4, null, null);
+	}
 
 }
-//{{core}}
+// {{core}}

@@ -23,9 +23,10 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 package net.sf.sdedit.drawable;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.sdedit.Constants;
 import net.sf.sdedit.diagram.Diagram;
@@ -49,9 +50,11 @@ public abstract class Drawable implements Constants {
 
 	private boolean visible;
 	
-	private String [] label;
-	
 	private Diagram diagram;
+	
+	private List<DrawableLabel> labels;
+
+
 
 	/**
 	 * Creates a new <tt>Drawable</tt> with the visibility set to <tt>true</tt>
@@ -59,6 +62,27 @@ public abstract class Drawable implements Constants {
 	protected Drawable(Diagram diagram) {
 		visible = true;
 		this.diagram = diagram;
+		labels = new ArrayList<DrawableLabel>(1);
+	}
+	
+	public DrawableLabel addLabel() {
+		DrawableLabel label = new DrawableLabel(this);
+		labels.add(label);
+		return label;
+	}
+	
+	public DrawableLabel getLabel() {
+		if (labels.size() == 0) {
+			return null;
+		}
+		return labels.get(0);
+	}
+	
+	public DrawableLabel getLabel(int i) {
+		if (i < 0 || i >= labels.size()) {
+			return null;
+		}
+		return labels.get(i);
 	}
 	
 	protected Diagram getDiagram() {
@@ -66,33 +90,8 @@ public abstract class Drawable implements Constants {
 	}
 	
 	public boolean hasLabel() {
-		return label != null && label.length > 0;
+		return labels.size() > 0;
 	}
-	
-	protected void setLabel(String[] label) {
-		this.label = label;
-	}
-	
-	protected String[] getLabel() {
-		return label;
-	}
-	
-    protected int textWidth() {
-        return textWidth(false);
-    }
-
-    protected int textWidth(boolean bold) {
-        int width = 0;
-        for (int i = 0; i < label.length; i++) {
-            width = Math.max(width,
-                    diagram.getPaintDevice().getTextWidth(label[i], bold));
-        }
-        return width;
-    }
-
-    protected int textHeight() {
-        return diagram.getPaintDevice().getTextHeight() * label.length;
-    }
 	
 	public void draw (Graphics2D g2d) {
 	    Graphics2D g2 = (Graphics2D) g2d.create();
@@ -210,49 +209,8 @@ public abstract class Drawable implements Constants {
 	public final void setVisible(boolean visible) {
 		this.visible = visible;
 	}
-
-	protected static final void drawMultilineString(Graphics2D g,
-			Color color,
-			String[] string, int x, int y, int simpleHeight, int width,
-			Color background, boolean center, boolean underline) {
-		if (background != null) {
-			g.setColor(background);
-			int height = 2 + string.length * simpleHeight;
-			int top;
-			top = y - height + 2;
-			g.fillRect(x - 1, top, width, height);
-		}
-		g.setColor(color);
-		for (int i = 0; i < string.length; i++) {
-			int yy = y - i * simpleHeight;
-			String str = string[string.length-1-i];
-			int _x = x;
-			int tw = 0;
-			if (center || underline) {
-				tw = g.getFontMetrics().stringWidth(str);
-			}
-			if (center) {
-				_x = x + width / 2 - tw / 2;
-			}
-			if (underline) {
-				g.drawLine(_x,  yy+2, _x + tw,  yy+2);
-			}
-			g.drawString(str, _x, yy);
-
-		}
-	}
 	
-    protected void drawMultilineString(Graphics2D g, Color color, int x, int y,
-            Color background, boolean center, boolean underline) {
-        drawMultilineString(g, color, label, x, y, diagram.getPaintDevice()
-                .getTextHeight(), textWidth(), background, center, underline);
-    }
+
     
-    protected void drawMultilineString(Graphics2D g, Color color, int x, int y,
-            Color background) {
-    	drawMultilineString(g, color, x, y, background, false, false);
-
-    }
-
 }
 // {{core}}

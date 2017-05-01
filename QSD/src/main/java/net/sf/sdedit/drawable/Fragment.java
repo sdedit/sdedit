@@ -24,6 +24,7 @@
 package net.sf.sdedit.drawable;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -109,6 +110,8 @@ public class Fragment extends Drawable
             this.type = type + "  ";
             this.condition = condition.equals("") ? "" : "[" + condition + "]";
         }
+        addLabel().setLabel(type).setBold(true);
+        addLabel().setLabel(condition).setBold(true);
         this.diagram = diagram;
         includedElements = new HashSet<SequenceElement>();
         typeTextPadding = diagram.getConfiguration().getFragmentTextPadding();
@@ -158,7 +161,7 @@ public class Fragment extends Drawable
      *            below the dashed line
      */
     public void addSection(String sectionCondition) {
-        int h = diagram.getPaintDevice().getTextHeight(true);
+        int h = getLabel().textHeight();
         diagram.extendLifelines(diagram.getConfiguration()
                 .getSeparatorTopMargin());
         separators.add(new Pair<Integer, String>(diagram.getVerticalPosition(),
@@ -220,16 +223,16 @@ public class Fragment extends Drawable
      * @return the height of the label of the fragment
      */
     public int getLabelHeight () {
-        return diagram.getPaintDevice().getTextHeight(true) + 2;
+        return getLabel().textHeight() + 2;
     }
 
     /**
      * @see net.sf.sdedit.drawable.Drawable#drawObject(java.awt.Graphics2D)
      */
     protected void drawObject(Graphics2D g2d) {
-        int typeWidth = diagram.getPaintDevice().getTextWidth(type, true);
-        int textWidth = diagram.getPaintDevice().getTextWidth(condition, true);
-        int textHeight = diagram.getPaintDevice().getTextHeight(true);
+        int typeWidth = getLabel(0).textWidth();
+        int textWidth = getLabel(1).textWidth();
+        int textHeight = getLabel(0).textHeight();
 
         int leftMargin = typeWidth + 4 + typeTextPadding;
 
@@ -242,7 +245,7 @@ public class Fragment extends Drawable
    
         g2d.setStroke(Strokes.getStroke(StrokeType.SOLID, thickness));
 
-        g2d.setFont(diagram.getPaintDevice().getFont(true));
+        g2d.setFont(diagram.getPaintDevice().getFont().deriveFont(Font.BOLD));
 
         g2d.setColor(diagram.getConfiguration().getFragmentEdgeColor());        
         g2d.drawRect(getLeft(), getTop(), getWidth(), getHeight());
@@ -259,8 +262,8 @@ public class Fragment extends Drawable
             g2d.drawLine(getLeft() + typeWidth + typeTextPadding + 2, getTop()
                     + textHeight - 2, getLeft() + typeWidth + typeTextPadding
                     + 2, getTop());
-            g2d.drawString(type, getLeft() + typeTextPadding, getTop()
-                    + textHeight - 1);
+            getLabel(0).drawLabel(g2d, getLeft() + typeTextPadding, getTop()
+                    + textHeight - 1, null, null);
         }
 
         if (condition.length() > 0) {
@@ -270,8 +273,8 @@ public class Fragment extends Drawable
                     textWidth, textHeight);
 
             g2d.setColor(Color.BLACK);
-            g2d.drawString(condition, getLeft() + leftMargin, getTop() + 2
-                    * textHeight - 1);
+            getLabel(1).drawLabel(g2d, getLeft() + leftMargin, getTop() + 2
+                    * textHeight - 1, null, null);
 
         }
 

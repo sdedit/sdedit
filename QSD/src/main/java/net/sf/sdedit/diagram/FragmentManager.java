@@ -212,7 +212,7 @@ public final class FragmentManager {
 
 	private void openFragment(String type, String text) {
 		Fragment fragment = new Fragment(type, text, diagram);
-		int textHeight = diagram.getPaintDevice().getTextHeight();
+		int textHeight = fragment.getLabelHeight();
 		int extension = 5 + (fragment.getCondition().length() > 0 ? textHeight * 2
 				: textHeight);
 		diagram.getPaintDevice().announce(

@@ -30,6 +30,8 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Stroke;
 
+import javax.swing.JLabel;
+
 import net.sf.sdedit.diagram.Lifeline;
 import net.sf.sdedit.diagram.MessageData;
 import net.sf.sdedit.diagram.SequenceDiagram;
@@ -62,8 +64,6 @@ public class Arrow extends SequenceElement {
 
 	protected final boolean isAnswer;
 
-	private int fontStyle;
-
 	// protected final Color color;
 
 	private static String[] splitMessage(String text, int length) {
@@ -90,27 +90,21 @@ public class Arrow extends SequenceElement {
 			headType = ArrowHeadType.CLOSED;
 			headSize = 0;
 		}
-		int totalTextHeight = textHeight();
+		
+		if (message.getData().isStatic() && !isAnswer) {
+			getLabel().setItalic(true);
+		}
+		
+		if (message.getData().isBold() && !isAnswer) {
+			getLabel().setBold(true);
+		}
+		
+		int totalTextHeight = getLabel().textHeight();
 		setHeight(totalTextHeight + configuration().getMessageLabelSpace() + diagram().arrowSize / 2);
 
-		setWidth(headSize + leftPadding() + rightPadding() + diagram().messagePadding + textWidth());
-
-		fontStyle = (message.getData().isStatic() && !isAnswer ? Font.ITALIC : 0)
-				| (message.getData().isBold() && !isAnswer ? Font.BOLD : 0);
-
+		setWidth(headSize + leftPadding() + rightPadding() + diagram().messagePadding + getLabel().textWidth());
 	}
 
-	protected int textWidth() {
-		boolean bold = (fontStyle & Font.BOLD) > 0;
-		return textWidth(bold);
-	}
-
-	protected Font getFont(Font originalFont) {
-		if (fontStyle == 0) {
-			return originalFont;
-		}
-		return originalFont.deriveFont(fontStyle);
-	}
 
 	/**
 	 * Creates a new <tt>Arrow</tt>.
@@ -158,13 +152,14 @@ public class Arrow extends SequenceElement {
 	 *         and the arrow
 	 */
 	public int getInnerHeight() {
-		return textHeight() + diagram().messageLabelSpace;
+		return getLabel().textHeight() + diagram().messageLabelSpace;
 	}
 
 	public static int getInnerHeight(Message message) {
 		// int l = message.getText().split("\\\\n").length;
-		int l = splitMessage(message.getText(), message.getDiagram().messageLineLength).length;
-		return message.getDiagram().getPaintDevice().getTextHeight() * l
+		String[] msg = splitMessage(message.getText(), message.getDiagram().messageLineLength);
+		JLabel label = DrawableLabel.makeLabel(msg, message.getDiagram().getPaintDevice().getFont(), false, false, false);
+		return label.getPreferredSize().height
 				+ message.getDiagram().getConfiguration().getMessageLabelSpace();
 	}
 
@@ -199,7 +194,6 @@ public class Arrow extends SequenceElement {
 	@Override
 	protected void drawObject(Graphics2D g2d) {
 		Font font = g2d.getFont();
-		g2d.setFont(getFont(font));
 		g2d.setColor(getFontColor());
 		drawText(g2d);
 		g2d.setFont(font);
@@ -261,7 +255,7 @@ public class Arrow extends SequenceElement {
 	}
 
 	protected void drawText(Graphics2D g2d) {
-		drawMultilineString(g2d, getFontColor(), textPoint.x, textPoint.y, getBackgroundColor());
+		getLabel().drawLabel(g2d, textPoint.x, textPoint.y, getFontColor(), getBackgroundColor());
 	}
 
 	/**
@@ -296,9 +290,9 @@ public class Arrow extends SequenceElement {
 
 		int sgn = align == Direction.LEFT ? 1 : -1;
 
-		int text_x = sgn == 1 ? x_from - diagram().messagePadding - textWidth() - rightPadding()
+		int text_x = sgn == 1 ? x_from - diagram().messagePadding - getLabel().textWidth() - rightPadding()
 				: x_from + diagram().messagePadding + leftPadding();
-		int v = getTop() + textHeight() + diagram().messageLabelSpace;
+		int v = getTop() + getLabel().textHeight() + diagram().messageLabelSpace;
 
 		pts = new Point[2];
 
@@ -372,8 +366,8 @@ public class Arrow extends SequenceElement {
 			r = new java.awt.Rectangle();
 			r.x = textPoint.x;
 			r.y = textPoint.y;
-			r.height = textHeight();
-			r.width = textWidth();
+			r.height = getLabel().textHeight();
+			r.width = getLabel().textWidth();
 		} else {
 			r = super.getRectangle();
 		}

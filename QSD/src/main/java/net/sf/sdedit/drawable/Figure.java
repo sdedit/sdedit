@@ -39,12 +39,6 @@ import net.sf.sdedit.drawable.Strokes.StrokeType;
  */
 public class Figure extends Drawable {
 
-    private int textHeight;
-
-    private int textWidth;
-
-    private boolean underline;
-
     private int actorHeight;
 
     private int actorWidth;
@@ -72,20 +66,14 @@ public class Figure extends Drawable {
         } else {
             lab = actor.getName();
         }
-        setLabel(lab.split("\\\\n"));
-        this.underline = underline;
-        textHeight = actor.getDiagram().getPaintDevice().getTextHeight();
-        for (String l : getLabel()) {
-        	int tw = actor.getDiagram().getPaintDevice().getTextWidth(l);
-        	if (tw > textWidth) {
-        		textWidth = tw;
-        	}
-        }
+        DrawableLabel label = addLabel();
+        label.setLabel(lab.split("\\\\n"));
+        label.setUnderlined(underline);
         int width = Math.max(actor.getDiagram().getConfiguration()
-                .getActorWidth(), textWidth);
+                .getActorWidth(), label.textWidth());
         setWidth(width);
         actorHeight = actor.getDiagram().getConfiguration().getHeadHeight();
-        setHeight(actorHeight + 3 + getLabel().length*textHeight);
+        setHeight(actorHeight + 3 + label.textHeight());
         actorWidth = actor.getDiagram().getConfiguration().getActorWidth();
         shouldShadow = actor.getDiagram().getConfiguration()
                 .isShouldShadowParticipants();
@@ -95,10 +83,11 @@ public class Figure extends Drawable {
      * @see net.sf.sdedit.drawable.Drawable#drawObject(java.awt.Graphics2D)
      */
     protected void drawObject(Graphics2D g2d) {
-    	drawMultilineString(g2d, Color.BLACK,
-        		getLeft() + getWidth() / 2 - textWidth / 2,
+    	getLabel().drawLabel(g2d, 
+        		getLeft() + getWidth() / 2 - getLabel().textWidth() / 2,
         		getTop() + getHeight() - 3,
-        		Color.WHITE, true, underline);
+        		Color.BLACK,
+        		Color.WHITE);
         renderActor(g2d, getTop(), getTop() + actorHeight - 2, getLeft()
                 + getWidth() / 2, actorWidth);
     }

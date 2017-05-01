@@ -50,10 +50,10 @@ public abstract class SequenceElement extends Drawable implements Constants {
     protected final Configuration configuration;
 
     protected SequenceElement(SequenceDiagram diagram, Lifeline boundary0,
-            Lifeline boundary1, String[] label, Direction align, int y) {
+            Lifeline boundary1, String[] text, Direction align, int y) {
     	super(diagram);
         setTop(y);
-        setLabel(label);
+        addLabel().setLabel(text);
         this.align = align;
         configuration = configuration();
         findEndpoints(boundary0, boundary1);

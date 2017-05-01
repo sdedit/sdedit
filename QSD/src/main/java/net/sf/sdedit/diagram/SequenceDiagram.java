@@ -339,7 +339,7 @@ public final class SequenceDiagram implements Diagram, Iterable<Lifeline> {
 
 		String description[] = provider.getDescription();
 		if (description != null) {
-			text = new Text(description, paintDevice);
+			text = new Text(description, this);
 			text.setTop(conf.getUpperMargin());
 			text.setLeft(conf.getLeftMargin());
 			verticalPosition = text.getBottom() + 3;

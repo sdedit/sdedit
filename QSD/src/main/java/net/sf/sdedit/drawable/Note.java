@@ -113,10 +113,10 @@ public class Note extends SequenceElement
         this.location = location;
         padding = configuration().getNotePadding();
         margin = configuration().getNoteMargin();
-        int totalTextHeight = textHeight();
+        int totalTextHeight = getLabel().textHeight();
         setHeight(margin * 2 + padding + totalTextHeight);
         setWidth(margin * 2 + padding * 2 + leftPadding() + rightPadding()
-                + textWidth());
+                + getLabel().textWidth());
         targets = new LinkedList<Point>();
         targetId = 0;
         subId = -1;
@@ -283,8 +283,8 @@ public class Note extends SequenceElement
         g2d.setColor(Color.BLACK);
         g2d.draw(p1);
         g2d.draw(p2);
-        drawMultilineString(g2d, Color.BLACK, left + margin + padding, getTop()
-                + getHeight() - margin - padding, null);
+        getLabel().drawLabel(g2d, left + margin + padding, getTop()
+                + getHeight() - margin - padding, Color.BLACK, Color.WHITE);
         for (Point anchor : targets) {
             Point start = findStart(anchor);
             g2d.setStroke(Strokes.getStroke(StrokeType.DOTTED, 1));

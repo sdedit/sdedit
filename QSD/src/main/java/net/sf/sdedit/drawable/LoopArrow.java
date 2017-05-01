@@ -24,7 +24,6 @@
 
 package net.sf.sdedit.drawable;
 
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
@@ -60,7 +59,7 @@ public class LoopArrow extends Arrow {
 	private void init() {
 		Message message = getMessage();
 		xExtent = diagram().selfMessageXExtent;
-		setWidth(diagram().messagePadding + xExtent + diagram().subLifelineWidth + textWidth());
+		setWidth(diagram().messagePadding + xExtent + diagram().subLifelineWidth + getLabel().textWidth());
 		from = message.getCaller().getView();
 		to = message.getCallee().getView();
 		if (getAlign() == Direction.LEFT) {
@@ -90,10 +89,7 @@ public class LoopArrow extends Arrow {
 
 	@Override
 	protected void drawObject(Graphics2D g) {
-		Font font = g.getFont();
-		g.setFont(getFont(font));
-		drawMultilineString(g, getFontColor(), textPoint.x, textPoint.y, getBackgroundColor());
-		g.setFont(font);
+		getLabel().drawLabel(g, textPoint.x, textPoint.y, getFontColor(), getBackgroundColor());
 		g.setColor(getColor());
 		int sgn = getAlign() == Direction.RIGHT ? 1 : -1;
 		g.setStroke(getStroke() == ArrowStroke.SOLID ? solid() : dashed());
@@ -102,7 +98,7 @@ public class LoopArrow extends Arrow {
 	}
 
 	public int getInnerHeight() {
-		return textHeight();
+		return getLabel().textHeight();
 	}
 
 	/**
@@ -123,7 +119,7 @@ public class LoopArrow extends Arrow {
 
 	@Override
 	public void computeLayoutInformation() {
-		int y_to = getTop() + textHeight();
+		int y_to = getTop() + getLabel().textHeight();
 		int y_from = getTop();
 
 		int x_from, x_to;
@@ -149,8 +145,8 @@ public class LoopArrow extends Arrow {
 		pts[3] = new Point(x_to, y_to);
 
 		int textOffset = getAlign() == Direction.RIGHT ? diagram().messagePadding
-				: -textWidth() - diagram().messagePadding;
-		int textY = isAnswer ? y_to : y_from + textHeight();
+				: -getLabel().textWidth() - diagram().messagePadding;
+		int textY = isAnswer ? y_to : y_from + getLabel().textHeight();
 		textPoint = new Point(outer_x + textOffset, textY);
 	}
 }
