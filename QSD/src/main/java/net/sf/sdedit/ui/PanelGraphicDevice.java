@@ -167,7 +167,6 @@ public class PanelGraphicDevice extends
 	}
 
 	public void setAntialiasing(boolean on) {
-		setFontRenderContext(on);
 		antialias = on;
 	}
 
@@ -295,7 +294,7 @@ public class PanelGraphicDevice extends
 			g2.setColor(Color.WHITE);
 			g2.fill(clipBounds);
 			if (!empty) {
-				g2.setFont(PanelGraphicDevice.this.getFont(false));
+				g2.setFont(PanelGraphicDevice.this.getFont());
 				if (antialias) {
 					g2.setRenderingHints(new RenderingHints(
 							RenderingHints.KEY_ANTIALIASING,

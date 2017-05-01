@@ -50,10 +50,9 @@ public abstract class G2DGraphicsDevice extends AbstractGraphicDevice
      * gain information about the font metrics (which should be the same
      * as in the final graphics context)
      * 
-     * @param bold flag denoting if the bold font is set
      * @return a small-sized dummy graphics context
      */
-    protected abstract Graphics2D createDummyGraphics(boolean bold);
+    protected abstract Graphics2D createDummyGraphics();
     
     private Graphics2D g2d;
     

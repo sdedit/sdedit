@@ -81,10 +81,10 @@ public class ImageGraphicsDevice extends G2DGraphicsDevice implements
 	}
 
 	@Override
-	protected Graphics2D createDummyGraphics(boolean bold) {
+	protected Graphics2D createDummyGraphics() {
 		Image img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = (Graphics2D) img.getGraphics();
-		Font font = getFont(bold);
+		Font font = getFont();
 		g2d.setFont(font);
 		return g2d;
 	}
@@ -102,7 +102,7 @@ public class ImageGraphicsDevice extends G2DGraphicsDevice implements
 		if (antialias) {
 			g2d.setRenderingHints(AALIAS);
 		}
-		g2d.setFont(getFont(false));
+		g2d.setFont(getFont());
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, getWidth(), getHeight());
 		return g2d;

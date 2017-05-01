@@ -56,7 +56,7 @@ public class NullPaintDevice implements PaintDevice {
         return diagram;
     }
 
-    public Font getFont(boolean bold) {
+    public Font getFont() {
         return Font.decode("Dialog");
     }
 

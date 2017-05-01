@@ -38,24 +38,8 @@ public abstract class AbstractPaintDevice implements PaintDevice {
         this.graphicDevice = graphicDevice;
     }
     
-    public Font getFont (boolean bold) {
-        return graphicDevice.getFont(bold);
-    }
-    
-    public int getTextWidth(String text, boolean bold) {
-        return getGraphicDevice().getTextWidth(text, bold);
-    }
-
-    public int getTextWidth(String text) {
-        return getTextWidth(text, false);
-    }
-
-    public int getTextHeight(boolean bold) {
-        return getGraphicDevice().getTextHeight(bold);
-    }
-
-    public int getTextHeight() {
-        return getTextHeight(false);
+    public Font getFont () {
+        return graphicDevice.getFont();
     }
     
     public void close() {

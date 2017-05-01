@@ -38,21 +38,13 @@ public interface PaintDevice extends Iterable<Drawable> {
 	 */
 	public void reinitialize();
 
-	public Font getFont(boolean bold);
+	public Font getFont();
 
 	public void addExtraordinary(Drawable drawable);
 
 	public void append(Drawable drawable);
 
 	public boolean isEmpty();
-
-	public int getTextWidth(String text, boolean bold);
-
-	public int getTextWidth(String text);
-
-	public int getTextHeight(boolean bold);
-
-	public int getTextHeight();
 
 	public int getWidth();
 
