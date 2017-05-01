@@ -37,9 +37,9 @@ public class FatalError extends SequenceDiagramError {
 
 	private static final long serialVersionUID = -6422401715307224806L;
 	
-	private RuntimeException cause;
+	private Throwable cause;
 	
-	public FatalError(DiagramDataProvider provider, RuntimeException re) {
+	public FatalError(DiagramDataProvider provider, Throwable re) {
 		super(provider, re.getMessage());
 		this.cause = re;
 	}
@@ -52,7 +52,7 @@ public class FatalError extends SequenceDiagramError {
 	 * rendering process
 	 */
 	@Override
-	public RuntimeException getCause () {
+	public Throwable getCause () {
 		return cause;
 	}
 }

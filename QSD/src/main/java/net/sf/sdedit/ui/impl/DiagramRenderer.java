@@ -90,12 +90,12 @@ public class DiagramRenderer implements Runnable {
 			DiagramTab tab = (DiagramTab) factory.getProviderFactory();
 			try {
 				factory.generateDiagram(tab.getConfiguration().getDataObject());
-			} catch (RuntimeException e) {
-				e.printStackTrace();
-				err = new FatalError(factory.getProvider(), e);
 			} catch (DiagramError e) {
 				err = e;
-			}
+			} catch (Throwable e) {
+				e.printStackTrace();
+				err = new FatalError(factory.getProvider(), e);
+			} 
 			doDisplay(tab, factory.getDiagram(), err);
 		}
 	}
