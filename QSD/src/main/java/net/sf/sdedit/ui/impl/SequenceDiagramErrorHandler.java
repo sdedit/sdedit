@@ -52,7 +52,7 @@ public class SequenceDiagramErrorHandler extends DiagramErrorHandler {
         return (SequenceDiagram) tab.getDiagram();
     }
     
-    protected void handleBug(Diagram diagram, RuntimeException ex) {
+    protected void handleBug(Diagram diagram, Throwable ex) {
 
         String name = "sdedit-errorlog-" + System.currentTimeMillis();
 
