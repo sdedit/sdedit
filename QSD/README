@@ -1,5 +1,4 @@
-How to build QSD (Quick Sequence Diagram Editor) with Maven 3 and
-run it:
+How to build QSD (Quick Sequence Diagram Editor) with Maven 3 and run it:
 
 1. Get QSD-lib and QSD from github.
 2. cd to the QSD-lib directory
