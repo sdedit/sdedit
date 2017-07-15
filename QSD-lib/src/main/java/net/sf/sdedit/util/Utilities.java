@@ -1014,7 +1014,7 @@ public class Utilities {
 				} else {
 					boolean match = args.length == classes.length;
 					for (int j = 0; match && j < args.length; j++) {
-						match = classes[j].isAssignableFrom(args[j].getClass())
+						match = args[j] == null || classes[j].isAssignableFrom(args[j].getClass())
 								|| primitiveClasses.get(classes[j]) == args[j].getClass();
 					}
 					if (match) {
