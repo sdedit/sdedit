@@ -1545,8 +1545,8 @@ public class Utilities {
 		return min;
 	}
 
-	public static <T> T fromMap(Map<String, Object> map, Class<T> cls) {
-		T t = newInstance(cls);
+	public static <T> T fromMap(Map<String, Object> map, Class<T> cls, Object... constructorArgs) {
+		T t = newInstance(cls, constructorArgs);
 		for (PropertyDescriptor prop : getProperties(cls)) {
 			Object value = map.get(prop.getName());
 			if (value != null) {
