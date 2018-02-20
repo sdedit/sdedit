@@ -75,7 +75,7 @@ public interface Configuration extends DataObject {
 	@Adjustable(dflt = 5, min = 1, max = 100, info = "Top margin", category = "Margins")
 	public void setUpperMargin(int upperMargin);
 
-	@Adjustable(editable = false, info = "Vertical split", category = "Misc")
+	@Adjustable(info = "Editor on bottom", category = "Misc")
 	public void setVerticallySplit(boolean verticallySplit);
 
 	@Adjustable(editable = true, info = "Arrow thickness", category = "Line thickness", min = 1)
