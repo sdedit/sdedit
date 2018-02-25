@@ -274,11 +274,11 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 		remove(splitter);
 		switch (layout) {
 
-		case 0:
+		case 0: // Editor on Left
 			splitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, textScroller, getZoomPane());
 			splitter.setResizeWeight(0.2);
 			break;
-		case 1:
+		case 1: // Editor on Bottom
 			splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, getZoomPane(), textScroller);
 			splitter.setOneTouchExpandable(true);
 			splitter.setResizeWeight(0.8);
@@ -509,6 +509,8 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 			changeTimer.stop();
 			changeTimer.setDelay((Integer) evt.getNewValue());
 			changeTimer.start();
+		} else if (evt.getPropertyName().toLowerCase().equals("verticallysplit")) {
+			layout(((Boolean) evt.getNewValue())?1:0);
 		}
 		somethingChanged();
 	}
