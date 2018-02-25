@@ -42,6 +42,10 @@ import static net.sf.sdedit.editor.Shortcuts.SPLIT_LEFT_RIGHT;
 import static net.sf.sdedit.editor.Shortcuts.SPLIT_TOP_BOTTOM;
 import static net.sf.sdedit.editor.Shortcuts.UNDO;
 import static net.sf.sdedit.editor.Shortcuts.WIDEN;
+
+import static net.sf.sdedit.editor.Shortcuts.GOTO_NEXT_TAB;
+import static net.sf.sdedit.editor.Shortcuts.GOTO_PREVIOUS_TAB;
+
 import static net.sf.sdedit.editor.Shortcuts.getShortcut;
 import static net.sf.sdedit.ui.components.buttons.ManagedAction.ICON_NAME;
 
@@ -608,7 +612,8 @@ public final class Actions implements Constants {
 		nextAction = new TabAction<Tab>(Tab.class, ui) {
 
 			{
-				putValue(Action.NAME, "Go to next tab");
+				
+				putValue(Action.NAME,getShortcut(GOTO_NEXT_TAB) + "Go to next tab");
 				putValue(ManagedAction.ID, "GO_TO_NEXT_TAB");
 				putValue(ICON_NAME, "next");
 				putValue(Action.SHORT_DESCRIPTION, "Go to next tab");
@@ -623,7 +628,7 @@ public final class Actions implements Constants {
 		previousAction = new TabAction<Tab>(Tab.class, ui) {
 
 			{
-				putValue(Action.NAME, "Go to previous tab");
+				putValue(Action.NAME, getShortcut(GOTO_PREVIOUS_TAB) + "Go to previous tab");
 				putValue(ManagedAction.ID, "GO_TO_PREVIOUS_TAB");
 				putValue(ICON_NAME, "previous");
 				putValue(Action.SHORT_DESCRIPTION, "Go to previous tab");

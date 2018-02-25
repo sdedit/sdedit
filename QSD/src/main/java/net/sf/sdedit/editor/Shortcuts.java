@@ -164,8 +164,8 @@ public class Shortcuts {
 		shortcuts[REDRAW] = "F5";
 		shortcuts[ENABLE_THREADS] = ctrl("shift M");
 		
-		shortcuts[GOTO_NEXT_TAB] = ctrl("tab");
-		shortcuts[GOTO_PREVIOUS_TAB] = ctrl("shift tab");
+		shortcuts[GOTO_NEXT_TAB] = ctrl("shift F6");
+		shortcuts[GOTO_PREVIOUS_TAB] = ctrl("F6");
 	}
 
 	private void initForMac() {
