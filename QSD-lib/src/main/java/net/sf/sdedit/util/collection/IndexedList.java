@@ -425,7 +425,7 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 	public T previous(T elem) {
 		Entry previous = entryMap.get(elem).previous;
 		if (previous == null) {
-			return null;
+			return (T) last.content;
 		}
 		return (T) previous.content;
 	}
@@ -434,7 +434,7 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 	public T next(T elem) {
 		Entry next = entryMap.get(elem).next;
 		if (next == null) {
-			return null;
+			return (T) first.content;
 		}
 		return (T) next.content;
 	}

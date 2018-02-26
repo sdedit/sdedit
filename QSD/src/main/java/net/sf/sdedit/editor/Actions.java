@@ -557,10 +557,10 @@ public final class Actions implements Constants {
 
 		splitLeftRightAction = new TabAction<DiagramTextTab>(DiagramTextTab.class, ui) {
 			{
-				putValue(Action.NAME, getShortcut(SPLIT_LEFT_RIGHT) + "Split view left/right");
+				putValue(Action.NAME, getShortcut(SPLIT_LEFT_RIGHT) + "Editor on left");
 				putValue(ManagedAction.ID, "SPLIT_LEFT_RIGHT");
 				putValue(ICON_NAME, "view_left_right");
-				putValue(Action.SHORT_DESCRIPTION, "Split view left/right");
+				putValue(Action.SHORT_DESCRIPTION, "Editor on left");
 			}
 
 			protected void _actionPerformed(DiagramTextTab tab, ActionEvent evt) {
@@ -570,10 +570,10 @@ public final class Actions implements Constants {
 
 		splitTopBottomAction = new TabAction<DiagramTextTab>(DiagramTextTab.class, ui) {
 			{
-				putValue(Action.NAME, getShortcut(SPLIT_TOP_BOTTOM) + "Split view top/bottom");
+				putValue(Action.NAME, getShortcut(SPLIT_TOP_BOTTOM) + "Editor on bottom");
 				putValue(ManagedAction.ID, "SPLIT_TOP_BOTTOM");
 				putValue(ICON_NAME, "view_top_bottom");
-				putValue(Action.SHORT_DESCRIPTION, "Split view top/bottom");
+				putValue(Action.SHORT_DESCRIPTION, "Editor on bottom");
 			}
 
 			protected void _actionPerformed(DiagramTextTab tab, ActionEvent evt) {
