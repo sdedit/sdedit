@@ -250,7 +250,7 @@ public final class UserInterfaceImpl extends JFrame implements Constants, UserIn
 		Container pane = getContentPane();
 		pane.setLayout(new BorderLayout());
 
-		tabContainer = new TabNavigatorContainer(0.2);
+		tabContainer = new TabNavigatorContainer(0.01);
 
 		tabContainer.addCategory("Sequence diagrams", Icons.getIcon("text"));
 
