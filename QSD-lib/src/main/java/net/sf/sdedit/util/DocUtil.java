@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
@@ -70,21 +71,26 @@ import org.xml.sax.SAXException;
 
 public class DocUtil {
 
-	private static DocumentBuilder documentBuilder;
-
-	private static Transformer transformer;
-
-	private static XPathFactory xPathFactory = XPathFactory.newInstance();
-
-	private DocUtil() {
-		/* empty */
-	}
-
+	private static String DOCUMENT_BUILDER_CLASS = "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl";
+		
 	static {
+		try {
+			Class.forName(DOCUMENT_BUILDER_CLASS);
+		} catch (Throwable t) {
+			System.err.println("Warning: class not found: " + DOCUMENT_BUILDER_CLASS);
+			DOCUMENT_BUILDER_CLASS = null;
+		}
+	}
+	
+	private static DocumentBuilder documentBuilder() {
 		DocumentBuilderFactory factory = null;
 		try {
-			factory = DocumentBuilderFactory.newInstance();
-
+			/* try -Djaxp.debug=1 */
+			if (DOCUMENT_BUILDER_CLASS == null) {
+				factory = DocumentBuilderFactory.newInstance();
+			} else {
+				factory = DocumentBuilderFactory.newInstance(DOCUMENT_BUILDER_CLASS, null);	
+			}
 			factory.setValidating(false);
 			try {
 				factory.setFeature(
@@ -100,21 +106,30 @@ public class DocUtil {
 			} catch (Throwable pce) {
 				System.err.println("Warning: " + pce.getMessage());
 			}
-
-			documentBuilder = factory.newDocumentBuilder();
-			documentBuilder.setEntityResolver(null);
-			transformer = TransformerFactory.newInstance().newTransformer();
 			factory.setIgnoringElementContentWhitespace(true);
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+			documentBuilder.setEntityResolver(null);
+			return documentBuilder;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new IllegalStateException("cannot instantiate DocumentBuilder", e);
 		}
+	}
+	
+	private static Transformer transformer()  {
+		Transformer transformer;
+		try {
+			transformer = TransformerFactory.newInstance().newTransformer();
+		} catch (Exception e) {
+			throw new IllegalStateException("cannot instantiate Transformer");
+		}
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");	
+		return transformer;
 	}
 
 	public static String evalXPathAsString(Document document, String expression)
 			throws XMLException {
-		XPath xpath = xPathFactory.newXPath();
+		XPath xpath = XPathFactory.newInstance().newXPath();
 		try {
 			return xpath.evaluate(expression, document);
 		} catch (XPathExpressionException xee) {
@@ -141,7 +156,7 @@ public class DocUtil {
 
 	public static Node evalXPathAsNode(Document document, String expression)
 			throws XMLException {
-		XPath xpath = xPathFactory.newXPath();
+		XPath xpath = XPathFactory.newInstance().newXPath();
 		try {
 			Node result = (Node) xpath.evaluate(expression, document,
 					XPathConstants.NODE);
@@ -154,7 +169,7 @@ public class DocUtil {
 
 	public static NodeList evalXPathAsNodeList(Document document,
 			String expression) throws XMLException {
-		XPath xpath = xPathFactory.newXPath();
+		XPath xpath = XPathFactory.newInstance().newXPath();
 		try {
 			return (NodeList) xpath.evaluate(expression, document,
 					XPathConstants.NODESET);
@@ -170,7 +185,7 @@ public class DocUtil {
 	 * @return an empty Document
 	 */
 	public static Document newDocument() {
-		return documentBuilder.newDocument();
+		return documentBuilder().newDocument();
 	}
 
 	public static Node getChild(Node parent, String name) {
@@ -195,7 +210,7 @@ public class DocUtil {
 
 	public static <T extends Node> Iterable<T> select(Node context,
 			String xpath, Class<T> nodeClass) {
-		XPath path = xPathFactory.newXPath();
+		XPath path = XPathFactory.newInstance().newXPath();
 		NodeList nodeList;
 		try {
 			nodeList = (NodeList) path.evaluate(xpath, context,
@@ -335,9 +350,11 @@ public class DocUtil {
 		if (writer == null) {
 			writer = new OutputStreamWriter(out, encoding);
 		}
+		Transformer transformer = transformer();
 		transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
 				omitXMLDeclaration ? "yes" : "no");
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		Source source = new DOMSource(document);
 		Result result = new StreamResult(writer);
 		try {
@@ -368,16 +385,24 @@ public class DocUtil {
 			throws IOException, XMLException {
 		try {
 			InputStreamReader reader = new InputStreamReader(in, encoding);
+			return readDocument(reader);
+		} finally {
+			in.close();
+		}
+	}
+	
+	public static Document readDocument(Reader reader) throws IOException, XMLException {
+		try {
 			InputSource source = new InputSource(new BufferedReader(reader));
 			Document document;
 			try {
-				document = documentBuilder.parse(source);
+				document = documentBuilder().parse(source);
 			} catch (SAXException e) {
 				throw new XMLException("readDocument failed", e);
 			}
-			return document;
+			return document;			
 		} finally {
-			in.close();
+			reader.close();
 		}
 	}
 
