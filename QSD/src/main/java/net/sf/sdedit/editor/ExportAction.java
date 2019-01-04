@@ -25,19 +25,13 @@
 package net.sf.sdedit.editor;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.util.Properties;
 
 import javax.swing.Action;
 
 import net.sf.sdedit.Constants;
-import net.sf.sdedit.diagram.AbstractPaintDevice;
 import net.sf.sdedit.diagram.Diagram;
-import net.sf.sdedit.ui.PanelGraphicDevice;
 import net.sf.sdedit.ui.components.buttons.ManagedAction;
 import net.sf.sdedit.ui.impl.DiagramTab;
-
-import org.freehep.graphicsbase.util.export.ExportDialog;
 
 public class ExportAction extends TabAction<DiagramTab> implements Constants {
 
@@ -45,15 +39,8 @@ public class ExportAction extends TabAction<DiagramTab> implements Constants {
 
 	private ExportDialog exportDialog;
 
-	private Properties properties;
-
-	private AbstractPaintDevice exportDevice;
-
-	private PanelGraphicDevice exportGraphic;
-
 	public ExportAction(Editor editor) {
 		super(DiagramTab.class, editor.getUI());
-		properties = new Properties();
 		putValue(Action.NAME, Shortcuts.getShortcut(Shortcuts.EXPORT) + "E&xport...");
 		putValue(ManagedAction.ICON_NAME, "image");
 		putValue(ManagedAction.ID, "EXPORT");
@@ -65,49 +52,15 @@ public class ExportAction extends TabAction<DiagramTab> implements Constants {
 		if (diagram == null) {
 			return;
 		}
-		exportDevice = (AbstractPaintDevice) diagram.getPaintDevice();
-		exportGraphic = (PanelGraphicDevice) exportDevice.getGraphicDevice();
-		if (exportDevice.isEmpty()) {
-			return;
+		if (exportDialog == null) {
+			exportDialog = new ExportDialog(tab);
+			exportDialog.getConfiguration().setFormat("A4");
+			exportDialog.getConfiguration().setOrientation("Portrait");
+			exportDialog.getConfiguration().setType("png");
+			exportDialog.getConfiguration().setFile(null);
 		}
-		try {
-			File file = tab.getFile();
-			if (exportDialog == null) {
-				String version = System.getProperty("java.version");
-				if (version != null && 9 <= Integer.parseInt(version.split("\\.")[0])) {
-					ui.message("Export not available on JDK >= 9");
-					return;
-				}
-				exportDialog = new ExportDialog("Quick Sequence Diagram Editor");
-				exportDialog.setUserProperties(properties);
-				// exportDialog.addExportDialogListener(this);
-				if (file != null) {
-					properties.setProperty(SAVE_AS_FILE_PROPERTY, file.getAbsolutePath());
-				}
-			} else {
-				String fileName = properties.getProperty(SAVE_AS_FILE_PROPERTY);
-				File current = fileName != null ? new File(fileName) : null;
-				if (current != null && current.exists()) {
-					File dir = current.getParentFile();
-					if (file == null) {
-						current = new File(dir, "untitled");
-					} else {
-						current = new File(dir, file.getName());
-					}
-					properties.setProperty(SAVE_AS_FILE_PROPERTY, current.getAbsolutePath());
-				}
+		exportDialog.open(tab);
 
-			}
-
-			exportDialog.showExportDialog(tab, "Export via FreeHEP library (see http://www.freehep.org/vectorgraphics)",
-					exportGraphic.getPanel().asJComponent(), "untitled");
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			ui.errorMessage(ex, null, "Export failed");
-		} finally {
-			exportGraphic.setAntialiasing(true);
-		}
 	}
 
 }
