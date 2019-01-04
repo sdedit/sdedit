@@ -40,75 +40,74 @@ import net.sf.sdedit.ui.impl.DiagramTab;
 import org.freehep.graphicsbase.util.export.ExportDialog;
 
 public class ExportAction extends TabAction<DiagramTab> implements Constants {
-    
-    private static final long serialVersionUID = -8534175701798362565L;
 
-    private ExportDialog exportDialog;
+	private static final long serialVersionUID = -8534175701798362565L;
 
-    private Properties properties;
-    
-    private AbstractPaintDevice exportDevice;
-    
-    private PanelGraphicDevice exportGraphic;
-    
-    public ExportAction (Editor editor) {
-    	super(DiagramTab.class, editor.getUI());
-        properties = new Properties();
-       	putValue(Action.NAME, Shortcuts.getShortcut(Shortcuts.EXPORT) + "E&xport...");
-        putValue(ManagedAction.ICON_NAME, "image");
-        putValue(ManagedAction.ID, "EXPORT");
-        putValue(Action.SHORT_DESCRIPTION, "Export diagram as bitmap or vector graphics");
-    }
-    
-    protected void _actionPerformed(DiagramTab tab, ActionEvent e) {
-    	Diagram diagram = tab.getDiagram();
-    	if (diagram == null) {
-    		return;
-    	}
-        exportDevice = (AbstractPaintDevice) diagram.getPaintDevice();
-        exportGraphic = (PanelGraphicDevice) exportDevice.getGraphicDevice();
-        if (exportDevice.isEmpty()) {
-            return;
-        }
-        try {
-            File file = tab.getFile();
-            if (exportDialog == null) {
-                exportDialog = new ExportDialog("Quick Sequence Diagram Editor");
-                exportDialog.setUserProperties(properties);
-                //exportDialog.addExportDialogListener(this);
-                if (file != null) {
-                    properties.setProperty(SAVE_AS_FILE_PROPERTY, file
-                            .getAbsolutePath());
-                }
-            } else {
-                String fileName = properties.getProperty(SAVE_AS_FILE_PROPERTY);
-                File current = fileName != null ? new File(fileName) : null;
-                if (current != null && current.exists()) {
-                    File dir = current.getParentFile();
-                    if (file == null) {
-                        current = new File(dir, "untitled");
-                    } else {
-                        current = new File(dir, file.getName());
-                    }
-                    properties.setProperty(SAVE_AS_FILE_PROPERTY, current
-                            .getAbsolutePath());
-                }
+	private ExportDialog exportDialog;
 
-            }
-            
-            exportDialog
-                    .showExportDialog(
-                            tab,
-                            "Export via FreeHEP library (see http://www.freehep.org/vectorgraphics)",
-                            exportGraphic.getPanel().asJComponent(), "untitled");
+	private Properties properties;
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            ui.errorMessage(ex, null,
-                    "Export failed");
-        } finally {
-            exportGraphic.setAntialiasing(true);
-        }
-    }
+	private AbstractPaintDevice exportDevice;
+
+	private PanelGraphicDevice exportGraphic;
+
+	public ExportAction(Editor editor) {
+		super(DiagramTab.class, editor.getUI());
+		properties = new Properties();
+		putValue(Action.NAME, Shortcuts.getShortcut(Shortcuts.EXPORT) + "E&xport...");
+		putValue(ManagedAction.ICON_NAME, "image");
+		putValue(ManagedAction.ID, "EXPORT");
+		putValue(Action.SHORT_DESCRIPTION, "Export diagram as bitmap or vector graphics");
+	}
+
+	protected void _actionPerformed(DiagramTab tab, ActionEvent e) {
+		Diagram diagram = tab.getDiagram();
+		if (diagram == null) {
+			return;
+		}
+		exportDevice = (AbstractPaintDevice) diagram.getPaintDevice();
+		exportGraphic = (PanelGraphicDevice) exportDevice.getGraphicDevice();
+		if (exportDevice.isEmpty()) {
+			return;
+		}
+		try {
+			File file = tab.getFile();
+			if (exportDialog == null) {
+				String version = System.getProperty("java.version");
+				if (version != null && 9 <= Integer.parseInt(version.split("\\.")[0])) {
+					ui.message("Export not available on JDK >= 9");
+					return;
+				}
+				exportDialog = new ExportDialog("Quick Sequence Diagram Editor");
+				exportDialog.setUserProperties(properties);
+				// exportDialog.addExportDialogListener(this);
+				if (file != null) {
+					properties.setProperty(SAVE_AS_FILE_PROPERTY, file.getAbsolutePath());
+				}
+			} else {
+				String fileName = properties.getProperty(SAVE_AS_FILE_PROPERTY);
+				File current = fileName != null ? new File(fileName) : null;
+				if (current != null && current.exists()) {
+					File dir = current.getParentFile();
+					if (file == null) {
+						current = new File(dir, "untitled");
+					} else {
+						current = new File(dir, file.getName());
+					}
+					properties.setProperty(SAVE_AS_FILE_PROPERTY, current.getAbsolutePath());
+				}
+
+			}
+
+			exportDialog.showExportDialog(tab, "Export via FreeHEP library (see http://www.freehep.org/vectorgraphics)",
+					exportGraphic.getPanel().asJComponent(), "untitled");
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			ui.errorMessage(ex, null, "Export failed");
+		} finally {
+			exportGraphic.setAntialiasing(true);
+		}
+	}
 
 }
