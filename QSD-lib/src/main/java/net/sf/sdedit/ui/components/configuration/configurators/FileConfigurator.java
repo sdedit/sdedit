@@ -120,9 +120,11 @@ FocusListener {
 
 	@Override
 	protected void _actionPerformed(ActionEvent evt) {
-		String text = fileTextField.getText();
+		String text = fileTextField.getText().trim();
 		if (!text.equals("")) {
 			getBean().setValue(getProperty(), new File(fileTextField.getText()));
+		} else {
+			getBean().setValue(getProperty(), null);
 		}
 	}
 
