@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2018, Markus Strauch.
+// Copyright (c) 2006 - 2019, Markus Strauch.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
