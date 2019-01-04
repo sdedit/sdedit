@@ -72,6 +72,8 @@ public abstract class AbstractFileHandler implements FileHandler {
 	}
 
 	private File currentFile;
+	
+	private static final char BOM = '\uFEFF';
 
 	protected AbstractFileHandler() {
 
@@ -193,7 +195,11 @@ public abstract class AbstractFileHandler implements FileHandler {
 		PrintWriter writer = new PrintWriter(stringWriter);
 		boolean xml = false;
 		String line = buffered.readLine();
+		boolean firstLine = true;
 		while (line != null) {
+			if (firstLine && line.length() > 0 && line.charAt(0) == BOM) {
+				line = line.substring(1);
+			}
 			xml |= line.trim().startsWith("<?xml");
 			writer.println(line);
 			line = buffered.readLine();
