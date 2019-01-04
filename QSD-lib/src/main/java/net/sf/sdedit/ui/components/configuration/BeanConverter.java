@@ -33,6 +33,7 @@ import java.util.Date;
 
 import javax.swing.KeyStroke;
 
+import net.sf.sdedit.util.DocUtil;
 import net.sf.sdedit.util.Utilities;
 
 import org.w3c.dom.CDATASection;
@@ -110,6 +111,15 @@ public class BeanConverter {
 		}
 		return elem;
 	}
+	
+	private String getText(Element element) {
+		String txt = element.getTextContent();
+		for (CDATASection x : DocUtil.iterate(element.getChildNodes(), CDATASection.class)) {
+			txt = x.getData();
+			break;
+		}
+		return txt;
+	}
 
 	private void setElementValue(Element element) {
 		String name = element.getAttribute("name");
@@ -120,9 +130,9 @@ public class BeanConverter {
 			Object value = null;
 			Class<?> type = property.getPropertyType();
 			if (type.equals(String.class)) {
-				value = element.getTextContent();
+				value = getText(element);
 			} else if (type.equals(String[].class)) {
-				String text = element.getTextContent();
+				String text = getText(element);
 				value = text.split(";;");
 			} else if (type.equals(Integer.TYPE)) {
 				value = parseInt(element.getAttribute("value"));
