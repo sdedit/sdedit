@@ -74,12 +74,13 @@ public class SingleStringSelectionConfigurator<C extends DataObject> extends
 	private void initialize() {
 		comboBox = new JComboBox();
 		
-		comboBox.setEditable(true);
+		//comboBox.setEditable(true);
 		AutoCompletionComboboxEditor editor = new AutoCompletionComboboxEditor(comboBox);
 		
 		
 		comboBox.setEditor(editor);
 		comboBox.setRenderer(this);
+		comboBox.setEditable(false);
 
 		ToolTipManager.sharedInstance().registerComponent(comboBox);
 
