@@ -54,9 +54,7 @@ public class ExportAction extends TabAction<DiagramTab> implements Constants {
 		}
 		if (exportDialog == null) {
 			exportDialog = new ExportDialog(tab);
-			exportDialog.getConfiguration().setFormat("A4");
-			exportDialog.getConfiguration().setOrientation("Portrait");
-			exportDialog.getConfiguration().setType("png");
+			exportDialog.getConfiguration().setType("png");		
 			exportDialog.getConfiguration().setFile(null);
 		}
 		exportDialog.open(tab);
