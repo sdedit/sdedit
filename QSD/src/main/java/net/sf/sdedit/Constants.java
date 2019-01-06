@@ -37,11 +37,6 @@ import net.sf.sdedit.util.OS;
 public interface Constants
 {
     
-    public static final String SAVE_AS_FILE_PROPERTY = "org.freehep.graphicsbase.util.export.ExportDialog.SaveAsFile";
-    
-    public static final String SAVE_AS_TYPE_PROPERTY = "org.freehep.graphicsbase.util.export.ExportDialog.SaveAsType";
-    
-    
     public static final Cursor HAND_CURSOR = new Cursor (Cursor.HAND_CURSOR);
     
     public static final Cursor DEFAULT_CURSOR = new Cursor (Cursor.DEFAULT_CURSOR);
