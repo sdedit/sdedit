@@ -38,6 +38,7 @@ public class ExportDialog extends JDialog implements ConfigurationUIListener, Wi
 
 	public ExportDialog(DiagramTab tab) {
 		super(tab.get_UI());
+		setTitle("Export diagram");
 		this.tab = tab;
 		this.addWindowListener(this);
 		configuration = new Bean<ExportConfiguration>(ExportConfiguration.class, null);
@@ -55,18 +56,16 @@ public class ExportDialog extends JDialog implements ConfigurationUIListener, Wi
 	public ExportConfiguration getConfiguration() {
 		return configuration.getDataObject();
 	}
-
-	private void setFile(String type) {
+	
+	private File getFile (DiagramTab tab, String type) {
 		File file = files.get(tab.getId());
 		if (file == null) {
 			file = tab.getFile();
 		}
-		if (file == null) {
-			configuration.getDataObject().setFile(null);
-		} else if (type != null && !file.getName().toLowerCase().endsWith(type)) {
+		if (file != null && type != null) {
 			file = new File(file.getParentFile(), file.getName().replaceAll("(.*)\\..*", "$1") + "." + type);
-			configuration.getDataObject().setFile(file);
 		}
+		return file;
 	}
 
 	public void open(DiagramTab tab) {
@@ -74,7 +73,7 @@ public class ExportDialog extends JDialog implements ConfigurationUIListener, Wi
 		cui.refreshAll();
 		copy = configuration.copy();
 		UIUtilities.centerWindow(this, this.getOwner());
-		setFile(configuration.getDataObject().getType());
+		configuration.getDataObject().setFile(getFile(tab, configuration.getDataObject().getType()));
 		adjustButton();
 		setVisible(true);
 	}
@@ -112,7 +111,7 @@ public class ExportDialog extends JDialog implements ConfigurationUIListener, Wi
 				FileOutputStream stream = new FileOutputStream(file);
 				try {
 					Exporter exporter = Exporter.getExporter(configuration.getDataObject().getType(),
-							configuration.getDataObject().getOrientation(), configuration.getDataObject().getFormat(),
+							null, null,
 							stream);
 					SDPaintDevice paintDevice = new SDPaintDevice(exporter);
 					DiagramFactory factory = tab.createFactory(paintDevice);
@@ -160,14 +159,17 @@ public class ExportDialog extends JDialog implements ConfigurationUIListener, Wi
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (this.isVisible()) {
 			if (evt.getPropertyName().equals("type")) {
-				setFile((String) evt.getNewValue());
+				String type = (String) evt.getNewValue();
+				File file = getFile(tab, type);
+				if (file != null) {
+					configuration.getDataObject().setFile(file);
+				}
 			}
 			if (evt.getPropertyName().equals("file")) {
 				files.put(tab.getId(), (File) evt.getNewValue());
 			}
 			adjustButton();
 		}
-
 	}
 
 }
