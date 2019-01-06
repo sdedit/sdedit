@@ -151,6 +151,8 @@ public @interface Adjustable {
 	String key() default "";
 
 	boolean forceComboBox() default false;
+	
+	boolean isComboBoxEditable() default true;
 
 	String tooltip() default "";
 
