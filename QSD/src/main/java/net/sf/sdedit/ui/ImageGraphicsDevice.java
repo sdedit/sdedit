@@ -93,7 +93,7 @@ public class ImageGraphicsDevice extends G2DGraphicsDevice implements
 	protected Graphics2D createGraphics() {
 		// if (getDiagram().isThreaded()) {
 		image = new BufferedImage(getWidth(), getHeight(),
-				BufferedImage.TYPE_INT_ARGB);
+				BufferedImage.TYPE_INT_RGB);
 		// } else {
 		// image = new BufferedImage(getWidth(), getHeight(),
 		// BufferedImage.TYPE_USHORT_GRAY);
