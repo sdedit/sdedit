@@ -83,8 +83,11 @@ public class Shortcuts {
 	public static final int EXPORT = 22;
 	
 	public static final int ENABLE_THREADS = 23;
+	
+	public static final int GOTO_NEXT_TAB = 24;
+	public static final int GOTO_PREVIOUS_TAB = 25;
 
-	private static final int MAX = 23;
+	private static final int MAX = 25;
 
 	private static final Shortcuts instance;
 
@@ -160,6 +163,9 @@ public class Shortcuts {
 		shortcuts[PRINT] = ctrl("P");
 		shortcuts[REDRAW] = "F5";
 		shortcuts[ENABLE_THREADS] = ctrl("shift M");
+		
+		shortcuts[GOTO_NEXT_TAB] = ctrl("shift F6");
+		shortcuts[GOTO_PREVIOUS_TAB] = ctrl("F6");
 	}
 
 	private void initForMac() {

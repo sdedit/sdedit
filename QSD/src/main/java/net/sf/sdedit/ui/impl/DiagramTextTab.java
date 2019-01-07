@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2019, Markus Strauch.
+// Copyright (c) 2006 - 2016, Markus Strauch.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -274,11 +274,11 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 		remove(splitter);
 		switch (layout) {
 
-		case 0:
+		case 0: // Editor on Left
 			splitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, textScroller, getZoomPane());
 			splitter.setResizeWeight(0.2);
 			break;
-		case 1:
+		case 1: // Editor on Bottom
 			splitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT, getZoomPane(), textScroller);
 			splitter.setOneTouchExpandable(true);
 			splitter.setResizeWeight(0.8);
@@ -440,8 +440,8 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 			}
 		}
 	}
-
-	@Override
+      
+ @Override
 	/* Clear out the tab, primarily used when being run in server mode and a new sink/source is 
 	 * discovered at runtime and you want to recreate the diagram.
 	 * 
@@ -462,7 +462,7 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 			});
 		}
 	}
-	
+
 	public void append(final String text) {
 		if (isEventDispatchThread()) {
 			textArea.setText(textArea.getText() + text);
@@ -531,6 +531,8 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 			changeTimer.stop();
 			changeTimer.setDelay((Integer) evt.getNewValue());
 			changeTimer.start();
+		} else if (evt.getPropertyName().toLowerCase().equals("verticallysplit")) {
+			layout(((Boolean) evt.getNewValue())?1:0);
 		}
 		somethingChanged();
 	}
@@ -670,7 +672,11 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 		}
 	}
 
-	protected abstract boolean _handleDiagramError(DiagramError error);
+	protected abstract boolean _handleDiagra
+    
+    
+    
+    mError(DiagramError error);
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == changeTimer) {

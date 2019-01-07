@@ -431,6 +431,9 @@ public final class Editor implements Constants, UserInterfaceListener
 		ui.addAction("&View", actions.widenAction, actions.canConfigureActivator);
 		ui.addAction("&View", actions.narrowAction, actions.canNarrowActivator);
 		ui.addConfigurationAction("&View", wrapAction, actions.textTabActivator);
+		ui.addAction("&View",actions.previousAction, actions.previousActivator);
+		ui.addAction("&View",actions.nextAction, actions.nextActivator);
+
 		ui.addAction("&View", actions.fullScreenAction, actions.supportsFullScreenActivator);
 
 		ui.addAction("&View", actions.splitLeftRightAction, actions.horizontalSplitPossibleActivator);
