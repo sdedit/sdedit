@@ -105,7 +105,7 @@ public class TreeNavigatorPane extends JPanel {
         splitPane.setRightComponent(contentPanel);
         splitPane.setResizeWeight(resizeWeight);
         categories = new HashSet<String>();
-        componentHistory = new IndexedList<JComponent>();
+        componentHistory = new IndexedList<JComponent>(true);
         historyEnabled = true;
     }
 
