@@ -672,11 +672,7 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 		}
 	}
 
-	protected abstract boolean _handleDiagra
-    
-    
-    
-    mError(DiagramError error);
+	protected abstract boolean _handleDiagramError(DiagramError error);
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == changeTimer) {
