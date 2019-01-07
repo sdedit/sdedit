@@ -261,11 +261,18 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 	private transient Entry last;
 
 	private transient OntoMap<Annotation, Entry> annotations;
+	
+	private boolean wrapAround;
 
-	public IndexedList() {
+	public IndexedList(boolean wrapAround) {
 		entryMap = new IdentityHashMap<T, Entry>();
 		first = null;
 		last = null;
+		this.wrapAround = wrapAround;
+	}
+	
+	public IndexedList() {
+		this(false);
 	}
 
 	public void addAnnotation(T from, T to, String type, Object value) {
@@ -425,7 +432,7 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 	public T previous(T elem) {
 		Entry previous = entryMap.get(elem).previous;
 		if (previous == null) {
-			return (T) last.content;
+			return wrapAround ?  (T) last.content : null;
 		}
 		return (T) previous.content;
 	}
@@ -434,7 +441,7 @@ public class IndexedList<T> implements Collection<T>, Serializable {
 	public T next(T elem) {
 		Entry next = entryMap.get(elem).next;
 		if (next == null) {
-			return (T) first.content;
+			return wrapAround ? (T) first.content : null;
 		}
 		return (T) next.content;
 	}
