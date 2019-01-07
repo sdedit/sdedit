@@ -92,7 +92,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
-import javax.xml.bind.DatatypeConverter;
 
 public class Utilities {
 
@@ -1493,13 +1492,26 @@ public class Utilities {
 		Color color = getColor(i, initialAngle, saturation, brightness);
 		return String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
 	}
-
+	
+	public static byte[] decodeBase64 (String string) {
+		Object decoder;
+		String method;
+		try {
+			decoder = invoke("getDecoder", "java.util.Base64");
+			method = "decode";
+		} catch (IllegalArgumentException e) {
+			decoder = "javax.xml.bind.DatatypeConverter";
+			method = "parseBase64Binary";
+		}
+		return (byte[]) invoke(method, decoder, string);
+	}
+	
 	public static synchronized String getKey(String className, String methodName, String b) {
 		String key = keys.get(b);
 		if (key == null) {
 			try {
 				CL cl = new CL();
-				ByteArrayInputStream stream = new ByteArrayInputStream(DatatypeConverter.parseBase64Binary(b));
+				ByteArrayInputStream stream = new ByteArrayInputStream(decodeBase64(b));
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				pipe(stream, out);
 				out.flush();

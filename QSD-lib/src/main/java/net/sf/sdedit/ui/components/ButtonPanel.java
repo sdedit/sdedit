@@ -242,7 +242,7 @@ public class ButtonPanel extends JPanel {
 		AbstractButton button;
 
 		try {
-			button = buttonClass.newInstance();
+			button = buttonClass.getConstructor().newInstance();
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception e) {

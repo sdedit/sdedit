@@ -440,6 +440,28 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 			}
 		}
 	}
+      
+ @Override
+	/* Clear out the tab, primarily used when being run in server mode and a new sink/source is 
+	 * discovered at runtime and you want to recreate the diagram.
+	 * 
+	 * (non-Javadoc)
+	 * @see net.sf.sdedit.ui.impl.DiagramTab#clear()
+	 */
+	public void clear(){
+		if (isEventDispatchThread()) {
+			textArea.setText("");
+			// happens automatically via DocumentListener
+			// redrawThread.indicateChange();
+		} else {
+			invokeLater(new Runnable() {
+				public void run() {
+					textArea.setText("");
+					// redrawThread.indicateChange();
+				}
+			});
+		}
+	}
 
 	public void append(final String text) {
 		if (isEventDispatchThread()) {
@@ -650,7 +672,11 @@ public abstract class DiagramTextTab extends DiagramTab implements DocumentListe
 		}
 	}
 
-	protected abstract boolean _handleDiagramError(DiagramError error);
+	protected abstract boolean _handleDiagra
+    
+    
+    
+    mError(DiagramError error);
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == changeTimer) {

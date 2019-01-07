@@ -221,6 +221,10 @@ public class ProcessRunner implements Runnable {
 			}
 		}
 	}
+	
+	public Process getProcess() {
+		return process;
+	}
 
 	public void run() {
 
@@ -240,7 +244,7 @@ public class ProcessRunner implements Runnable {
 				errRedir = new Redirect(process.getErrorStream(), err);
 				errRedir.start();
 			}
-
+			
 			try {
 				process.waitFor();
 				if (inRedir != null) {

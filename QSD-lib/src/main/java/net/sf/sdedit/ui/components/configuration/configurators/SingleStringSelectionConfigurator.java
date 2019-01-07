@@ -51,9 +51,12 @@ public class SingleStringSelectionConfigurator<C extends DataObject> extends
 
 	private BasicComboBoxRenderer renderer;
 
-	public SingleStringSelectionConfigurator(Bean<C> bean, PropertyDescriptor property) {
+	private boolean comboBoxEditable;
+
+	public SingleStringSelectionConfigurator(Bean<C> bean, PropertyDescriptor property, boolean comboBoxEditable) {
 		super(bean, property);
 		renderer = new BasicComboBoxRenderer();
+		this.comboBoxEditable = comboBoxEditable;
 		initialize();
 		
 	}
@@ -73,16 +76,15 @@ public class SingleStringSelectionConfigurator<C extends DataObject> extends
 
 	private void initialize() {
 		comboBox = new JComboBox();
-		
-		comboBox.setEditable(true);
-		AutoCompletionComboboxEditor editor = new AutoCompletionComboboxEditor(comboBox);
-		
-		
-		comboBox.setEditor(editor);
+		if (this.comboBoxEditable) {
+			comboBox.setEditable(true);
+			AutoCompletionComboboxEditor editor = new AutoCompletionComboboxEditor(comboBox);	
+			comboBox.setEditor(editor);
+		} else {
+			comboBox.setEditable(false);
+		}
 		comboBox.setRenderer(this);
-
 		ToolTipManager.sharedInstance().registerComponent(comboBox);
-
 		comboBox.addActionListener(this);
 		getBottomPanel().setLayout(new BorderLayout());
 		getBottomPanel().add(comboBox, BorderLayout.CENTER);

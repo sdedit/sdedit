@@ -81,12 +81,12 @@ public class ConfiguratorFactory<C extends DataObject> {
 					return new SmallStringSelectionConfigurator<C>(bean,
 							property);
 				} 
-				return new SingleStringSelectionConfigurator<C>(bean, property);
+				return new SingleStringSelectionConfigurator<C>(bean, property, adj.isComboBoxEditable());
 			}
 			if (!adj.stringSelectionProvided()) {
 				return new FreeStringConfigurator<C>(bean, property);
 			}
-			return new SingleStringSelectionConfigurator<C>(bean, property);
+			return new SingleStringSelectionConfigurator<C>(bean, property, adj.isComboBoxEditable());
 		}
 		if (property.getPropertyType().equals(String[].class)) {
 			return new StringSetConfigurator<C>(bean, property);

@@ -212,6 +212,14 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 		refreshAll();
 	}
 	
+	public Action getOkAction() {
+		return ok;
+	}
+	
+	public Action getCancelAction() {
+		return cancel;
+	}
+	
 	public ButtonPanel getButtonPanel () {
 		return buttonPanel;
 	}

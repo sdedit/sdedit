@@ -42,6 +42,9 @@ import net.sf.sdedit.ui.impl.DiagramTextTab;
  */
 public class Receiver implements Runnable
 {
+	private static final String RESET_STRING = "@RESET";
+	private static final String END_CONNECTION = "end";
+	
     private BufferedReader reader;
 
     private int delay = 100;
@@ -82,8 +85,15 @@ public class Receiver implements Runnable
 
         	@Override
             protected void perform() {
-        		tab.append(appendBuffer.toString());
-                appendBuffer.setLength(0);
+        		// If the RESET_STRING is found then clear the diagram
+        		// 
+        		if( appendBuffer.toString().trim().equals(RESET_STRING) ){
+        			tab.clear();
+        		}
+        		else{
+        			tab.append(appendBuffer.toString());
+        		}
+        		appendBuffer.setLength(0);
             }
         };
         waiter.start();
@@ -113,7 +123,7 @@ public class Receiver implements Runnable
                 line = reader.readLine();
                 if (line != null) {
                     line = line.trim();
-                    if (line.toLowerCase().equals("end")) {
+                    if (line.toLowerCase().equals(END_CONNECTION)) {
                         return;
                     }
                     synchronized (waiter) {
