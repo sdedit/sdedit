@@ -83,6 +83,8 @@ public @interface Option {
     
     String group() default "";
     
+    String dateFormat() default "";
+    
 
 
 }

@@ -26,6 +26,9 @@ package net.sf.sdedit.cli;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import net.sf.sdedit.util.ObjectFactory;
 
@@ -61,6 +64,10 @@ public class OptionObject {
 
     private boolean isBoolean() {
         return Boolean.TYPE == getType();
+    }
+    
+    private boolean isDate() {
+    	return getType().equals(Date.class);
     }
     
     private Class<?> getType() {
@@ -137,6 +144,13 @@ public class OptionObject {
                     description = "Default is " + dflt;
                 }
             }
+            if (!"".equals(option().dateFormat())) {
+            	if (!"".equals(description)) {
+            		description += ". Date format is " + option().dateFormat();
+            	} else {
+            		description = "Date format is " + option().dateFormat();
+                }
+            }
             description += ".";
         }
         return description;
@@ -196,6 +210,16 @@ public class OptionObject {
         }
         if (value == null) {
             return null;
+        }
+        if (isDate()) {
+        	String fmt = option().dateFormat();
+        	Date date;
+        	try {
+        		date = new SimpleDateFormat(fmt).parse(value);
+        	} catch (ParseException pe) {
+        		throw new IllegalArgumentException("Date not parseable: " + value + "; format is " + fmt, pe);
+        	}
+        	return date;
         }
         return createFromString(getType(), value);
     }
