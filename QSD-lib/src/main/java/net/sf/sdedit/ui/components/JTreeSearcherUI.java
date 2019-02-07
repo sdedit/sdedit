@@ -76,7 +76,6 @@ public class JTreeSearcherUI extends JPanel implements ActionListener {
 		button.removeActionListener(this);
 		textField = null;
 		button = null;
-		
 	}
 
 	public JTreeSearcherUI(JTreeSearcher searcher, String caption) {
@@ -90,7 +89,6 @@ public class JTreeSearcherUI extends JPanel implements ActionListener {
 	public JTree getTree () {
 		return tree;
 	}
-
 
 	public void actionPerformed(ActionEvent e) {
 		e.setSource(this);

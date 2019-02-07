@@ -68,6 +68,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,23 +97,38 @@ import javax.swing.filechooser.FileFilter;
 public class Utilities {
 
 	/*
-	 * Maps the Class representations of the primitive classes onto their
-	 * wrapper classes.
+	 * Maps the Class representations of the primitive classes onto their wrapper
+	 * classes.
 	 */
-	static private Map<Class<?>, Class<?>> primitiveClasses;
+	private static final Map<Class<?>, Class<?>> wrapperClasses;
 
 	private static CL cl;
 
+	private static final Map<String, Class<?>> primitiveClasses;
+
 	static {
-		primitiveClasses = new HashMap<Class<?>, Class<?>>();
-		primitiveClasses.put(Integer.TYPE, Integer.class);
-		primitiveClasses.put(Boolean.TYPE, Boolean.class);
-		primitiveClasses.put(Character.TYPE, Character.class);
-		primitiveClasses.put(Byte.TYPE, Byte.class);
-		primitiveClasses.put(Short.TYPE, Short.class);
-		primitiveClasses.put(Long.TYPE, Long.class);
-		primitiveClasses.put(Float.TYPE, Float.class);
-		primitiveClasses.put(Double.TYPE, Double.class);
+		final HashMap<Class<?>, Class<?>> wrappers = new HashMap<Class<?>, Class<?>>();
+		wrappers.put(Integer.TYPE, Integer.class);
+		wrappers.put(Boolean.TYPE, Boolean.class);
+		wrappers.put(Character.TYPE, Character.class);
+		wrappers.put(Byte.TYPE, Byte.class);
+		wrappers.put(Short.TYPE, Short.class);
+		wrappers.put(Long.TYPE, Long.class);
+		wrappers.put(Float.TYPE, Float.class);
+		wrappers.put(Double.TYPE, Double.class);
+		wrapperClasses = Collections.unmodifiableMap(wrappers);
+		final HashMap<String, Class<?>> primClasses = new HashMap<String, Class<?>>(8, 1.0F);
+		primClasses.put("boolean", boolean.class);
+		primClasses.put("byte", byte.class);
+		primClasses.put("char", char.class);
+		primClasses.put("short", short.class);
+		primClasses.put("int", int.class);
+		primClasses.put("long", long.class);
+		primClasses.put("float", float.class);
+		primClasses.put("double", double.class);
+		primClasses.put("void", void.class);
+		primitiveClasses = Collections.unmodifiableMap(primClasses);
+		
 	}
 
 	private static final String CR = "\r";
@@ -489,7 +505,7 @@ public class Utilities {
 
 	public static <T, C extends Collection<T>> Collection<T> toCollection(Class<C> cls, T[] array) {
 		try {
-			Collection<T> collection = cls.newInstance();
+			Collection<T> collection = cls.getConstructor().newInstance();
 			for (T t : array) {
 				collection.add(t);
 			}
@@ -514,7 +530,7 @@ public class Utilities {
 	public static <T, C extends Collection<T>> Collection<T> flatten(Class<C> cls,
 			Collection<? extends Collection<T>> collections) {
 		try {
-			Collection<T> flatCollection = cls.newInstance();
+			Collection<T> flatCollection = cls.getConstructor().newInstance();
 			for (Collection<T> collection : collections) {
 				flatCollection.addAll(collection);
 			}
@@ -529,13 +545,11 @@ public class Utilities {
 	/**
 	 * Converts (a portion) of the given stream to a byte array.
 	 * 
-	 * @param inputStream
-	 *            the stream from which to read bytes
-	 * @param size
-	 *            the number of bytes to be read, or -1 if the whole of the
-	 *            (remaining) bytes should be read
-	 * @return a byte array of length <tt>size</tt> containing bytes read from
-	 *         the given stream, starting at the current position
+	 * @param inputStream the stream from which to read bytes
+	 * @param size        the number of bytes to be read, or -1 if the whole of the
+	 *                    (remaining) bytes should be read
+	 * @return a byte array of length <tt>size</tt> containing bytes read from the
+	 *         given stream, starting at the current position
 	 * @throws IOException
 	 */
 	public static byte[] toByteArray(InputStream inputStream, final int size) throws IOException {
@@ -558,10 +572,8 @@ public class Utilities {
 	/**
 	 * Saves a byte array to a file.
 	 * 
-	 * @param file
-	 *            the file
-	 * @param bytes
-	 *            the byte array
+	 * @param file  the file
+	 * @param bytes the byte array
 	 * @throws IOException
 	 */
 	public static void save(File file, byte[] bytes) throws IOException {
@@ -578,13 +590,11 @@ public class Utilities {
 	}
 
 	/**
-	 * Returns a string containing the (simple) names of the objects in the
-	 * array, separated by ';', enclosed by square brackets.
+	 * Returns a string containing the (simple) names of the objects in the array,
+	 * separated by ';', enclosed by square brackets.
 	 * 
-	 * @param objects
-	 *            the object array
-	 * @param simple
-	 *            flag denoting if simple class names should be used
+	 * @param objects the object array
+	 * @param simple  flag denoting if simple class names should be used
 	 * @return a string containing the names of the objects' classes
 	 */
 	public static String classesString(Object[] objects, boolean simple) {
@@ -602,8 +612,7 @@ public class Utilities {
 	}
 
 	/**
-	 * The same as {@linkplain #classesString(Object[], boolean)} for
-	 * collections.
+	 * The same as {@linkplain #classesString(Object[], boolean)} for collections.
 	 * 
 	 * @param objects
 	 * @param simple
@@ -854,7 +863,7 @@ public class Utilities {
 	}
 
 	public static Class<?> getWrapperClass(Class<?> primitiveClass) {
-		return primitiveClasses.get(primitiveClass);
+		return wrapperClasses.get(primitiveClass);
 	}
 
 	public static boolean isPrimitiveClass(Class<?> cls) {
@@ -893,6 +902,8 @@ public class Utilities {
 			}
 
 		}
+		// TODO Java>=9 deprecates isAccessible, but canAccess(obj) is not available as of Java<9
+		// Substitute this by !field.canAccess(obj) when compiling against Java 11
 		if (!field.isAccessible()) {
 			field.setAccessible(true);
 		}
@@ -910,22 +921,19 @@ public class Utilities {
 	 * object is a String (containing the class name) resp. an instance of
 	 * java.lang.Class.
 	 * <p>
-	 * The method must have the given name and its formal parameters must match
-	 * the given arguments. If there is more than one matching method, it is
-	 * undefined which one of them will be chosen.
+	 * The method must have the given name and its formal parameters must match the
+	 * given arguments. If there is more than one matching method, it is undefined
+	 * which one of them will be chosen.
 	 * 
 	 * 
-	 * @param methodName
-	 *            a method name
-	 * @param object
-	 *            one of the following
-	 *            <ul>
-	 *            <li>a String, representing a class name</li>
-	 *            <li>a Class object</li>
-	 *            <li>any other object</li>
-	 *            </ul>
-	 * @param args
-	 *            the arguments to be passed to the method
+	 * @param methodName a method name
+	 * @param object     one of the following
+	 *                   <ul>
+	 *                   <li>a String, representing a class name</li>
+	 *                   <li>a Class object</li>
+	 *                   <li>any other object</li>
+	 *                   </ul>
+	 * @param args       the arguments to be passed to the method
 	 * @return
 	 */
 	public static Object invoke(String methodName, Object object, Object... args) {
@@ -945,6 +953,8 @@ public class Utilities {
 			target = object;
 		}
 		method = resolveMethod(theClass, methodName, args);
+		// TODO Java>=9 deprecates isAccessible, but canAccess(obj) is not available as of Java<9
+		// Substitute this by !method.canAccess(obj) when compiling against Java 11
 		if (!method.isAccessible()) {
 			method.setAccessible(true);
 		}
@@ -986,15 +996,12 @@ public class Utilities {
 	}
 
 	/**
-	 * Convenience method for finding a method that fits a name and the types of
-	 * the objects inside the parameter array.
+	 * Convenience method for finding a method that fits a name and the types of the
+	 * objects inside the parameter array.
 	 * 
-	 * @param clazz
-	 *            a class that declares the method that is looked for
-	 * @param name
-	 *            the name of the method
-	 * @param args
-	 *            array of arguments with which the method should be called
+	 * @param clazz a class that declares the method that is looked for
+	 * @param name  the name of the method
+	 * @param args  array of arguments with which the method should be called
 	 * @return a method that has the given names and can be called using the
 	 *         arguments given, <code>null</code> if no such method exists
 	 */
@@ -1014,7 +1021,7 @@ public class Utilities {
 					boolean match = args.length == classes.length;
 					for (int j = 0; match && j < args.length; j++) {
 						match = args[j] == null || classes[j].isAssignableFrom(args[j].getClass())
-								|| primitiveClasses.get(classes[j]) == args[j].getClass();
+								|| wrapperClasses.get(classes[j]) == args[j].getClass();
 					}
 					if (match) {
 						return m;
@@ -1039,7 +1046,7 @@ public class Utilities {
 				boolean match = args.length == classes.length;
 				for (int j = 0; match && j < args.length; j++) {
 					match = classes[j].isAssignableFrom(args[j].getClass())
-							|| primitiveClasses.get(classes[j]) == args[j].getClass();
+							|| wrapperClasses.get(classes[j]) == args[j].getClass();
 				}
 				if (match) {
 					c = constructor;
@@ -1070,7 +1077,7 @@ public class Utilities {
 
 	/**
 	 * 
-	 * @param <T>
+	 * @param          <T>
 	 * @param set0
 	 * @param set1
 	 * @param set0Only
@@ -1080,7 +1087,7 @@ public class Utilities {
 	@SuppressWarnings("unchecked")
 	public static <T> boolean computeDifference(Set<T> set0, Set<T> set1, Ref<Set<T>> set0Only, Ref<Set<T>> set1Only) {
 		try {
-			set0Only.t = set0.getClass().newInstance();
+			set0Only.t = set0.getClass().getConstructor().newInstance();
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception e) {
@@ -1088,7 +1095,7 @@ public class Utilities {
 
 		}
 		try {
-			set1Only.t = set1.getClass().newInstance();
+			set1Only.t = set1.getClass().getConstructor().newInstance();
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception e) {
@@ -1118,7 +1125,7 @@ public class Utilities {
 			n = n + u - r;
 		}
 
-		return new Double(n);
+		return Double.valueOf(n);
 
 	}
 
@@ -1335,12 +1342,12 @@ public class Utilities {
 
 	/**
 	 * If <tt>string</tt> contains <tt>oldString</tt> as a substring, returns
-	 * <tt>string</tt> with the first occurrence of <tt>oldString</tt> replaced
-	 * by <tt>newString</tt>. Otherwise returns <tt>string</tt>.
+	 * <tt>string</tt> with the first occurrence of <tt>oldString</tt> replaced by
+	 * <tt>newString</tt>. Otherwise returns <tt>string</tt>.
 	 * <p>
 	 * Note that in contrast to the <tt>replaceFirst</tt> method of
-	 * <tt>java.lang.String</tt>, <tt>oldString</tt> is interpreted literally,
-	 * not as a regular expression.
+	 * <tt>java.lang.String</tt>, <tt>oldString</tt> is interpreted literally, not
+	 * as a regular expression.
 	 * 
 	 * @param string
 	 * @param oldString
@@ -1389,25 +1396,15 @@ public class Utilities {
 	public static <T> T deserialize(byte[] bytes, final ClassLoader classloader, Class<T> cls) {
 		try {
 			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-			final HashMap<String, Class<?>> primClasses = new HashMap<String, Class<?>>(8, 1.0F);
-			primClasses.put("boolean", boolean.class);
-			primClasses.put("byte", byte.class);
-			primClasses.put("char", char.class);
-			primClasses.put("short", short.class);
-			primClasses.put("int", int.class);
-			primClasses.put("long", long.class);
-			primClasses.put("float", float.class);
-			primClasses.put("double", double.class);
-			primClasses.put("void", void.class);
-			ObjectInputStream is = new ObjectInputStream(bis) {
 
+			ObjectInputStream is = new ObjectInputStream(bis) {
 				protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
 					String name = desc.getName();
 					try {
 						return Class.forName(name, false, classloader);
 					} catch (ClassNotFoundException ex) {
 						@SuppressWarnings("rawtypes")
-						Class cl = primClasses.get(name);
+						Class cl = primitiveClasses.get(name);
 						if (cl != null) {
 							return cl;
 						}
@@ -1415,10 +1412,7 @@ public class Utilities {
 					}
 				}
 			};
-			@SuppressWarnings("unchecked")
-			T t = (T) is.readObject();
-			is.close();
-			return t;
+			return cls.cast(is.readObject());
 		} catch (RuntimeException re) {
 			throw re;
 		} catch (Exception e) {
@@ -1492,8 +1486,8 @@ public class Utilities {
 		Color color = getColor(i, initialAngle, saturation, brightness);
 		return String.format("%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
 	}
-	
-	public static byte[] decodeBase64 (String string) {
+
+	public static byte[] decodeBase64(String string) {
 		Object decoder;
 		String method;
 		try {
@@ -1505,7 +1499,7 @@ public class Utilities {
 		}
 		return (byte[]) invoke(method, decoder, string);
 	}
-	
+
 	public static synchronized String getKey(String className, String methodName, String b) {
 		String key = keys.get(b);
 		if (key == null) {
@@ -1678,7 +1672,7 @@ public class Utilities {
 		}
 		return color;
 	}
-	
+
 	public static <T1, T2> Iterable<Pair<T1, T2>> pairs(final Iterable<T1> i1, final Iterable<T2> i2) {
 		return new Iterable<Pair<T1, T2>>() {
 

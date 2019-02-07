@@ -122,7 +122,7 @@ public final class ObjectFactory {
 		}
 		try {
 			if (string == null) {
-				return cls.newInstance();
+				return cls.getConstructor().newInstance();
 			}
 			Constructor<?> constructor = stringConstructorMap.get(cls);
 			if (constructor == null) {

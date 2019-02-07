@@ -276,7 +276,7 @@ public class LookupTable<T> implements Serializable {
 	public T add(Map<String, Object> map) {
 		T row;
 		try {
-			row = type.newInstance();
+			row = type.getConstructor().newInstance();
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}

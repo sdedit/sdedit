@@ -68,7 +68,7 @@ public class OntoMap<P, I> implements Serializable {
 
 	private Collection<?> newCollection() {
 		try {
-			Collection<?> c = collectionClass.newInstance();
+			Collection<?> c = collectionClass.getConstructor().newInstance();
 			return c;
 		} catch (RuntimeException re) {
 			throw re;
