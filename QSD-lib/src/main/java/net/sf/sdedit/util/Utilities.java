@@ -745,6 +745,10 @@ public class Utilities {
 		byte[] buffer = new byte[BUFFER_SIZE];
 		long total = 0;
 		for (;;) {
+			if (Thread.interrupted()) {
+				Thread.currentThread().interrupt();
+				return;
+			}
 			long diff = size - total;
 			int length;
 			if (diff >= BUFFER_SIZE) {
