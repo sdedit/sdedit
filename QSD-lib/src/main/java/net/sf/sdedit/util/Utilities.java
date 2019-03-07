@@ -48,6 +48,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -941,6 +942,10 @@ public class Utilities {
 	 * @return
 	 */
 	public static Object invoke(String methodName, Object object, Object... args) {
+		return invokeIfAnnotated(methodName, null, object, args);
+	}
+
+	public static Object invokeIfAnnotated(String methodName, Class<?> annotationClass, Object object, Object... args) {
 		Method method;
 		Class<?> theClass;
 		Object target = null;
@@ -957,8 +962,48 @@ public class Utilities {
 			target = object;
 		}
 		method = resolveMethod(theClass, methodName, args);
+
+		if (method == null) {
+			for (Method _method : Utilities.joinArrays(theClass.getMethods(), theClass.getDeclaredMethods(),
+					Method.class)) {
+				if (_method.getName().equals(methodName) && args.length == _method.getParameterTypes().length) {
+					method = _method;
+					break;
+				}
+			}
+			if (method != null) {
+				Class<?>[] types = method.getParameterTypes();
+				for (int i = 0; i < types.length; i++) {
+					Class<?> type = types[i];
+					if (args[i] != null && !types[i].isInstance(args[i])
+							&& wrapperClasses.get(type) != args[i].getClass()) {
+						args[i] = ObjectFactory.createFromString(type, args[i].toString());
+					}
+				}
+			}
+		}
+
+		if (method != null && annotationClass != null) {
+			boolean annotationFound = false;
+			for (Annotation ann : method.getDeclaredAnnotations()) {
+				if (annotationClass.isInstance(ann)) {
+					annotationFound = true;
+					break;
+				}
+			}
+			if (!annotationFound) {
+				throw new IllegalArgumentException(
+						"No matching method annotated by " + annotationClass.getName() + " found");
+			}
+		}
+
+		if (method == null) {
+			throw new IllegalArgumentException(
+					"No matching method named " + methodName + " found in class " + theClass.getName());
+		}
+		
 		// TODO Java>=9 deprecates isAccessible, but canAccess(obj) is not available as of Java<9
-		// Substitute this by !method.canAccess(obj) when compiling against Java 11
+				// Substitute this by !method.canAccess(obj) when compiling against Java 11
 		if (!method.isAccessible()) {
 			method.setAccessible(true);
 		}
@@ -1708,4 +1753,5 @@ public class Utilities {
 
 		};
 	}
+	
 }
