@@ -129,7 +129,7 @@ public class Utilities {
 		primClasses.put("double", double.class);
 		primClasses.put("void", void.class);
 		primitiveClasses = Collections.unmodifiableMap(primClasses);
-		
+
 	}
 
 	private static final String CR = "\r";
@@ -907,7 +907,8 @@ public class Utilities {
 			}
 
 		}
-		// TODO Java>=9 deprecates isAccessible, but canAccess(obj) is not available as of Java<9
+		// TODO Java>=9 deprecates isAccessible, but canAccess(obj) is not available as
+		// of Java<9
 		// Substitute this by !field.canAccess(obj) when compiling against Java 11
 		if (!field.isAccessible()) {
 			field.setAccessible(true);
@@ -961,27 +962,7 @@ public class Utilities {
 			theClass = object.getClass();
 			target = object;
 		}
-		method = resolveMethod(theClass, methodName, args);
-
-		if (method == null) {
-			for (Method _method : Utilities.joinArrays(theClass.getMethods(), theClass.getDeclaredMethods(),
-					Method.class)) {
-				if (_method.getName().equals(methodName) && args.length == _method.getParameterTypes().length) {
-					method = _method;
-					break;
-				}
-			}
-			if (method != null) {
-				Class<?>[] types = method.getParameterTypes();
-				for (int i = 0; i < types.length; i++) {
-					Class<?> type = types[i];
-					if (args[i] != null && !types[i].isInstance(args[i])
-							&& wrapperClasses.get(type) != args[i].getClass()) {
-						args[i] = ObjectFactory.createFromString(type, args[i].toString());
-					}
-				}
-			}
-		}
+		method = resolveMethod(theClass, methodName, args, true);
 
 		if (method != null && annotationClass != null) {
 			boolean annotationFound = false;
@@ -1001,9 +982,10 @@ public class Utilities {
 			throw new IllegalArgumentException(
 					"No matching method named " + methodName + " found in class " + theClass.getName());
 		}
-		
-		// TODO Java>=9 deprecates isAccessible, but canAccess(obj) is not available as of Java<9
-				// Substitute this by !method.canAccess(obj) when compiling against Java 11
+
+		// TODO Java>=9 deprecates isAccessible, but canAccess(obj) is not available as
+		// of Java<9
+		// Substitute this by !method.canAccess(obj) when compiling against Java 11
 		if (!method.isAccessible()) {
 			method.setAccessible(true);
 		}
@@ -1055,10 +1037,14 @@ public class Utilities {
 	 *         arguments given, <code>null</code> if no such method exists
 	 */
 	public static Method resolveMethod(Class<?> clazz, String name, Object[] args) {
+		return resolveMethod(clazz, name, args, false);
+	}
+	
+	public static Method resolveMethod(Class<?> clazz, String name, Object[] args, boolean slack) {
 		Method[] methods = // clazz.getMethods();
 				Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class);
-		int i;
-		for (i = 0; i < methods.length; i++) {
+
+		for (int i = 0; i < methods.length; i++) {
 			Method m = methods[i];
 			if (m.getName().equals(name)) {
 				Class<?>[] classes = m.getParameterTypes();
@@ -1078,8 +1064,29 @@ public class Utilities {
 				}
 			}
 		}
-		return null;
+		Method method = null;
+		if (slack) {
+			for (Method _method : Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class)) {
+				if (_method.getName().equals(name) && args.length == _method.getParameterTypes().length) {
+					method = _method;
+					break;
+				}
+			}
+			if (method != null) {
+				Class<?>[] types = method.getParameterTypes();
+				for (int i = 0; i < types.length; i++) {
+					Class<?> type = types[i];
+					if (args[i] != null && !types[i].isInstance(args[i])
+							&& wrapperClasses.get(type) != args[i].getClass()) {
+						args[i] = ObjectFactory.createFromString(type, args[i].toString());
+					}
+				}
+			}			
+		}
+		return method;
 	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	public static <T> Constructor<T> resolveConstructor(Class<T> clazz, Object... args) {
@@ -1753,5 +1760,5 @@ public class Utilities {
 
 		};
 	}
-	
+
 }
