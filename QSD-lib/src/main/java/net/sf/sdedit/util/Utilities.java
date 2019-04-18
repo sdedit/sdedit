@@ -1040,9 +1040,9 @@ public class Utilities {
 		return resolveMethod(clazz, name, args, false);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Method resolveMethod(Class<?> clazz, String name, Object[] args, boolean slack) {
-		Method[] methods = // clazz.getMethods();
-				Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class);
+		Method[] methods = Utilities.joinArrays(clazz.getMethods(), clazz.getDeclaredMethods(), Method.class);
 
 		for (int i = 0; i < methods.length; i++) {
 			Method m = methods[i];
@@ -1078,7 +1078,12 @@ public class Utilities {
 					Class<?> type = types[i];
 					if (args[i] != null && !types[i].isInstance(args[i])
 							&& wrapperClasses.get(type) != args[i].getClass()) {
-						args[i] = ObjectFactory.createFromString(type, args[i].toString());
+						if (args[i] instanceof Map<?,?>) {
+							args[i] = Utilities.fromMap((Map<String,Object>) args[i], type);
+						} else {
+							args[i] = ObjectFactory.createFromString(type, args[i].toString());	
+						}
+						
 					}
 				}
 			}			
