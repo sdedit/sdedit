@@ -33,134 +33,128 @@ import java.io.Serializable;
  * @param <S> the type of the second entry of the pair
  * 
  */
-public class Pair<F,S> implements Comparable<Pair<F,S>>, Serializable
-{
+public class Pair<F, S> implements Comparable<Pair<F, S>>, Serializable {
 	private static final long serialVersionUID = -7755711272159335160L;
 
 	private F first;
-    
-    private S second;
-    
-    /**
-     * Creates a new <tt>Pair</tt>
-     * 
-     * @param first the first object
-     * @param second the second object
-     */
-    public Pair (F first, S second)
-    {
-        this.first = first;
-        this.second = second;
-        
-    }
-    
-    /**
-     * Returns the first object
-     * 
-     * @return the first object
-     */
-    public F getFirst ()
-    {
-        return first;
-    }
-    
-    /**
-     * Returns the second object
-     * 
-     * @return the second object
-     */
-    public S getSecond ()
-    {
-        return second;
-    }
-    
-    /**
-     * Sets the first object.
-     * 
-     * @param first the first object of the pair
-     */
-    public void setFirst (F first)
-    {
-        this.first = first;
-    }
-    
-    /**
-     * Sets the second object.
-     * 
-     * @param second the second object of the pair
-     */
-    public void setSecond (S second)
-    {
-        this.second = second;
-    }
-    
-    /**
-     * Returns this Pair's hash code, of which the 16 high bits are the
-     * 16 low bits of <tt>getFirst().hashCode()</tt> are identical to 
-     * the 16 low bits and the 16 low bits of <tt>getSecond().hashCode()</tt>
-     * 
-     * @return this Pair's hash code, composed of its two elements' hash codes
-     * as described above
-     */
-    public int hashCode ()
-    {
-        int fh = first == null ? 0 : first.hashCode();
-        int sh = second == null ? 0 : second.hashCode();
-        return (fh << 16) | (sh & 0xFFFF);
-    }
-    
-    private boolean equals (Object o1, Object o2) {
-        if (o1 == null && o2 == null) {
-            return true;
-        }
-        if (o1 == null || o2 == null) {
-            return false;
-        }
-        return o1.equals(o2);
-    }
-    
-    /**
-     * Returns true iff both elements of this Pair equal both elements of
-     * another Pair.
-     * 
-     * @param object object reference to another Pair
-     * @return true iff both elements of this Pair equal both elements of
-     * another Pair
-     */
-    @SuppressWarnings("unchecked")
-    public boolean equals (Object object)
-    {
-        Pair<F,S> pair = (Pair<F,S>) object;
-        return equals(first,pair.first) && equals(second,pair.second);
-    }
-    
-    /**
-     * @see java.lang.Object#toString()
-     */
-    public String toString ()
-    {
-        return "<" + getFirst() + "," + getSecond() + ">";
-    }
 
-    @SuppressWarnings("unchecked")
-    public int compareTo(Pair<F, S> arg0) {
-        F f = arg0.first;
-        S s = arg0.second;
-        int comp_f;
-        int comp_s;
-        if (Comparable.class.isInstance(first) && 
-                Comparable.class.isInstance(second) && Comparable.class.isInstance(f) && Comparable.class.isInstance(s)) {
-            comp_f = Comparable.class.cast(first).compareTo(Comparable.class.cast(f));
-            comp_s = Comparable.class.cast(second).compareTo(Comparable.class.cast(s));
-        } else {
-            comp_f = String.valueOf(first).compareTo(String.valueOf(f));
-            comp_s = String.valueOf(second).compareTo(String.valueOf(s));
-        }
-        if (comp_f != 0) {
-            return comp_f;
-        }
-        return comp_s;
-    }
+	private S second;
+
+	/**
+	 * Creates a new <tt>Pair</tt>
+	 * 
+	 * @param first  the first object
+	 * @param second the second object
+	 */
+	public Pair(F first, S second) {
+		this.first = first;
+		this.second = second;
+
+	}
+
+	/**
+	 * Returns the first object
+	 * 
+	 * @return the first object
+	 */
+	public F getFirst() {
+		return first;
+	}
+
+	/**
+	 * Returns the second object
+	 * 
+	 * @return the second object
+	 */
+	public S getSecond() {
+		return second;
+	}
+
+	/**
+	 * Sets the first object.
+	 * 
+	 * @param first the first object of the pair
+	 */
+	public void setFirst(F first) {
+		this.first = first;
+	}
+
+	/**
+	 * Sets the second object.
+	 * 
+	 * @param second the second object of the pair
+	 */
+	public void setSecond(S second) {
+		this.second = second;
+	}
+
+	/**
+	 * Returns this Pair's hash code, of which the 16 high bits are the 16 low bits
+	 * of <tt>getFirst().hashCode()</tt> are identical to the 16 low bits and the 16
+	 * low bits of <tt>getSecond().hashCode()</tt>
+	 * 
+	 * @return this Pair's hash code, composed of its two elements' hash codes as
+	 *         described above
+	 */
+	public int hashCode() {
+		int fh = first == null ? 0 : first.hashCode();
+		int sh = second == null ? 0 : second.hashCode();
+		return (fh << 16) | (sh & 0xFFFF);
+	}
+
+	private boolean equals(Object o1, Object o2) {
+		if (o1 == null && o2 == null) {
+			return true;
+		}
+		if (o1 == null || o2 == null) {
+			return false;
+		}
+		return o1.equals(o2);
+	}
+
+	/**
+	 * Returns true iff both elements of this Pair equal both elements of another
+	 * Pair.
+	 * 
+	 * @param object object reference to another Pair
+	 * @return true iff both elements of this Pair equal both elements of another
+	 *         Pair
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean equals(Object object) {
+		if (object instanceof Pair) {
+			Pair<F, S> pair = (Pair<F, S>) object;
+			return equals(first, pair.first) && equals(second, pair.second);
+		}
+		return false;
+	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "<" + getFirst() + "," + getSecond() + ">";
+	}
+
+	@SuppressWarnings("unchecked")
+	public int compareTo(Pair<F, S> arg0) {
+		F f = arg0.first;
+		S s = arg0.second;
+		int comp_f;
+		int comp_s;
+		if (Comparable.class.isInstance(first) && Comparable.class.isInstance(second) && Comparable.class.isInstance(f)
+				&& Comparable.class.isInstance(s)) {
+			comp_f = Comparable.class.cast(first).compareTo(Comparable.class.cast(f));
+			comp_s = Comparable.class.cast(second).compareTo(Comparable.class.cast(s));
+		} else {
+			comp_f = String.valueOf(first).compareTo(String.valueOf(f));
+			comp_s = String.valueOf(second).compareTo(String.valueOf(s));
+		}
+		if (comp_f != 0) {
+			return comp_f;
+		}
+		return comp_s;
+	}
 
 }
 //{{core}}
