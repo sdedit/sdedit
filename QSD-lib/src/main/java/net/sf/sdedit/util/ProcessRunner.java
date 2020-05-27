@@ -50,9 +50,12 @@ public class ProcessRunner implements Runnable {
 
 		private Thread thread;
 
-		Redirect(InputStream in, OutputStream out) {
+		private boolean close;
+
+		Redirect(InputStream in, OutputStream out, boolean close) {
 			this.in = in;
 			this.out = out;
+			this.close = close;
 		}
 
 		public void run() {
@@ -64,9 +67,11 @@ public class ProcessRunner implements Runnable {
 				byte[] buffer = new byte[1024];
 				while (EOF != (n = bis.read(buffer))) {
 					bos.write(buffer, 0, n);
+					bos.flush();
 				}
-				bos.flush();
-				bos.close();
+				if (close) {
+					bos.close();	
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 				this.e = e;
@@ -230,18 +235,18 @@ public class ProcessRunner implements Runnable {
 
 		try {
 			process = builder.start();
-
+			
 			if (in != null) {
-				inRedir = new Redirect(in, process.getOutputStream());
+				inRedir = new Redirect(in, process.getOutputStream(), true);
 				inRedir.start();
 			}
 
 			if (out != null) {
-				outRedir = new Redirect(process.getInputStream(), out);
+				outRedir = new Redirect(process.getInputStream(), out, false);
 				outRedir.start();
 			}
 			if (err != null) {
-				errRedir = new Redirect(process.getErrorStream(), err);
+				errRedir = new Redirect(process.getErrorStream(), err, false);
 				errRedir.start();
 			}
 			
