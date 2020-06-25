@@ -38,6 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -81,6 +82,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -1346,6 +1348,31 @@ public class Utilities {
 			throw new IllegalStateException(e);
 		}
 	}
+	
+	public static File[] listFiles (File directory, String... patterns) {
+		if (!directory.canRead()) {
+			throw new IllegalArgumentException("not readable: " + directory.getAbsolutePath());
+		}
+		if (!directory.isDirectory()) {
+			throw new IllegalArgumentException("not a directory: " + directory.getAbsolutePath());
+		}
+		FilenameFilter fnf = new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				if (patterns.length == 0) {
+					return true;
+				}
+				for (String pattern : patterns) {
+					if (Pattern.matches(pattern, name)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		return directory.listFiles(fnf);
+	}
 
 	public static PropertyDescriptor[] getProperties(Class<?> cls) {
 		BeanInfo beanInfo;
@@ -1765,5 +1792,5 @@ public class Utilities {
 
 		};
 	}
-
+	
 }
