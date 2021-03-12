@@ -73,7 +73,7 @@ public class ProcessRunner implements Runnable {
 					bos.close();	
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 				this.e = e;
 			}
 		}
