@@ -217,6 +217,11 @@ public class ProcessRunner implements Runnable {
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
+		
+		if (exception != null) {
+			throw new IllegalStateException(exception);
+		}
+
 		if (!isTerminated()) {
 			try {
 				process.destroy();
@@ -234,8 +239,11 @@ public class ProcessRunner implements Runnable {
 	public void run() {
 
 		try {
-			process = builder.start();
 			
+			synchronized (this) {
+				process = builder.start();
+			}
+					
 			if (in != null) {
 				inRedir = new Redirect(in, process.getOutputStream(), true);
 				inRedir.start();
@@ -301,13 +309,9 @@ public class ProcessRunner implements Runnable {
 		return exception;
 	}
 
-	public boolean isTerminated() {
-		while (process == null) {
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-
-			}
+	public synchronized boolean isTerminated() {
+		if (process == null) {
+			return false;
 		}
 		try {
 			this.exitValue = process.exitValue();
@@ -330,5 +334,5 @@ public class ProcessRunner implements Runnable {
 		}
 		return errRedir.getException();
 	}
-
+	
 }
