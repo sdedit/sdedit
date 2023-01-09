@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.sf.sdedit</groupId>
 	<artifactId>QSD-lib</artifactId>
-	<version>4.2.16</version>
+	<version>4.2.17</version>
 	<name>Quick Sequence Diagram Editor Library</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -12,7 +12,7 @@
 	<distributionManagement>
 		<repository>
 			<id>qsde-maven2</id>
-			<url>ftp://qsde.net/repository</url>
+			<url>ftp://develop.topogrids.de/repository</url>
 		</repository>
 	</distributionManagement>
 	<build>

@@ -24,6 +24,8 @@
 package net.sf.sdedit.util.graph;
 
 import java.util.Collection;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 
 import net.sf.sdedit.util.Pair;
 import net.sf.sdedit.util.collection.IStack;
@@ -37,6 +39,12 @@ public class DepthFirstSearch {
 	
 	private static int n = 0;
 	
+	private BiPredicate<Node,Edge> edgeGuard;
+	
+	private BiConsumer<Node,Node> edgeConsumer;
+	
+	private int debugSize;
+	
 	public DepthFirstSearch (Collection<Node> allNodes) {
 		this.allNodes = allNodes;
 		stack = new StackImpl<Pair<Node,IStack<Edge>>>();
@@ -47,7 +55,9 @@ public class DepthFirstSearch {
 		Pair<Node,IStack<Edge>> entry = new Pair<Node,IStack<Edge>>(node, nodeStack);
 		for (Edge edge : node.getEdges()) {
 			if (!edge.isVisited()) {
-				nodeStack.push(edge);
+				if (edgeGuard == null || edgeGuard.test(node, edge)) {
+					nodeStack.push(edge);
+				}
 			}
 		}
 		stack.push(entry);
@@ -74,8 +84,11 @@ public class DepthFirstSearch {
 				Edge edge = subStack.pop();
 				if (!edge.isVisited()) {
 					edge.setVisited(true);
+					if (edgeConsumer != null) {
+						edgeConsumer.accept(node, edge.getNode1() == node ? edge.getNode2() : edge.getNode1());
+					}
 					n++;
-					if (n % 100000 == 0) {
+					if (debugSize > 0 && n % debugSize == 0) {
 						System.out.println(n + " edges visited");
 					}
 					Node next = edge.getNode1() == node ? edge.getNode2() : edge.getNode1();
@@ -87,4 +100,31 @@ public class DepthFirstSearch {
 			}
 		}
 	}
+	
+	public BiPredicate<Node, Edge> getEdgeGuard() {
+		return edgeGuard;
+	}
+
+	public void setEdgeGuard(BiPredicate<Node, Edge> predicate) {
+		this.edgeGuard = predicate;
+	}
+
+	public BiConsumer<Node, Node> getEdgeConsumer() {
+		return edgeConsumer;
+	}
+
+	public void setEdgeConsumer(BiConsumer<Node, Node> consumer) {
+		this.edgeConsumer = consumer;
+	}
+
+	public int getDebugSize() {
+		return debugSize;
+	}
+
+	public void setDebugSize(int debugSize) {
+		this.debugSize = debugSize;
+	}
+
+
+
 }
