@@ -1,36 +1,37 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>net.sf.sdedit</groupId>
-	<artifactId>QSD-lib</artifactId>
-	<version>4.2.17</version>
-	<name>Quick Sequence Diagram Editor Library</name>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	<distributionManagement>
-		<repository>
-			<id>qsde-maven2</id>
-			<url>ftp://develop.topogrids.de/repository</url>
-		</repository>
-	</distributionManagement>
-	<build>
-		<extensions>
-			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-ftp</artifactId>
-				<version>3.4.3</version>
-			</extension>
-		</extensions>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<release>8</release>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.sf.sdedit</groupId>
+    <artifactId>QSD-lib</artifactId>
+    <version>4.2.18</version>
+    <name>Quick Sequence Diagram Editor Library</name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>qsde-maven2</id>
+            <url>davs://develop.topogrids.de/repository</url>
+        </repository>
+
+    </distributionManagement>
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav-jackrabbit</artifactId>
+                <version>3.5.3</version>
+            </extension>
+        </extensions>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <release>8</release>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
