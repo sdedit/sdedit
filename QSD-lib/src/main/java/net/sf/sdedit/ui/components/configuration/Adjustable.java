@@ -163,6 +163,8 @@ public @interface Adjustable {
 	String datePattern() default "";
 	
 	boolean button() default false;
+	
+	boolean actOnKeyTyped() default true;
 
 }
 //{{core}}

@@ -54,8 +54,12 @@ public class FreeStringConfigurator<C extends DataObject> extends
 		getBottomPanel().setLayout(new BorderLayout());
 		textField = new JTextField(getValue());
 		getBottomPanel().add(textField, BorderLayout.CENTER);
-		// textField.addFocusListener(this);
-		textField.addKeyListener(this);
+		if (getAdjustable().actOnKeyTyped()) {
+			textField.addKeyListener(this);
+		} else {
+			textField.addFocusListener(this);
+		}
+		
 	}
 
 	@Override
@@ -100,8 +104,9 @@ public class FreeStringConfigurator<C extends DataObject> extends
 	}
 
 	public void keyTyped(KeyEvent e) {
-		actionPerformed(null);
-
+		if (getAdjustable().actOnKeyTyped()) {
+			actionPerformed(null);
+		}
 	}
 
 }
