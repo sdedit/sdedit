@@ -52,7 +52,7 @@ public interface Edge {
 	 * 
 	 * @param visited
 	 */
-	public void setVisited (boolean visited);
+	public void setVisited (Node node);
 	
 	/**
 	 * Returns a flag denoting if this <tt>Edge</tt> has already been visited
@@ -61,5 +61,7 @@ public interface Edge {
 	 * @return
 	 */
 	public boolean isVisited ();
+	
+	public Node getVisitedFrom();
 
 }

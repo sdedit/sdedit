@@ -32,27 +32,27 @@ import net.sf.sdedit.util.collection.IStack;
 import net.sf.sdedit.util.collection.StackImpl;
 
 public class DepthFirstSearch {
-	
-	private IStack<Pair<Node,IStack<Edge>>> stack;
-	
+
+	private IStack<Pair<Node, IStack<Edge>>> stack;
+
 	private Collection<Node> allNodes;
-	
+
 	private static int n = 0;
-	
-	private BiPredicate<Node,Edge> edgeGuard;
-	
-	private BiConsumer<Node,Node> edgeConsumer;
-	
+
+	private BiPredicate<Node, Edge> edgeGuard;
+
+	private BiConsumer<Node, Node> edgeConsumer;
+
 	private int debugSize;
-	
-	public DepthFirstSearch (Collection<Node> allNodes) {
+
+	public DepthFirstSearch(Collection<Node> allNodes) {
 		this.allNodes = allNodes;
-		stack = new StackImpl<Pair<Node,IStack<Edge>>>();
+		stack = new StackImpl<Pair<Node, IStack<Edge>>>();
 	}
-	
-	private void push (Node node) {
+
+	private void push(Node node) {
 		IStack<Edge> nodeStack = new StackImpl<Edge>();
-		Pair<Node,IStack<Edge>> entry = new Pair<Node,IStack<Edge>>(node, nodeStack);
+		Pair<Node, IStack<Edge>> entry = new Pair<Node, IStack<Edge>>(node, nodeStack);
 		for (Edge edge : node.getEdges()) {
 			if (!edge.isVisited()) {
 				if (edgeGuard == null || edgeGuard.test(node, edge)) {
@@ -62,20 +62,24 @@ public class DepthFirstSearch {
 		}
 		stack.push(entry);
 	}
-	
-	public void start () {
+
+	public void start() {
 		for (Node node : allNodes) {
 			if (node.getTRoot() == null) {
-				push(node);
-				node.setTRoot(node);
-				dfs ();
+				start(node);
 			}
 		}
 	}
-	
-	private void dfs () {
+
+	public void start(Node node) {
+		push(node);
+		node.setTRoot(node);
+		dfs();
+	}
+
+	private void dfs() {
 		while (!stack.isEmpty()) {
-			Pair<Node,IStack<Edge>> entry = stack.peek();
+			Pair<Node, IStack<Edge>> entry = stack.peek();
 			Node node = entry.getFirst();
 			IStack<Edge> subStack = entry.getSecond();
 			if (subStack.isEmpty()) {
@@ -83,7 +87,7 @@ public class DepthFirstSearch {
 			} else {
 				Edge edge = subStack.pop();
 				if (!edge.isVisited()) {
-					edge.setVisited(true);
+					edge.setVisited(node);
 					if (edgeConsumer != null) {
 						edgeConsumer.accept(node, edge.getNode1() == node ? edge.getNode2() : edge.getNode1());
 					}
@@ -100,7 +104,7 @@ public class DepthFirstSearch {
 			}
 		}
 	}
-	
+
 	public BiPredicate<Node, Edge> getEdgeGuard() {
 		return edgeGuard;
 	}
@@ -124,7 +128,5 @@ public class DepthFirstSearch {
 	public void setDebugSize(int debugSize) {
 		this.debugSize = debugSize;
 	}
-
-
 
 }
