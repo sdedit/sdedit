@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 public class IteratingStream<T> extends InputStream implements Enumeration<InputStream> {
 	
-	private Iterator<T> iterator;
+	private final Iterator<T> iterator;
 	
 	private boolean done;
 	
@@ -18,24 +18,31 @@ public class IteratingStream<T> extends InputStream implements Enumeration<Input
 	
 	private InputStream stream;
 
-	private byte[] prefix;
+	private final byte[] prefix;
 
-	private byte[] separator;
+	private final byte[] separator;
 
-	private byte[] suffix;
+	private final byte[] suffix;
+	
+	private final byte[] suffixOfEmptyStream;
 
-	private Function<T, byte[]> serializer;
+	private final Function<T, byte[]> serializer;
 
 	private Runnable close;
 	
-	public IteratingStream(Iterator<T> iterator, byte[] prefix, byte[] separator, byte[] suffix, Function<T,byte[]> serializer) {
+	public IteratingStream(Iterator<T> iterator, byte[] prefix, byte[] separator, byte[] suffix, Function<T,byte[]> serializer, byte[] suffixOfEmptyStream) {
 		this.iterator = iterator;
 		first = true;
 		this.prefix = prefix;
 		this.separator = separator;
 		this.suffix = suffix;
 		this.serializer = serializer;
+		this.suffixOfEmptyStream = suffixOfEmptyStream;
 		stream = new SequenceInputStream(this);
+	}
+	
+	public IteratingStream(Iterator<T> iterator, byte[] prefix, byte[] separator, byte[] suffix, Function<T,byte[]> serializer) {
+		this(iterator,prefix,separator,suffix,serializer,null);
 	}
 	
 	public void onClose(Runnable close) {
@@ -65,7 +72,11 @@ public class IteratingStream<T> extends InputStream implements Enumeration<Input
 	public InputStream nextElement() {
 		byte[] dat;
 		if (done) {
-			dat = suffix;
+			if (first && suffixOfEmptyStream != null) {
+				dat = suffixOfEmptyStream;
+			} else {
+				dat = suffix;		
+			}
 		} else {
 			dat = this.serializer.apply(iterator.next());
 		}
