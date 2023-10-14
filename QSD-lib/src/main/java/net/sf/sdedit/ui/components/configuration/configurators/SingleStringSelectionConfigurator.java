@@ -130,6 +130,7 @@ public class SingleStringSelectionConfigurator<C extends DataObject> extends
 
 	protected void _setEnabled(boolean enabled) {
 		comboBox.setEnabled(enabled);
+		comboBox.setEditable(enabled);
 	}
 
 	@Override

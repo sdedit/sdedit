@@ -32,6 +32,7 @@ import java.beans.PropertyDescriptor;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
+import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -103,7 +104,10 @@ implements ChangeListener
 
 	protected void _setEnabled(boolean enabled) {
 		spinner.setEnabled(enabled);
+		((DefaultEditor) spinner.getEditor()).getTextField().setEditable(enabled);
+		((DefaultEditor) spinner.getEditor()).getTextField().setEnabled(enabled);
 	}
+	
 
 	@Override
 	public void focus() {
