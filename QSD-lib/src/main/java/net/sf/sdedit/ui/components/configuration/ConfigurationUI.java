@@ -77,7 +77,7 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 
 	private Map<String, Integer> labelWidths;
 
-	private JList categoryList;
+	private JList<String> categoryList;
 
 	private JPanel right;
 
@@ -148,7 +148,7 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 
 			categoryListPanel = new JPanel();
 			categoryListPanel.setLayout(new BorderLayout());
-			categoryList = new JList();
+			categoryList = new JList<>();
 			JScrollPane listScrollPane = new JScrollPane(categoryList);
 			categoryListPanel.add(listScrollPane, BorderLayout.CENTER);
 			add(categoryListPanel, BorderLayout.WEST);
@@ -279,6 +279,17 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 		}
 		return list;
 	}
+	
+	public Configurator<?, C> getConfigurator (String property) {
+		for (List<Configurator<?, C>> conf : configurators.values()) {
+			for (Configurator<?, C> c : conf) {
+				if (c.getProperty().getName().equals(property)) {
+					return c;
+				}
+			}
+		}
+		return null;
+	}
 
 	public void updateStringSelections(String... properties) {
 		for (Configurator<?, C> configurator : getConfigurators()) {
@@ -340,7 +351,7 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 
 					} else {
 						categoryList
-								.setListData(categoryMap.keySet().toArray());
+								.setListData(categoryMap.keySet().toArray(new String[0]));
 
 						if (categoryMap.keySet().iterator().next().equals(
 								category)) {
