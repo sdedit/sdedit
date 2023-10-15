@@ -156,7 +156,7 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 			categoryList.addListSelectionListener(new ListSelectionListener() {
 
 				public void valueChanged(ListSelectionEvent e) {
-					String category = (String) categoryList.getSelectedValue();
+					String category = categoryList.getSelectedValue();
 					if (category != null) {
 						JPanel panel = categoryMap.get(category);
 						right.removeAll();
@@ -166,12 +166,14 @@ public class ConfigurationUI<C extends DataObject> extends JPanel {
 				}
 			});
 
+			@SuppressWarnings("rawtypes")
 			final ListCellRenderer lcr = categoryList.getCellRenderer();
-			categoryList.setCellRenderer(new ListCellRenderer() {
+			categoryList.setCellRenderer(new ListCellRenderer<Object>() {
 
-				public Component getListCellRendererComponent(JList list,
+				public Component getListCellRendererComponent(JList<?> list,
 						Object value, int index, boolean isSelected,
 						boolean cellHasFocus) {
+					@SuppressWarnings("unchecked")
 					JComponent comp = (JComponent) lcr
 							.getListCellRendererComponent(list, value, index,
 									isSelected, cellHasFocus);
