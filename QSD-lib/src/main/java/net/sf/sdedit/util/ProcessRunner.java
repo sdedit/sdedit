@@ -65,15 +65,15 @@ public class ProcessRunner implements Runnable {
 				int n = 0;
 				final int EOF = -1;
 				byte[] buffer = new byte[1024];
-				while (EOF != (n = bis.read(buffer))) {
+				while (Thread.currentThread().isInterrupted() && EOF != (n = bis.read(buffer))) {
 					bos.write(buffer, 0, n);
 					bos.flush();
 				}
 				if (close) {
-					bos.close();	
+					bos.close();
 				}
 			} catch (IOException e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 				this.e = e;
 			}
 		}
@@ -85,6 +85,18 @@ public class ProcessRunner implements Runnable {
 		void start() {
 			thread = new Thread(this);
 			thread.start();
+		}
+
+		void stop() {
+			thread.interrupt();
+			try {
+				this.in.close();
+			} catch (IOException e) {
+			}
+			try {
+				this.out.close();
+			} catch (IOException e) {
+			}
 		}
 
 		void join() {
@@ -123,6 +135,8 @@ public class ProcessRunner implements Runnable {
 	private File workingDirectory;
 
 	private Integer exitValue;
+
+	private Thread mainThread;
 
 	/**
 	 * Creates a new <tt>ProcessRunner</tt>
@@ -191,7 +205,7 @@ public class ProcessRunner implements Runnable {
 		env.put(name, value);
 		return this;
 	}
-	
+
 	public Integer getExitValue() {
 		return exitValue;
 	}
@@ -210,14 +224,14 @@ public class ProcessRunner implements Runnable {
 		if (redirect) {
 			builder.redirectErrorStream(true);
 		}
-		Thread thread = new Thread(this);
-		thread.start();
+		this.mainThread = new Thread(this);
+		mainThread.start();
 		try {
-			thread.join(maxDurationMillis);
+			mainThread.join(maxDurationMillis);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
-		
+
 		if (exception != null) {
 			throw new IllegalStateException(exception);
 		}
@@ -225,13 +239,55 @@ public class ProcessRunner implements Runnable {
 		if (!isTerminated()) {
 			try {
 				process.destroy();
-				thread.join();
+				mainThread.join();
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
 		}
 	}
-	
+
+	public void kill() {
+		try {
+			var pr = new ProcessRunner();
+			var pid = process.pid();
+			if (OS.TYPE == OS.Type.WINDOWS) {
+				pr.command("taskkill", "/PID", Long.toString(pid), "/T", "/F");
+			} else {
+				pr.command("kill", "KILL", "--", "-" + pid);
+			}
+			pr.start(0);
+		} finally {
+			stopThreads();
+		}
+	}
+
+	private void stopThreads() {
+		if (this.mainThread != null) {
+			this.mainThread.interrupt();
+		}
+		if (this.inRedir != null) {
+			this.inRedir.stop();
+		}
+		if (this.outRedir != null) {
+			this.outRedir.stop();
+		}
+		if (this.errRedir != null) {
+			this.errRedir.stop();
+		}
+	}
+
+	public void stop(boolean force) {
+		try {
+			if (force) {
+				this.process.destroyForcibly();
+			} else {
+				this.process.destroy();
+			}
+		} finally {
+			stopThreads();
+		}
+	}
+
 	public Process getProcess() {
 		return process;
 	}
@@ -239,11 +295,11 @@ public class ProcessRunner implements Runnable {
 	public void run() {
 
 		try {
-			
+
 			synchronized (this) {
 				process = builder.start();
 			}
-					
+
 			if (in != null) {
 				inRedir = new Redirect(in, process.getOutputStream(), true);
 				inRedir.start();
@@ -257,7 +313,7 @@ public class ProcessRunner implements Runnable {
 				errRedir = new Redirect(process.getErrorStream(), err, false);
 				errRedir.start();
 			}
-			
+
 			try {
 				process.waitFor();
 				if (inRedir != null) {
@@ -334,5 +390,5 @@ public class ProcessRunner implements Runnable {
 		}
 		return errRedir.getException();
 	}
-	
+
 }
