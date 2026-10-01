@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.sf.sdedit</groupId>
     <artifactId>QSD-lib</artifactId>
-    <version>4.2.21</version>
+    <version>4.2.22</version>
     <name>Quick Sequence Diagram Editor Library</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,9 +27,9 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.14.1</version>
                 <configuration>
-                    <release>8</release>
+                    <release>21</release>
                 </configuration>
             </plugin>
         </plugins>
