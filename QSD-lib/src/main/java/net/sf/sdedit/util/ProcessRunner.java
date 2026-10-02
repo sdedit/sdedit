@@ -65,7 +65,7 @@ public class ProcessRunner implements Runnable {
 				int n = 0;
 				final int EOF = -1;
 				byte[] buffer = new byte[1024];
-				while (Thread.currentThread().isInterrupted() && EOF != (n = bis.read(buffer))) {
+				while (!Thread.currentThread().isInterrupted() && EOF != (n = bis.read(buffer))) {
 					bos.write(buffer, 0, n);
 					bos.flush();
 				}
